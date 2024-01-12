@@ -1,0 +1,94 @@
+.header {
+    justify-content: center;
+    align-items: center;
+    h1 {
+        padding: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        color: black;
+    }
+    p {
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+
+    }
+
+}
+
+.container-class {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+
+
+    table {
+        border-radius: 10px;
+        border-collapse: collapse;
+        // height: calc(100vh - 180px);
+        width: 100%;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+        thead {
+            background-color: #f2f2f2;
+
+            tr,
+            th {
+                font-weight: bold;
+                font-size: 20px;
+                border: 1px solid #ddd;
+                padding: 15px;
+                text-align: center;
+                background-color: rgb(148, 109, 185);
+            }
+        }
+
+        tbody {
+            tr,
+            td {
+                border: 1px solid #ddd;
+                height: 130px;
+                font-size: 20px;
+                font-weight: bold;
+                margin-left: 10px;
+                text-align: center;
+                width: 15%;
+                text-transform: capitalize;
+
+                &:first-child {
+                    width: 10%; /* Set the width for the first td in tbody */
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+
+
+
+    // break in 1300
+    @media (max-width: 1300px) {
+        table {
+            width: 100%;
+            margin-left: 0px;
+            height: calc(100vh - 170px);
+            thead {
+                tr,
+                th {
+                    font-size: 15px;
+                    padding: 10px;
+                }
+            }
+            tbody {
+                tr,
+                td {
+                    font-size: 15px;
+                    padding: 10px;
+                }
+            }
+        }
+    }
+}

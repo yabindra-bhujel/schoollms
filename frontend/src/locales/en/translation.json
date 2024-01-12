@@ -1,0 +1,261 @@
+{
+  "translation": {
+    "event": "Event",
+    "today event": "Today's Events",
+    "dont miss": "Don't miss scheduled events",
+
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "event list": "Event List",
+
+    "exam title": "Test Title",
+    "status": "Status",
+    "time": "Time",
+    "start time": "Start Time",
+    "end time": "End Time",
+    "not have exam": "Not have any exam for this subject.",
+
+    "task": "Assigment",
+    "status": "Status",
+    "submitted": "Submitted",
+    "start date": "Start Date",
+    "deadline": "Deadline",
+
+    "exam": "Exam",
+    "create new exam": "Create New Exam",
+    "attendance": "Register as Chief",
+    "generate QR code or number": "Generate QR Code or Number",
+    "create assignment": "Create Assignment",
+    "create assignment for this subject": "Assignment for This Subject",
+    "teaching materials": "Teaching Materials",
+    "share materials related to the class": "Share Class Materials",
+    "survey": "Survey",
+    "survey related to the class": "Survey Related to the Class",
+    "announcement":"Announcement",
+
+    "assignment": "Assigment",
+    "exam": "Exam",
+    "attendance": "Attendance",
+    "course materials": "Materials",
+    "survey": "Survey",
+    "examInfo": [
+      "You cannot change the browser screen during the exam.",
+      "Make sure to read all the instructions carefully.",
+      "Do not use any external resources during the exam.",
+      "Keep your focus and manage your time effectively.",
+      "Double-check your answers before submitting.",
+      "Follow the exam rules and guidelines.",
+      "Ask for clarification if you have any doubts.",
+      "Stay calm and composed throughout the exam.",
+      "Use the provided resources wisely.",
+      "Good luck!"
+    ],
+    "examInfo header": "Exam notes",
+    "start button": "Start",
+    "agree": "Agree",
+
+    "createNewCollection": "Create New Video Collection",
+    "title": "Title",
+    "description": "Description",
+
+    "selectVideoFile": "Select a video file to upload",
+    "maxFileSizeVideo": "Max file size 1GB",
+
+    "selectImageFile": "Select an image file to upload",
+    "maxFileSizeImage": "Max file size 30MB",
+    "video_cancle_btn": "Cancle",
+    "video_upload_btn": "Upload",
+
+    "millionsCollection": "Millions of video and article collection",
+    "search": "Search",
+    "addFilter": "Add Filter",
+    "addNewCollection": "Add New Video Collection",
+    "learnPython": "Learn Python",
+    "noResultsFound": "No results found for ",
+    "leave_your_comment": "Leave your comment",
+    "comment_post_btn": "Post",
+    "addNewArticla": "Add New Article",
+
+    "articleTitle": "Enter a Captivating Title",
+    "initialValues": "Enter the description of Your Aspirations",
+    "article_add": "Upload Article",
+    "articla_cancel": "Cancel",
+
+
+
+    "classSchedule": "CLASS SCHEDULE",
+    "time": "Time",
+    "weekDay": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+
+
+    "assignmentTitle": "Assignment Title",
+  "assignmentType": "Assignment Type",
+  "assignmentDeadline": "Assignment Deadline",
+  "maxGrade": "Max Grade",
+  "assignmentStartDate": "Assignment Start Date",
+  "assignmentDescription": "Assignment Description",
+
+  "saveChange": "Save Change",
+
+
+  "fullName": "Student Name",
+  "studentId": "Student ID",
+  "assigemnttabletitile": "Assignment Submissions List",
+  "submissionDate": "Submissions Date",
+  "status": "Status",
+  "grade": "Grade",
+  "submittedFileHeader": "Submitted File",
+  "assignmentBody": "Chanage Assigment Description",
+"assignmentQuestion": "Question List",
+"deleteQuestionhover":"Delete Question",
+"successMessage": "Assignment updated successfully",
+
+"confirmDeletion": {
+  "title": "Confirm Deletion",
+  "description": "Are you sure you want to delete this question?",
+  "cancel": "Cancel",
+  "confirm": "Confirm"
+},
+
+
+"createExam":{
+  "examTitle": "Exam Title",
+  "placholder": "Exam Title Input",
+  "examStartDate": "Exam Start Date",
+  "examEndDate": "Exam End Date",
+  "examTime": "Exam Time",
+  "examMaxScore": "Max Score",
+  "examDescription": "Exam Description",
+  "createExam": "Create Exam",
+  "question": "Question",
+  "answerType": "Answer Type",
+  "submit": "Submit",
+  "cancel": "Cancel",
+  "back": "Back",
+  "next": "Next",
+  "examPreview": "Exam Preview",
+  "inputQuestion":"Enput Question",
+  "questiontype": "Choice Question Type",
+  "shortAnswer": "Short Answer",
+  "longAnswer": "Long Answer",
+  "addmore":"Add Question",
+  "creeateExma": "Create Exam",
+  "createQuestion": "Cretae Question",
+  "finish": "Finish"
+
+},
+
+
+"examD":{
+  "startDate": "Start Date Time",
+  "endDate": "End Date Time",
+  "duration": "Duration",
+  "maxGrade": "Max Grade",
+  "update": "Update",
+  "loading": "Loading...",
+  "shortAnswerQuestions": "Short Answer Questions",
+  "noShortAnswerQuestions": "No short answer questions",
+  "longAnswerQuestions": "Long Answer Questions",
+  "noLongAnswerQuestions": "No long answer questions",
+  "examlist": "Exam submission List"
+},
+
+
+"examTable":{
+  "studentID": "Student ID",
+  "studentName": "Student Name",
+  "subjectName": "Subject Name",
+  "submissionTime": "Submission Time",
+  "takeTime": "Take Time",
+  "submissionFile": "Submission File"
+},
+
+"studentAssigemnt":{
+  "fileerror":"You can only upload files up to 10 MB",
+  "submit": "Submit",
+  "cancel": "Cancel",
+  "drag": "Drag & drop or click to choose file",
+  "maxFile": "Max file size: 10MB",
+  "save": "Save",
+  "submit": "Submitted",
+  "notsubmit": "Not Submitted",
+  "subject": "Subject",
+  "date": "Date",
+  "status": "Status",
+  "present": "Present",
+  "absent": "Absent",
+  "noAttendanceData": "No attendance data found in the response.",
+  "errorFetchingData": "Error fetching attendance data:",
+  "materiales":"Materiales"
+
+
+
+},
+"is_graded":"Graded",
+"score":"Score",
+"update_edite_sale": "Submit Edited Cells",
+
+"messages": {
+  "enterCode": "Enter Your Code",
+  "invalidCode": "Please enter a valid attendance code.",
+  "alreadyMarked": "Attendance already marked.",
+  "markedSuccessfully": "Attendance marked successfully.",
+  "codeNotFound": "Attendance code not found.",
+  "badRequest": "Bad request. Please check the attendance code.",
+  "unexpectedError": "An unexpected error occurred.",
+  "noResponse": "No response from the server.",
+  "errorSendingRequest": "Error in sending request.",
+  "send": "Send"
+},
+
+"exma":{
+  "timer": "Remaining time"
+},
+
+"teacherAttdance":{
+  "generateCode": "Generate Code",
+    "addAttendance": "Add Attendance",
+    "allStudentAttendanceList": " student attendance list.",
+    "update": "Update",
+    "cancel": "Cancel",
+    "generate": "Generate",
+    "areYouSure": "Are you sure you want to generate code?",
+    "computerScience": "Computer Science",
+    "todayDate": "Today's Date",
+    "modalHeader": "Generate Code",
+    "studentNumber": "Student ID",
+    "studentName": "Student Name",
+    "attendanceCode": "Attendance Code",
+    "attendanceDate": "Attendance Date",
+    "courseName": "Course Name",
+    "action": "Action",
+    "present": "Present",
+  "absent": "Absent"
+},
+
+
+"fileInput":{
+  "classRelatedFiles": "Class related files",
+  "uploadFiles": "Upload files (PDF, ZIP, PPTX, CSV)",
+  "maxFileSize": "Max file size is",
+  "fileUploadError": "You can not upload this type of file.",
+  "cancelButton": "Cancel",
+  "uploadButton": "Upload"
+}
+
+
+
+
+
+
+
+  }
+}

@@ -1,0 +1,10 @@
+.student-container {
+    .student-list {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        height: calc(100vh - 73px);
+        position: fixed;
+
+    }
+}

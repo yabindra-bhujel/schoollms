@@ -1,0 +1,73 @@
+.attendacne-code{
+
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+.attendacne-title{
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #000;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.attendance-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+   
+
+            input{
+                width: 70%;
+                padding: 1rem;
+                border: 1px solid #000;
+                border-radius: 5px;
+                outline: none;
+                font-size: 1.5rem;
+                font-family: 'Roboto', sans-serif;
+                font-weight: 500;
+                color: #000;
+                transition: all 0.3s ease;
+
+                &:focus{
+                    border: 1px solid #000;
+                }
+
+
+            }
+    
+
+    
+
+            button{
+                margin-top: 20px;
+                width: auto;
+                padding: 15px;
+                border: 1px solid #000;
+                background-color: white;
+                border-radius: 5px;
+                outline: none;
+                font-size: 1rem;
+                font-family: 'Roboto', sans-serif;
+                font-weight: 500;
+                color: #000;
+                transition: all 0.3s ease;
+                cursor: pointer;
+
+                &:hover{
+                    background-color: #000;
+                    color: #fff;
+                }
+            }
+    
+}

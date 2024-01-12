@@ -1,0 +1,19 @@
+/* Add this to your CSS file */
+.custom-today {
+    border: 2px solid #007bff; /* Custom border color for the circle */
+    border-radius: 150px; /* Make it a circle */
+    box-sizing: border-box; /* Include border in the circle */
+    background-color: purple;
+    color: white;
+
+    &:hover{
+        background-color: #007bff;
+        color: white;
+    }
+
+}
+
+.weekend{
+    background-color: red;
+    color: white;
+}

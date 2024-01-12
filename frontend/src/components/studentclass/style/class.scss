@@ -1,0 +1,95 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+.student-header {
+    height: 90px;
+    justify-content: center;
+    align-items: center;
+    background: rgb(63, 94, 251);
+    color: white;
+    h1 {
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+    p {
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+
+    }
+
+}
+
+.student-container-class {
+    display: flex;
+    gap: 10px;
+
+    .today-class {
+        margin-left: 10px;
+        width: 20%;
+        height: 733px;
+        background-color: white;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        h2 {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+        p {
+            font-size: 14px;
+            font-weight: bold;
+            margin-left: 15px;
+            color: gray;
+            opacity: 0.4;
+        }
+    }
+
+    table {
+        border-collapse: collapse;
+        height: 700px;
+        width: 90%;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+        thead {
+            background-color: #f2f2f2;
+
+            tr,
+            th {
+                font-weight: bold;
+                font-size: 20px;
+                border: 1px solid #ddd;
+                padding: 25px;
+                text-align: center;
+                background-color: rgb(148, 109, 185);
+            }
+        }
+
+        tbody {
+            tr,
+            td {
+                border: 1px solid #ddd;
+                height: 130px;
+                font-size: 20px;
+                font-weight: bold;
+                margin-left: 10px;
+                text-align: center;
+                width: 15%;
+                text-transform: capitalize;
+
+                &:first-child {
+                    width: 10%; /* Set the width for the first td in tbody */
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+}

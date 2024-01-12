@@ -1,0 +1,37 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.pdf_header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: solid 2px orange;
+
+    h1{
+        font-size: 20px;
+        font-weight: 600;
+    }
+    button{
+        background-color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 30px;
+        color: #201dc2;
+    }
+}
+
+.pdf_viewer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    width: 100%;
+
+    iframe{
+        height: 100%;
+        width: 100%;
+    }
+}

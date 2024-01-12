@@ -1,0 +1,245 @@
+{
+  "translation": {
+    "event": "イベント",
+    "today event": "今日のイベント",
+    "dont miss": "スケジュールされたイベントを見逃さないでください",
+
+    "month": "月",
+    "week": "週",
+    "day": "日",
+    "event list": "イベントリスト",
+
+    "exam title": "試験のタイトル",
+    "status": "状態",
+    "time": "時間",
+    "start time": "開始時刻",
+    "end time": "終了時刻",
+    "not have exam": "この科目の試験はありません",
+
+    "task": "課題",
+    "status": "状態",
+    "submitted": "提出済み",
+    "start date": "開始日",
+    "deadline": "締め切り",
+
+    "exam": "試験",
+    "create new exam": "新規試験作成",
+    "attendance": "主席登録",
+    "generate QR code or number": "QR コードまたは 番号発行",
+    "create assignment": "課題作成",
+    "create assignment for this subject": "本科目課題作成",
+    "teaching materials": "授業材料",
+    "share materials related to the class": "授業に関する材料共有",
+    "survey": "アンケート",
+    "survey related to the class": "授業に関するアンケート",
+    "announcement":"ニュース",
+
+
+
+    "assignment": "課題",
+    "exam": "テースト",
+    "attendance": "出席",
+    "course materials": "コースコンテンツ",
+    "survey": "アンケート",
+
+    "examInfo": [
+      "試験中にブラウザ画面を変更することはできません。",
+      "すべての指示を注意深く読んでください。",
+      "試験中は外部の資料を使用しないでください。",
+      "焦点を合わせ、時間を効果的に管理してください。",
+      "提出前に回答を再確認してください。",
+      "試験の規則とガイドラインに従ってください。",
+      "疑問があれば質問してください。",
+      "試験中は冷静で落ち着いてください。",
+      "提供された資料を賢く活用してください。",
+      "がんばってください！"
+    ],
+    "examInfo header": "試験の注意",
+    "start button": "スタート",
+    "agree": "同意する",
+
+    "createNewCollection": "新しい動画コレクションを作成",
+    "title": "タイトル",
+    "description": "説明",
+
+    "selectVideoFile": "アップロードするビデオファイルを選択してください",
+    "maxFileSizeVideo": "最大ファイルサイズ1GB",
+
+    "selectImageFile": "アップロードする画像ファイルを選択してください",
+    "maxFileSizeImage": "最大ファイルサイズ30MB",
+    "video_cancle_btn": "キャンセル",
+    "video_upload_btn": "アップロード",
+
+    "millionsCollection": "数百万のビデオと記事のコレクション",
+    "search": "検索",
+    "addFilter": "フィルターを追加",
+    "addNewCollection": "新しい動画コレクションを追加",
+    "learnPython": "Pythonを学ぶ",
+    "noResultsFound": "検索結果見つけません。",
+    "leave_your_comment": "コメント追加",
+    "comment_post_btn": "送信",
+
+    "addNewArticla": "新しい記事を追加",
+    "articleTitle": "記事のタイトル",
+    "initialValues": "記事内容",
+    "article_add": "記事をアップロード",
+    "articla_cancel": "キャンセル",
+
+    "classSchedule": "クラススケジュール",
+    "time": "時間",
+    "weekDay": ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
+
+    "assignmentTitle": "課題タイトル",
+    "assignmentType": "課題タイプ",
+    "assignmentDeadline": "課題締切日",
+    "maxGrade": "最高評価点",
+    "assignmentStartDate": "課題開始日",
+    "assignmentDescription": "課題内容",
+    "saveChange": "保存",
+
+    "fullName": "学生名",
+    "studentId": "学生番号",
+    "assigemnttabletitile": "課題提出一覧",
+    "submissionDate": "提出日時",
+    "status": "状態",
+    "grade": "評価点",
+    "submittedFileHeader": "提出済みファイル",
+    "assignmentBody": "課題内容変更",
+    "assignmentQuestion": "質問 一覧",
+    "deleteQuestionhover": "問題削除",
+    "successMessage": "課題 アップデートされました。",
+    "confirmDeletion": {
+      "title": "削除確認",
+      "description": "この質問を削除してもよろしいですか？",
+      "cancel": "キャンセル",
+      "confirm": "確認"
+    },
+
+
+    "createExam":{
+  "examTitle": "試験タイトル",
+  "placholder": "テスト タイトル 入力",
+  "examStartDate": "試験開始日時",
+  "examEndDate": "試験終了日時",
+  "examTime": "試験時間",
+  "examMaxScore": "最大点数",
+  "examDescription": "試験の説明",
+  "createExam": "試験作成",
+  "question": "問題",
+  "answerType": "回答タイプ",
+  "submit": "提出",
+  "cancel": "キャンセル",
+  "back": "戻る",
+  "next": "次へ",
+  "examPreview": "試験プレビュー",
+  "inputQuestion":"問題文を入力",
+  "questiontype": "問題タイプを選択",
+  "shortAnswer": "短答",
+  "longAnswer": "長答",
+  "addmore":"問題追加",
+  "creeateExma": "試験作成",
+  "createQuestion": "問題作成",
+  "finish": "終了"
+  
+  
+
+
+},
+
+"examD":{
+  "startDate": "開始日時",
+  "endDate": "終了日時",
+  "duration": "期間",
+  "maxGrade": "最高得点",
+  "update": "更新",
+  "loading": "読み込み中...",
+  "shortAnswerQuestions": "短答式質問",
+  "noShortAnswerQuestions": "短答式の質問はありません",
+  "longAnswerQuestions": "長答式質問",
+  "noLongAnswerQuestions": "長答式の質問はありません",
+  "examlist": "試験課題提出一覧"
+
+},
+"examTable":{
+  "studentID": "学生ID",
+  "studentName": "学生名",
+  "subjectName": "科目名",
+  "submissionTime": "提出時刻",
+  "takeTime": "受験時間",
+  "submissionFile": "提出ファイル"
+},
+"studentAssigemnt": {
+  "fileerror": "ファイルのサイズは10 MBまでしかアップロードできません",
+  "submit": "提出",
+  "cancel": "キャンセル",
+  "drag": "ファイルをドラッグ＆ドロップするか、クリックしてファイルを選択",
+  "maxFile": "最大ファイルサイズ：10MB",
+  "save": "保存",
+  "submit": "提出",
+  "notsubmit": "未提出",
+  "subject": "科目",
+  "date": "日付",
+  "status": "出席",
+  "present": "出席",
+  "absent": "欠席",
+  "noAttendanceData": "応答で出席データが見つかりませんでした。",
+  "errorFetchingData": "出席データの取得中にエラーが発生しました:",
+  "materiales":"材料"
+
+},
+"is_graded":"確認済み",
+"score":"得点",
+"update_edite_sale": "アップデート",
+
+"messages": {
+  "enterCode": "コードを入力してください",
+  "invalidCode": "有効な出席コードを入力してください。",
+  "alreadyMarked": "すでに出席がマークされています。",
+  "markedSuccessfully": "出席が正常にマークされました。",
+  "codeNotFound": "出席コードが見つかりません。",
+  "badRequest": "不正なリクエスト。出席コードを確認してください。",
+  "unexpectedError": "予期しないエラーが発生しました。",
+  "noResponse": "サーバーからの応答がありません。",
+  "errorSendingRequest": "リクエストの送信中にエラーが発生しました。",
+  "send": "送信"
+
+},
+"exma":{
+  "timer": "残り時間"
+},
+"teacherAttdance":{
+  "generateCode": "コードを生成する",
+    "addAttendance": "出席を追加",
+    "allStudentAttendanceList": "学生の出席一覧",
+    "update": "更新",
+    "cancel": "キャンセル",
+    "generate": "生成",
+    "areYouSure": "コードを生成してもよろしいですか？",
+    "computerScience": "コンピュータサイエンス",
+    "todayDate": "今日の日付",
+    "modalHeader": "コード生成",
+    "studentNumber": "学籍番号",
+    "studentName": "学生名",
+    "attendanceStatus": "出席状況",
+    "attendanceCode": "出席コード",
+    "attendanceDate": "出席日",
+    "courseName": "科目名",
+    "present": "出席",
+  "absent": "欠席"
+},
+
+"fileInput":{
+  "classRelatedFiles": "クラス関連のファイル",
+  "uploadFiles": "ファイルをアップロードする (PDF, ZIP, PPTX, CSV)",
+  "maxFileSize": "最大ファイルサイズは ",
+  "fileUploadError": "このタイプのファイルはアップロードできません。",
+  "cancelButton": "キャンセル",
+  "uploadButton": "アップロード"
+}
+
+
+
+
+
+  }
+}

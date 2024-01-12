@@ -1,0 +1,89 @@
+.admin-student{
+ 
+    .admin-student-header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        border-bottom: 1px solid #ccc;
+        background-color: #fff;
+        height: 70px;
+
+
+        .admin-student-search{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+            width: 300px;
+
+            input{
+                border: none;
+                outline: none;
+            }
+        }
+
+        .add-new-student{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            a{
+                text-decoration: none;
+                color: #fff;
+            }
+            button{
+            margin-right: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #1e90ff;
+            color: #fff;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-weight: bold;
+            font-size: 20px;
+
+            &:hover{
+                background-color: #fff;
+                color: #1e90ff;
+                border: 1px solid #1e90ff;
+            }
+        }
+    }
+    }
+
+}
+
+.admin-student-table .MuiTableContainer-root {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+  
+
+  .admin-student-table {
+    margin-top: 20px;
+  }
+  
+  .TableHead {
+    background-color: #f5f5f5; /* Light grey header */
+  }
+  
+  .TableRow:hover {
+    background-color: #e0e0e0; /* Light hover effect */
+  }
+  
+  .TableCell {
+    font-family: Arial, sans-serif; /* Custom font */
+    font-size: 16px; /* Bigger font size */
+  }
+  
+  .action-btn Button {
+    margin-right: 10px;
+  }
