@@ -1,6 +1,17 @@
 import instance from "../../../api/axios";
 
 
+const getTeacherList =async(username) =>{
+    try{
+        const response = await instance.get(`/teacher/list/${username}/`);
+        return response.data;
+    }catch(error){
+        throw new Error(error);
+    }
+}
+
+
+
 
 const AdminCourseAdd = async (courseData) => {
     try {
@@ -32,5 +43,21 @@ const DeleteCourse = async (username, course_id) => {
     } catch (error) {
         console.log(error);
     }
+
+
+
 }
-export { AdminCourseList , DeleteCourse}
+
+
+const getDepartmentList = async () => {
+    try {
+      const endpoint = "/course/department_list/";
+      const response = await instance.get(endpoint);
+      return response.data;
+    } catch (error) {
+        throw error;
+    }
+  };
+
+
+export { AdminCourseList , DeleteCourse, getTeacherList, getDepartmentList}

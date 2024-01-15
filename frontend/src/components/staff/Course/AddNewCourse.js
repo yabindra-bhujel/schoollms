@@ -10,10 +10,11 @@ import AdminLayout from "../navigation/NavigationLayout";
 
 import instance from "../../../api/axios";
 
+import { getTeacherList , getDepartmentList} from "./CourseService";
 
 
 const AdminCourseAdd = () => {
-    const [courseData , setCourseData] = useState({
+    const [courseData, setCourseData] = useState({
         course_id: '',
         course_name: '',
         weekday: '',
@@ -21,6 +22,32 @@ const AdminCourseAdd = () => {
         course_department: '',
         teacher_name: '',
     });
+    const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const [teacherList, setTeacherList] = useState([]);
+    const [departmentList, setDepartmentList] = useState([]);
+
+
+    console.log(departmentList);
+    useEffect(() => {
+        const fetchTeacherList = async () => {
+            const response = await getTeacherList("admin");
+            const full_name = response.map((teacher) => {  
+                return teacher.first_name + " " + teacher.last_name  + " " + teacher.TeacherID;
+            }
+            );
+            setTeacherList(full_name);
+
+            const department_response = await getDepartmentList();
+            const department_name = department_response.map((department) => {       
+                return department.Department_name;
+            }
+            );
+            setDepartmentList(department_name);
+        }
+        fetchTeacherList();
+    }, []);
+
+
 
     const handleChange = (event) => {
         setCourseData({
@@ -48,30 +75,7 @@ const AdminCourseAdd = () => {
 
         }
 
-        if (!courseData.weekday.trim()) {
-            newErrors.weekday = 'Weekday is required';
-            isValid = false;
-
-        }
-
-        if (!courseData.class_period.trim()) {
-            newErrors.class_period = 'Class Time is required';
-            isValid = false;
-
-        }
-
-
-        if (!courseData.course_department.trim()) {
-            newErrors.course_department = 'Course Department is required';
-            isValid = false;
-
-        }
-
-        if (!courseData.teacher_name.trim()) {
-            newErrors.teacher_name = 'Teacher Name is required';
-            isValid = false;
-
-        }
+ 
 
         setErrors(newErrors);
         return isValid;
@@ -81,7 +85,7 @@ const AdminCourseAdd = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (validateForm()) {
-           console.log(courseData);
+            console.log(courseData);
         }
     }
 
@@ -106,7 +110,7 @@ const AdminCourseAdd = () => {
                             name="course_id"
                             label="Course Code"
                             fullWidth
-                            error = {!!errors.course_id}
+                            error={!!errors.course_id}
                             helperText={errors.course_id}
                             value={courseData.course_id}
                             onChange={handleChange}
@@ -119,7 +123,7 @@ const AdminCourseAdd = () => {
                             name="course_name"
                             label="Course Name"
                             fullWidth
-                            error = {!!errors.course_name}
+                            error={!!errors.course_name}
                             helperText={errors.course_name}
                             value={courseData.course_name}
                             onChange={handleChange}
@@ -127,57 +131,78 @@ const AdminCourseAdd = () => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="Weekday"
-                            name="Weekday"
-                            label="Weekday"
-                            fullWidth
-                            error = {!!errors.weekday}
-                            helperText={errors.weekday}
-                            value={courseData.weekday}
-                            onChange={handleChange}
+                        <FormControl fullWidth >
+                            <InputLabel id="weekday-label">Weekday</InputLabel>
+                            <Select
+                                labelId="weekday-label"
+                                id="weekday"
+                                name="weekday"
+                                value={courseData.weekday}
+                                label="Weekday"
+                                onChange={handleChange}
+                            >
+                                {weekdays.map((day, index) => (
+                                    <MenuItem key={index} value={day}>{day}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
 
-                        />
+
+                    <Grid item xs={12} sm={6}>
+                        <FormControl fullWidth >
+                            <InputLabel id="class-period-label">Class Time</InputLabel>
+                            <Select
+                                labelId="class-period-label"
+                                id="class_period"
+                                name="class_period"
+                                value={courseData.class_period}
+                                label="Class Time"
+                                onChange={handleChange}
+                            >
+                                {[1, 2, 3, 4, 5].map((period) => (
+                                    <MenuItem key={period} value={period}>{period}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+
+
+                    <Grid item xs={12} sm={6}>
+                        <FormControl fullWidth >
+                            <InputLabel id="course-department-label">Course Department</InputLabel>
+                            <Select
+
+                                labelId="course-department-label"
+                                id="course_department"
+                                name="course_department"
+                                value={courseData.course_department}
+                                label="Course Department"
+                                onChange={handleChange}
+                            >
+                                {departmentList.map((department, index) => (
+                                    <MenuItem key={index} value={department}>{department}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="Class_period"
-                            name="Class_period"
-                            label="Class Time"
-                            fullWidth
-                            error = {!!errors.class_period}
-                            helperText={errors.class_period}
-                            value={courseData.class_period}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="course_department"
-                            name="course_department"
-                            label="Course Department"
-                            fullWidth
-                            error = {!!errors.course_department}
-                            helperText={errors.course_department}
-                            value={courseData.course_department}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="teacher_name"
-                            name="teacher_name"
-                            label="Teacher"
-                            fullWidth
-                            error = {!!errors.teacher_name}
-                            helperText={errors.teacher_name}
-                            value={courseData.teacher_name}
-                            onChange={handleChange}
-                        />
+                        <FormControl fullWidth >
+                            <InputLabel id="teacher-name-label">Teacher</InputLabel>
+                            <Select
+                                labelId="teacher-name-label"
+                                id="teacher_name"
+                                name="teacher_name"
+                                value={courseData.teacher_name}
+                                label="Teacher Name"
+                                onChange={handleChange}
+                            >
+                                {teacherList.map((teacher, index) => (
+                                    <MenuItem key={index} value={teacher}>{teacher}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
 
                     <Grid item xs={6} sm={6}>
