@@ -205,6 +205,10 @@ def add_student_by_csv_file(request):
         next(io_string)  # Skip the header row
 
         for column in csv.reader(io_string, delimiter=',', quotechar='"'):
+            # Check if the column list has at least 8 elements
+            if len(column) < 8:
+                continue
+
             # Extract department data
             department_name = column[7]
 
@@ -215,39 +219,32 @@ def add_student_by_csv_file(request):
                 print(f"Department '{department_name}' not found. Skipping entry.")
                 continue
 
-            # Create Student
+            studentID = column[0]
+            date_of_birth = column[5]
+            password = date_of_birth.replace("-", "")
+            email = f"{studentID}{column[1]}@gmail.com"
+            first_name = column[1]
+            last_name = column[2]
+            middle_name = column[3]
+            phone = column[4]
+            gender = column[6]
+
             student = Student.objects.create(
-                studentID=column[0],
-                first_name=column[1],
-                last_name=column[2],
-                middle_name=column[3],
-                phone=column[4],
-                date_of_birth=column[5],
-                gender=column[6],
+                studentID=studentID,
+                first_name=first_name,
+                last_name=last_name,
+                middle_name=middle_name,
+                gender=gender,
+                email=email,
+                phone=phone,
+                date_of_birth=date_of_birth,
                 department=department,
-                email=column[8]
-
             )
-            
+            user = User.objects.create_user(username=studentID, password=password,
+                                            first_name=first_name, last_name=last_name, email=email, is_student=True)
 
-            # Create User
-            user_data = {
-                'username': column[0],
-                'password': column[5].replace("-", ""),
-                'email': f"{column[0]}{column[1]}@gmail.com",
-                'first_name': column[1],
-                'last_name': column[2]
-            }
-
-            # Assume UserSerializer exists and is properly set up
-            user_serializer = UserSerializer(data=user_data)
-            if user_serializer.is_valid():
-                user = user_serializer.save()
-                user.is_student = True
-                user.save()
-                student.user = user
-                student.email = user.email
-                student.save()
+            student.user = user
+            student.save()
 
         return Response(status=status.HTTP_201_CREATED)
     except Exception as e:

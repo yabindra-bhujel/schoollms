@@ -19,7 +19,7 @@ class Teacher(models.Model):
     first_name = models.CharField(max_length=255, null= False, blank=False, default="")
     last_name = models.CharField(max_length=255, null= False, blank=False,default="")
     gender = models.CharField(max_length=20, choices= GENDER, null=False, blank=False, default="Male")
-    email = models.EmailField(max_length=50,  null=True, blank=True, default="")
+    email = models.EmailField(max_length=50,  null=True, blank=True)
     phone = models.CharField(max_length=20, unique=True)
     address = models.CharField(max_length=255, null=False, blank=False)
     date_of_birth = models.DateField(null=True)

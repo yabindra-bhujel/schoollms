@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState} from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./style/sidebar.css";
 import { GiTeacher } from "react-icons/gi";
@@ -6,15 +6,137 @@ import { PiStudentFill } from "react-icons/pi";
 import { FaRegUserCircle } from "react-icons/fa";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { IoMdLogOut } from "react-icons/io";
+import { FaBookOpen } from "react-icons/fa";
+import { SiGoogleclassroom } from "react-icons/si";
+import { RiCalendarTodoLine } from "react-icons/ri";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar } from '@mui/material';
+
+
 
 
 const AdminSideBar = () =>{
     const location = useLocation();
+    const [passwordChange, setPasswordChange] = useState(false);
+    const [password, setPassword] = useState({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+    });
+    const [errors, setErrors] = useState({});
+    const [snackbar, setSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
+
+    const handlePasswordChange = () => {
+        setPasswordChange(true);
+    }
+
+    const handlePasswordChangeClose = () => {
+
+        setPasswordChange(false);
+    }
+
+    const handlePasswordChangeSubmit = async () => {
+        if (password.newPassword !== password.confirmPassword) {
+            setErrors({ confirmPassword: "Passwords do not match" });
+            return;
+        }
+        // const response = await ChangePassword("admin", password);
+        // console.log(response);
+        // if (response.status === 200) {
+        //     setSnackbar(true);
+        //     setSnackbarMessage("Password Changed Successfully");
+        //     setPasswordChange(false);
+        // }
+    }
+
+    const handlePasswordChangeCancel = () => {
+        setPasswordChange(false);
+    }
+
+
+    const handleChange = (event) => {
+        setPassword({
+            ...password,
+            [event.target.name]: event.target.value
+        });
+    }
+
 
     
 
     return(
         <div>
+            <Dialog
+                open={passwordChange}
+                onClose={handlePasswordChangeClose}
+            >
+
+                <DialogTitle>
+                    Change Password
+                </DialogTitle>
+
+                <DialogContent>
+                    <div className="password-change-form">
+                        <div className="password-change-input">
+                            <label>Old Password</label>
+                            <input
+
+                                type="password"
+                                name="oldPassword"
+                                value={password.oldPassword}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="password-change-input">
+                            <label>New Password</label>
+                            <input
+
+                                type="password"
+                                name="newPassword"
+                                value={password.newPassword}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        
+                        <div className="password-change-input">
+                            <label>Confirm Password</label>
+                            <input
+
+                                type="password"
+                                name="confirmPassword"
+                                value={password.confirmPassword}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                </DialogContent>
+
+
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handlePasswordChangeSubmit}
+                    >
+                        Submit
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+
+                        onClick={handlePasswordChangeCancel}
+                    >
+
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+
+
+
           <div className="admin-nav-bar">
             <h1>
             LMS administration
@@ -26,7 +148,9 @@ const AdminSideBar = () =>{
               </div>
 
               <div className="chnage-password">
-                <p>Change Password</p>
+                <p
+                  onClick={handlePasswordChange}
+                >Change Password</p>
               </div>
 
               <div className="logout">
@@ -80,6 +204,48 @@ const AdminSideBar = () =>{
                     <span>User</span>
                   </Link>
                 </li>
+
+                <li>
+                  <Link to="/admin/department"
+
+                    className={
+                      location.pathname === "/admin/department" ||
+                      location.pathname === "/admin/department/add" ||
+                      location.pathname === "/admin/department/edit"? "active" : ""
+                    }
+                  >
+                    <FaBookOpen size={20} />
+                    <span>Department</span>
+
+                  </Link>
+                </li>
+
+
+                <li>
+                  <Link to="/admin/course"
+                    className={
+                      location.pathname === "/admin/course" ||
+                      location.pathname === "/admin/course/add" ||
+                      location.pathname === "/admin/course/edit"? "active" : ""
+                    }
+                  >
+                  <SiGoogleclassroom size={20} />
+
+                    <span>Course</span>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/admin/otp">
+                  <RiCalendarTodoLine size={20} />
+
+                    <span>
+                      Enroll Student
+                    </span>
+                  </Link>
+                </li>
+
+
 
                 <hr/>
 

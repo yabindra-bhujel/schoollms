@@ -64,7 +64,8 @@ class DepartmentSerializers(serializers.ModelSerializer):
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
-        fields = ['subject_code', 'subject_name', 'subject_description', 'weekday', 'period_start_time', 'period_end_time', 'class_room', 'class_period']
+        fields = '__all__'
+        # fields = ['subject_code', 'subject_name', 'subject_description', 'weekday', 'period_start_time', 'period_end_time', 'class_room', 'class_period']
 
 class SubjectEnrollSerializers(serializers.ModelSerializer):
     student = serializers.SerializerMethodField()

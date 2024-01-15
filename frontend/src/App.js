@@ -51,6 +51,10 @@ import AdminTeacher from "./components/staff/Teacher/Teacher";
 import AdminStudent from "./components/staff/Student/Student";
 import User from "./components/staff/User/User";
 import AddStudent from "./components/staff/Student/AddStudent";
+import AddTeacher from "./components/staff/Teacher/AddTeacher";
+import Department from "./components/staff/department/Department";
+import AdminCourse from "./components/staff/Course/Course";
+import AddNewCourse from "./components/staff/Course/AddNewCourse";
 
 
 
@@ -117,7 +121,11 @@ function App() {
         <Route path="/admin/student" element = { <AdminStudent/>}/>
         <Route path="/admin/student/add" element = { <AddStudent/>}/>
         <Route path="/admin/teacher" element = { <AdminTeacher/>}/>
+        <Route path="/admin/teacher/add" element = { <AddTeacher/>}/>
         <Route path="/admin/user" element = { <User/>}/>
+        <Route path="/admin/department" element = { <Department/>}/>
+        <Route path="/admin/course" element = { <AdminCourse/>}/>
+        <Route path="/admin/course/add" element = { <AddNewCourse/>}/>
 
 
         

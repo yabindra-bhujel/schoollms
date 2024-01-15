@@ -1,1 +1,65 @@
-*{font-family:sans-serif}.assigment-list{height:540px;background-color:#fff;border-radius:10px;overflow-y:auto}.assigment-list .content-table{border-collapse:collapse;font-size:.9em;width:100%;border-radius:5px 5px 0 0;overflow:hidden;box-shadow:0 0 20px rgba(0,0,0,.15)}.assigment-list .content-table thead tr{border-bottom:solid 1px #000;color:#000;text-align:left;font-weight:bold;font-size:18px}.assigment-list .content-table th{padding:12px 15px;height:40px;font-family:"Gill Sans","Gill Sans MT",Calibri,"Trebuchet MS",sans-serif}.assigment-list .content-table td{padding:20px 20px;font-weight:600;font-weight:15px}.assigment-list .content-table tbody a{text-decoration:none;display:block;width:300px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-weight:bold;font-size:18px;font-family:"Gill Sans","Gill Sans MT",Calibri,"Trebuchet MS",sans-serif}.assigment-list .content-table tbody tr{border-bottom:1px solid #ddd}.assigment-list .content-table tbody tr:nth-of-type(even){background-color:#f3f3f3}.assigment-list .content-table tbody tr:last-of-type{border-bottom:2px solid #009879}.assigment-list .content-table tbody tr .active{color:green;font-size:18px;font-weight:bold}.assigment-list .content-table tbody tr .inactive{color:red;font-size:18px;font-weight:bold}
+* {
+  font-family: sans-serif;
+}
+
+.assigment-list {
+  height: 540px;
+  background-color: white;
+  border-radius: 10px;
+  overflow-y: auto;
+}
+.assigment-list .content-table {
+  border-collapse: collapse;
+  font-size: 0.9em;
+  width: 100%;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.assigment-list .content-table thead tr {
+  border-bottom: solid 1px black;
+  color: black;
+  text-align: left;
+  font-weight: bold;
+  font-size: 18px;
+}
+.assigment-list .content-table th {
+  padding: 12px 15px;
+  height: 40px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+.assigment-list .content-table td {
+  padding: 20px 20px;
+  font-weight: 600;
+  font-weight: 15px;
+}
+.assigment-list .content-table tbody a {
+  text-decoration: none;
+  display: block;
+  width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: bold;
+  font-size: 18px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+.assigment-list .content-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+.assigment-list .content-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+.assigment-list .content-table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+.assigment-list .content-table tbody tr .active {
+  color: green;
+  font-size: 18px;
+  font-weight: bold;
+}
+.assigment-list .content-table tbody tr .inactive {
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+}/*# sourceMappingURL=AssigemtList.css.map */

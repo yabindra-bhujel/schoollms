@@ -1,1 +1,142 @@
-.container{margin-left:10px;display:flex;height:calc(100vh - 72px)}@media screen and (max-width: 1000px){.container .container{margin-top:0px;flex-direction:row}}.container .left-item{width:75%;background-color:#f0f0f0;border-bottom-left-radius:5px;border-bottom-right-radius:5px;padding:20px;box-shadow:0 2px 4px rgba(0,0,0,.1);margin-right:20px;top:0}.container .left-item .dashboard-cards{display:flex;gap:10px}.container .left-item .dashboard-cards .assigemnt-deadeline{background-color:#fff;border-radius:5px;padding:20px;width:29.5%;box-shadow:0 2px 4px rgba(0,0,0,.1)}.container .left-item .dashboard-cards .card{background-color:#fff;border-radius:5px;padding:20px;width:29.5%;box-shadow:0 2px 4px rgba(0,0,0,.1)}.container .left-item .dashboard-cards .card h2{font-size:20px;margin-bottom:10px}.container .left-item .dashboard-cards .card p{font-size:24px;font-weight:bold}.container .left-item .chart-section-one{margin-top:20px;display:flex;gap:10px}.container .left-item .chart-section-one .chart-item-big{height:280px;width:60%;background-color:#fff;border-radius:5px;padding:20px;box-shadow:0 2px 4px rgba(0,0,0,.1)}.container .left-item .chart-section-one .chart-item{height:200px;width:32%;background-color:#fff;border-radius:5px;padding:20px;box-shadow:0 2px 4px rgba(0,0,0,.1)}.container .left-item .dashbord-section-two{margin-top:20px;display:flex;gap:10px}.container .left-item .dashbord-section-two .dashbord-announcement{height:300px;width:60%;background-color:#fff;border-radius:5px;box-shadow:0 2px 4px rgba(0,0,0,.1);overflow-y:auto}.container .left-item .dashbord-section-two .dashbord-announcement p{font-size:18px;font-weight:bold;padding:5px}.container .left-item .dashbord-section-two .chart-item{height:200px;width:32%;background-color:#fff;border-radius:5px;padding:20px;box-shadow:0 2px 4px rgba(0,0,0,.1)}.container .right-item{background-color:#f0f0f0;border-bottom-left-radius:5px;border-bottom-right-radius:5px;width:25%}.container .right-item .event-top{padding:10px;display:flex;flex-direction:column;gap:10px}.container .right-item .calender-basic{background-color:#fff;border-radius:5px;font-weight:bold;font-size:15px}.container .right-item .subject-list{background-color:#fff;border-radius:5px;padding:10px;box-shadow:0 2px 4px rgba(0,0,0,.1);margin-bottom:10px;display:flex;flex-direction:column;gap:10px;height:220px;overflow-y:scroll}.container .right-item .subject-list ::-webkit-scrollbar{width:5px}.container .right-item .event-list{background-color:#fff;border-radius:5px;padding:10px;box-shadow:0 2px 4px rgba(0,0,0,.1);margin-bottom:10px;display:flex;flex-direction:column;gap:10px;height:210px;overflow-y:scroll}.container .right-item .event-list ::-webkit-scrollbar{width:5px}
+.container {
+  margin-left: 10px;
+  display: flex;
+  height: calc(100vh - 72px);
+}
+@media screen and (max-width: 1000px) {
+  .container .container {
+    margin-top: 0px;
+    flex-direction: row;
+  }
+}
+.container .left-item {
+  width: 75%;
+  background-color: #f0f0f0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-right: 20px;
+  top: 0;
+}
+.container .left-item .dashboard-cards {
+  display: flex;
+  gap: 10px;
+}
+.container .left-item .dashboard-cards .assigemnt-deadeline {
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  width: 29.5%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.container .left-item .dashboard-cards .card {
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  width: 29.5%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.container .left-item .dashboard-cards .card h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+.container .left-item .dashboard-cards .card p {
+  font-size: 24px;
+  font-weight: bold;
+}
+.container .left-item .chart-section-one {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+.container .left-item .chart-section-one .chart-item-big {
+  height: 280px;
+  width: 60%;
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.container .left-item .chart-section-one .chart-item {
+  height: 200px;
+  width: 32%;
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.container .left-item .dashbord-section-two {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+.container .left-item .dashbord-section-two .dashbord-announcement {
+  height: 300px;
+  width: 60%;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+.container .left-item .dashbord-section-two .dashbord-announcement p {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 5px;
+}
+.container .left-item .dashbord-section-two .chart-item {
+  height: 200px;
+  width: 32%;
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.container .right-item {
+  background-color: #f0f0f0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  width: 25%;
+}
+.container .right-item .event-top {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.container .right-item .calender-basic {
+  background-color: white;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 15px;
+}
+.container .right-item .subject-list {
+  background-color: white;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 220px;
+  overflow-y: scroll;
+}
+.container .right-item .subject-list ::-webkit-scrollbar {
+  width: 5px;
+}
+.container .right-item .event-list {
+  background-color: white;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 210px;
+  overflow-y: scroll;
+}
+.container .right-item .event-list ::-webkit-scrollbar {
+  width: 5px;
+}/*# sourceMappingURL=dashbord.css.map */

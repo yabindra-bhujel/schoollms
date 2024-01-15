@@ -3,6 +3,10 @@ from django.urls import path
 from.views import *
 
 urlpatterns = [
+    path('delete_course/<int:id>/<str:username>/', delete_course, name='delete_course'),
+    path('delete_department/<int:id>/<str:username>/', delete_department, name='delete_department'),
+    path('add_department/<str:username>/', add_department, name='add_department'),
+    path('update_department/<str:username>/<int:id>/', update_department, name='update_department'),
     path('get_announcement_by_student/<int:studentid>/', get_announcement_by_student, name='get_announcement_by_student'),
     path('update_announcement/<int:id>/', update_announcement, name='update_announcement'),
     path('delete_announcement/<int:id>/', delete_announcement, name='delete_announcement'),
@@ -24,7 +28,7 @@ urlpatterns = [
     path('department_list/', department_list, name='department_list'), 
     path('file_assigment/', file_assigment, name='file_assigment'), 
     path('text_assignment/', text_assignment, name='text_assigment'),
-    path('',course_list ,name='course'), 
+    path('<str:username>/',course_list ,name='course'), 
     path('create_assigment/', create_assigment, name='create_assigment'),
     path('assigment_detalis/<int:id>/', assignment_details, name='assigment_detalis'),
     path('student_assignment_details/<int:id>/', student_assignment_details, name='student_assignment_details'),

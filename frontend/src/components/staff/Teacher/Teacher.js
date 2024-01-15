@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Snackbar from '@mui/material/Snackbar';
-import { getTeacherList, deleteTeacher } from "./TeacherService";
+import { getTeacherList, deleteTeacher ,uploadTeahcerFile} from "./TeacherService";
 
 const AdminTeacher = () =>{
     const [teacherList, setTeacherList] = useState([])
@@ -32,16 +32,70 @@ const AdminTeacher = () =>{
     const [teacherToDelete, setTeacherToDelete] = useState(null);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
+  const fileInputRef = useRef(null); 
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+
+
+
+
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "text/csv") {
+      uploadTeacherFile(file); 
+    } else {
+      setSnackbarMessage("Please select a CSV file.");
+      setOpenSnackbar(true);
+    }
+  };
+
+
+
+  const uploadTeacherFile = async (file) => { 
+    try {
+      setUploadingFile(true);
+      const formData = new FormData();
+      formData.append("file", file);
+  
+      await uploadTeahcerFile(formData);
+  
+      setSnackbarMessage("Teacher successfully added.");
+      setOpenSnackbar(true);
+      fetchData();
+
+
+    } catch (err) {
+      setSnackbarMessage("Failed to add teacher.");
+      setOpenSnackbar(true);
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+
+
+  const handleReadFileButtonClick = () => {
+    if (selectedFile) {
+      uploadTeacherFile();
+    } else {
+      setSnackbarMessage("Please select a CSV file.");
+      setOpenSnackbar(true);
+    }
+  };
+
+  const fetchData = async () =>{
+    try{
+        const response = await getTeacherList("admin");
+        setTeacherList(response);
+    }catch(error){
+        console.error("Error fetching teacher list:", error);
+    }
+};
+
+
 
     useEffect(() =>{
-        const fetchData = async () =>{
-            try{
-                const response = await getTeacherList("admin");
-                setTeacherList(response);
-            }catch(error){
-                console.error("Error fetching teacher list:", error);
-            }
-        };
+        
         fetchData();
     
     },[])
@@ -67,6 +121,8 @@ const AdminTeacher = () =>{
         setOpenDialog(false);
         setTeacherToDelete(null);
       };
+
+
 
       const handleCloseDialog = () => {
         setOpenDialog(false);
@@ -99,23 +155,22 @@ const AdminTeacher = () =>{
             type="file"
             style={{ display: 'none' }}
             accept=".csv"
-            // onChange={handleFileSelect}
-            // ref={fileInputRef} 
+            onChange={handleFileSelect}
+            ref={fileInputRef} 
         />
             </div>
             <Button
         variant="contained"
         color="primary"
-        // onClick={() => fileInputRef.current.click()}
-        // disabled={uploadingFile}
+        onClick={() => fileInputRef.current.click()}
+        disabled={uploadingFile}
       >
-        {/* {uploadingFile ? 'Uploading...' : 'Read File'} */}
-        Upload CSV
+        {uploadingFile ? 'Uploading...' : 'Read File'}
       </Button>
 
 
 
-            <Link to="/admin/student/add">
+            <Link to="/admin/teacher/add">
               <Button variant="contained" color="primary">
                 Add New Teacher
               </Button>

@@ -1,6 +1,31 @@
 import instance from "../../../api/axios";
 
 
+
+const uploadTeahcerFile = async (file) => {
+    try{
+        const endpoint = '/teacher/add/file/';
+        const response = await instance.post(endpoint, file);
+        return response;
+
+    }catch(error){
+        throw new Error(error);
+    }
+}
+
+
+
+const addTeacher = async (teacherData) => {
+    const endpoint = '/teacher/add/';
+    try {
+      const response = await instance.post(endpoint, teacherData);
+      return response;
+    } catch (err) {
+      throw err;
+    }
+  };    
+
+
 const getTeacherList =async(username) =>{
     try{
         const response = await instance.get(`/teacher/list/${username}/`);
@@ -24,4 +49,4 @@ const deleteTeacher = async(teacherID) =>{
         }
 }
 
-export { getTeacherList , deleteTeacher}
+export { getTeacherList , deleteTeacher, addTeacher, uploadTeahcerFile}

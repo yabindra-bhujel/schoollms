@@ -57,7 +57,7 @@ const AdminStudent = () => {
       formData.append("file", file);
   
       await addStudentFile(formData);
-  
+      fetchData();
       setSnackbarMessage("Student successfully added.");
       setOpenSnackbar(true);
     } catch (err) {
@@ -119,11 +119,15 @@ const AdminStudent = () => {
     setSearchText(e.target.value);
   };
 
+
+  const fetchData = async () => {
+    const response = await StudentList("admin");
+    setStudentList(response);
+  };
+
+
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await StudentList("admin");
-      setStudentList(response);
-    };
+  
     fetchData();
   }, []);
 

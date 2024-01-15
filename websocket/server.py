@@ -333,6 +333,6 @@ if __name__ == '__main__':
     thread.start()
     thread_group.start()
 
-    port = 5001
+    port = 3001
     print(f"Server running on http://0.0.0.0:{port}")
     socketio.run(app, host='0.0.0.0', port=port, debug=True)

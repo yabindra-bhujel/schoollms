@@ -1,5 +1,7 @@
 .admin-teacher{
- 
+
+  overflow: hidden;
+  height: calc(100vh - 72px);
     .admin-teacher-header{
         display: flex;
         align-items: center;
@@ -62,7 +64,7 @@
 }
 
 .admin-student-table .MuiTableContainer-root {
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 210px);
     overflow-y: auto;
   }
   

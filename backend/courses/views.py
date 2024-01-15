@@ -21,6 +21,89 @@ User = get_user_model()
 
 logger = logging.getLogger(__name__)
 
+
+@api_view(["DELETE"])
+def delete_course(request, id, username):
+    try:
+        subject = Subject.objects.get(subject_code=id)
+        subject.delete()
+        return Response({"message": "Course deleted successfully"}, status=200)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+
+@api_view(["GET"])
+def department_list(request):
+    try:
+        departments = Department.objects.all()
+        serializer = DepartmentSerializer(departments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response(
+            {"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+
+
+@api_view(["PUT"])
+def update_department(request, username, id):
+
+    try:
+        department_name = request.data.get("Department_name")
+        department_code = request.data.get("Department_code")
+
+        try:
+            department = Department.objects.get(id=id)
+        except Department.DoesNotExist:
+            return Response(
+                {"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        department.Department_name = department_name
+        department.Department_code = department_code
+        department.save()
+        return Response({"message": "Department updated."}, status=200)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+    
+
+
+
+@api_view(["POST"])
+def add_department(request, username):
+    try:
+        department_name = request.data.get("Department_name")
+        department_code = request.data.get("Department_code")
+
+        try:
+            department = Department.objects.create(
+                Department_name=department_name, Department_code=department_code
+            )
+            department.save()
+            return Response({"message": "Department created."}, status=201)
+        except Exception as e:
+            print(e)
+            return Response({"message": "An error occurred"}, status=500)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+
+
+
+@api_view(["DELETE"])
+def delete_department(request, id, username):
+    try:
+        department = Department.objects.get(id=id)
+        department.delete()
+        return Response({"message": "Department deleted successfully"}, status=200)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+
+
 @api_view(["POST"])
 def get_file(request):
     request_data = request.data
@@ -268,24 +351,36 @@ def delete_assigemnt_question(request, id):
         return Response({"message": "An error occurred"}, status=500)
 
 
-@api_view(["GET"])
-def department_list(request):
-    try:
-        departments = Department.objects.all()
-        serializer = DepartmentSerializer(departments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except Exception as e:
-        print(e)
-        return Response(
-            {"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
 
 
 @api_view(["GET"])
-def course_list(request):
+def course_list(request, username):
     courses = Subject.objects.all()
-    serializer = SubjectSerializer(courses, many=True)
-    return Response(serializer.data)
+   
+
+
+
+    course_data = []
+    for course in courses:
+         teacherID = course.subject_teacher
+         course_data.append(
+            {
+                "subject_code": course.subject_code,
+                "subject_name": course.subject_name,
+                "subject_description": course.subject_description,
+                "weekday": course.weekday,
+                "start_time": course.period_start_time,
+                "end_time": course.period_end_time,
+                "class_room": course.class_room,
+                "class_period": course.class_period,
+                "subject_teacher": teacherID.first_name + " " + teacherID.last_name,
+                "subject_faculty": course.subject_faculty.Department_name,
+                
+
+
+            }
+        )
+    return Response(course_data)
 
 @api_view(["GET"])
 def course_details_student(request, subject_code, studentID):

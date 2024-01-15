@@ -1,1 +1,286 @@
-.container_for_search{background-color:#fff;width:100%;height:150px}.container_for_search .search-container{max-width:80%;margin:0 auto}.container_for_search .search-container p{padding:5px;font-size:20px;font-weight:600}.container_for_search .search_bar{display:flex;align-items:center;background-color:#fff;border:1px solid #ccc;padding:5px 10px;border-radius:10px}.container_for_search .search_bar input[type=text]{flex:1;border:none;outline:none;padding:10px;font-size:16px}.container_for_search .search_bar button[type=submit]{background-color:red;color:#fff;border:none;border-radius:2px;padding:10px 15px;cursor:pointer;transition:background-color .3s ease}.container_for_search .search_bar button[type=submit]:hover{background-color:#6336bc}.container_for_search .filter-button{padding:5px}.container_for_search .filter-button button{margin:4px;border:none;border-radius:2px;padding:10px 15px;cursor:pointer;transition:background-color .3s ease;font-size:13px;font-weight:bold}.container_for_search .filter-button button:hover{background-color:#c00}.container_for_search .filter-button .button{margin:4px;border:none;border-radius:2px;padding:10px 15px;cursor:pointer;transition:background-color .3s ease;font-size:13px;font-weight:bold;color:#000;text-decoration:none}.container_for_search .filter-button .button:hover{background-color:#c00}.model{display:flex;justify-content:center;align-items:center;width:100%;height:100%}.modal-content{width:70%;max-width:900px;background-color:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);overflow-y:auto;max-height:80vh}.create-model{width:100%;height:100%}.create-model .create-model-container{max-width:80%;margin:0 auto}.create-model .create-model-container .create-model-header{display:flex;justify-content:space-between;align-items:center;padding:10px}.create-model .create-model-container .create-model-header h3{font-size:20px;font-weight:600}.create-model .create-model-container .create-model-body-input input[type=text]{width:100%;padding:10px;margin:10px;border:1px solid #ccc;border-radius:5px;outline:none;font-size:16px;font-weight:400}.create-model .create-model-container .create-model-body-input textarea{width:100%;height:100px;padding:10px;margin:10px;border:1px solid #ccc;border-radius:5px;font-size:16px;font-weight:400;resize:none}.create-model .create-model-container .file-input{display:flex;justify-content:space-evenly;width:100%;padding:10px;margin:10px;border:1px solid #ccc;border-radius:5px;font-size:16px;font-weight:400;cursor:pointer}.create-model .create-model-container .file-input .video-input{position:relative;overflow:hidden;display:inline-block;padding:10px;margin:10px;border:1px solid #ccc;border-radius:5px;font-size:16px;font-weight:400;width:40%;height:150px;display:flex;flex-direction:column;justify-content:center;align-items:center}.create-model .create-model-container .file-input .video-input button{padding:5px;margin:5px;border-radius:5px;background-color:#fff;outline:none;font-size:16px;font-weight:400;cursor:pointer;transition:background-color .3s ease;border:none}.create-model .create-model-container .file-input .video-input button .video-btn{font-weight:bold;font-size:40px}.create-model .create-model-container .file-input .video-input p{font-size:12px;font-weight:bold;color:#000}.create-model .create-model-container .file-input .video-input strong{font-size:12px;font-weight:400;color:red}.create-model .create-model-container .file-input .thumbnail-input{position:relative;overflow:hidden;display:inline-block;padding:10px;margin:10px;border:1px solid #ccc;border-radius:5px;font-size:16px;font-weight:400;width:40%;height:150px;display:flex;flex-direction:column;justify-content:center;align-items:center}.create-model .create-model-container .file-input .thumbnail-input button{padding:5px;margin:5px;border-radius:5px;outline:none;font-size:16px;font-weight:400;cursor:pointer;background-color:#fff;transition:background-color .3s ease;border:none}.create-model .create-model-container .file-input .thumbnail-input button .image-btn{font-weight:bold;font-size:40px}.create-model .create-model-container .file-input .thumbnail-input p{font-size:12px;font-weight:bold;color:#000}.create-model .create-model-container .file-input .thumbnail-input strong{font-size:12px;font-weight:400;color:red}.create-model .create-model-container .create-model-footer{display:flex;justify-content:space-evenly}.create-model .create-model-container .create-model-footer button{width:100%;padding:10px;margin:10px;border:1px solid #ccc;border-radius:5px;outline:none;font-weight:bold;font-size:20px;cursor:pointer;color:#000;background-color:#fff;transition:background-color .3s ease}.create-model .create-model-container .create-model-footer button:hover{background-color:#6336bc}.create-model .create-model-container .create-model-footer .cancle-btn{border:1px solid #ccc;transition:background-color .3s ease}.create-model .create-model-container .create-model-footer .cancle-btn:hover{background-color:red;color:#fff}.create-model .create-model-container .create-model-footer .create-btn{border:1px solid #ccc;transition:background-color .3s ease}.create-model .create-model-container .create-model-footer .create-btn:hover{background-color:green;color:#fff}.artical-model{display:flex;justify-content:center;align-items:center;width:100%;height:100%}.artical-modal-content{width:90%;max-width:1100px;background-color:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);overflow-y:auto;max-height:80vh}
+/* search.scss */
+.container_for_search {
+  background-color: white;
+  width: 100%;
+  height: 150px;
+}
+.container_for_search .search-container {
+  max-width: 80%;
+  margin: 0 auto;
+}
+.container_for_search .search-container p {
+  padding: 5px;
+  font-size: 20px;
+  font-weight: 600;
+}
+.container_for_search .search_bar {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+.container_for_search .search_bar input[type=text] {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 10px;
+  font-size: 16px;
+}
+.container_for_search .search_bar button[type=submit] {
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.container_for_search .search_bar button[type=submit]:hover {
+  background-color: #6336bc;
+}
+.container_for_search .filter-button {
+  padding: 5px;
+}
+.container_for_search .filter-button button {
+  margin: 4px;
+  border: none;
+  border-radius: 2px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 13px;
+  font-weight: bold;
+}
+.container_for_search .filter-button button:hover {
+  background-color: #cc0000;
+}
+.container_for_search .filter-button .button {
+  margin: 4px;
+  border: none;
+  border-radius: 2px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 13px;
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
+}
+.container_for_search .filter-button .button:hover {
+  background-color: #cc0000;
+}
+
+.model {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 100%;
+  height: 100%;
+}
+
+.modal-content {
+  width: 70%;
+  max-width: 900px; /* Set a max-width for better readability */
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Make the content scrollable */
+  max-height: 80vh; /* Limit the max height of the content to 80% of the viewport height */
+}
+
+.create-model {
+  width: 100%;
+  height: 100%;
+}
+.create-model .create-model-container {
+  max-width: 80%;
+  margin: 0 auto;
+}
+.create-model .create-model-container .create-model-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+.create-model .create-model-container .create-model-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+}
+.create-model .create-model-container .create-model-body-input input[type=text] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  font-size: 16px;
+  font-weight: 400;
+}
+.create-model .create-model-container .create-model-body-input textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 400;
+  resize: none;
+}
+.create-model .create-model-container .file-input {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+.create-model .create-model-container .file-input .video-input {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 400;
+  width: 40%;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.create-model .create-model-container .file-input .video-input button {
+  padding: 5px;
+  margin: 5px;
+  border-radius: 5px;
+  background-color: white;
+  outline: none;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+.create-model .create-model-container .file-input .video-input button .video-btn {
+  font-weight: bold;
+  font-size: 40px;
+}
+.create-model .create-model-container .file-input .video-input p {
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+}
+.create-model .create-model-container .file-input .video-input strong {
+  font-size: 12px;
+  font-weight: 400;
+  color: red;
+}
+.create-model .create-model-container .file-input .thumbnail-input {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 400;
+  width: 40%;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.create-model .create-model-container .file-input .thumbnail-input button {
+  padding: 5px;
+  margin: 5px;
+  border-radius: 5px;
+  outline: none;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  background-color: white;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+.create-model .create-model-container .file-input .thumbnail-input button .image-btn {
+  font-weight: bold;
+  font-size: 40px;
+}
+.create-model .create-model-container .file-input .thumbnail-input p {
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+}
+.create-model .create-model-container .file-input .thumbnail-input strong {
+  font-size: 12px;
+  font-weight: 400;
+  color: red;
+}
+.create-model .create-model-container .create-model-footer {
+  display: flex;
+  justify-content: space-evenly;
+}
+.create-model .create-model-container .create-model-footer button {
+  width: 100%;
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  color: black;
+  background-color: white;
+  transition: background-color 0.3s ease;
+}
+.create-model .create-model-container .create-model-footer button:hover {
+  background-color: #6336bc;
+}
+.create-model .create-model-container .create-model-footer .cancle-btn {
+  border: 1px solid #ccc;
+  transition: background-color 0.3s ease;
+}
+.create-model .create-model-container .create-model-footer .cancle-btn:hover {
+  background-color: red;
+  color: white;
+}
+.create-model .create-model-container .create-model-footer .create-btn {
+  border: 1px solid #ccc;
+  transition: background-color 0.3s ease;
+}
+.create-model .create-model-container .create-model-footer .create-btn:hover {
+  background-color: green;
+  color: white;
+}
+
+.artical-model {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 100%;
+  height: 100%;
+}
+
+.artical-modal-content {
+  width: 90%;
+  max-width: 1100px; /* Set a max-width for better readability */
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Make the content scrollable */
+  max-height: 80vh; /* Limit the max height of the content to 80% of the viewport height */
+}/*# sourceMappingURL=search.css.map */

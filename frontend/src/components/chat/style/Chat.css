@@ -1,1 +1,19 @@
-.chat__system{display:flex;position:fixed;max-width:100%;width:100%;justify-content:center;align-items:center}.chat__list{height:calc(100vh - 70px);width:25%;border-right:solid 2px gray}.chat__details{width:75%;margin-right:88px;height:calc(100vh - 70px)}
+.chat__system {
+  display: flex;
+  position: fixed;
+  max-width: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat__list {
+  width: 25%;
+  border-right: solid 2px gray;
+}
+
+.chat__details {
+  width: 75%;
+  margin-right: 88px;
+  height: calc(100vh - 70px); /* Subtract the fixed header height from the viewport height */
+}/*# sourceMappingURL=Chat.css.map */

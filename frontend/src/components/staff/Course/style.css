@@ -1,0 +1,10 @@
+.admin-course {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  overflow: hidden;
+}/*# sourceMappingURL=style.css.map */
