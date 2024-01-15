@@ -236,7 +236,13 @@ const AdminSideBar = () =>{
                 </li>
 
                 <li>
-                  <Link to="/admin/otp">
+                  <Link to="/admin/enroll"
+                    className={
+                      location.pathname === "/admin/enroll" ||
+                      location.pathname === "/admin/enroll/add" ||
+                      location.pathname === "/admin/enroll/edit"? "active" : ""
+                    }
+                  >
                   <RiCalendarTodoLine size={20} />
 
                     <span>

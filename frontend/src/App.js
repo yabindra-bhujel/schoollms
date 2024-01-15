@@ -55,7 +55,8 @@ import AddTeacher from "./components/staff/Teacher/AddTeacher";
 import Department from "./components/staff/department/Department";
 import AdminCourse from "./components/staff/Course/Course";
 import AddNewCourse from "./components/staff/Course/AddNewCourse";
-
+import EnrollStudent from "./components/staff/EnrollStudent/Enroll";
+import AddEnrollSubject from "./components/staff/EnrollStudent/AddEnrollSubject";
 
 
 
@@ -79,7 +80,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        {/* <Route path="/otp-verification" element={<AdminNavigationBar/> }/> */}
+        <Route path="/otp-verification" element={<OtpInput/> }/>
 
 
         {/* Protected Routes for Authenticated Users */}
@@ -126,6 +127,8 @@ function App() {
         <Route path="/admin/department" element = { <Department/>}/>
         <Route path="/admin/course" element = { <AdminCourse/>}/>
         <Route path="/admin/course/add" element = { <AddNewCourse/>}/>
+        <Route path="/admin/enroll" element = { <EnrollStudent/>}/>
+        <Route path="/admin/enroll/add" element = { <AddEnrollSubject/>}/>
 
 
         

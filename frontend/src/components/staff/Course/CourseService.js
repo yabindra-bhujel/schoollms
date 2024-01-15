@@ -13,13 +13,13 @@ const getTeacherList =async(username) =>{
 
 
 
-const AdminCourseAdd = async (courseData) => {
+const adminCourseAdd = async (username, courseData) => {
     try {
-        const endpoint = `/course/add/`;
+        const endpoint = `/course/create_course/${username}/`;
         const response = await instance.post(endpoint, courseData);
-        return response.data;
+        return response;
     } catch (error) {
-        console.log(error);
+        throw new Error(error);
     }
 }
 
@@ -37,7 +37,7 @@ const AdminCourseList = async (username) => {
 
 const DeleteCourse = async (username, course_id) => {
     try {
-        const endpoint = `/course/${course_id}/${username}/`;
+        const endpoint = `/course/delete_course/${course_id}/${username}/`;
         const response = await instance.delete(endpoint);
         return response.data;
     } catch (error) {
@@ -60,4 +60,4 @@ const getDepartmentList = async () => {
   };
 
 
-export { AdminCourseList , DeleteCourse, getTeacherList, getDepartmentList}
+export { AdminCourseList , DeleteCourse, getTeacherList, getDepartmentList, adminCourseAdd}

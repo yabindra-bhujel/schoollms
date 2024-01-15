@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { AdminCourseList, DeleteCourse } from "./CourseService";
-import { FormHelperText, TextField, Button, Container, Grid } from '@mui/material';
+  import { FormHelperText, TextField, Button, Container, Grid, Snackbar } from '@mui/material';
 import { Input, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-
+import { useNavigate } from 'react-router-dom';
 
 import AdminLayout from "../navigation/NavigationLayout";
 
 
 import instance from "../../../api/axios";
 
-import { getTeacherList , getDepartmentList} from "./CourseService";
+import { getTeacherList , getDepartmentList, adminCourseAdd} from "./CourseService";
 
 
 const AdminCourseAdd = () => {
@@ -25,9 +24,19 @@ const AdminCourseAdd = () => {
     const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const [teacherList, setTeacherList] = useState([]);
     const [departmentList, setDepartmentList] = useState([]);
+    const navigator = useNavigate();
+    const [snackbar, setSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
+    const handleSnackbarClose = () => {
+        setSnackbar(false);
+    }
 
 
-    console.log(departmentList);
+
+
+
+
     useEffect(() => {
         const fetchTeacherList = async () => {
             const response = await getTeacherList("admin");
@@ -85,7 +94,24 @@ const AdminCourseAdd = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (validateForm()) {
-            console.log(courseData);
+
+            
+            try {
+                const response = await adminCourseAdd("admin", courseData);
+                console.log(response);
+                if (response.status === 201) {
+                    navigator('/admin/course');
+                }else{
+                    setSnackbar(true);
+                    setSnackbarMessage("Error Adding Course Please Try Again");
+
+
+                }
+
+            } catch (error) {
+                setSnackbar(true);
+                setSnackbarMessage("Error Adding Course Please Try Again");
+            }
         }
     }
 

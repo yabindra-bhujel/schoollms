@@ -156,7 +156,7 @@ const AdminCourse = () => {
                                     <Button 
                                      variant="outlined"
                                      color="secondary"
-                                        onClick={() => handleDeleteDialog(course.id)}   
+                                        onClick={() => handleDeleteDialog(course.subject_code)}   
                                      >
                                         Delete
                                     </Button>

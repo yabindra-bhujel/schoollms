@@ -22,6 +22,101 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
+@api_view(['GET'])
+def get_subject_enroll(request, username):
+    try:
+        enroll_subject = SubjectEnroll.objects.all()
+        enroll_subject_data = []
+
+        for enroll in enroll_subject:
+            students_count = enroll.student.count()
+            teacher_name = enroll.teacher.first_name + " " + enroll.teacher.last_name 
+            subject_name = enroll.course.subject_name  
+
+            enroll_subject_data.append({
+                "id": enroll.id,
+                "subject_name": subject_name,
+                "total_students": students_count,
+                "teacher_name": teacher_name
+            })
+
+        return Response(enroll_subject_data)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+
+
+
+@api_view(["POST"])
+def create_course(request, username):
+    try:
+        data = request.data
+        print(data)
+        course_id = data.get('course_id')
+        course_name = data.get('course_name')
+        weekday = data.get('weekday')
+        class_period = data.get('class_period')
+        course_department = data.get('course_department')
+        teacher_name = data.get('teacher_name')
+
+
+       # Split the teacher name into parts based on spaces
+        name_parts = teacher_name.split(' ')
+        teacher_id = name_parts[-1]
+        print(teacher_id)
+        teacher = Teacher.objects.get(TeacherID=teacher_id)
+        department = Department.objects.get(Department_name=course_department)
+
+
+
+        period_start_time = {
+            '1': '9:00',
+            '2': '10:40',
+            '3': '13:00',
+            '4': '14:40',
+
+        }
+
+        period_end_time = {
+            '1': '10:30',
+            '2': '12:10',
+            '3': '14:30',
+            '4': '16:10',
+        }
+
+        start_time = period_start_time.get(str(class_period), 'N/A')
+        end_time = period_end_time.get(str(class_period), 'N/A')
+
+
+        try:
+            subject = Subject.objects.create(
+                subject_code=course_id,
+                subject_name=course_name,
+                weekday=weekday,
+                class_period=class_period,
+                period_start_time=start_time,
+                period_end_time=end_time,
+                subject_faculty=department,
+                subject_teacher=teacher,
+            )
+            subject.save()
+
+
+        except Exception as e:
+            print(e)
+            return Response({"message": "An error occurred"}, status=500)
+
+
+
+
+        return Response({"message": "Course created successfully"}, status=201)
+    
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+    
+
+
 @api_view(["DELETE"])
 def delete_course(request, id, username):
     try:
