@@ -31,51 +31,24 @@ function Login() {
 
       // Store user data in localStorage only if OTP is not required
       const decodeData = jwtDecode(access);
-      const otpRequired = decodeData.is_staff || decodeData.is_superuser;
 
-      if (!otpRequired) {
         const userData = {
           access,
           refresh,
-          isTeacher: decodeData.is_teacher, // Assuming this is a property in the JWT payload
-          isStudent: decodeData.is_student, // Assuming this is a property in the JWT payload
+          isTeacher: decodeData.is_teacher,
+          isStudent: decodeData.is_student,
           is_staff: decodeData.is_staff,
           is_superuser: decodeData.is_superuser,
         };
 
         localStorage.setItem("userData", JSON.stringify(userData));
-      }
 
-      if (otpRequired) {
-        const endpoint = "http://127.0.0.1:8000/otp_verification";
-
-        const csrftoken = Cookies.get("csrftoken");
-
-
-        const response = await axios.post(endpoint, {
-          withCredentials: true,
-          headers: {
-            "X-CSRFToken": csrftoken,
-
-          },
-        });
-        if (response.status === 200) {
-          const username = decodeData.username;
-          
-          navigate("/otp-verification", { state: { 
-            username: username,
-            password: password,
-           } });
-          // navigate("/otp-verification");
-        }
-      } else {
         // Always navigate to the root path
         if (decodeData.is_student || decodeData.is_teacher) {
           navigate("/");
-        } else {
-          navigate("/admin");
+        } else if (decodeData.is_staff || decodeData.is_superuser) {
+          navigate("/admin/student");
         }
-      }
     } catch (e) {
       setMessage(
         "Unable to authenticate your account. Please check your credentials and try again."

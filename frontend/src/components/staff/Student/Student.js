@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Snackbar from '@mui/material/Snackbar';
+import { ca } from "date-fns/locale";
 
 
 const AdminStudent = () => {
@@ -121,8 +122,20 @@ const AdminStudent = () => {
 
 
   const fetchData = async () => {
-    const response = await StudentList("admin");
-    setStudentList(response);
+    try {
+      const response = await StudentList("admin");
+      setStudentList(response.data);
+    } catch (err) {
+      if (err.response && err.response.status === 403) {
+        // Handle 403 Forbidden error
+        setSnackbarMessage("You are not authorized to view this page.");
+        setOpenSnackbar(true);
+      } else {
+        console.error("Error fetching data:", err.message);
+        setSnackbarMessage("An error occurred while fetching data.");
+        setOpenSnackbar(true);
+      }
+    }
   };
 
 

@@ -5,8 +5,7 @@ from django.conf import settings
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView
 from tenant.views import *
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-
+from rest_framework_simplejwt.views import TokenBlacklistView
 
 
 urlpatterns = [
@@ -16,14 +15,14 @@ urlpatterns = [
 
 
     # user api path
+    path('api/logout/', BlacklistRefreshView.as_view(), name="logout"),
     path('api/token/', UserTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
     path('api/create_new_user',create_new_user, name="create_new_user"),
     path('get_university_login_screen_info',get_university_login_screen_info, name="get_university_login_screen_info"),
     path('get_user_profile_pic/<str:username>/', get_user_profile_pic, name="get_user_profile_pic"),
     path('change_password', change_password, name="change_password"),
-    path('otp_verification', otp_verification, name="otp_verification"),
-    path('verify_otp/<int:otp>/', verify_otp, name='verify_otp'),
     path('get_user_list/<str:username>/', get_user_list, name="get_user_list"),
 
 

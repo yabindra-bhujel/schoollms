@@ -3,6 +3,7 @@ from django.urls import path
 from.views import *
 
 urlpatterns = [
+    path('create_enroll_subject/<str:username>/', create_enroll_subject, name='create_enroll_subject'),
     path('get_subject_enroll/<str:username>/', get_subject_enroll, name='get_subject_enroll'),
     path('create_course/<str:username>/', create_course, name='create_course'),
     path('delete_course/<str:id>/<str:username>/', delete_course, name='delete_course'),
@@ -30,7 +31,7 @@ urlpatterns = [
     path('department_list/', department_list, name='department_list'), 
     path('file_assigment/', file_assigment, name='file_assigment'), 
     path('text_assignment/', text_assignment, name='text_assigment'),
-    path('<str:username>/',course_list ,name='course'), 
+    path('admin/',admincourse_list ,name='admincourse_list'), 
     path('create_assigment/', create_assigment, name='create_assigment'),
     path('assigment_detalis/<int:id>/', assignment_details, name='assigment_detalis'),
     path('student_assignment_details/<int:id>/', student_assignment_details, name='student_assignment_details'),

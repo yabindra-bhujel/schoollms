@@ -16,7 +16,17 @@ from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
 import jwt
 from django.conf import settings
+from rest_framework.views import APIView
 
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
+class BlacklistRefreshView(APIView):
+    def post(self, request):
+        token = RefreshToken(request.data.get('refresh'))
+        token.blacklist()
+        return Response("Success")
+    
 
 
 class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -162,58 +172,6 @@ def change_password(request):
             print(e)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
      
-
-
-
-def send_otp(request):
-    print("Sending OTP")
-    print(request.data)
-    print(request.session)
-    totp = pyotp.TOTP(pyotp.random_base32(), interval=60)
-    otp = totp.now()
-
-    try:
-        request.session['otp_secret_key'] = totp.secret
-        request.session['otp_valid_until'] = (datetime.now() + timedelta(minutes=5)).isoformat()
-        request.session.modified = True  
-
-        print(f"Your One-time password is {otp}")
-    except Exception as e:
-        print(f"Error saving session data: {e}")
-
-    return Response({"success": "OTP sent successfully"}, status=status.HTTP_200_OK)
-
-
-
-@api_view(['POST'])
-def otp_verification(request):
-    try:
-        username = "admin"
-        send_otp(request)
-        request.session['username'] = username
-
-        return Response({"success": "OTP sent successfully"}, status=status.HTTP_200_OK)
-    except Exception as e:
-        print(f"Error sending OTP: {e}")  # Print informative error message
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(['POST'])
-def verify_otp(request, otp):
-    # Use the provided 'otp' parameter for verification
-    # Instead of redefining 'otp' as a local variable
-    try:
-        otp_secret_key = request.session.get('otp_secret_key')
-        # otp_valid_until = request.session['otp_valid_until']
-        print(otp_secret_key)
-        # print(otp_valid_until)
-
-    except Exception as e:
-        print(f"Error retrieving session data: {e}")
-        return Response({"message": "OTP not sent"}, status=status.HTTP_400_BAD_REQUEST)
-    return Response({"success": "OTP verified successfully"}, status=status.HTTP_200_OK)
-
-
 
 
 

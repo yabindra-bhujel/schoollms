@@ -1,27 +1,159 @@
-from courses.models import Assignment, SubjectEnroll, FileSubmission, TextSubmission, Subject
-from courses.serializers import DepartmentSerializers, SubjectSerializer
-from .serializers import StudentSerializer,UserSerializer ,ParentSerializer
+from courses.models import *
+from courses.serializers import *
+from .serializers import StudentSerializer,UserSerializer 
 from .models import Student, Parent
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from courses.models import Department
 User = get_user_model()
 import csv
+
 import io
 import traceback
 
 
-class IsSuperuserOrStaff(BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_superuser or request.user.is_staff
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def add_newStudent(request):
+    try:
+        # Extract department data
+        department_name = request.data.get('department')
+        department = Department.objects.get(Department_name=department_name)
+
+        # Add the department to the student data
+        student_data = request.data.copy()
+        student_data['department'] = department.id
+
+        # Create the student serializer
+        student_serializer = StudentSerializer(data=student_data)
+        if student_serializer.is_valid():
+            student = student_serializer.save()
+
+            # Create user data and serializer (your existing code)
+            username = str(request.data['studentID'])
+            date_of_birth = str(request.data['date_of_birth'])
+            password = date_of_birth.replace("-", "")
+            email = f"{username}{student.first_name}@gmail.com"
+
+            user_data = {
+                'username': username,
+                'password': password,
+                'email': email,
+                'first_name': request.data['first_name'],
+                'last_name': request.data['last_name'],
+            }
+
+            user_serializer = UserSerializer(data=user_data)
+            if user_serializer.is_valid():
+                user = user_serializer.save()
+                user.is_student = True
+                user.save()
+
+                # Associate the user and email with the student
+                student.user = user
+                student.email = email
+                student.save()
+
+                return Response(student_serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                print(user_serializer.errors)
+                return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print(student_serializer.errors)
+            return Response(student_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Department.DoesNotExist:
+        return Response({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(e)
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def add_student_by_csv_file(request):
+    try:
+        uploaded_file = request.data.get('file')
+        data_set = uploaded_file.read().decode('UTF-8')
+        io_string = io.StringIO(data_set)
+        next(io_string)  # Skip the header row
+
+        for column in csv.reader(io_string, delimiter=',', quotechar='"'):
+            # Check if the column list has at least 8 elements
+            if len(column) < 8:
+                continue
+
+            # Extract department data
+            department_name = column[7]
+
+            try:
+                department = Department.objects.get(Department_name=department_name)
+            except Department.DoesNotExist:
+                # Handle missing department case
+                print(f"Department '{department_name}' not found. Skipping entry.")
+                continue
+
+            studentID = column[0]
+            date_of_birth = column[5]
+            password = date_of_birth.replace("-", "")
+            email = f"{studentID}{column[1]}@gmail.com"
+            first_name = column[1]
+            last_name = column[2]
+            middle_name = column[3]
+            phone = column[4]
+            gender = column[6]
+
+            student = Student.objects.create(
+                studentID=studentID,
+                first_name=first_name,
+                last_name=last_name,
+                middle_name=middle_name,
+                gender=gender,
+                email=email,
+                phone=phone,
+                date_of_birth=date_of_birth,
+                department=department,
+            )
+            user = User.objects.create_user(username=studentID, password=password,
+                                            first_name=first_name, last_name=last_name, email=email, is_student=True)
+
+            student.user = user
+            student.save()
+
+        return Response(status=status.HTTP_201_CREATED)
+    except Exception as e:
+        traceback.print_exc()
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def delete_student(request, studentID):
+    try:
+        student = Student.objects.get(studentID=studentID)
+        student.delete()
+        user = User.objects.get(username=studentID)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    except Student.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+ 
+
 
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated, IsSuperuserOrStaff])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def student_list(request, username):
     students = Student.objects.all()
     serializer = StudentSerializer(students, many=True)
@@ -138,133 +270,6 @@ def student_detail(request, studentID):
     return Response(serialized_data)
 
 
-
-
-@api_view(['POST'])
-def add_newStudent(request):
-    try:
-        # Extract department data
-        department_name = request.data.get('department')
-        department = Department.objects.get(Department_name=department_name)
-
-        # Add the department to the student data
-        student_data = request.data.copy()
-        student_data['department'] = department.id
-
-        # Create the student serializer
-        student_serializer = StudentSerializer(data=student_data)
-        if student_serializer.is_valid():
-            student = student_serializer.save()
-
-            # Create user data and serializer (your existing code)
-            username = str(request.data['studentID'])
-            date_of_birth = str(request.data['date_of_birth'])
-            password = date_of_birth.replace("-", "")
-            email = f"{username}{student.first_name}@gmail.com"
-
-            user_data = {
-                'username': username,
-                'password': password,
-                'email': email,
-                'first_name': request.data['first_name'],
-                'last_name': request.data['last_name'],
-            }
-
-            user_serializer = UserSerializer(data=user_data)
-            if user_serializer.is_valid():
-                user = user_serializer.save()
-                user.is_student = True
-                user.save()
-
-                # Associate the user and email with the student
-                student.user = user
-                student.email = email
-                student.save()
-
-                return Response(student_serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                print(user_serializer.errors)
-                return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            print(student_serializer.errors)
-            return Response(student_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Department.DoesNotExist:
-        return Response({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        print(e)
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-@api_view(['POST'])
-def add_student_by_csv_file(request):
-    try:
-        uploaded_file = request.data.get('file')
-        data_set = uploaded_file.read().decode('UTF-8')
-        io_string = io.StringIO(data_set)
-        next(io_string)  # Skip the header row
-
-        for column in csv.reader(io_string, delimiter=',', quotechar='"'):
-            # Check if the column list has at least 8 elements
-            if len(column) < 8:
-                continue
-
-            # Extract department data
-            department_name = column[7]
-
-            try:
-                department = Department.objects.get(Department_name=department_name)
-            except Department.DoesNotExist:
-                # Handle missing department case
-                print(f"Department '{department_name}' not found. Skipping entry.")
-                continue
-
-            studentID = column[0]
-            date_of_birth = column[5]
-            password = date_of_birth.replace("-", "")
-            email = f"{studentID}{column[1]}@gmail.com"
-            first_name = column[1]
-            last_name = column[2]
-            middle_name = column[3]
-            phone = column[4]
-            gender = column[6]
-
-            student = Student.objects.create(
-                studentID=studentID,
-                first_name=first_name,
-                last_name=last_name,
-                middle_name=middle_name,
-                gender=gender,
-                email=email,
-                phone=phone,
-                date_of_birth=date_of_birth,
-                department=department,
-            )
-            user = User.objects.create_user(username=studentID, password=password,
-                                            first_name=first_name, last_name=last_name, email=email, is_student=True)
-
-            student.user = user
-            student.save()
-
-        return Response(status=status.HTTP_201_CREATED)
-    except Exception as e:
-        traceback.print_exc()
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(['DELETE'])
-def delete_student(request, studentID):
-    try:
-        student = Student.objects.get(studentID=studentID)
-        student.delete()
-        user = User.objects.get(username=studentID)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    except Student.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
 
 
 from datetime import datetime

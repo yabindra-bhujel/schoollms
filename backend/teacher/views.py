@@ -1,20 +1,33 @@
-from student.models import Student, Parent
 from .models import Teacher
 from .serializers import TeacherSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from courses.serializers import SubjectSerializer,SubjectEnrollSerializers,DepartmentSerializers
+from courses.serializers import DepartmentSerializers
 from django.contrib.auth import get_user_model
 from courses.models import SubjectEnroll,Subject
 import io
 import csv
-import  traceback
 User = get_user_model()
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from datetime import datetime
+from .permissions import IsTeacherPermission
+
+
+
+
+# """""""""""""""""""""""""""""""""""""""""
+# Teacher API For Admin"
+# """""""""""""""""""""""""""""""""""""""""
+
 
 
 
 @api_view(["DELETE"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def delete_teacher(request, TeacherID):
     try:
         teacher = Teacher.objects.get(TeacherID=TeacherID)
@@ -28,7 +41,9 @@ def delete_teacher(request, TeacherID):
 
 
 @api_view(["GET", "POST"])
-def teacher_list(request, username):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def teacher_list(request):
     if request.method == "GET":
         teachers = Teacher.objects.all()
         serializer = TeacherSerializer(teachers, many=True)
@@ -42,7 +57,123 @@ def teacher_list(request, username):
 
 
 
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def add_teacher(request):
+
+    try:
+        data = request.data
+        teacherID = data["teacherID"]
+        date_of_birth = data["date_of_birth"]
+        password = date_of_birth.replace("-", "")
+        email = f"{teacherID}@gmail.com"
+        first_name = data["first_name"]
+        last_name = data["last_name"]
+        gender = data["gender"]
+        phone = data["phone"]
+        address = data["address"]
+        image = data["image"]
+
+
+        try:
+            teacher = Teacher.objects.create(
+                TeacherID=teacherID,
+                first_name=first_name,
+                last_name=last_name,
+                gender = gender,
+                email = email,
+                phone = phone,
+                address = address,
+                date_of_birth = date_of_birth,
+                image = image,
+            )
+            user = User.objects.create_user(username=teacherID, password=password, 
+                                            first_name=first_name, last_name=last_name, email=email, is_teacher=True)
+            
+            teacher.user = user
+            teacher.save()
+            return Response(status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            print(e)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+
+    except Exception as e:
+        print(e)
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def add_teacher_by_file(request):
+    try:
+        uploaded_file = request.data.get('file')
+        data_set = uploaded_file.read().decode('UTF-8')
+        io_string = io.StringIO(data_set)
+        next(io_string)
+
+        for row_number, column in enumerate(csv.reader(io_string, delimiter=',', quotechar='"')):
+            try:
+                if len(column) >= 7:  # Check if the row has at least 7 columns
+                    teacherID = column[0]
+                    date_of_birth = column[1]
+                    password = date_of_birth.replace("-", "")
+                    email = f"{teacherID}@gmail.com"
+                    first_name = column[2]
+                    last_name = column[3]
+                    gender = column[4]
+                    phone = column[5]
+                    address = column[6]
+
+                    teacher = Teacher.objects.create(
+                        TeacherID=teacherID,
+                        first_name=first_name,
+                        last_name=last_name,
+                        gender=gender,
+                        email=email,
+                        phone=phone,
+                        address=address,
+                        date_of_birth=date_of_birth,
+                    )
+                    user = User.objects.create_user(username=teacherID, password=password, 
+                                                    first_name=first_name, last_name=last_name, email=email, is_teacher=True)
+                    
+                    teacher.user = user
+                    teacher.save()
+            except Exception as e:
+                print(f"Error at row {row_number + 2}: {e}")
+                return Response({"error": f"Error at row {row_number + 2}: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(status=status.HTTP_201_CREATED)
+    
+    except Exception as e:
+        print(e)
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+# """""""""""""""""""""""""""""""""""""""""
+#  API For Teacher"
+# """""""""""""""""""""""""""""""""""""""""
+
+
+
+
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def teacher_detail(request, TeacherID):
     try:
         teacher = Teacher.objects.get(TeacherID=TeacherID)
@@ -115,110 +246,11 @@ def teacher_detail(request, TeacherID):
     return Response(serializer_data)
 
 
-@api_view(["POST"])
-def add_teacher(request):
 
-    try:
-        data = request.data
-        teacherID = data["teacherID"]
-        date_of_birth = data["date_of_birth"]
-        password = date_of_birth.replace("-", "")
-        email = f"{teacherID}@gmail.com"
-        first_name = data["first_name"]
-        last_name = data["last_name"]
-        gender = data["gender"]
-        phone = data["phone"]
-        address = data["address"]
-        image = data["image"]
-
-
-        try:
-            teacher = Teacher.objects.create(
-                TeacherID=teacherID,
-                first_name=first_name,
-                last_name=last_name,
-                gender = gender,
-                email = email,
-                phone = phone,
-                address = address,
-                date_of_birth = date_of_birth,
-                image = image,
-            )
-            user = User.objects.create_user(username=teacherID, password=password, 
-                                            first_name=first_name, last_name=last_name, email=email, is_teacher=True)
-            
-            teacher.user = user
-            teacher.save()
-            return Response(status=status.HTTP_201_CREATED)
-
-        except Exception as e:
-            print(e)
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-
-
-    except Exception as e:
-        print(e)
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
-
-@api_view(["POST"])
-def add_teacher_by_file(request):
-    try:
-        uploaded_file = request.data.get('file')
-        data_set = uploaded_file.read().decode('UTF-8')
-        io_string = io.StringIO(data_set)
-        next(io_string)
-
-        for row_number, column in enumerate(csv.reader(io_string, delimiter=',', quotechar='"')):
-            try:
-                if len(column) >= 7:  # Check if the row has at least 7 columns
-                    teacherID = column[0]
-                    date_of_birth = column[1]
-                    password = date_of_birth.replace("-", "")
-                    email = f"{teacherID}@gmail.com"
-                    first_name = column[2]
-                    last_name = column[3]
-                    gender = column[4]
-                    phone = column[5]
-                    address = column[6]
-
-                    teacher = Teacher.objects.create(
-                        TeacherID=teacherID,
-                        first_name=first_name,
-                        last_name=last_name,
-                        gender=gender,
-                        email=email,
-                        phone=phone,
-                        address=address,
-                        date_of_birth=date_of_birth,
-                    )
-                    user = User.objects.create_user(username=teacherID, password=password, 
-                                                    first_name=first_name, last_name=last_name, email=email, is_teacher=True)
-                    
-                    teacher.user = user
-                    teacher.save()
-            except Exception as e:
-                print(f"Error at row {row_number + 2}: {e}")
-                return Response({"error": f"Error at row {row_number + 2}: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        return Response(status=status.HTTP_201_CREATED)
-    
-    except Exception as e:
-        print(e)
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-from datetime import datetime
 
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_teacher_today_class(request, teacher_id):
     try:
         try:

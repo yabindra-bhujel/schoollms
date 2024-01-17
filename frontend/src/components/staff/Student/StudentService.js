@@ -18,12 +18,9 @@ const deleteStudent = async (studentID) =>{
 
 const StudentList = async (username) =>{
     const endpoint = `/student/list/${username}/`
-
-
     try{
         const response = await instance.get(endpoint)
-        return response.data
-
+        return response;
     }
     catch(err){
         throw err

@@ -14,6 +14,8 @@ const AssignmentList = () => {
   const [totalStudents, setTotalStudents] = useState(0);
   const { t } = useTranslation();
 
+  console.log("assigemtList", assigemtList);
+
   useEffect(() => {
     getAssigemtList();
   }, []);
@@ -22,8 +24,10 @@ const AssignmentList = () => {
     try {
       const endpoint = `/course/${subject_code}/`;
       const response = await instance.get(endpoint);
+      console.log("response", response);
       if (response.data[0] && response.data[0].assignments) {
         const assigement = response.data[0].assignments;
+        console.log("asss", assigement);
         setAssigemtList(assigement);
         // Calculate total number of unique students
         const studentSet = new Set();
@@ -33,7 +37,6 @@ const AssignmentList = () => {
         const totalUniqueStudents = studentSet.size;
         setTotalStudents(totalUniqueStudents);
       } else {
-        console.log("No students found in the response.");
       }
     } catch {
       console.log("error");

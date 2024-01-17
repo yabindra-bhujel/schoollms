@@ -85,7 +85,7 @@ const AdminTeacher = () =>{
 
   const fetchData = async () =>{
     try{
-        const response = await getTeacherList("admin");
+        const response = await getTeacherList();
         setTeacherList(response);
     }catch(error){
         console.error("Error fetching teacher list:", error);

@@ -48,7 +48,7 @@ const AdminCourse = () => {
 
 
     const getCourseList = async () => {
-        const response = await AdminCourseList("admin");
+        const response = await AdminCourseList();
         setCourseList(response);
     }
 

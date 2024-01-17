@@ -1,7 +1,7 @@
 from django.utils import timezone
 from student.models import Student
 from .serializers import *
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from .models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -17,12 +17,104 @@ from .pdfcreator import PDF
 from django.conf import settings
 from notification.models import NotificationModel
 from django.contrib.auth import get_user_model
+import re
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 User = get_user_model()
+from student.permissions import IsStudentPermission
+
 
 logger = logging.getLogger(__name__)
 
 
+
+def extract_teacher_id(data):
+    match = re.search(r"T\d+", data)
+    return match.group(0) if match else None
+
+
+
+def extract_student_id(studentData):
+    studentIDs = []
+    for student in studentData:
+        match = re.search(r'S?\d+$', student)
+        if match:
+            studentIDs.append(match.group(0))
+    return studentIDs
+
+
+
+# ##################################
+#  Admin API for Course
+# ##################################
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def create_enroll_subject(request, username):
+    try:
+        subject_name = request.data.get('subject_name')
+        subject_teacher = request.data.get('subject_teacher')
+        student_data = request.data.get('student')
+
+        teacher_id = extract_teacher_id(subject_teacher)
+        student_ids = extract_student_id(student_data)
+        print(student_ids)
+
+        try:
+            teacher = Teacher.objects.get(TeacherID=teacher_id)
+        except ObjectDoesNotExist as e:
+            print(e)
+            return Response({"message": "Teacher object not found."}, status=404)
+
+        students = []
+        for student_id in student_ids:
+            try:
+                student = Student.objects.get(studentID=student_id)
+                students.append(student)
+                print(student)
+            except ObjectDoesNotExist as e:
+                print(e)
+                return Response({"message": f"Student object with ID {student_id} not found."}, status=404)
+
+        try:
+            subject = Subject.objects.get(subject_name=subject_name)
+        except ObjectDoesNotExist as e:
+            print(e)
+            return Response({"message": "Subject object not found."}, status=404)
+
+        try:
+            # Try to get an existing SubjectEnroll object
+            subject_enroll = SubjectEnroll.objects.get(course=subject)
+            
+            # If it exists, update teacher and students
+            subject_enroll.teacher = teacher
+            subject_enroll.student.set(students)
+            subject_enroll.save()
+
+            return Response({"message": "Subject enrollment updated successfully"}, status=200)
+
+        except SubjectEnroll.DoesNotExist:
+            # If it doesn't exist, create a new one
+            subject_enroll = SubjectEnroll.objects.create(
+                course=subject,
+                teacher=teacher,
+            )
+            subject_enroll.student.set(students)
+            subject_enroll.save()
+            return Response({"message": "Subject enrollment created successfully"}, status=201)
+
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+
+
+
+
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def get_subject_enroll(request, username):
     try:
         enroll_subject = SubjectEnroll.objects.all()
@@ -48,10 +140,11 @@ def get_subject_enroll(request, username):
 
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def create_course(request, username):
     try:
         data = request.data
-        print(data)
         course_id = data.get('course_id')
         course_name = data.get('course_name')
         weekday = data.get('weekday')
@@ -118,6 +211,8 @@ def create_course(request, username):
 
 
 @api_view(["DELETE"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def delete_course(request, id, username):
     try:
         subject = Subject.objects.get(subject_code=id)
@@ -128,6 +223,8 @@ def delete_course(request, id, username):
         return Response({"message": "An error occurred"}, status=500)
 
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def department_list(request):
     try:
         departments = Department.objects.all()
@@ -143,6 +240,8 @@ def department_list(request):
 
 
 @api_view(["PUT"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def update_department(request, username, id):
 
     try:
@@ -168,6 +267,8 @@ def update_department(request, username, id):
 
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def add_department(request, username):
     try:
         department_name = request.data.get("Department_name")
@@ -189,6 +290,8 @@ def add_department(request, username):
 
 
 @api_view(["DELETE"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def delete_department(request, id, username):
     try:
         department = Department.objects.get(id=id)
@@ -199,7 +302,45 @@ def delete_department(request, id, username):
         return Response({"message": "An error occurred"}, status=500)
 
 
+
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated , IsAdminUser])
+def admincourse_list(request):
+    courses = Subject.objects.all()
+   
+
+
+
+    course_data = []
+    for course in courses:
+         teacherID = course.subject_teacher
+         course_data.append(
+            {
+                "subject_code": course.subject_code,
+                "subject_name": course.subject_name,
+                "subject_description": course.subject_description,
+                "weekday": course.weekday,
+                "start_time": course.period_start_time,
+                "end_time": course.period_end_time,
+                "class_room": course.class_room,
+                "class_period": course.class_period,
+                "subject_teacher": teacherID.first_name + " " + teacherID.last_name,
+                "subject_faculty": course.subject_faculty.Department_name,
+                
+
+
+            }
+        )
+    return Response(course_data)
+
+
+
+
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_file(request):
     request_data = request.data
 
@@ -226,8 +367,11 @@ def get_file(request):
 
 
 
+# 
 
 @api_view(['DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def delete_file(request, id):
     try:
         file = CourseMateriales.objects.get(id=id)
@@ -239,6 +383,12 @@ def delete_file(request, id):
     
 
 
+
+
+
+
+
+
 def format_iso_date(iso_date):
     try:
         date = parser.isoparse(iso_date)
@@ -248,6 +398,8 @@ def format_iso_date(iso_date):
 
 
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def student_assignment_details(request, id):
     try:
         try:
@@ -284,6 +436,8 @@ def student_assignment_details(request, id):
    
 
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def assignment_details(request, id):
     try:
         try:
@@ -400,6 +554,8 @@ def assignment_details(request, id):
 
 
 @api_view(["PUT"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def update_submission(request):
     try:
         for item in request.data:
@@ -436,6 +592,8 @@ def update_submission(request):
 
 
 @api_view(['DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def delete_assigemnt_question(request, id):
     try:
         question = TextAssigemntQuestion.objects.get(id=id)
@@ -447,37 +605,9 @@ def delete_assigemnt_question(request, id):
 
 
 
-
 @api_view(["GET"])
-def course_list(request, username):
-    courses = Subject.objects.all()
-   
-
-
-
-    course_data = []
-    for course in courses:
-         teacherID = course.subject_teacher
-         course_data.append(
-            {
-                "subject_code": course.subject_code,
-                "subject_name": course.subject_name,
-                "subject_description": course.subject_description,
-                "weekday": course.weekday,
-                "start_time": course.period_start_time,
-                "end_time": course.period_end_time,
-                "class_room": course.class_room,
-                "class_period": course.class_period,
-                "subject_teacher": teacherID.first_name + " " + teacherID.last_name,
-                "subject_faculty": course.subject_faculty.Department_name,
-                
-
-
-            }
-        )
-    return Response(course_data)
-
-@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def course_details_student(request, subject_code, studentID):
     try:
         subject = Subject.objects.get(subject_code=subject_code)
@@ -531,8 +661,13 @@ def course_details_student(request, subject_code, studentID):
 
 
 
+
+
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def course_details(request, subject_code):
+    print(request)
     try:
         subject = Subject.objects.get(subject_code=subject_code)
     except Subject.DoesNotExist:
@@ -546,24 +681,29 @@ def course_details(request, subject_code):
     # Create a list to store the course data
     course_data = []
 
+    # Retrieve assignments related to this SubjectEnroll instance
+    assignments = Assignment.objects.filter(course=subject)
+
+        # Serialize assignments using AssignmentSerializer
+    assignment_serializer = AssignmentSerializer(assignments, many=True)
+    serialized_assignments = assignment_serializer.data  # Serialized assignment data
+
+        # Add is_active property to each assignment
+    assignment__data = []
+    for assignment_data in serialized_assignments:
+            assignment_id = assignment_data["id"]
+            assignment_instance = Assignment.objects.get(id=assignment_id)
+            assignment_data["is_active"] = assignment_instance.is_active
+            assignment__data.append(assignment_data)
+
+
 
     for enrolled in serializer.data:
         # Get related student and teacher data from SubjectEnroll instance
         students = enrolled["student"]
         teacher = enrolled["teacher"]
 
-        # Retrieve assignments related to this SubjectEnroll instance
-        assignments = Assignment.objects.filter(course=subject)
-
-        # Serialize assignments using AssignmentSerializer
-        assignment_serializer = AssignmentSerializer(assignments, many=True)
-        serialized_assignments = assignment_serializer.data  # Serialized assignment data
-
-        # Add is_active property to each assignment
-        for assignment_data in serialized_assignments:
-            assignment_id = assignment_data["id"]
-            assignment_instance = Assignment.objects.get(id=assignment_id)
-            assignment_data["is_active"] = assignment_instance.is_active
+        
 
         # Serialize course_materiales using CourseMaterialesSerializers
         course_materiales = CourseMateriales.objects.filter(course=subject)
@@ -583,7 +723,7 @@ def course_details(request, subject_code):
             "class_room": subject.class_room,
             "students": students,
             "teacher": teacher,
-            "assignments": reversed(serialized_assignments),
+            "assignments": reversed(assignment__data),
             "course_materiales": reversed(serialized_course_materiales),
         }
         course_data.append(course)
@@ -593,8 +733,17 @@ def course_details(request, subject_code):
 
 
 
+
+
+
+
+
+
+
 # get course takne student list
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def enroll_student(request):
     enroll_student = SubjectEnroll.objects.all()
     serializer = SubjectEnrollSerializers(enroll_student, many=True)
@@ -603,6 +752,8 @@ def enroll_student(request):
 
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def create_assigment(request):
     assigment_data = request.data
     course_code = assigment_data["course"]
@@ -679,6 +830,8 @@ def create_assigment(request):
 
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def file_assigment(request):
     try:
         answer_files = request.FILES.getlist("file_submission")
@@ -738,6 +891,8 @@ def ensure_directory_exists(path):
 
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def text_assignment(request):
     try:
         # Extract data from the request
@@ -829,6 +984,8 @@ def text_assignment(request):
 
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def upadteAssigemnt(request):
     try:
         assignment_id = request.data.get("id")
@@ -861,6 +1018,8 @@ def upadteAssigemnt(request):
 
 # TODO: write Test
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_all_assignment(request, username):
     try:
         assignments = Assignment.objects.filter(student__user__username=username)
@@ -874,6 +1033,8 @@ def get_all_assignment(request, username):
 
 # TODO: write Test
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_active_assigemnt(request, username):
     try:
         assignments = Assignment.objects.filter(
@@ -889,6 +1050,8 @@ def get_active_assigemnt(request, username):
 
 # TODO: write Test
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_past_assigemnt(request, username):
     try:
         current_time = timezone.now()
@@ -907,6 +1070,8 @@ def get_past_assigemnt(request, username):
 
 # TODO: write Test
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_future_assigemnt(request, username):
     try:
         current_time = timezone.now()
@@ -926,6 +1091,8 @@ def get_future_assigemnt(request, username):
 
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, ])
 def create_attendance(request):
     try:
         course_code = request.data.get("course_code")
@@ -986,7 +1153,7 @@ def create_attendance(request):
             
         return Response({"message": "Attendance object cretaed",
                             "attendance": response_data
-                         }, status=200)
+                         }, status=201)
     except Exception as e:
         print(e)
         logger.error("An error occurred")
@@ -996,6 +1163,8 @@ def create_attendance(request):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, ])
 def mark_attendance(request):
 
     try:
@@ -1048,6 +1217,8 @@ def mark_attendance(request):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, ])
 def get_attendance_by_subject(request, subject_code):
     try:
         subject = get_object_or_404(Subject, subject_code=subject_code)
@@ -1107,6 +1278,8 @@ def get_attendance_by_subject(request, subject_code):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, ])
 def get_attendance_by_student_subject(request, studentID, subjectID):
     try:
         try:
@@ -1156,6 +1329,8 @@ def get_attendance_by_student_subject(request, studentID, subjectID):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_student_list_by_subject_id(request, subject_code):
     try:
         subject = Subject.objects.get(subject_code=subject_code)

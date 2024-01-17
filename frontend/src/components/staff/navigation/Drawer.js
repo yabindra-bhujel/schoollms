@@ -10,7 +10,7 @@ import { FaBookOpen } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import { RiCalendarTodoLine } from "react-icons/ri";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar } from '@mui/material';
-
+import instance from "../../../api/axios";
 
 
 
@@ -61,6 +61,23 @@ const AdminSideBar = () =>{
             [event.target.name]: event.target.value
         });
     }
+
+    const handleLogout = async () => {
+      try {
+          const endpoint = "api/logout/";
+          const userData = JSON.parse(localStorage.getItem("userData"));
+          if (userData && userData.refresh) {
+              const response = await instance.post(endpoint, { "refresh": userData.refresh });
+              if (response.status === 200) {
+                  localStorage.removeItem("userData");
+                  window.location.href = "/login";
+              }
+          }
+      } catch (error) {
+          console.log(error);
+      }
+  }
+  
 
 
     
@@ -154,7 +171,10 @@ const AdminSideBar = () =>{
               </div>
 
               <div className="logout">
-                <IoMdLogOut  size={30}/>
+
+                <IoMdLogOut
+                  onClick={handleLogout}
+                  size={30}/>
               </div>
 
 
@@ -257,7 +277,8 @@ const AdminSideBar = () =>{
 
 
                 <li>
-                  <Link to="">
+                 
+                  <Link  onClick={handleLogout}>
                   <RiLogoutCircleLine size={20} />
                     <span>Logout</span>
                   </Link>

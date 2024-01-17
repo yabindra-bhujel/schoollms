@@ -23,9 +23,9 @@ const adminCourseAdd = async (username, courseData) => {
     }
 }
 
-const AdminCourseList = async (username) => {
+const AdminCourseList = async () => {
     try {
-        const endpoint = `/course/${username}/`;
+        const endpoint = `/course/admin/`;
         const response = await instance.get(endpoint);
         return response.data;
     } catch (error) {
