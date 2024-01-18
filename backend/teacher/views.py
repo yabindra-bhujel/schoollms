@@ -44,16 +44,18 @@ def delete_teacher(request, TeacherID):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def teacher_list(request):
-    if request.method == "GET":
-        teachers = Teacher.objects.all()
-        serializer = TeacherSerializer(teachers, many=True)
+    try:
+        teacher = Teacher.objects.all()
+        serializer = TeacherSerializer(teacher, many=True)
+        for data in serializer.data:
+            data["image"] = request.build_absolute_uri(data["image"])
         return Response(serializer.data)
-    elif request.method == "POST":
-        serializer = TeacherSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+    
+    except Exception as e:
+        print(e)
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
 
 
 

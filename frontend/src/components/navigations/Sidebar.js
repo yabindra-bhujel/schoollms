@@ -201,7 +201,7 @@ const Sidebar = ({}) => {
       <nav>
         <div className="user_info_side">
        
-          <p>Welcome, {fullname}!</p>
+          <p> CampusFlow  Welcome, {fullname}!</p>
         </div>
         <div className="quick_acess">
           <li>

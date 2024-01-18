@@ -25,6 +25,8 @@ import {
 import Alert from "@mui/material/Alert";
 import Snackbar from '@mui/material/Snackbar';
 import { getTeacherList, deleteTeacher ,uploadTeahcerFile} from "./TeacherService";
+import Avatar from '@mui/material/Avatar';
+
 
 const AdminTeacher = () =>{
     const [teacherList, setTeacherList] = useState([])
@@ -35,6 +37,7 @@ const AdminTeacher = () =>{
   const fileInputRef = useRef(null); 
   const [uploadingFile, setUploadingFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+
 
 
 
@@ -145,12 +148,11 @@ const AdminTeacher = () =>{
         <AdminLayout>
            <div className="admin-teacher">
            <div className="admin-teacher-header">
-          <p>Select teacher to change</p>
+          <h2>All Teacher List</h2>
 
           
 
           <div className="add-new-teacher">
-            <div className="read-file">
                 <input
             type="file"
             style={{ display: 'none' }}
@@ -158,7 +160,6 @@ const AdminTeacher = () =>{
             onChange={handleFileSelect}
             ref={fileInputRef} 
         />
-            </div>
             <Button
         variant="contained"
         color="primary"
@@ -184,7 +185,7 @@ const AdminTeacher = () =>{
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <Checkbox />
+                    
                   </TableCell>
                   <TableCell>Teacher ID</TableCell>
                   <TableCell>Teacher Name</TableCell>
@@ -198,7 +199,11 @@ const AdminTeacher = () =>{
                 {teacherList.map((teacher) => (
                   <TableRow key={teacher.TeacherID}>
                     <TableCell>
-                      <Checkbox />
+                     {/* image */}
+                      <Avatar alt={teacher.first_name} src={teacher.image}
+                      sx={{ width: 40, height: 40 }}
+                       />
+
                     </TableCell>
                     <TableCell>{teacher.TeacherID}</TableCell>
                     <TableCell>

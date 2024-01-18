@@ -155,18 +155,30 @@ def delete_student(request, studentID):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def student_list(request, username):
-    students = Student.objects.all()
-    serializer = StudentSerializer(students, many=True)
-    data = serializer.data
-    for item in data:
-        item['image_url'] = request.build_absolute_uri(item['image'])
-        del item['image']
-    return Response(data)
+    try:
+        students = Student.objects.all()
+
+        student_data = []
+
+        for student in students:
+            data = {
+                'studentID': student.studentID,
+                'first_name': student.first_name,
+                'last_name': student.last_name,
+                'email': student.email,
+                'phone': student.phone,
+                'department': student.department.Department_name,
+                'image': request.build_absolute_uri(student.image.url),
+                'user': student.user.username,
+            }
+            student_data.append(data)
+
+        return Response(student_data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
-@api_view(['GET'])
 def student_detail(request, studentID):
     student = Student.objects.get(studentID=studentID)
     serializer = StudentSerializer(student)

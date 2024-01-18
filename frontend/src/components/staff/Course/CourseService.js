@@ -1,9 +1,9 @@
 import instance from "../../../api/axios";
 
 
-const getTeacherList =async(username) =>{
+const getTeacherList =async() =>{
     try{
-        const response = await instance.get(`/teacher/list/${username}/`);
+        const response = await instance.get(`/teacher/list/`);
         return response.data;
     }catch(error){
         throw new Error(error);

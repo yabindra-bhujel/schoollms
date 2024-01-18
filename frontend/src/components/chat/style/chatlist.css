@@ -78,8 +78,8 @@
   border-top: solid rgb(163, 158, 158) 1px;
   overflow-y: scroll;
   overflow-y: scroll;
-  background-color: aqua;
-  height: 300px;
+  height: calc(100vh - 250px);
+  height: calc(100vh - 232px);
   margin-bottom: 20px;
 }
 .chat__list__body .seleteduser {
@@ -94,8 +94,9 @@
   align-items: center;
   margin: 12px 0;
   cursor: pointer;
+  position: relative;
 }
-.chat__list__body .chat_list_items m img {
+.chat__list__body .chat_list_items img {
   margin-top: 4px;
   height: 55px;
   width: 55px;

@@ -44,15 +44,17 @@ const User = () => {
   return (
     <AdminLayout>
       <div className="admin-teacher">
-        <div className="admin-teacher-header"></div>
+        <div className="admin-teacher-header">
+          <h2>All Users</h2>
+        </div>
 
         <div className="admin-student-table">
+
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <Checkbox />
                   </TableCell>
                   <TableCell>Username</TableCell>
                   <TableCell>email</TableCell>
@@ -70,7 +72,6 @@ const User = () => {
                 {userlist.map((user) => (
                   <TableRow key={user.username}>
                     <TableCell>
-                      <Checkbox />
                     </TableCell>
                     <TableCell>{user.username}</TableCell>
                     <TableCell>

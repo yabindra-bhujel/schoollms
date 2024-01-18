@@ -5,8 +5,11 @@ import "./style/setting.css";
 import ChnagePassword from "./ChnagePassword";
 import OtherSetting from "./otherSetting";
 import TeacherProfile from "./Profile/TeacherProfile";
+import getUserInfo from "../../api/user/userdata";
 const Setting = () => {
   const [activeMenuItem, setActiveMenuItem] = useState("Profile");
+
+  const isTeacher = getUserInfo().isTeacher;
 
   const handleMenuItemClick = (menu) => {
     setActiveMenuItem(menu);
@@ -17,12 +20,12 @@ const Setting = () => {
       case "Profile":
         return <TeacherProfile />;
 
-        case "Change Password":
-            return <ChnagePassword />;
+      case "Change_Password":
+        return <ChnagePassword />;
 
 
-        case "Other Settings":
-            return <OtherSetting />;
+      case "Other_Settings":
+        return <OtherSetting />;
 
       default:
         return null;
@@ -32,29 +35,47 @@ const Setting = () => {
   return (
     <Layout>
       <div className="settings">
+        <div className="setting-menu-header">
+          <h1>Settings</h1>
+          <strong>Manage your settings and preference.</strong>
+        </div>
         <div className="setting-menu">
           <div className="setting-menu-items">
-            <li
-              className={activeMenuItem === "Profile" ? "act-menu" : ""}
-              onClick={() => handleMenuItemClick("Profile")}
-            >
-              Profile
-            </li>
-            <li
-              className={activeMenuItem === "Change Password" ? "act-menu" : ""}
-              onClick={() => handleMenuItemClick("Change Password")}
-            >
-              Change Password
-            </li>
-            <li
-              className={activeMenuItem === "Other Settings" ? "act-menu" : ""}
-              onClick={() => handleMenuItemClick("Other Settings")}
-            >
-             Other Setting
-            </li>
+            <button className={activeMenuItem === "Profile" ? "act-menu" : ""}
+              onClick={() => handleMenuItemClick("Profile")}>Profile Settings</button>
+            <button
+              className={
+                activeMenuItem === "notification" ? "act-menu" : ""
+              }
+              onClick={() => handleMenuItemClick("notification")}
+            >Notification Preferences</button>
+
+
+
+            <button
+              className={
+                activeMenuItem === "Change_Password" ? "act-menu" : ""
+              }
+              onClick={() => handleMenuItemClick("Change_Password")}
+            >Password and Security</button>
+
+
+            {isTeacher && (
+              <button
+                className={
+                  activeMenuItem === "teaching_preferences" ? "act-menu" : ""
+                }
+                onClick={() => handleMenuItemClick("teaching_preferences")}
+              >Teaching Preferences</button>
+            )}
+
+
+
           </div>
+
+
         </div>
-      <div className="component-container">{renderComponent()}</div>
+        <div className="component-container">{renderComponent()}</div>
 
       </div>
     </Layout>

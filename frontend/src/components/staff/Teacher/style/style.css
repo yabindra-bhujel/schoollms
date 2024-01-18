@@ -6,10 +6,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
   border-bottom: 1px solid #ccc;
   background-color: #fff;
-  height: 70px;
 }
 .admin-teacher .admin-teacher-header .admin-student-search {
   display: flex;
@@ -25,43 +23,16 @@
   outline: none;
 }
 .admin-teacher .admin-teacher-header .add-new-teacher {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.admin-teacher .admin-teacher-header .add-new-teacher a {
-  text-decoration: none;
-  color: #fff;
-}
-.admin-teacher .admin-teacher-header .add-new-teacher button {
-  margin-right: 50px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px;
-  border-radius: 5px;
-  background-color: #1e90ff;
-  color: #fff;
   padding: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  font-weight: bold;
-  font-size: 20px;
-}
-.admin-teacher .admin-teacher-header .add-new-teacher button:hover {
-  background-color: #fff;
-  color: #1e90ff;
-  border: 1px solid #1e90ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .admin-student-table .MuiTableContainer-root {
-  max-height: calc(100vh - 210px);
+  max-height: calc(100vh - 140px);
   overflow-y: auto;
-}
-
-.admin-student-table {
-  margin-top: 20px;
 }
 
 .TableHead {

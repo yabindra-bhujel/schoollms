@@ -103,9 +103,8 @@
     border-top: solid rgb(163, 158, 158) 1px;
     overflow-y: scroll;
     overflow-y: scroll;
-    // height: calc(100vh - 250px);
-    background-color: aqua;
-    height: 300px;
+    height: calc(100vh - 250px);
+    height: calc(100vh - 232px);
     margin-bottom: 20px;
 
     .seleteduser{
@@ -122,7 +121,7 @@
         align-items: center;
         margin: 12px 0;
         cursor: pointer;
-        m
+        position: relative;
 
     
           

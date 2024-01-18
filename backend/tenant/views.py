@@ -7,19 +7,16 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes, authentication_classes
 from .models import UniversityLoginScreenInfo, UserProfile
 from django.contrib.auth import get_user_model
-import pyotp
 User = get_user_model()
-from datetime import datetime, timedelta
-from django.utils.dateparse import parse_datetime
-import jwt
-from django.conf import settings
 from rest_framework.views import APIView
-
-
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
 
 class BlacklistRefreshView(APIView):
     def post(self, request):
@@ -147,27 +144,32 @@ def get_user_profile_pic(request, username):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def change_password(request):
      try:
-          data = request.data
-          user_id = data["user_id"]
-          user_email = data["email"]
-          old_password = data["old_password"]
-          new_password = data["confirm_password"]
+        user = request.user
 
-          user = User.objects.filter(id= user_id, email = user_email).first()
+        old_password = request.data['oldPassword']
+        new_password = request.data['newPassword']
+        confirm_password = request.data['confirmPassword']
 
-          if not user:
-                return Response({"message": "User not found in this email"})
-          
-          if not user.check_password(old_password):
-                return Response({"message": "Old password is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
-          elif old_password == new_password:
-                return Response({"message": "New password is same as old password"}, status=status.HTTP_400_BAD_REQUEST)
-          else:
-                user.set_password(new_password)
-                user.save()
-                return Response({"success": "Password changed successfully"}, status= status.HTTP_200_OK)
+        if new_password != confirm_password:
+            return Response({"error": "Password does not match"}, status= status.HTTP_400_BAD_REQUEST)
+        
+
+        # Check old password
+        if not user.check_password(old_password):
+            return Response({"error": "Old password is not correct"}, status= status.HTTP_400_BAD_REQUEST)
+        
+
+
+
+        user.set_password(new_password)
+        user.save()
+
+
+        return Response({"success": "Password changed successfully"}, status= status.HTTP_200_OK)
      except Exception as e:
             print(e)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

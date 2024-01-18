@@ -39,7 +39,7 @@ const AdminCourseAdd = () => {
 
     useEffect(() => {
         const fetchTeacherList = async () => {
-            const response = await getTeacherList("admin");
+            const response = await getTeacherList();
             const full_name = response.map((teacher) => {  
                 return teacher.first_name + " " + teacher.last_name  + " " + teacher.TeacherID;
             }
@@ -97,7 +97,7 @@ const AdminCourseAdd = () => {
 
             
             try {
-                const response = await adminCourseAdd("admin", courseData);
+                const response = await adminCourseAdd(courseData);
                 console.log(response);
                 if (response.status === 201) {
                     navigator('/admin/course');

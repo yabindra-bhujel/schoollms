@@ -11,8 +11,8 @@ import { SiGoogleclassroom } from "react-icons/si";
 import { RiCalendarTodoLine } from "react-icons/ri";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar } from '@mui/material';
 import instance from "../../../api/axios";
-
-
+import getUserInfo from "../../../api/user/userdata";
+import TextField from '@mui/material/TextField';
 
 const AdminSideBar = () =>{
     const location = useLocation();
@@ -25,6 +25,8 @@ const AdminSideBar = () =>{
     const [errors, setErrors] = useState({});
     const [snackbar, setSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
+    const username = getUserInfo().username;
+
 
 
     const handlePasswordChange = () => {
@@ -36,19 +38,64 @@ const AdminSideBar = () =>{
         setPasswordChange(false);
     }
 
-    const handlePasswordChangeSubmit = async () => {
-        if (password.newPassword !== password.confirmPassword) {
-            setErrors({ confirmPassword: "Passwords do not match" });
-            return;
+
+    const ChangePassword = async (data) => {
+        try{
+          const endpoint = "change_password";
+          const response = await instance.post(endpoint, data);
+          return response;
+
+
+        }catch(error){
+           throw error;
         }
-        // const response = await ChangePassword("admin", password);
-        // console.log(response);
-        // if (response.status === 200) {
-        //     setSnackbar(true);
-        //     setSnackbarMessage("Password Changed Successfully");
-        //     setPasswordChange(false);
-        // }
     }
+
+    const handlePasswordChangeSubmit = async () => {
+      setErrors({});
+      if (password.oldPassword === "") {
+          setErrors({ oldPassword: "Old Password is required" });
+          return;
+      }
+  
+      if (password.newPassword === "") {
+          setErrors({ newPassword: "New Password is required" });
+          return;
+      }
+  
+      if (password.confirmPassword === "") {
+          setErrors({ confirmPassword: "Confirm Password is required" });
+          return;
+      }
+  
+      if (password.newPassword !== password.confirmPassword) {
+          setErrors({ confirmPassword: "Passwords do not match" });
+          return;
+      }
+  
+      try {
+          const response = await ChangePassword(password);
+          if (response.status === 200) {
+              setSnackbar(true);
+              setSnackbarMessage("Password Changed Successfully");
+              setPasswordChange(false);
+              setTimeout(() => {
+                  handleLogout();
+              }, 30000);
+          }
+      } catch (error) {
+          setSnackbar(true);
+          if (error.response) {
+              const errorMessage = error.response.data.error || "There was an error processing your request.";
+              setSnackbarMessage(errorMessage);
+          } else {
+              setSnackbarMessage("An unexpected error occurred. Please try again later.");
+          }
+          setPasswordChange(false);
+      }
+  }
+  
+  
 
     const handlePasswordChangeCancel = () => {
         setPasswordChange(false);
@@ -77,6 +124,10 @@ const AdminSideBar = () =>{
           console.log(error);
       }
   }
+
+
+  
+
   
 
 
@@ -84,9 +135,19 @@ const AdminSideBar = () =>{
 
     return(
         <div>
+
+            <Snackbar
+                open={snackbar}
+                autoHideDuration={6000}
+                onClose={() => setSnackbar(false)}
+                message={snackbarMessage}
+            />
+
+            
             <Dialog
                 open={passwordChange}
                 onClose={handlePasswordChangeClose}
+                fullWidth
             >
 
                 <DialogTitle>
@@ -94,41 +155,48 @@ const AdminSideBar = () =>{
                 </DialogTitle>
 
                 <DialogContent>
-                    <div className="password-change-form">
-                        <div className="password-change-input">
-                            <label>Old Password</label>
-                            <input
+    <div className="password-change-form">
+        <TextField
+            label="Old Password"
+            type="password"
+            name="oldPassword"
+            value={password.oldPassword}
+            onChange={handleChange}
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            error={!!errors.oldPassword}
+            helperText={errors.oldPassword}
+        />
 
-                                type="password"
-                                name="oldPassword"
-                                value={password.oldPassword}
-                                onChange={handleChange}
-                            />
-                        </div>
+        <TextField
+            label="New Password"
+            type="password"
+            name="newPassword"
+            value={password.newPassword}
+            onChange={handleChange}
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            error={!!errors.newPassword}
+            helperText={errors.newPassword}
+        />
 
-                        <div className="password-change-input">
-                            <label>New Password</label>
-                            <input
+        <TextField
+            label="Confirm Password"
+            type="password"
+            name="confirmPassword"
+            value={password.confirmPassword}
+            onChange={handleChange}
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword}
+        />
+    </div>
+</DialogContent>
 
-                                type="password"
-                                name="newPassword"
-                                value={password.newPassword}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        
-                        <div className="password-change-input">
-                            <label>Confirm Password</label>
-                            <input
-
-                                type="password"
-                                name="confirmPassword"
-                                value={password.confirmPassword}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-                </DialogContent>
 
 
                 <DialogActions>
@@ -156,12 +224,12 @@ const AdminSideBar = () =>{
 
           <div className="admin-nav-bar">
             <h1>
-            LMS administration
+            CampusFlow  Administration
             </h1>
 
             <div className="nav-bar-menu">
               <div className="welcome">
-                <p>Welcome Admin</p>
+                <p>Welcome {username}</p>
               </div>
 
               <div className="chnage-password">

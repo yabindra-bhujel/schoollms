@@ -105,7 +105,7 @@ const AdminCourse = () => {
             </Dialog>
 
         <div className="admin-course">
-            <h1>Course</h1>
+            <h1>All Course List.</h1>
 
 
             <Link to="/admin/course/add">

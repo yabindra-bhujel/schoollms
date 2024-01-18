@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import AdminLayout from "../navigation/NavigationLayout";
-import { FormHelperText, TextField, Button, Container, Grid } from '@mui/material';
-import { Input, FormControl, InputLabel, Select, MenuItem, List, ListItem } from '@mui/material';
+import {  Button, Container, Grid, Snackbar } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, List, ListItem } from '@mui/material';
 import { getTeacherList } from "../Course/CourseService";
 import { AdminCourseList } from "../Course/CourseService";
 import { StudentList } from "../Student/StudentService";
 import { addEnrollSubject } from "./EnrollService";
+
 
 
 const AddEnrollSubject = () => {
@@ -13,6 +14,16 @@ const AddEnrollSubject = () => {
     const [departmentList, setDepartmentList] = useState([]);
     const [studentList, setStudentList] = useState([]);
     const [selectedStudents, setSelectedStudents] = useState([]);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
+
+    const handleSnackbarClose = () => {
+        setOpenSnackbar(false);
+    };
+
+    
+
 
     const handleSelectStudent = (student) => {
         if (!selectedStudents.includes(student)) {
@@ -40,30 +51,37 @@ const AddEnrollSubject = () => {
 
 
     useEffect(() => {
-        const fetchTeacherList = async () => {
-            const response = await getTeacherList("admin");
-            const full_name = response.map((teacher) => {
-                return teacher.first_name + " " + teacher.last_name + " " + teacher.TeacherID;
-            }
-            );
-            setTeacherList(full_name);
+        const fatchData = async () => {
+            try {
+                const teacherresponse = await getTeacherList();
+                const full_name = teacherresponse.map((teacher) => {
+                    return teacher.first_name + " " + teacher.last_name + " " + teacher.TeacherID;
+                }
+                );
+                setTeacherList(full_name);
+    
+                const course_response = await AdminCourseList();
+                const department_name = course_response.map((course) => {
+                    return course.subject_name;
+                }
+                );
+                setDepartmentList(department_name);
 
-            const course_response = await AdminCourseList();
-            const department_name = course_response.map((course) => {
-                return course.subject_name;
-            }
-            );
-            setDepartmentList(department_name);
 
-            const student_response = await StudentList("admin");
-            const student_name = student_response.map((student) => {
-                return student.first_name + " " + student.last_name + " " + student.studentID;
+                const response = await StudentList("admin");
+                const student = response.data;
+                const student_name_id = student.map((student) =>
+                 student.first_name + " " + student.last_name  + " " + student.studentID);
+                setStudentList(student_name_id);
+                
+               
+            } catch (error) {
+                console.error('Error fetching student data:', error);
             }
-
-            );
-            setStudentList(student_name);
-        }
-        fetchTeacherList();
+        };
+        
+        
+        fatchData();
     }, []);
 
 
@@ -84,8 +102,38 @@ const AddEnrollSubject = () => {
             subject_teacher: enrollSubjectData.subject_teacher,
             student: selectedStudents
         }
+
+
+
+
+
+
+
+        // Validation
+    let hasError = false;
+    let validationErrors = {};
+
+    if (!data.subject_name) {
+        validationErrors.subject_name = "Course department is required";
+        hasError = true;
+    }
+
+    if (!data.subject_teacher) {
+        validationErrors.subject_teacher = "Teacher name is required";
+        hasError = true;
+    }
+
+    if (!data.student || data.student.length === 0) {
+        validationErrors.student = "At least one student must be selected";
+        hasError = true;
+    }
+
+    setSnackbarMessage(validationErrors);
+
         try {
+            if(!hasError) {
             const response = await addEnrollSubject("admin", data);
+            }
         } catch (error) {
             console.log(error);
             setErrors(error.response.data);
@@ -95,6 +143,13 @@ const AddEnrollSubject = () => {
 
     return (
         <AdminLayout>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+                message={snackbarMessage}
+            />
+            
             <div className="enroll-student-header">
                 <h1> Add Enroll Subject</h1>
 
@@ -119,6 +174,9 @@ const AddEnrollSubject = () => {
                                 value={enrollSubjectData.subject_name}
                                 label="Course Department"
                                 onChange={handleChange}
+                                error={errors.subject_name}
+                                helperText={errors.subject_name}
+
                             >
                                 {departmentList.map((department, index) => (
                                     <MenuItem key={index} value={department}>{department}</MenuItem>
@@ -136,6 +194,8 @@ const AddEnrollSubject = () => {
                                 value={enrollSubjectData.subject_teacher}
                                 label="Teacher Name"
                                 onChange={handleChange}
+                                error={errors.subject_teacher}
+                                helperText={errors.subject_teacher}
                             >
                                 {teacherList.map((teacher, index) => (
                                     <MenuItem key={index} value={teacher}>{teacher}</MenuItem>
@@ -165,6 +225,7 @@ const AddEnrollSubject = () => {
                                             ))}
                                         </List>
                                     </FormControl>
+
                                 </div>
                             ) : (
                                 <></>
