@@ -179,107 +179,107 @@ def student_list(request, username):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def student_detail(request, studentID):
-    student = Student.objects.get(studentID=studentID)
-    serializer = StudentSerializer(student)
-    course_enrolls = SubjectEnroll.objects.filter(student=student)
-    # Create a list to store the course data
-    course_data = []
-    
-    # Iterate over the course_enrolls queryset
-    for enroll in course_enrolls:
-        course = {
-            'id': enroll.course.subject_code,
-            'name': enroll.course.subject_name,
-            'weekday':enroll.course.weekday,
-            'start_time': enroll.course.period_start_time,
-            'end_time': enroll.course.period_end_time,
-            'class_room': enroll.course.class_room,
-            'teacher': {
-                'id': enroll.teacher.id,
-                'name': enroll.teacher.first_name
-            },
-            'assignments': [],  # Initialize an empty list for assignments
-        }
 
-
-         # Get the assignments associated with the course
-        assignments = Assignment.objects.filter(course=enroll.course)
+    try:
+        student = Student.objects.get(studentID=studentID)
+        serializer = StudentSerializer(student)
+        course_enrolls = SubjectEnroll.objects.filter(student=student)
+        # Create a list to store the course data
+        course_data = []
         
-        # Iterate over the assignments queryset
-        for assignment in assignments:
-            assignment_data = {
-                'id':assignment.id,
-                'assignment_title': assignment.assignment_title,
-                'assignment_description': assignment.assignment_description,
-                'assignment_deadline': assignment.assignment_deadline,
-                'assignment_posted_date': assignment.assignment_posted_date,
-                'assignment_type': assignment.assignment_type,
-                'assignment_start_date':assignment.assignment_start_date,
-                'is_active': assignment.is_active,
-
+        # Iterate over the course_enrolls queryset
+        for enroll in course_enrolls:
+            course = {
+                'id': enroll.course.subject_code,
+                'name': enroll.course.subject_name,
+                'weekday':enroll.course.weekday,
+                'start_time': enroll.course.period_start_time,
+                'end_time': enroll.course.period_end_time,
+                'class_room': enroll.course.class_room,
+                'teacher': {
+                    'id': enroll.teacher.id,
+                    'name': enroll.teacher.first_name
+                },
+                'assignments': [],  # Initialize an empty list for assignments
             }
-            course['assignments'].append(assignment_data)
-             # Add the assignment data to the course 
-        course_data.append(course)
 
-    # TODO: make send notifaction only related course 
 
-    # notifications = Notifaction.objects.all()
-    # for notifications in notifications:
-    #     notification_date = {
-    #         'id':notifications.id,
-    #         'title':notifications.title,
-    #         'date':notifications.date,
-    #         'time':notifications.time,
-    #         'is_read':notifications.is_read
-    #     }
+            # Get the assignments associated with the course
+            assignments = Assignment.objects.filter(course=enroll.course)
+            
+            # Iterate over the assignments queryset
+            for assignment in assignments:
+                assignment_data = {
+                    'id':assignment.id,
+                    'assignment_title': assignment.assignment_title,
+                    'assignment_description': assignment.assignment_description,
+                    'assignment_deadline': assignment.assignment_deadline,
+                    'assignment_posted_date': assignment.assignment_posted_date,
+                    'assignment_type': assignment.assignment_type,
+                    'assignment_start_date':assignment.assignment_start_date,
+                    'is_active': assignment.is_active,
+
+                }
+                course['assignments'].append(assignment_data)
+                # Add the assignment data to the course 
+            course_data.append(course)
+
     
-    # Create a dictionary with the student data
-    student_data = {
-        'studentID': serializer.data['studentID'],
-        'first_name': serializer.data['first_name'],
-        'last_name': serializer.data['last_name'],
-        'gender': serializer.data['gender'],
-        'date_of_birth': serializer.data['date_of_birth'],
-        'email': serializer.data['email'],
-        'phone': serializer.data['phone'],
-        'address': serializer.data.get('address', ''),
-        "department": DepartmentSerializers(student.department).data,
-        'image': request.build_absolute_uri(serializer.data['image']),
-        'user': serializer.data['user'],
+        # Create a dictionary with the student data
+        student_data = {
+            'studentID': serializer.data['studentID'],
+            'first_name': serializer.data['first_name'],
+            'last_name': serializer.data['last_name'],
+            'gender': serializer.data['gender'],
+            'date_of_birth': serializer.data['date_of_birth'],
+            'email': serializer.data['email'],
+            'phone': serializer.data['phone'],
+            'address': serializer.data.get('address', ''),
+            "department": DepartmentSerializers(student.department).data,
+            'image': request.build_absolute_uri(serializer.data['image']),
+            'user': serializer.data['user'],
 
-        # address
-        'country':serializer.data['country'],
-        'state':serializer.data['state'],
-        'city':serializer.data['city'],
-        'zip_code':serializer.data['zip_code'],
-        'parents': [],
+            # address
+            'country':serializer.data['country'],
+            'state':serializer.data['state'],
+            'city':serializer.data['city'],
+            'zip_code':serializer.data['zip_code'],
+            'parents': [],
 
 
 
-    }
-    # Get all of the parents that are assigned to this user and add them as a list under "parent" key
-    parents = Parent.objects.filter(student=student)
-    for parent in parents:
-        if parent is None or parent == '':
-            continue
-        parent_data = {
-            'father_name': parent.father_name,
-            'mother_name': parent.mother_name,
-            'parent_email': parent.parent_email,
-            'parent_phone': parent.parent_phone,
         }
-        student_data['parents'].append(parent_data)
+        # Get all of the parents that are assigned to this user and add them as a list under "parent" key
+        parents = Parent.objects.filter(student=student)
+        for parent in parents:
+            if parent is None or parent == '':
+                continue
+            parent_data = {
+                'father_name': parent.father_name,
+                'mother_name': parent.mother_name,
+                'parent_email': parent.parent_email,
+                'parent_phone': parent.parent_phone,
+            }
+            student_data['parents'].append(parent_data)
 
+        
+        # Create a dictionary to combine the student data and course data
+        serialized_data = {
+            'student': student_data,
+            'courses': course_data,
+            # 'notification':notification_date
+        }
+        return Response(serialized_data)
+    except Student.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    # Create a dictionary to combine the student data and course data
-    serialized_data = {
-        'student': student_data,
-        'courses': course_data,
-        # 'notification':notification_date
-    }
-    return Response(serialized_data)
 
 
 

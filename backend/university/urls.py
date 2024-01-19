@@ -22,8 +22,11 @@ urlpatterns = [
     path('api/create_new_user',create_new_user, name="create_new_user"),
     path('get_university_login_screen_info',get_university_login_screen_info, name="get_university_login_screen_info"),
     path('get_user_profile_pic/<str:username>/', get_user_profile_pic, name="get_user_profile_pic"),
+    path('update_user_profile_pic/', update_user_profile_pic, name="update_user_profile_pic"),
     path('change_password', change_password, name="change_password"),
     path('get_user_list/<str:username>/', get_user_list, name="get_user_list"),
+    path('get_user_profile_details/', get_user_profile_details, name="get_user_profile_details"),
+    path('upadte_user_info/', upadte_user_info, name="upadte_user_info"),
 
 
 

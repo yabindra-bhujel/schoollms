@@ -2,12 +2,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from student.models import Parent, Student
+from teacher.models import Teacher
 from .serializers import UserSerializer, UniversityLoginScreenInfoSerializer, UserProfileSerializer, AdminUserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view,permission_classes, authentication_classes
+from rest_framework.decorators import api_view,permission_classes, authentication_classes,parser_classes
 from .models import UniversityLoginScreenInfo, UserProfile
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -15,7 +18,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class BlacklistRefreshView(APIView):
@@ -103,6 +107,8 @@ def get_university_login_screen_info(request):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_user_profile_pic(request, username):
     try:
         # Retrieve the user based on the provided username
@@ -123,6 +129,7 @@ def get_user_profile_pic(request, username):
                 'email': user.email,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
+
                 
             }
 
@@ -142,6 +149,31 @@ def get_user_profile_pic(request, username):
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def update_user_profile_pic(request):   
+    try:
+        user = request.user
+        profile = UserProfile.objects.get(user=user)
+        
+        image_file = request.FILES.get('image', None)
+
+        if image_file:
+            profile.image = image_file
+            profile.save()
+            return Response({"success": "Profile picture updated successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "No image file provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except UserProfile.DoesNotExist:
+        return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(e)
+        return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
@@ -186,3 +218,99 @@ def get_user_list(request, username):
      except Exception as e:
             print(e)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+     
+
+
+
+
+
+
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_profile_details(request):
+    try:
+        user = request.user
+        user_obj = User.objects.get(username=user)
+        is_student = user_obj.is_student
+        is_teacher = user_obj.is_teacher
+        teacher_data = []
+        student_data = []
+
+        if is_teacher:
+            teacher = Teacher.objects.get(user=user_obj)
+            teacher_data.append({
+                "phone": teacher.phone,
+                "address": teacher.address,
+                "date_of_birth": teacher.date_of_birth,
+                "gender": teacher.gender
+
+                 
+            })
+
+        if is_student:
+            student = Student.objects.get(user=user_obj)
+            student_data.append({
+                 "gender": student.gender,
+                    "date_of_birth": student.date_of_birth,
+                    "phone": student.phone,
+                    "country": student.country,
+                    "state": student.state,
+                    "city": student.city,
+                    "zip_code": student.zip_code,
+
+
+               
+            })
+
+    
+
+        final_data = {
+            "user": {
+                "username": user_obj.username,
+                "email": user_obj.email,
+                "first_name": user_obj.first_name,
+                "last_name": user_obj.last_name,
+            },
+            **({"teacher_data": teacher_data} if is_teacher else {}),
+            **({"student_data": student_data} if is_student else {}),
+        }
+
+        return Response(final_data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def upadte_user_info(request):
+    try:
+        user = request.user
+        first_name = request.data['first_name']
+        last_name = request.data['last_name']
+        email = request.data['email']
+        # update user info
+
+        try:
+            user = User.objects.get(username=user)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+            user.save()
+
+        except User.DoesNotExist as e:
+            print(e)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(status=status.HTTP_200_OK)
+     
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

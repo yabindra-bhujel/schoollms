@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Layout from "../navigations/Layout";
 import "./style/setting.css";
-// import Profile from "./Profile";
+import Profile from "./Profile";
 import ChnagePassword from "./ChnagePassword";
 import OtherSetting from "./otherSetting";
 import TeacherProfile from "./Profile/TeacherProfile";
@@ -18,7 +18,7 @@ const Setting = () => {
   const renderComponent = () => {
     switch (activeMenuItem) {
       case "Profile":
-        return <TeacherProfile />;
+        return <Profile />;
 
       case "Change_Password":
         return <ChnagePassword />;

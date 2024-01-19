@@ -60,186 +60,186 @@
 
 
 
-// user profile section scss
-.setting-profile{
-    margin-left: 50px;
-    margin-right: 50px;
+// // user profile section scss
+// .setting-profile{
+//     margin-left: 50px;
+//     margin-right: 50px;
 
-    height: 70px;
-    border-bottom: solid 1px blueviolet;
-    display: flex;
-    justify-content: space-between;
+//     height: 70px;
+//     border-bottom: solid 1px blueviolet;
+//     display: flex;
+//     justify-content: space-between;
 
-    .profile-header{
-        h3{
-            font-size: 20px;
-            font-weight: bold;
-            padding-top: 10px;
-        }
-        p{
-            font-size: 15px;
-            font-weight: bold;
-        }
+//     .profile-header{
+//         h3{
+//             font-size: 20px;
+//             font-weight: bold;
+//             padding-top: 10px;
+//         }
+//         p{
+//             font-size: 15px;
+//             font-weight: bold;
+//         }
 
-    }
+//     }
 
-    .save-button{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        button{
-            width: auto;
-            padding: 10px;
-            height: 40px;
-            background-color: rgb(152, 154, 251);
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-
-            &:hover{
-                background-color: white;
-                border: solid 2px black;
-                color: black;
-            }
-        }
-    }
+//     .save-button{
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//         button{
+//             width: auto;
+//             padding: 10px;
+//             height: 40px;
+//             background-color: rgb(152, 154, 251);
+//             border: none;
+//             border-radius: 5px;
+//             color: white;
+//             font-weight: bold;
+//             cursor: pointer;
+//             display: flex;
+//             justify-content: center;
+//             align-items: center;
 
 
-}
+//             &:hover{
+//                 background-color: white;
+//                 border: solid 2px black;
+//                 color: black;
+//             }
+//         }
+//     }
 
 
-.profile-form{
-    margin-left: 50px;
-    margin-right: 50px;
+// }
+
+
+// .profile-form{
+//     margin-left: 50px;
+//     margin-right: 50px;
   
 
 
-    .user-name{
-        display: flex;
-        gap: 20px;
-        padding: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100px;
-        border-bottom: solid green 1px;
+//     .user-name{
+//         display: flex;
+//         gap: 20px;
+//         padding: 10px;
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//         height: 100px;
+//         border-bottom: solid green 1px;
 
-        label{
-            font-size: 20px;
-            font-weight: bold;
-            margin-right: 50px;
-        }
+//         label{
+//             font-size: 20px;
+//             font-weight: bold;
+//             margin-right: 50px;
+//         }
      
 
 
-        .input-filds{
-            width: 60%;
-            height: 45px;
-        }
-    }
+//         .input-filds{
+//             width: 60%;
+//             height: 45px;
+//         }
+//     }
 
-}
-
-
-
-// chnage password scss
-
-.update-button{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    button{
-        width: auto;
-        padding: 20px;
-        height: 40px;
-        background-color: rgb(66, 68, 193);
-        border: none;
-        border-radius: 5px;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 15px;
-
-        &:hover{
-            background-color: rgb(145, 212, 219);
-            color: black;
-
-        }
-        }
-}
+// }
 
 
 
-.from{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+// // chnage password scss
 
-}
-.password-email{
-    margin-left: 50px;
-    margin-right: 40px;
-    width: 800px;
-    padding: 50px;
-    label{
-        font-size: 20px;
-        font-weight: bold;
-        margin-right: 50px;
+// .update-button{
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     margin-top: 20px;
+//     button{
+//         width: auto;
+//         padding: 20px;
+//         height: 40px;
+//         background-color: rgb(66, 68, 193);
+//         border: none;
+//         border-radius: 5px;
+//         color: white;
+//         font-weight: bold;
+//         cursor: pointer;
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//         font-size: 15px;
+
+//         &:hover{
+//             background-color: rgb(145, 212, 219);
+//             color: black;
+
+//         }
+//         }
+// }
 
 
-    }
 
-    input{
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
+// .from{
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+
+// }
+// .password-email{
+//     margin-left: 50px;
+//     margin-right: 40px;
+//     width: 800px;
+//     padding: 50px;
+//     label{
+//         font-size: 20px;
+//         font-weight: bold;
+//         margin-right: 50px;
+
+
+//     }
+
+//     input{
+//         width: 100%;
+//         padding: 12px 20px;
+//         margin: 8px 0;
+//         display: inline-block;
+//         border: 1px solid #ccc;
+//         border-radius: 4px;
+//         box-sizing: border-box;
 
      
-      }
+//       }
 
-      .error-message-list{
-        padding: 20px;
+//       .error-message-list{
+//         padding: 20px;
 
       
 
 
-      .success-message{
-        color: red;
-        font-weight: bold;
-        background-color: rgb(89, 72, 185);
-        padding: 10px;
-        border-radius: 10px;
-        font-size: 20px;
-      }
+//       .success-message{
+//         color: red;
+//         font-weight: bold;
+//         background-color: rgb(89, 72, 185);
+//         padding: 10px;
+//         border-radius: 10px;
+//         font-size: 20px;
+//       }
 
-      .error-message{
-        color: red;
-        font-size: 15px;
-        font-weight: bold;
-  }
-  .success{
-    color: rgb(44, 237, 83);
-    font-weight: bold;
-    background-color: rgb(89, 72, 185);
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 20px;
-  }
-}
+//       .error-message{
+//         color: red;
+//         font-size: 15px;
+//         font-weight: bold;
+//   }
+//   .success{
+//     color: rgb(44, 237, 83);
+//     font-weight: bold;
+//     background-color: rgb(89, 72, 185);
+//     padding: 10px;
+//     border-radius: 10px;
+//     font-size: 20px;
+//   }
+// }
 
 
      
@@ -247,6 +247,6 @@
 
 
   
-}
+// }
 
 
