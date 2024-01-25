@@ -1,6 +1,9 @@
 
+from django.conf import Settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+from university import settings
 
 
 class User(AbstractUser):
@@ -39,13 +42,13 @@ class UserProfile(models.Model):
     @property
     def image_url(self):
         if self.image:
-            return self.image.url.replace('/media/', setting.MEDIA_URL)
+            return self.image.url.replace('/media/', settings.MEDIA_URL)
         
         
     @property
     def get_cover_image_url(self):
         if self.cover_image:
-            return self.cover_image.url.replace('/media/', setting.MEDIA_URL)
+            return self.cover_image.url.replace('/media/', settings.MEDIA_URL)
         
 
 
@@ -78,3 +81,15 @@ class UniversityLoginScreenInfo(models.Model):
         return f"University Login Screen Info - {self.university_full_name}"
 
     
+
+
+
+
+class ApplicationSettings(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_dark_mode = models.BooleanField(default=False)
+    is_notification = models.BooleanField(default=False)
+    isTwoFactorAuthEnabled = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f" {self.user.username} - Application Settings"

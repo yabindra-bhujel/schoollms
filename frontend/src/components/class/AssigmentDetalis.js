@@ -132,6 +132,7 @@ const AssigmentDetalis = () => {
       const student = response.data.students;
       setAssignment(response.data);
       setSubmissions(response.data.submissions);
+      console.log(response.data.submissions);
       setQquestion(response.data.questions);
     } catch (e) {
       console.log("error", e);

@@ -98,7 +98,7 @@ export default function DataTable({ submissions }) {
       headerClassName: 'headerStyle',
       sortable: false,
       renderCell: (params) => (
-        <>
+        <div>
           {params.value?.map((fileObj, index) => (
             <div key={index}>
               <a href={fileObj.url} target="_blank" rel="noopener noreferrer">
@@ -106,9 +106,10 @@ export default function DataTable({ submissions }) {
               </a>
             </div>
           ))}
-        </>
+        </div>
       ),
     },
+    
   ];
 
   const rows = submissions.map(submission => ({

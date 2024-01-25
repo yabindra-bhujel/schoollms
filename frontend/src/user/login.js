@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import jwtDecode from "jwt-decode";
 import "./login.css";
 import instance from "../api/axios";
@@ -26,7 +26,9 @@ function Login() {
 
     try {
       const endpoint = "/api/token/";
-      const response = await instance.post(endpoint, { username, password });
+      const response = await instance.post(endpoint, { username, password,
+        
+       });
       const { access, refresh, username: loggedInUsername } = response.data;
 
       // Store user data in localStorage only if OTP is not required
@@ -93,13 +95,18 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <div className="forgot-password-login">
-              <button type="button" onClick={handleLogin}>
-                Login
-              </button>
-              <a href="">Forgot password?</a>
+              <div className="forgot-password-login">
+                <button type="button" onClick={handleLogin}>
+                  Login
+                </button>
+                
+                <Link to="/resetpassword">Forgot password?</Link>
+              </div>
+              <div className="terms-of-use">
+            <p>Term of use | Privacy policy</p>
             </div>
-          </div>
+
+            </div>
         </div>
 
         <div className="other-image">
@@ -108,9 +115,7 @@ function Login() {
           </div>
         </div>
       </div>
-      <div className="login-fotter">
-        <p>Term of use | Privacy policy</p>
-      </div>
+     
     </>
   );
 }

@@ -151,6 +151,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'university.urls'
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -289,6 +291,9 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 
+APP_NAME = "LMS Shikoku University"
+FRONTEND_URL = "http://localhost:3000"
+
 
 
 EMAIL_IMAP_USERNAME = os.environ.get('EMAIL_IMAP_USERNAME')
@@ -297,8 +302,8 @@ EMAIL_IMAP_PASSWORD = os.environ.get('EMAIL_IMAP_PASSWORD')
 # imap backend config for get email
 EMAIL_IMAP_HOST = 'imap.gmail.com'
 EMAIL_IMAP_PORT = 993
-EMAIL_IMAP_USERNAME = EMAIL_IMAP_USERNAME,
-EMAIL_IMAP_PASSWORD = EMAIL_IMAP_PASSWORD,
+EMAIL_IMAP_USERNAME = EMAIL_IMAP_USERNAME
+EMAIL_IMAP_PASSWORD = EMAIL_IMAP_PASSWORD
 EMAIL_IMAP_USE_SSL = True
 
 
@@ -307,7 +312,7 @@ EMAIL_IMAP_USE_SSL = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587 
-EMAIL_HOST_USER = EMAIL_IMAP_USERNAME,
+EMAIL_HOST_USER = EMAIL_IMAP_USERNAME
 EMAIL_HOST_PASSWORD = EMAIL_IMAP_PASSWORD
 EMAIL_USE_TLS = True  
 

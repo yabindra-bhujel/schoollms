@@ -667,7 +667,6 @@ def course_details_student(request, subject_code, studentID):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def course_details(request, subject_code):
-    print(request)
     try:
         subject = Subject.objects.get(subject_code=subject_code)
     except Subject.DoesNotExist:
@@ -838,7 +837,7 @@ def file_assigment(request):
         assignment_id = request.data.get("assignment_id")
         student_id = request.data.get("student")
         try:
-            assignment = get_object_or_404(Assignment, pk=assignment_id, is_active=True)
+            assignment = get_object_or_404(Assignment, pk=assignment_id)
             student = get_object_or_404(Student, studentID=student_id)
         except ObjectDoesNotExist as e:
             print(e)
@@ -874,6 +873,11 @@ def file_assigment(request):
                 submission.assignment_submission_file.add(assignment_file)
         else:
             return Response({"message": "Submission not created"}, status=500)
+        
+
+         # Update the submission count for the assignment
+        assignment.submission_count = FileSubmission.objects.filter(assignment=assignment, is_submited=True).count()
+        assignment.save()
 
         return Response({"message": "File Submission Successfully"}, status=201)
     except Exception as e:
@@ -1361,6 +1365,8 @@ def get_student_list_by_subject_id(request, subject_code):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def create_attdenace_and_add_student(request):
     try:
         data = request.data
@@ -1404,6 +1410,8 @@ def create_attdenace_and_add_student(request):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_attendance_by_student(request, student_id):
     try:
         try:
@@ -1451,6 +1459,8 @@ def get_attendance_by_student(request, student_id):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def AddAnnouncement(request):
     try:
         subject_code = request.data.get('subject_code')
@@ -1520,6 +1530,8 @@ def AddAnnouncement(request):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_announcement_by_subject(request, subject_code):
     try:
         subject = Subject.objects.get(subject_code=subject_code)
@@ -1536,6 +1548,8 @@ def get_announcement_by_subject(request, subject_code):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_announcement_by_subject_student(request, subject_code):
     try:
         subject = Subject.objects.get(subject_code=subject_code)
@@ -1553,6 +1567,8 @@ def get_announcement_by_subject_student(request, subject_code):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_announcement_by_student(request, studentid):
     try:
         student = Student.objects.get(studentID=studentid)
@@ -1570,6 +1586,8 @@ def get_announcement_by_student(request, studentid):
 
 
 @api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def handle_active_change_announcement(request, id):
     try:
         announcement = Announcement.objects.get(id=id)
@@ -1585,6 +1603,8 @@ def handle_active_change_announcement(request, id):
 
 
 @api_view(['DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def delete_announcement(request, id):
     try:
         announcement = Announcement.objects.get(id=id)
@@ -1599,6 +1619,8 @@ def delete_announcement(request, id):
 
 
 @api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def update_announcement(request, id):
     try:
         announcement = Announcement.objects.get(id=id)

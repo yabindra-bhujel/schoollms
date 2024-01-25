@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view,permission_classes, authentication_classes,parser_classes
-from .models import UniversityLoginScreenInfo, UserProfile
+from .models import *
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from rest_framework.views import APIView
@@ -20,13 +20,23 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.parsers import MultiPartParser, FormParser
-
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.conf import settings
 
 class BlacklistRefreshView(APIView):
     def post(self, request):
-        token = RefreshToken(request.data.get('refresh'))
-        token.blacklist()
-        return Response("Success")
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response("Success", status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_200_OK )
     
 
 
@@ -210,6 +220,8 @@ def change_password(request):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_user_list(request, username):
      try:
           user = User.objects.all()
@@ -305,12 +317,138 @@ def upadte_user_info(request):
             user.email = email
             user.save()
 
+
         except User.DoesNotExist as e:
             print(e)
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(status=status.HTTP_200_OK)
      
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+
+
+
+
+
+@api_view(['POST'])
+def reset_password(request):
+    try:
+        email = request.data['email']
+        username = request.data['username']
+
+        # check user exist or not
+        try:
+            user = User.objects.get(email=email, username=username)
+
+        except User.DoesNotExist as e:
+            print(e)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+       # Generate Password Reset Token
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(user)
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # If uidb64 is a bytes-like object, decode it
+        if isinstance(uidb64, bytes):
+            uidb64 = uidb64.decode('utf-8')
+
+        # Build the complete reset link
+        reset_link = settings.FRONTEND_URL + "/reset_password/" + uidb64 + "/" + token
+
+        # Send the reset link to the user's email
+        app_name = settings.APP_NAME
+        message = f'Hi {user.username},\n\nPlease click on the link below to reset your password:\n\n{reset_link}\n\nThanks!'
+        recipient_list = [user.email]
+        email_from = settings.EMAIL_HOST_USER
+        subject = f"Password Reset Request for {app_name}"
+        message = f'Hi {user.username},\n\nWe received a request to reset the password for your {app_name} account. If you made this request, please set a new password by clicking on the link below:\n {reset_link}\n\nThis link will expire in 1 hour. If you did not request a password reset, please ignore this email or contact our support team if you have any concerns.\n\nThanks!\n{app_name} Team'
+
+
+
+        try:
+            send_mail(subject, message, email_from, recipient_list)
+            return Response({"success": "Password reset link sent successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+@api_view(['POST'])
+def conform_reset_password(request, uuid, token):
+
+    try:
+        uid = force_text(urlsafe_base64_decode(uuid))
+        user = User.objects.get(pk=uid)
+
+
+        # Check if the token is valid
+        token_generator = PasswordResetTokenGenerator()
+        if token_generator.check_token(user, token):
+            new_password = request.data['password']
+            confirm_password = request.data['confirmPassword']
+
+            if new_password != confirm_password:
+                return Response({"error": "Password does not match"}, status=status.HTTP_400_BAD_REQUEST)
+
+            user.set_password(new_password)
+            user.save()
+
+            return Response({"success": "Password reset successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Token is invalid"}, status=status.HTTP_400_BAD_REQUEST)
+       
+
+    except User.DoesNotExist as e:
+        print(e)
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(e)
+        return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def check_have_two_factor_auth(request):
+    try:
+        user_settings = ApplicationSettings.objects.get(user=request.user)
+        two_factor_auth = user_settings.isTwoFactorAuthEnabled
+
+        return Response({"two_factor_auth": two_factor_auth}, status=status.HTTP_200_OK)
+    except ApplicationSettings.DoesNotExist:
+        return Response({"two_factor_auth": False}, status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def update_two_factor_auth(request):
+    try:
+        user_settings = ApplicationSettings.objects.get(user=request.user)
+        two_factor_auth = request.data['two_factor_auth']
+        user_settings.isTwoFactorAuthEnabled = two_factor_auth
+        user_settings.save()
+
+        return Response({"success": "Two factor authentication updated successfully"}, status=status.HTTP_200_OK)
+    except ApplicationSettings.DoesNotExist:
+        return Response({"error": "User settings not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         print(e)
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

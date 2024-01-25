@@ -3,6 +3,8 @@ import "./app.css"
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from "./user/login";
 import ProtectedRoute from "./api/user/PrivateRoute";
+import ResetPassword from "./user/PasswordReset";
+import ResetPasswordConform from "./user/PasswordResetConform";
 
 // teacher navigation
 import Dashboard from "./components/dashbord/Dashbord"
@@ -78,6 +80,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/resetpassword" element={<ResetPassword />} />
+          <Route path="/reset_password/:uid/:token" element={<ResetPasswordConform />} />
 
 
           {/* Protected Routes for Authenticated Users */}

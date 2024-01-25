@@ -106,7 +106,7 @@ class Assignment(models.Model):
     assignment_deadline = models.DateTimeField()
     assignment_posted_date = models.DateTimeField(default=timezone.now)
     assignment_type = models.CharField(max_length=20, choices=ASSIGNMENT_TYPE, default='File')
-    is_active = models.BooleanField(null=True, blank=True, default=True)
+    is_active = models.BooleanField(default=True)
     submission_count = models.PositiveIntegerField(default=0)
     additional_info = models.TextField(null=True, blank=True)
     last_modified = models.DateTimeField(auto_now=True)

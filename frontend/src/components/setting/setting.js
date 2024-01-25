@@ -6,6 +6,9 @@ import ChnagePassword from "./ChnagePassword";
 import OtherSetting from "./otherSetting";
 import TeacherProfile from "./Profile/TeacherProfile";
 import getUserInfo from "../../api/user/userdata";
+import NotificationOtherSettings from "./NotificationOtherSettings";
+
+
 const Setting = () => {
   const [activeMenuItem, setActiveMenuItem] = useState("Profile");
 
@@ -24,8 +27,8 @@ const Setting = () => {
         return <ChnagePassword />;
 
 
-      case "Other_Settings":
-        return <OtherSetting />;
+      case "notification":
+        return <NotificationOtherSettings />;
 
       default:
         return null;

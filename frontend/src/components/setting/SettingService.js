@@ -43,5 +43,56 @@ const updateUserInfo = async(data) =>{
     }
 }
 
+const chnagePassword = async(data) =>{
+    try {
+        const endpoint = `change_password`;
+        const response = await instance.post(endpoint, data);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
 
-export { getUserProfile , uploadImage, getUserProfileInfo, updateUserInfo};
+const handleLogout = async () => {
+    try {
+        const endpoint = "api/logout/";
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        if (userData && userData.refresh) {
+            const response = await instance.post(endpoint, { "refresh": userData.refresh });
+            if (response.status === 200) {
+                localStorage.removeItem("userData");
+                window.location.href = "/login";
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const checkTwoFactorAuth = async () => {
+    try {
+        const endpoint = "havetwoFactorAuth";
+        const response = await instance.get(endpoint);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+const updateTwoFactorAuth = async (data) => {
+    try {
+        const endpoint = "update_two_factor_auth";
+        const response = await instance.post(endpoint, data);
+        return response;
+    } catch (error) {
+        throw error;
+    
+}
+}
+
+
+
+
+export { getUserProfile , uploadImage, getUserProfileInfo, updateUserInfo, chnagePassword, handleLogout, checkTwoFactorAuth, updateTwoFactorAuth};

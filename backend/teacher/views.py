@@ -65,6 +65,7 @@ def teacher_list(request):
 @permission_classes([IsAuthenticated, IsAdminUser])
 def add_teacher(request):
 
+
     try:
         data = request.data
         teacherID = data["teacherID"]

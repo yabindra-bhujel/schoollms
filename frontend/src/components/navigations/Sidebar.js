@@ -94,13 +94,6 @@ const Sidebar = ({}) => {
         setNotify((prev) => [data, ...prev]);
       });
 
-      // // Handle socket disconnect
-      // socket.emit("disconnect", () => {
-      //   // console.log("Disconnected from socket!");
-     
-
-
-      // });
     }
   }, [socket]);
 
@@ -155,12 +148,23 @@ const Sidebar = ({}) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-  const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout ? ")) {
-      localStorage.removeItem("userData");
-      navigate("/login");
+
+
+  const handleLogout = async () => {
+    try {
+        const endpoint = "api/logout/";
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        if (userData && userData.refresh) {
+            const response = await instance.post(endpoint, { "refresh": userData.refresh });
+            if (response.status === 200) {
+                localStorage.removeItem("userData");
+                window.location.href = "/login";
+            }
+        }
+    } catch (error) {
+        console.log(error);
     }
-  };
+}
 
   useEffect(() => {
     getUniveristyName();

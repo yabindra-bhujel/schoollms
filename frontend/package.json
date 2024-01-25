@@ -37,7 +37,8 @@
     "recharts": "^2.8.0",
     "redux": "^5.0.1",
     "socket.io-client": "^4.7.2",
-    "styled-components": "^5.3.11"
+    "styled-components": "^5.3.11",
+    "ua-parser-js": "^1.0.37"
   },
   "scripts": {
     "start": "react-scripts start",
