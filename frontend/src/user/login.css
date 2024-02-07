@@ -118,6 +118,14 @@
     width: 90%;
   }
 }
+.login-form .terms-of-use {
+  margin-top: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
 
 .other-image {
   height: 100%;

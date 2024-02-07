@@ -102,12 +102,19 @@ function Login() {
                 
                 <Link to="/resetpassword">Forgot password?</Link>
               </div>
-              <div className="terms-of-use">
-            <p>Term of use | Privacy policy</p>
-            </div>
+              
 
             </div>
+            <div className="terms-of-use">
+              
+            <p>Term of use | Privacy policy</p>
+              <p>© 2024 Shikoku University Ozaki Seminar </p>
+            </div>
+
+
         </div>
+
+
 
         <div className="other-image">
           <div className="help-button">

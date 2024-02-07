@@ -82,6 +82,8 @@
         gap: 20px;
     }
 
+
+
     a {
         text-decoration: none;
         color: gray;
@@ -130,6 +132,18 @@
     .forgot-password-login {
         width: 90%;
     }
+    }
+
+    
+
+
+    .terms-of-use{
+        margin-top: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
     }
 }
 

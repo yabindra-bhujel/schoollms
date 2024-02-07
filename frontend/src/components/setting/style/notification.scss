@@ -1,0 +1,41 @@
+.notification-settings{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+
+    .notify{
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+    .notification{
+        margin-top: 20px;
+        background-color: antiquewhite;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #e6e6e6;
+        border-radius: 10px;
+        width: 45%;
+        h2{
+            font-weight: bold;
+            
+            
+        }
+   
+        p{
+            margin-left: 20px;
+            font-size: 18px;
+
+        }
+    }
+
+
+}

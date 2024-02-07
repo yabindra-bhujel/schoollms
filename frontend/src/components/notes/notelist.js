@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./style/notelist.css";
 import { TiDelete } from "react-icons/ti";
 import { Link } from "react-router-dom";
-import { deleteNote, updateNoteTitle, updateNoteColor } from "./NotesService";
+import { deleteNote, updateNoteTitle, updateNoteColor, getNotes  } from "./NotesService";
 import { MdSaveAlt } from "react-icons/md";
 import { IoMdPersonAdd } from "react-icons/io";
 import ShareDialog from "./ShareNote";
@@ -56,9 +56,19 @@ const NoteList = ({ notes, setNotes, fetchData, activeTab }) => {
   };
 
 
+  useEffect(() =>{
+    const interval = setInterval(() => {
+      getNotes(currentUser);
+    }, 60000);
+    return () => clearInterval(interval);
+  })
+
+
   useEffect(() => {
     setOriginalNotes([...notes]);
   }, [notes]);
+
+
 
   const handleTitleChange = (index, newTitle) => {
     const updatedNotesArray = [...notes];
