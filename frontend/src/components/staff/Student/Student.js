@@ -45,6 +45,7 @@ const AdminStudent = () => {
 
 
 
+
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file && file.type === "text/csv") {
@@ -190,6 +191,7 @@ const AdminStudent = () => {
                     <TableCell>Student Name</TableCell>
                     <TableCell>Email</TableCell>
                     <TableCell>Phone Number</TableCell>
+                    <TableCell>Date of Birth</TableCell>
                     <TableCell>Department</TableCell>
                     <TableCell>Action</TableCell>
                   </TableRow>
@@ -215,6 +217,7 @@ const AdminStudent = () => {
                           <p>{student.email}</p>
                         </TableCell>
                         <TableCell>{student.phone}</TableCell>
+                        <TableCell>{student.date_of_birth}</TableCell>
                         <TableCell>{student.department}</TableCell>
                         <TableCell>
                           <div className="action-btn">

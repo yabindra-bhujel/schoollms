@@ -36,7 +36,6 @@ const AdminCourseAdd = () => {
 
 
 
-
     useEffect(() => {
         const fetchTeacherList = async () => {
             const response = await getTeacherList();
@@ -98,9 +97,10 @@ const AdminCourseAdd = () => {
             
             try {
                 const response = await adminCourseAdd(courseData);
-                console.log(response);
                 if (response.status === 201) {
                     navigator('/admin/course');
+
+
                 }else{
                     setSnackbar(true);
                     setSnackbarMessage("Error Adding Course Please Try Again");

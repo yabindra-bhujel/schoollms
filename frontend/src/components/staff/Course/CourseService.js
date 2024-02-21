@@ -13,9 +13,9 @@ const getTeacherList =async() =>{
 
 
 
-const adminCourseAdd = async (username, courseData) => {
+const adminCourseAdd = async (courseData) => {
     try {
-        const endpoint = `/course/create_course/${username}/`;
+        const endpoint = `/course/create_course/`;
         const response = await instance.post(endpoint, courseData);
         return response;
     } catch (error) {
