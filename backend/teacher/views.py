@@ -286,3 +286,16 @@ def get_teacher_today_class(request, teacher_id):
     
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(["GET"])
+def get_teacher_all_class(request, teacher_id):
+    try:
+        print("Hello")
+       
+        
+        return Response( status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

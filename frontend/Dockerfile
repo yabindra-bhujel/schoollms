@@ -13,8 +13,7 @@ RUN npm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Expose the port on which the React app will run (if needed)
-# EXPOSE 3000
+EXPOSE 3000
 
 # Define the default command to run your React app
 CMD ["npm", "start"]

@@ -47,14 +47,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
+
+
 
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'tenant',
-
-
     "student",
     "teacher",
     "courses",
@@ -139,6 +140,7 @@ REST_FRAMEWORK  = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',  
     'django.middleware.common.CommonMiddleware',
@@ -190,32 +192,16 @@ CHANNEL_LAYERS = {
 
 
 
-
-DATABASE_NAME = os.getenv('DATABASE_NAME')
-DATABASE_USER = os.getenv('DATABASE_USER')
-DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
+import dj_database_url
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DATABASE_NAME,
-        'USER': DATABASE_USER,
-        'PASSWORD': DATABASE_PASSWORD,
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default='postgres://root:pAYCUjbQ1bKo8DLXG5uCZBGlc2toL7mr@dpg-cnams7uv3ddc73dama5g-a.singapore-postgres.render.com/lms_vzx1',
+        conn_max_age=600,
+        ssl_require=False
+    )
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': DATABASE_NAME,
-#         'USER': DATABASE_USER,
-#         'PASSWORD': DATABASE_PASSWORD,
-#         'HOST': 'db',
-#         'PORT': '5432',
-#     }
-# }
 
 
 
@@ -223,16 +209,9 @@ DATABASES = {
 
 
 
+TENANT_MODEL = "tenant.University"
 
 
-
-
-
-TENANT_MODEL = "tenant.University" # app.Model
-
-
-
-# Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
     {
