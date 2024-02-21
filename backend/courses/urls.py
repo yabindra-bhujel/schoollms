@@ -5,7 +5,7 @@ from.views import *
 urlpatterns = [
     path('create_enroll_subject/<str:username>/', create_enroll_subject, name='create_enroll_subject'),
     path('get_subject_enroll/<str:username>/', get_subject_enroll, name='get_subject_enroll'),
-    path('create_course/<str:username>/', create_course, name='create_course'),
+    path('create_course/', create_course, name='create_course'),
     path('delete_course/<str:id>/<str:username>/', delete_course, name='delete_course'),
     path('delete_department/<int:id>/<str:username>/', delete_department, name='delete_department'),
     path('add_department/<str:username>/', add_department, name='add_department'),

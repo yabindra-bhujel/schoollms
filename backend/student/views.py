@@ -167,6 +167,7 @@ def student_list(request, username):
                 'last_name': student.last_name,
                 'email': student.email,
                 'phone': student.phone,
+                'date_of_birth': student.date_of_birth,
                 'department': student.department.Department_name,
                 'image': request.build_absolute_uri(student.image.url),
                 'user': student.user.username,

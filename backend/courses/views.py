@@ -142,10 +142,10 @@ def get_subject_enroll(request, username):
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def create_course(request, username):
+def create_course(request):
     try:
+        print(request.data)
         data = request.data
-        print(data)
         course_id = data.get('course_id')
         course_name = data.get('course_name')
         weekday = data.get('weekday')
