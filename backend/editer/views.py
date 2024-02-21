@@ -262,7 +262,14 @@ def get_all_problems(request):
         return Response(serializer.data)
     except Exception as e:
         print(e)
+
+        
         return Response({"output": str(e)}, status=500)
     
 
 
+
+
+
+def getNmae():
+    return "Hello World"
