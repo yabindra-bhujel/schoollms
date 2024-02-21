@@ -222,7 +222,7 @@ def change_password(request):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_user_list(request, username):
+def get_user_list(request):
      try:
           user = User.objects.all()
           serializer = AdminUserSerializer(user, many=True)

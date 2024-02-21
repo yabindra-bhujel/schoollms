@@ -94,7 +94,7 @@ def add_student_by_csv_file(request):
             department_name = column[7]
 
             try:
-                department = Department.objects.get(Department_name=department_name)
+                department = Department.objects.get(Department_code=department_name)
             except Department.DoesNotExist:
                 # Handle missing department case
                 print(f"Department '{department_name}' not found. Skipping entry.")

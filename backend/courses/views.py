@@ -145,6 +145,7 @@ def get_subject_enroll(request, username):
 def create_course(request, username):
     try:
         data = request.data
+        print(data)
         course_id = data.get('course_id')
         course_name = data.get('course_name')
         weekday = data.get('weekday')
@@ -156,7 +157,6 @@ def create_course(request, username):
        # Split the teacher name into parts based on spaces
         name_parts = teacher_name.split(' ')
         teacher_id = name_parts[-1]
-        print(teacher_id)
         teacher = Teacher.objects.get(TeacherID=teacher_id)
         department = Department.objects.get(Department_name=course_department)
 
