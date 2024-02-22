@@ -19,6 +19,9 @@ class Department(models.Model):
     def __str__(self):
         return self.Department_name
     
+
+
+
     
 class Subject(models.Model):
     CLASS_ROOM_CODE = (
