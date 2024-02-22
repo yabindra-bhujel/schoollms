@@ -8,24 +8,21 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./style/CustomToolbar.css";
 import "./style/weekday.css";
-import { TiWeatherPartlySunny } from "react-icons/ti";
 import { useTranslation } from "react-i18next";
-import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
-import axios from "axios";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-} from "@mui/material";
+import {Dialog,DialogTitle,DialogContent} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EventIcon from "@mui/icons-material/Event";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import { addNewEvent, deleteEvent, getEvents, updateEvent } from "./CalenderService";
+import CustomToolbar from "./CustomToolbar";
+import {TextField, Button } from "@mui/material";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const DnDCalendar = withDragAndDrop(Calendar);
 const localizer = momentLocalizer(moment);
@@ -33,19 +30,20 @@ const localizer = momentLocalizer(moment);
 const CalendarComponent = () => {
   const userData = getUserInfo();
   const user = userData.user_id;
-  const username = userData.username;
-  const initialEvent = {
+  const [newEvent, setNewEvent] = useState({
     title: "",
-    start_date: new Date(),
-    end_date: new Date(),
-    time: "",
+    start_date: new Date().toISOString().split('T')[0],
+    end_date: new Date().toISOString().split('T')[0],
     user: user,
-  };
+    color: "#FFD600",
+
+  });
+  
   const buttonColors = ["#FFD600", "#FF5733", "#33FF57", "#3357FF", "#FF33DC"]; 
   const [events, setEvents] = useState([]);
-  const [newEvent, setNewEvent] = useState(initialEvent);
   const [todayevent, setTodayevent] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openNewEventDialog, setOpenNewEventDialog] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -54,6 +52,7 @@ const CalendarComponent = () => {
   const [seletedColorButton, setSeletedColorButton] = useState(
     buttonColors.indexOf("#3357FF")
   );
+
 
 
 
@@ -76,6 +75,8 @@ const CalendarComponent = () => {
     setSnackbarOpen(false);
   };
 
+ 
+
 
   const onEventDrop = ({ event, start, end, isAllDay }) => {
     if (event.color === "red" || event.color === "green") {
@@ -94,12 +95,18 @@ const CalendarComponent = () => {
     eventUpdate(updatedEvent);
   };
 
+  const fatchData = async () => {
+    const response = await getEvents();
+    if (response.status === 200) {
+      setEvents(response.data);
+    }
+  }
+
   const eventUpdate = async (data) => {
     try {
-      const endpoint = `/notification/update_event_date/`;
-      const response = await instance.put(endpoint, data);
+      const response = await updateEvent(data);
       if (response.status === 200) {
-        getEvent();
+        fatchData();
       }
     } catch (e) {
       console.log(e);
@@ -123,22 +130,14 @@ const CalendarComponent = () => {
   };
 
   useEffect(() => {
-    getEvent();
+    fatchData();
   }, []);
-
-  const getEvent = async () => {
-    try {
-      const endpoint = `/notification/calendar/${username}/`;
-      const response = await instance.get(endpoint);
-      setEvents(response.data);
-    } catch (e) {}
-  };
 
   const formattedEvents = events.map((event) => ({
     id: event.id,
     title: event.title,
-    start: new Date(`${event.start_date}T${event.time}`), // Combine date and time
-    end: new Date(`${event.end_date}T${event.time}`), // Combine date and time
+    start: new Date(`${event.start_date}`),
+    end: new Date(`${event.end_date}`), 
     color: event.color,
   }));
 
@@ -150,50 +149,62 @@ const CalendarComponent = () => {
     }));
   };
 
-  const handleStartDateChange = (date) => {
+  const handleStartDateChange = (event) => {
+    const { name, value } = event.target;
     setNewEvent((prevEvent) => ({
       ...prevEvent,
-      start_date: date,
+      [name]: value,
     }));
   };
-
-  const handleEndDateChange = (date) => {
+  
+  const handleEndDateChange = (event) => {
+    const { name, value } = event.target;
     setNewEvent((prevEvent) => ({
       ...prevEvent,
-      end_date: date,
+      [name]: value,
     }));
   };
+  
 
   const addEvent = async () => {
     try {
       const formattedEvent = {
         title: newEvent.title,
-        start_date: newEvent.start_date.toISOString().split("T")[0], // Format to 'YYYY-MM-DD'
-        end_date: newEvent.end_date.toISOString().split("T")[0], // Format to 'YYYY-MM-DD'
-        time: newEvent.time,
-        user: parseInt(newEvent.user),
-        username: username,
+        start_date: newEvent.start_date,
+        end_date: newEvent.end_date,
         color: buttonColors[seletedColorButton],
       };
 
-      const endpoint = `/notification/addevent/${username}/`;
-      const response = await instance.post(endpoint, formattedEvent);
-      setNewEvent(initialEvent);
+
+      
+      const response = await addNewEvent(formattedEvent);
+      if (response.status === 201) {
+        console.log("Event added successfully");
+      }else{
+        console.log(response)
+      }
+      setNewEvent({
+        title: "",
+        start_date: "",
+        end_date: "",
+      });
+      setOpenNewEventDialog(false);
     } catch (e) {}
   };
 
   const handleAddEvent = async () => {
+    if (!isVallidFrom()) {
+      return;
+    }
     await addEvent();
-    await getEvent();
-    getTodayData();
+    await fatchData();
   };
 
   const isVallidFrom = () => {
     return (
       newEvent.title !== "" &&
       newEvent.start_date !== "" &&
-      newEvent.end_date !== "" &&
-      newEvent.time !== ""
+      newEvent.end_date !== ""
     );
   };
   const eventStyleGetter = (event, start, end, isSelected) => {
@@ -210,44 +221,22 @@ const CalendarComponent = () => {
 
   const handleDelete = async (event) => {
     const eventID = event.id;
-    const endpoint = `/notification/delete_event/${eventID}/`;
-    const response = await instance.delete(endpoint);
+    const response = await deleteEvent(eventID);
     if (response.status === 200) {
-      getEvent();
-      getTodayData();
+      fatchData();
       setOpenDialog(false);
     }
   };
 
-  const getTodayData = () => {
-    const today = new Date();
-
-    const filterEvents = formattedEvents.filter((event) => {
-      const eventStart = new Date(event.start);
-      const eventEnd = new Date(event.end);
-
-      const startsToday =
-        eventStart.getFullYear() === today.getFullYear() &&
-        eventStart.getMonth() === today.getMonth() &&
-        eventStart.getDate() === today.getDate();
-
-      const endsToday =
-        eventEnd.getFullYear() === today.getFullYear() &&
-        eventEnd.getMonth() === today.getMonth() &&
-        eventEnd.getDate() === today.getDate();
-
-      const spansToday = eventStart <= today && eventEnd >= today;
-
-      return startsToday || endsToday || spansToday;
-    });
-
-    setTodayevent(filterEvents);
+  const handleSelectSlot = (slotInfo) => {
+    setNewEvent(prevEvent => ({
+      ...prevEvent,
+      start_date: slotInfo.start,
+      end_date: slotInfo.start, 
+    }));
+    setOpenNewEventDialog(true); 
   };
-
-  useEffect(() => {
-    getTodayData();
-  }, [events]);
-
+  
 
 
   return (
@@ -316,78 +305,83 @@ const CalendarComponent = () => {
         </DialogContent>
       </Dialog>
 
+<Dialog
+  open={openNewEventDialog}
+  onClose={() => setOpenNewEventDialog(false)}
+  fullWidth={true}
+  maxWidth="sm" // Adjust the width of the dialog if necessary
+>
+  <DialogTitle>
+    <div className="close-delete-btn">
+      <IconButton
+        aria-label="close"
+        onClick={() => setOpenNewEventDialog(false)}
+        style={{ marginRight: 8 }}
+      >
+        <CloseIcon />
+      </IconButton>
+    </div>
+  </DialogTitle>
+  <DialogContent dividers style={{ minHeight: 250 }}> {/* Set the minimum height */}
+    <div className="input-area" style={{ padding: "16px" }}> {/* Add padding for better spacing */}
+      <TextField
+        type="text"
+        label={t("event")}
+        name="title"
+        value={newEvent.title}
+        onChange={handleInputChange}
+        required
+        fullWidth
+        autoFocus
+        style={{ marginBottom: "16px" }} 
+      />
+<TextField
+  type="date"
+  label="Start Date"
+  name="start_date"
+  value={newEvent.start_date}
+  onChange={handleStartDateChange}
+  InputLabelProps={{ shrink: true }}
+  style={{ marginBottom: "16px" }}
+  fullWidth
+/>
+<TextField
+  type="date"
+  label="End Date"
+  name="end_date"
+  value={newEvent.end_date}
+  onChange={handleEndDateChange}
+  InputLabelProps={{ shrink: true }}
+  style={{ marginBottom: "16px" }}
+  fullWidth
+/>
+
+
+
+      {/* color selet btn */}
+    </div>
+    <div className="add-event-btn" style={{ textAlign: "right", padding: "16px" }}> {/* Align button to the right and add padding */}
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<AddCircleIcon />}
+        onClick={handleAddEvent}
+      >
+        {t("add")}
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+ 
+            
+
       <div className="calender-container-main">
-        <div className="input-area">
-          <input
-            type="text"
-            placeholder={t("event")}
-            name="title"
-            value={newEvent.title}
-            onChange={handleInputChange}
-            required
-          ></input>
-
-          <div className="date-picker-wrapper">
-            <DatePicker
-              selected={newEvent.start_date}
-              onChange={handleStartDateChange}
-              dateFormat="yyyy-MM-dd"
-            />
-            <DatePicker
-              selected={newEvent.end_date}
-              onChange={handleEndDateChange}
-              dateFormat="yyy-MM-dd"
-              required
-            />
-          </div>
-
-          <input
-            type="time"
-            placeholder="Time"
-            name="time"
-            value={newEvent.time}
-            onChange={handleInputChange}
-            required
-          />
-
-          {/* color selecter */}
-          <div className="color-selecter" style={{ marginTop: "20px" }}>
-            {[1, 2, 3, 4, 5].map((number, index) => (
-              <button
-                key={index}
-                className={`color-button ${
-                  seletedColorButton === index ? "selected" : ""
-                }`}
-                onClick={() => handleButtonClick(index)}
-                style={{ backgroundColor: buttonColors[index] }} // Apply background color from array
-              >
-                {seletedColorButton === index && (
-                  <span className="selected-indicator" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {isVallidFrom() && <button onClick={handleAddEvent}>Add</button>}
-
-          <div className="todya-event-area">
-            <h3>{t("today event")}</h3>
-            <small>{t("dont miss")}</small>
-            <div className="event-list">
-              {todayevent.map((event) => (
-                <p key={event.id}>
-                  {event.title} - {moment(event.start).format("hh:mm A")}
-                </p>
-              ))}
-            </div>
-          </div>
-        </div>
-
         <div className="calendar-container">
           <DnDCalendar
             selected={selected}
             onSelectEvent={(event, target) => handleEventClick(event, target)}
             localizer={localizer}
+            onSelectSlot={handleSelectSlot} 
             onEventDrop={onEventDrop}
             onEventResize={onEventResize}
             resizable
@@ -409,80 +403,5 @@ const CalendarComponent = () => {
 };
 
 
-
-// CustomToolbar component for styling the toolbar
-const CustomToolbar = ({ view, label, onView, onNavigate }) => {
-  const { t } = useTranslation();
-
-  const apiKey = "cbc5ac4d514d4c48ba271633232008";
-  const location = "Tokushima Japan";
-
-  const [weatherData, setWeatherData] = useState({});
-
-  useEffect(() => {
-    getweater();
-  }, []);
-
-  const getweater = async () => {
-    try {
-      const endpoint = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=no`;
-      const response = await axios.get(endpoint);
-      setWeatherData(response.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  return (
-    <div className="custom-toolbar">
-      <div className="toolbar-navigation">
-        <button onClick={() => onNavigate("PREV")}>Previous</button>
-        <button onClick={() => onNavigate("TODAY")}>Today</button>
-        <button onClick={() => onNavigate("NEXT")}>Next</button>
-        <div className="toolbar-label">{label}</div>
-      </div>
-
-      <div className="toolbar-views">
-        <div className="time-weather">
-          <div className="time">
-            <p>{moment().format("hh:mm A")}</p>
-            <small>{location} </small>
-            <small>{weatherData.current?.temp_c}°C</small> <br></br>
-            <small>{weatherData.current?.condition?.text}</small>
-          </div>
-          <div className="weather">
-            <span>
-              <TiWeatherPartlySunny className="TiWeatherPartlySunny" />
-            </span>
-          </div>
-        </div>
-        <button
-          className={view === "month" ? "active" : ""}
-          onClick={() => onView("month")}
-        >
-          {t("month")}
-        </button>
-        <button
-          className={view === "week" ? "active" : ""}
-          onClick={() => onView("week")}
-        >
-          {t("week")}
-        </button>
-        <button
-          className={view === "day" ? "active" : ""}
-          onClick={() => onView("day")}
-        >
-          {t("day")}
-        </button>
-        <button
-          className={view === "List" ? "active" : ""}
-          onClick={() => onView("agenda")}
-        >
-          {t("event list")}
-        </button>
-      </div>
-    </div>
-  );
-};
 
 export default CalendarComponent;

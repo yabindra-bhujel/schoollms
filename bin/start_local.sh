@@ -1,16 +1,23 @@
 #!/bin/bash
+echo "Stopping processes on ports 3000 and 8000"
 
+kill_processes_on_port() {
+    port=$1
+    echo "Killing processes on port $port"
+    pid=$(lsof -t -i:$port)
+    if [ -n "$pid" ]; then
+        kill -9 $pid
+    fi
+}
+kill_processes_on_port 3000
+kill_processes_on_port 8000
+
+echo "Processes on ports 3000 and 8000 stopped"
 echo "Starting local development environment"
 
-# Navigate to the backend directory and activate the virtual environment
 cd backend
 source venv/bin/activate
-
-# Apply database migrations and start the Django server in the background
-python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver &
-
-# Navigate to the frontend directory and start the React server in the background
+python3 manage.py runserver &
 cd ../frontend
 npm start &
-
 echo "Local development environment started"

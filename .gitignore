@@ -24,16 +24,6 @@ TestResults.xml
 # pdf
 *.pdf
 # image
-*.jpg
-*.png
-*.gif
-*.jpeg
-*.svg
-*.ico
-*.tif
-*.tiff
-*.bmp
-*.eps
 
 
 # evn

@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from student.models import Student
@@ -16,6 +15,9 @@ from teacher.models import Teacher
 from django.utils import timezone
 from django.db.models import Q
 from django.db import transaction
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
 
 
@@ -98,8 +100,11 @@ def update_event_date(request):
 
 
 @api_view(['GET'])
-def getCalender_event(request, username):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def getCalenderEvent(request):
     try:
+        username = request.user.username
         calender = CalenderModel.objects.filter(user__username=username)
         serializer = CalendarSerializers(calender, many=True)
         return Response(serializer.data)
@@ -161,85 +166,114 @@ def get_dates_of_month(event_days, months=1):
 
 
 
-
-# add new event
 @api_view(['POST'])
-def addCalender_event(request, user_id):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def addCalenderEvent(request):
+    user = request.user
     try:
-        months_to_generate = 6
-
-        user_id = request.data["user"]
-
-        username = request.data["username"]
-        # user object from userid
-        user = User.objects.get(id=user_id)
-
-        is_teacher = user.is_teacher
-        is_student = user.is_student
-        if is_teacher:
-            # get teacher from username
-            teacher = Teacher.objects.get(TeacherID=username)
-            
-            
-            subject = Subject.objects.filter(subject_teacher=teacher)
-            for i in subject:
-                subject_name = i.subject_name
-                subject_time = i.period_start_time
-
-                event_week_days = i.weekday.split(',')  # Assuming weekdays are stored as comma-separated values
-                dates = get_dates_of_month(event_week_days,months_to_generate)
-                
-                for date in dates:
-                    # check event is already exist or not
-                    event = CalenderModel.objects.filter(user=user, title=subject_name, start_date=date).first()
-                    if not event:
-                        event = CalenderModel.objects.create(
-                            user=user,
-                            title=subject_name,
-                            start_date=date,
-                            end_date=date,
-                            time=subject_time,
-                            color='red'
-                        )
-                        event.save()
-
-        elif is_student:
-            # get student from username
-            student = Student.objects.get(studentID=username)
-            course = SubjectEnroll.objects.filter(student=student)
-            for i in course:
-                subject_name = i.course.subject_name
-                subject_start_time = i.course.period_start_time
-                
-
-                event_week_days = i.course.weekday.split(',')
-                dates = get_dates_of_month(event_week_days, months_to_generate)
-
-                for date in dates:
-                    # check event is already exist or not
-                    event = CalenderModel.objects.filter(user=user, title=subject_name, start_date=date).first()
-                    if not event:
-                        event = CalenderModel.objects.create(
-                            user=user,
-                            title=subject_name,
-                            start_date=date,
-                            end_date=date,
-                            time=subject_start_time,
-                            color='green'
-                        )
-                        event.save()
+        newEvent = request.data
+        title = newEvent['title']
+        start_date = newEvent['start_date']
+        end_date = newEvent['end_date']
+        color = newEvent['color']
 
 
-        serializer = CalendarSerializers(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        event = CalenderModel.objects.create(
+            user=user,
+            title=title,
+            start_date=start_date,
+            end_date=end_date,
+            color=color,
+        )
+        event.save()
 
+
+     
+        return Response('Event added successfully', status=status.HTTP_201_CREATED)
     except Exception as e:
         print(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# # add new event
+# @api_view(['POST'])
+# def addCalender_event(request, ):
+#     try:
+#         months_to_generate = 6
+
+#         user_id = request.data["user"]
+
+#         username = request.data["username"]
+#         # user object from userid
+#         user = User.objects.get(id=user_id)
+
+#         is_teacher = user.is_teacher
+#         is_student = user.is_student
+#         if is_teacher:
+#             # get teacher from username
+#             teacher = Teacher.objects.get(TeacherID=username)
+            
+            
+#             subject = Subject.objects.filter(subject_teacher=teacher)
+#             for i in subject:
+#                 subject_name = i.subject_name
+#                 subject_time = i.period_start_time
+
+#                 event_week_days = i.weekday.split(',')  # Assuming weekdays are stored as comma-separated values
+#                 dates = get_dates_of_month(event_week_days,months_to_generate)
+                
+#                 for date in dates:
+#                     # check event is already exist or not
+#                     event = CalenderModel.objects.filter(user=user, title=subject_name, start_date=date).first()
+#                     if not event:
+#                         event = CalenderModel.objects.create(
+#                             user=user,
+#                             title=subject_name,
+#                             start_date=date,
+#                             end_date=date,
+#                             time=subject_time,
+#                             color='red'
+#                         )
+#                         event.save()
+
+#         elif is_student:
+#             # get student from username
+#             student = Student.objects.get(studentID=username)
+#             course = SubjectEnroll.objects.filter(student=student)
+#             for i in course:
+#                 subject_name = i.course.subject_name
+#                 subject_start_time = i.course.period_start_time
+                
+
+#                 event_week_days = i.course.weekday.split(',')
+#                 dates = get_dates_of_month(event_week_days, months_to_generate)
+
+#                 for date in dates:
+#                     # check event is already exist or not
+#                     event = CalenderModel.objects.filter(user=user, title=subject_name, start_date=date).first()
+#                     if not event:
+#                         event = CalenderModel.objects.create(
+#                             user=user,
+#                             title=subject_name,
+#                             start_date=date,
+#                             end_date=date,
+#                             time=subject_start_time,
+#                             color='green'
+#                         )
+#                         event.save()
+
+
+#         serializer = CalendarSerializers(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     except Exception as e:
+#         print(e)
+#         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 

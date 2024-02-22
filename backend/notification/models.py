@@ -14,7 +14,7 @@ class CalenderModel(models.Model):
     title = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
-    time = models.TimeField(auto_now=False, auto_now_add=False)
+    time = models.TimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
     color = models.CharField(max_length=20, null=True, blank=True)
 
     
