@@ -1,5 +1,4 @@
 .container {
-  margin-left: 10px;
   display: flex;
   height: calc(100vh - 72px);
 }
@@ -139,4 +138,4 @@
 }
 .container .right-item .event-list ::-webkit-scrollbar {
   width: 5px;
-}/*# sourceMappingURL=dashbord.css.map */
+}

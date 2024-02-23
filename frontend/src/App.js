@@ -61,17 +61,7 @@ import AddEnrollSubject from "./components/staff/EnrollStudent/AddEnrollSubject"
 
 function App() {
 
-
-
   const { t } = useTranslation();
-
-
-
-
-
-
-
-
 
   return (
     <WebSocketProvider>

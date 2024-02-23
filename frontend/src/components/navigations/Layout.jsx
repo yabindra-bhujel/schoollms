@@ -1,18 +1,20 @@
-import React from "react";
-import Sidebar from "./Sidebar";
-
-const mainContentStyle = {
-    marginTop: '72px',  // Top margin of 72px
-    marginLeft: '80px', // Left margin of 80px
-};
+// Layout.js
+import Sidebar from './Sidebar';
 
 const Layout = ({ children }) => {
-    return (
-        <div>
-            <Sidebar />
-            <main style={mainContentStyle}>{children}</main>
+
+  return (
+    <div>
+      <div className="main-container">
+        <div className="main-sidebar">
+          <Sidebar/>
         </div>
-    );
+        <div className="main-content">
+          <main>{children}</main>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Layout;

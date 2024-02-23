@@ -1,0 +1,20 @@
+@import "./style/sidebar.scss";
+
+.main-container {
+    display: flex;
+    .main-sidebar {
+        width: $side-width;
+        height: 100%;
+        top: 0;
+        z-index: 99;
+        position: relative;
+    }
+    .main-content {
+        position: fixed;
+        background-color: orange;
+        width: calc(100% - $side-width);
+        left: $side-width;
+        top: $head-h;
+        height: calc(100vh - #{$head-h});
+    }
+}

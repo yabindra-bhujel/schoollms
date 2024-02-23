@@ -139,3 +139,22 @@ nav .profile img {
   font-size: 30px;
   padding: 0 20px;
 }
+
+.main-container {
+  display: flex;
+}
+.main-container .main-sidebar {
+  width: 200px;
+  height: 100%;
+  top: 0;
+  z-index: 99;
+  position: relative;
+}
+.main-container .main-content {
+  position: fixed;
+  background-color: orange;
+  width: calc(100% - 200px);
+  left: 200px;
+  top: 8vh;
+  height: calc(100vh - 8vh);
+}
