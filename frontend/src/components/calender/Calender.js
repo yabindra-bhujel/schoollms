@@ -123,14 +123,9 @@ const CalendarComponent = () => {
     setEvents(updatedEvents);
     // Optionally, update the event in your backend here
   };
-
-
-  const handleButtonClick = (index) => {
-    setSeletedColorButton(index);
-  };
-
   useEffect(() => {
     fatchData();
+
   }, []);
 
   const formattedEvents = events.map((event) => ({

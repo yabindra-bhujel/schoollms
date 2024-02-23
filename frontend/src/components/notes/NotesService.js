@@ -21,7 +21,7 @@ const getNotesbyID = async(noteID) =>{
 
 
 const getNotes = async() =>{
-    const endpoint = `/notification/getNotes/${username}/`;
+    const endpoint = `/notification/getNotes/`;
 
     try{
         const res = await instance.get(endpoint);
@@ -61,7 +61,7 @@ const deleteNote = async (noteID) => {
   };
 
 
-const updatedNotes = async (noteID, data) => {
+const updatedNote = async (noteID, data) => {
     const endpoint = `/notification/updateNotes/${noteID}/`;
     try {
         const res = await instance.put(endpoint, data);
@@ -99,6 +99,17 @@ const updateNoteColor = async (notes, color) =>{
 }
 
   
+const updateNoteCollaborator = async (noteId, data) => {
+    const endpoint = `notification/add_collaborator_to_note/${noteId}/`;
+
+    try {
+        const response = await instance.post(endpoint, data);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+
+}
   
 
-export  { getNotes, addNotes, deleteNote, updatedNotes, getNotesbyID, updateNoteTitle, updateNoteColor };
+export  { getNotes, addNotes, deleteNote, updatedNote, getNotesbyID, updateNoteTitle, updateNoteColor ,updateNoteCollaborator};

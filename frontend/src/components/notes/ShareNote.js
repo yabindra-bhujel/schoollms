@@ -12,6 +12,7 @@ import instance from '../../api/axios';
 import getUserInfo from '../../api/user/userdata';
 import UserInfoDialog from './UserInfo';
 import Avatar from '@mui/material/Avatar';
+import { updateNoteCollaborator } from './NotesService';
 
 const ShareDialog = ({ open, handleClose, noteid, onUsersAdded, fetchData }) => {
   const [userInput, setUserInput] = useState('');
@@ -52,9 +53,8 @@ const ShareDialog = ({ open, handleClose, noteid, onUsersAdded, fetchData }) => 
       if(selectedUsernames.length === 0){
         return;
       }
-      const endpoint = `notification/add_collaborator_to_note/${username}/${noteid}/`;
       try {
-        await instance.post(endpoint, selectedUsernames);
+        await updateNoteCollaborator(noteid, selectedUsernames);
         setUserInput('');
         setSelectedUsers([]);
         handleClose();
@@ -84,7 +84,6 @@ const ShareDialog = ({ open, handleClose, noteid, onUsersAdded, fetchData }) => 
         <Autocomplete
           id="user-search"
           options={userList.filter(user => !selectedUsers.some(selectedUser => selectedUser.username === user.username))}
-          getOptionLabel={(option) => option.username}
           style={{ marginTop: 20 }}
           value={null}
           onChange={(event, newValue) => {

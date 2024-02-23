@@ -15,7 +15,7 @@ from teacher.models import Teacher
 from django.utils import timezone
 from django.db.models import Q
 from django.db import transaction
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
@@ -59,9 +59,10 @@ def update_notification(request, username):
         print(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
 @api_view(['DELETE'])
-def delete_event(request, eventID):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def deleteEvent(request, eventID):
     try:
         event = CalenderModel.objects.get(id=eventID)
         event.delete()
@@ -74,7 +75,9 @@ def delete_event(request, eventID):
 
 
 @api_view(['PUT'])
-def update_event_date(request):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def updateEvent(request):
     try:
         start_date_data = request.data.get('start', None)
         event_id = request.data.get('id', None)
@@ -298,6 +301,8 @@ def updateNotesColor(request, noteid):
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def addNotes(request):
     try:
 
@@ -327,50 +332,56 @@ def addNotes(request):
 
 
 @api_view(['GET'])
-def getNotes(request, user_id):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def getNotes(request):
     try:
-        user = User.objects.get(username=user_id)
-        # Get notes where the user is the owner and notes where the user is a collaborator
+        userId = request.user.username
+        user = User.objects.get(username=userId)
         notes = Notes.objects.filter(Q(user=user) | Q(shared_with=user))
         serializer = NotesSerializers(notes, many=True)
-        note_data = []
+        notes = []
+        existingIds = set()  
         for note in serializer.data:
-            note_id = note['id']
-            note_title = note['title']
-            note_content = note['content']
-            note_color = note['color']
-            note_type = note['note_type']
-
-            # Get the owner of the note
-            note_owner = User.objects.get(id=note['user'])
-            note_owner_username = note_owner.username
-
-            # Get the collaborators of the note
+            notesId = note['id']
+            if notesId in existingIds:
+                continue
+            else:
+                existingIds.add(notesId)
+            notesTitle = note['title']
+            noteContent = note['content']
+            noteColor = note['color']
+            noteType = note['note_type']
+            
+            noteOwner = User.objects.get(id=note['user'])
+            noteOwnerUsername = noteOwner.username
             collaborators = []
             for collaborator_id in note['shared_with']:
                 collaborator = User.objects.get(id=collaborator_id)
-                collaborators.append(collaborator.username)
+                profile = UserProfile.objects.filter(user=collaborator).first()
+                collaborators.append({
+                    'username': collaborator.username,
+                    'image': request.build_absolute_uri(profile.image.url) if profile and profile.image else None,
+                })
 
-            note_data.append({
-                'id': note_id,
-                'title': note_title,
-                'content': note_content,
-                'color': note_color,
-                'note_type': note_type,
-                'owner': note_owner_username,
+            notes.append({
+                'id': notesId,
+                'title': notesTitle,
+                'content': noteContent,
+                'color': noteColor,
+                'note_type': noteType,
+                'owner': noteOwnerUsername,
                 'collaborators': collaborators
             })
-
-
-        
-        return Response(note_data)
+        return Response(notes, status=status.HTTP_200_OK)
     except Exception as e:
         print(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 @api_view(['DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def deleteNotes(request, pk):
     try:
         notes = Notes.objects.get(id=pk)
@@ -398,22 +409,21 @@ def getNotesByID(request, username, noteid):
 
 
 @api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def updateNotes(request, noteid):
     try:
-        # Retrieve only the 'content' field from the request data
-        content_data = request.data.get('content', None)
-        
-        if content_data is not None:
-            # Get the existing Notes object
-            notes = Notes.objects.get(id=noteid)
+        noteContent = request.data.get('content', None)
+        noteTitle = request.data.get('title', None)
 
-            # Update the 'content' field
-            notes.content = content_data
-            notes.save()
+        if noteContent is not None:
+            note = Notes.objects.get(id=noteid)
+            note.title = noteTitle
+            note.content = noteContent
+            note.save()
+            serializer = NotesSerializers(instance=note)
 
-            # Serialize the updated Notes object
-            serializer = NotesSerializers(instance=notes)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid request data'}, status=status.HTTP_400_BAD_REQUEST)
     except Notes.DoesNotExist:
@@ -454,28 +464,22 @@ def updateNotesTitle(request, noteid):
 
 
 @api_view(['POST'])
-def add_collaborator_to_note(request, username, noteid):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def addCollaboratorToNote(request, noteid):
     try:
-        # Get the user who is the owner of the note
+        username = request.user.username
         owner_user = User.objects.get(username=username)
-        # Get the note
         note = Notes.objects.get(user=owner_user, id=noteid)
-
-        # Get the list of usernames from the request data
         collaborator_usernames = request.data
 
-        # If the note type is private, change it to shared
         if note.note_type == 'private':
             note.note_type = 'shared'
 
-        # Use a transaction to ensure atomicity
         with transaction.atomic():
-            # Iterate over each username and add them as collaborators
             for collaborator_username in collaborator_usernames:
                 collaborator_user = User.objects.get(username=collaborator_username)
                 note.shared_with.add(collaborator_user)
-
-            # Save the changes
             note.save()
 
         return Response("Collaborators added successfully", status=status.HTTP_200_OK)

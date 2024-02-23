@@ -1,18 +1,11 @@
 // CustomToolbar component styles
 .custom-toolbar {
-
-  
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 100px;
-    padding: 10px;
-    background-color: #9399b0;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-
-    
-  
+    height: 60px;
+    padding: 5px;
+    background-color: #c5c8d4;
     .toolbar-navigation {
       button {
         background-color: transparent;

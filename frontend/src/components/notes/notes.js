@@ -29,8 +29,8 @@ const Notes = () => {
 
     const newNote = {
       user: username,
-      title: "New Note Title",
-      content: "New Note Body",
+      title: "Enter your note title here...",
+      content: "Enter your note here...",
     };
 
     addNotes(newNote)

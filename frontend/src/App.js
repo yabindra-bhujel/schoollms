@@ -36,7 +36,6 @@ import StudentClassDetails from "./components/studentclass/StudentClassdetails";
 import StudentAssigmentDetalis from "./components/studentclass/StudentAssigmentDetalis";
 import TakeExamPage from "./components/studentclass/Exam/TakeExam";
 import Exma from "./components/studentclass/Exam/Exam";
-import TextEditer from "./components/notes/TextEditer";
 import ArticlePage from "./components/learningSection/Article";
 
 
@@ -108,7 +107,6 @@ function App() {
           <Route path="/" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><Dashboard /></ProtectedRoute>} />
           <Route path="/calender" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><CalendarComponent /></ProtectedRoute>} />
           <Route path="/notes" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><Notes /></ProtectedRoute>} />
-          <Route path="/textediter/:id" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><TextEditer /></ProtectedRoute>} />
           <Route path="/learningsection" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><VideoList /></ProtectedRoute>} />
           <Route path="/video/:id" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><VideoDetails /></ProtectedRoute>} />
           <Route path="/article/:id" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><ArticlePage /></ProtectedRoute>} />

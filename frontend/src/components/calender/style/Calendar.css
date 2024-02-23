@@ -8,10 +8,11 @@
   justify-content: center;
 }
 .calender-container-main .calendar-container {
+  margin-top: 5px;
   position: relative;
   overflow: hidden;
   height: 100%;
-  width: 97%;
+  width: 99%;
   background-color: white;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
