@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import "./style/learningsection.css";
 
 import ReactPlayer from "react-player";

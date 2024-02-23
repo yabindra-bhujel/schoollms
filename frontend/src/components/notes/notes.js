@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import "./style/note.css";
 import NoteList from "./notelist";
 import { GoShieldLock } from "react-icons/go";

@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import "./style/AssigmentDetalis.css";
 import { Link, useParams } from "react-router-dom";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import { MdArrowBack } from "react-icons/md";
 import instance from "../../api/axios";
 import { CiSaveDown2 } from "react-icons/ci";

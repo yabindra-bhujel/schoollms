@@ -1,4 +1,4 @@
-import Layout from "../../navigations/Layout";
+import Layout from "../../layout/Layout";
 import "./style/exam.css";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";

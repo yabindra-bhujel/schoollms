@@ -1,4 +1,5 @@
 nav {
+  background-color: #2a71b9;
   height: 8vh;
   width: calc(100% - 200px);
   position: fixed;
@@ -83,7 +84,7 @@ nav .profile img {
   left: 0;
   bottom: 0;
   width: 200px;
-  z-index: 1;
+  z-index: 99;
   overflow-y: auto;
   height: 100vh;
 }

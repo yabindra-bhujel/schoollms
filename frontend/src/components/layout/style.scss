@@ -1,6 +1,6 @@
-@import "./style/sidebar.scss";
+@import "../navigations/style/sidebar.scss";
 
-.main-container {
+.container {
     display: flex;
     .main-sidebar {
         width: $side-width;
@@ -16,5 +16,6 @@
         left: $side-width;
         top: $head-h;
         height: calc(100vh - #{$head-h});
+        padding: 10px
     }
 }

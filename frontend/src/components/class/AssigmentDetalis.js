@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./style/AssigmentDetalis.css";
 import { useParams } from "react-router-dom";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import instance from "../../api/axios";
 import Modal from "react-modal";
 import { useTranslation } from "react-i18next";
