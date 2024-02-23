@@ -119,8 +119,9 @@ def get_university_login_screen_info(request):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_user_profile_pic(request, username):
+def getUserProfile(request):
     try:
+        username = request.user.username
         # Retrieve the user based on the provided username
         user = User.objects.get(username=username)
 
@@ -164,7 +165,7 @@ def get_user_profile_pic(request, username):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
-def update_user_profile_pic(request):   
+def updateProfilePicture(request):   
     try:
         user = request.user
         profile = UserProfile.objects.get(user=user)
@@ -188,7 +189,7 @@ def update_user_profile_pic(request):
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def change_password(request):
+def changePassword(request):
      try:
         user = request.user
 
@@ -242,7 +243,7 @@ def get_user_list(request):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_user_profile_details(request):
+def profileDetails(request):
     try:
         user = request.user
         user_obj = User.objects.get(username=user)

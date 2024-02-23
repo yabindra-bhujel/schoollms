@@ -25,6 +25,11 @@ urlpatterns = [
     path('havetwoFactorAuth', check_have_two_factor_auth, name='check_have_two_factor_auth'),
     path('reset_password', reset_password, name='reset_password'),
     path('conform_reset_password/<str:uuid>/<str:token>/', conform_reset_password, name='conform_reset_password'),
+    path('get_user_profile', getUserProfile, name='getUserProfile'),
+    path('profile_detalis', profileDetails, name='profileDetails'),
+    path('update_profile_picture', updateProfilePicture, name='updateProfile'),
+    path('chnage_password', changePassword, name='changePassword'),
+    
 
     path('student/', include("student.urls")),
     path('course/', include("courses.urls")),   

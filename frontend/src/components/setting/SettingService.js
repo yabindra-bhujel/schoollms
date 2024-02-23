@@ -1,9 +1,9 @@
 import instance from "../../api/axios";
 
 
-const getUserProfile = async (username) => {
+const getUserProfile = async () => {
     try {
-        const endpoint = `get_user_profile_pic/${username}/`;
+        const endpoint = `get_user_profile`;
         const response = await instance.get(endpoint);
         return response;
     } catch (error) {
@@ -14,7 +14,7 @@ const getUserProfile = async (username) => {
 
 const uploadImage = async(image) =>{
     try {
-        const endpoint = `update_user_profile_pic/`;
+        const endpoint = `update_profile_picture`;
         const response = await instance.post(endpoint, image);
         return response;
     } catch (error) {
@@ -24,7 +24,7 @@ const uploadImage = async(image) =>{
 
 const getUserProfileInfo = async() =>{
     try {
-        const endpoint = `get_user_profile_details/`;
+        const endpoint = `profile_detalis`;
         const response = await instance.get(endpoint);
         return response;
     } catch (error) {
@@ -45,7 +45,7 @@ const updateUserInfo = async(data) =>{
 
 const chnagePassword = async(data) =>{
     try {
-        const endpoint = `change_password`;
+        const endpoint = `chnage_password`;
         const response = await instance.post(endpoint, data);
         return response;
     } catch (error) {

@@ -46,7 +46,7 @@ const TodayCourseList = () => {
   const isTeacher = getUserInfo().isTeacher;
   const [todayCourseList, setTodayCourseList] = useState([]);
   const getTodayCourse = async () => {
-    const endpoint = isTeacher ? `/teacher/get_teacher_today_class/${username}/` : `/student/get_student_today_class/${username}/`;
+    const endpoint = isTeacher ? `/teacher/get_teacher_today_class/${username}/` : `/student/get_student_today_class/`;
 
     try {
       const response = await instance.get(endpoint);

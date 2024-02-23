@@ -167,13 +167,12 @@ const Sidebar = ({}) => {
 }
 
   useEffect(() => {
-    getUniveristyName();
     getLoginUserData();
   }, []);
 
   const getLoginUserData = async () => {
     try {
-      const endpoint = `/get_user_profile_pic/${username}/`;
+      const endpoint = `get_user_profile`;
       const response = await instance.get(endpoint);
       setLoginuserData(response.data);
     } catch (e) {
@@ -181,15 +180,7 @@ const Sidebar = ({}) => {
     }
   };
 
-  const getUniveristyName = async () => {
-    try {
-      const endpoint = "/get_university_login_screen_info";
-      const response = await instance.get(endpoint);
-      setuniversityName(response.data);
-    } catch (e) {
-      console.log("error", e);
-    }
-  };
+
 
   return (
     <div>

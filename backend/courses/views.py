@@ -1569,9 +1569,11 @@ def get_announcement_by_subject_student(request, subject_code):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_announcement_by_student(request, studentid):
+def getAnnouncementByStudent(request):
     try:
-        student = Student.objects.get(studentID=studentid)
+        user = request.user
+        student = Student.objects.get(user=user)
+        # student = Student.objects.get(studentID=studentid)
         subject_enroll = SubjectEnroll.objects.filter(student=student)
         announcement = Announcement.objects.filter(course__in=subject_enroll.values_list('course', flat=True))
         serializer = AnnouncementSerializer(announcement, many=True, context={'request': request})

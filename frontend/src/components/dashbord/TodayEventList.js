@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import { List, ListItem, ListItemText, Divider, Typography, Box, Avatar, Paper } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import instance from "../../api/axios";
-import getUserInfo from "../../api/user/userdata";
 
 const TodayEventList = () => {
   const [events, setEvents] = useState([]);
 
   const getTodayEvent = async () => {
-    const username = getUserInfo().username;
-    const endpoint = `/notification/getTodayEvent/${username}/`;
+    const endpoint = `/notification/getTodayEvent`;
     try {
       const response = await instance.get(endpoint);
       if (response.status === 200) {

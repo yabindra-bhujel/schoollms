@@ -288,10 +288,13 @@ def student_detail(request, studentID):
 from datetime import datetime
 
 @api_view(["GET"])
-def get_student_today_class(request, student_id):
+def getStudentTodayClass(request):
     try:
+        user = request.user
+        
         try:
-            student = Student.objects.get(studentID=student_id)
+            if user.is_student:
+                student = Student.objects.get(user=user)
         except Student.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         

@@ -37,7 +37,7 @@ const AnnouncementList = () =>{
 
     useEffect(() => {
         if (isStudent) {
-            instance.get("/course/get_announcement_by_student/" + studentid + "/").then((response) => {
+            instance.get("/course/get_announcement_by_student/").then((response) => {
                 setAnnouncements(response.data);
             });
             }

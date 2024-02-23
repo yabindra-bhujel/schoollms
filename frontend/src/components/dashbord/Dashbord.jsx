@@ -20,7 +20,6 @@ import BasicDateCalendar from "./Calender";
 import TodayCourseList from "./TodayCourseList";
 import TodayEventList from "./TodayEventList";
 import HeatmapChart from "./heatmapChart";
-// import AnnouncementList from "./AnnouncementList";
 import AnnouncementList from "./Announcement/AnnouncementList";
 import getUserInfo from "../../api/user/userdata";
 
@@ -29,7 +28,6 @@ const Dashboard = () => {
     const accessToken = loginedinUserdata.access;
     const decoded = jwtDecode(accessToken);
     const username = decoded.username;
-    const [user, setUser] = useState([]);
     const isTeacher = getUserInfo().isTeacher;
 
     const lineChartData = [
@@ -51,19 +49,6 @@ const Dashboard = () => {
 
         // Add more data points here
     ];
-
-    useEffect(() => {
-        getTeacherData();
-    }, []);
-
-    const getTeacherData = async () => {
-        try {
-            const res = await instance.get(`/teacher/${username}/`);
-            setUser(res.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     return (
         <Layout>

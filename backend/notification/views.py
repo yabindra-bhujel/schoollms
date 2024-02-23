@@ -19,6 +19,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
+from django.db.models import Q
 
 
 
@@ -118,13 +119,13 @@ def getCalenderEvent(request):
 
 
 @api_view(['GET'])
-def getTodayEvent(request, username):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def getTodayEvent(request):
     try:
+        username = request.user.username
         user = User.objects.get(username=username)
         today = datetime.now().date()
-        
-        # calendar_events = CalenderModel.objects.filter(user=user, start_date=today).exclude(color='red', color='green')
-        from django.db.models import Q
 
         calendar_events = CalenderModel.objects.filter(
             user=user,

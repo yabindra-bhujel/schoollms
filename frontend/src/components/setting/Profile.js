@@ -64,10 +64,8 @@ const Profile = () => {
 
   const fatchData = async () => {
     try {
-      if (username) {
-        const response = await getUserProfile(username);
+        const response = await getUserProfile();
         setProfile(response.data);
-      }
     } catch (error) {
       setMessage("Something went wrong");
       setSnackbarOpen(true);
