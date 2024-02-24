@@ -3,20 +3,16 @@ $menu-text-light: black;
 $main-background-color: #2a71b9;
 $side-width: 200px;
 $inline-flx: inline-flex;
-$head-h: 8vh;
+$head-h: 200px;
 
 
 nav {
   background-color: $main-background-color;
-  height: $head-h;
-  width: calc(100% - #{$side-width});
-  position: fixed;
-  top: 0;
-  left: $side-width;
+  height: 100%;
+  width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: white;
   display: flex;
-  justify-content: space-between;
 
   .user_info_side {
     margin-left: 100px;

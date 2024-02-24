@@ -1,14 +1,10 @@
 nav {
   background-color: #2a71b9;
-  height: 8vh;
-  width: calc(100% - 200px);
-  position: fixed;
-  top: 0;
-  left: 200px;
+  height: 100%;
+  width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: white;
   display: flex;
-  justify-content: space-between;
 }
 nav .user_info_side {
   margin-left: 100px;

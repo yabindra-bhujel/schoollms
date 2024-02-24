@@ -1,6 +1,7 @@
 // Layout.js
 import Header from '../navigations/header';
 import Sidebar from '../navigations/sidebar/Sidebar';
+import "./layout.css";
 
 const Layout = ({ children }) => {
 
@@ -14,7 +15,7 @@ const Layout = ({ children }) => {
           <div className='header-bar'>
             <Header />
           </div>
-          <div className="page-wrapper">
+          <div className="body-content">
               {children}
           </div>
         </div>
