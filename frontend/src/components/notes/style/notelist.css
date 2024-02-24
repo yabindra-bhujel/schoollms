@@ -37,9 +37,6 @@
 .note-list .note-card .note-item .content-update {
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
-}/*# sourceMappingURL=notelist.css.map */
-=======
 }
 .note-list .note-card .note-item .content-update .content {
   height: 60px;
@@ -149,4 +146,3 @@
     width: 200px;
   }
 }
->>>>>>> 89df77b (changed in sidebar.js)
