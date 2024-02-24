@@ -25,7 +25,8 @@ div.main-container {
     }
     div.body-content {
       height: calc(100% - 70px);
-      width: 100%;
+      width: calc(100% - 200px);
+      left: 200px;
       padding: 10px;
       overflow: scroll;
     }

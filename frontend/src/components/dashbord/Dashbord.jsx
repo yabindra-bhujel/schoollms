@@ -36,7 +36,7 @@ const Dashboard = () => {
         { name: "Mar", sales: 800 },
         // Add more data points here
     ];
-
+    
     const barChartData = [
         { name: "Jan", revenue: 200 },
         { name: "Feb", revenue: 400 },

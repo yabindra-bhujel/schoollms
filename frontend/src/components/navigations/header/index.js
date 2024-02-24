@@ -213,10 +213,7 @@ useEffect(() => {
 
       {/* header bar */}
       <div className="set-nav">
-        <nav style={{
-          width: sidebarWidth ? "calc(100% - 200px)" : "calc(100% - 70px)",
-          left: sidebarWidth ? "200px" : "70px"
-        }}>
+        <nav>
           <div className="user_info_side">
 
             <p> CampusFlow  Welcome, {fullname}!</p>
