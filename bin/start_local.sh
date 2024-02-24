@@ -11,6 +11,7 @@ kill_processes_on_port() {
 }
 kill_processes_on_port 3000
 kill_processes_on_port 8000
+kill_processes_on_port 3001
 
 echo "Processes on ports 3000 and 8000 stopped"
 echo "Starting local development environment"

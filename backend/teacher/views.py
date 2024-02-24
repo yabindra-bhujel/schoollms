@@ -13,17 +13,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from datetime import datetime
-from .permissions import IsTeacherPermission
-
-
-
-
-# """""""""""""""""""""""""""""""""""""""""
-# Teacher API For Admin"
-# """""""""""""""""""""""""""""""""""""""""
-
-
-
+from tenant.models import UserProfile,ApplicationSettings
 
 @api_view(["DELETE"])
 @authentication_classes([JWTAuthentication])
@@ -39,7 +29,6 @@ def delete_teacher(request, TeacherID):
     except Teacher.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-
 @api_view(["GET", "POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
@@ -54,18 +43,11 @@ def teacher_list(request):
     except Exception as e:
         print(e)
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
-
-
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def add_teacher(request):
-
-
     try:
         data = request.data
         teacherID = data["teacherID"]
@@ -78,8 +60,6 @@ def add_teacher(request):
         phone = data["phone"]
         address = data["address"]
         image = data["image"]
-
-
         try:
             teacher = Teacher.objects.create(
                 TeacherID=teacherID,
@@ -94,26 +74,19 @@ def add_teacher(request):
             )
             user = User.objects.create_user(username=teacherID, password=password, 
                                             first_name=first_name, last_name=last_name, email=email, is_teacher=True)
-            
             teacher.user = user
             teacher.save()
+
+            userProfile = UserProfile.objects.create(user=user, image=image)
+            userProfile.save()
+            applicationSetting = ApplicationSettings.objects.create(user=user)
+            applicationSetting.save()
             return Response(status=status.HTTP_201_CREATED)
-
         except Exception as e:
-            print(e)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-
-
     except Exception as e:
         print(e)
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -127,7 +100,7 @@ def add_teacher_by_file(request):
 
         for row_number, column in enumerate(csv.reader(io_string, delimiter=',', quotechar='"')):
             try:
-                if len(column) >= 7:  # Check if the row has at least 7 columns
+                if len(column) >= 7:  
                     teacherID = column[0]
                     date_of_birth = column[1]
                     password = date_of_birth.replace("-", "")
@@ -150,11 +123,13 @@ def add_teacher_by_file(request):
                     )
                     user = User.objects.create_user(username=teacherID, password=password, 
                                                     first_name=first_name, last_name=last_name, email=email, is_teacher=True)
-                    
                     teacher.user = user
                     teacher.save()
+                    userProfile = UserProfile.objects.create(user=user)
+                    userProfile.save()
+                    applicationSetting = ApplicationSettings.objects.create(user=user)
+                    applicationSetting.save()
             except Exception as e:
-                print(f"Error at row {row_number + 2}: {e}")
                 return Response({"error": f"Error at row {row_number + 2}: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(status=status.HTTP_201_CREATED)
@@ -162,17 +137,6 @@ def add_teacher_by_file(request):
     except Exception as e:
         print(e)
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-
-# """""""""""""""""""""""""""""""""""""""""
-#  API For Teacher"
-# """""""""""""""""""""""""""""""""""""""""
-
-
-
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -212,12 +176,8 @@ def teacher_detail(request, TeacherID):
             "period_end_time":enroll.course.period_end_time,
             "class_room":enroll.course.class_room,
             "class_period":enroll.course.class_period,
-
-
-            # Add other subject details if needed
         }
 
-        # Get information about the students enrolled in the subject
         students_data = []
         for student in enroll.student.all():
             student_data = {
@@ -246,10 +206,7 @@ def teacher_detail(request, TeacherID):
         "subjects": subjects_data,
     }
 
-    return Response(serializer_data)
-
-
-
+    return Response(serializer_data, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -261,11 +218,9 @@ def get_teacher_today_class(request, teacher_id):
         except Teacher.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-        # Get the current day of the week (Monday=0, Sunday=6)
         current_day_index = datetime.now().weekday()
         current_day = Subject.DAYS_OF_WEEK[current_day_index][0]
 
-        # Filter classes for the current day
         subject_incharge = SubjectEnroll.objects.filter(teacher=teacher, course__weekday=current_day)
         
         subjects_data = []
@@ -283,19 +238,5 @@ def get_teacher_today_class(request, teacher_id):
             subjects_data.append(subject_data)
         
         return Response(subjects_data, status=status.HTTP_200_OK)
-    
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-@api_view(["GET"])
-def get_teacher_all_class(request, teacher_id):
-    try:
-        print("Hello")
-       
-        
-        return Response( status=status.HTTP_200_OK)
-    
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

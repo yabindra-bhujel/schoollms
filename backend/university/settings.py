@@ -24,7 +24,7 @@ if os.path.isfile(dotenv_file):
 # UPDATE secret key
 SECRET_KEY = os.environ['SECRET_KEY'] 
 
-
+CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -177,8 +177,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
 )
 
-# WSGI_APPLICATION = 'university.wsgi.application'
-ASGI_APPLICATION = 'university.asgi.application'
+WSGI_APPLICATION = 'university.wsgi.application'
+# ASGI_APPLICATION = 'university.asgi.application'
+
 
 
 

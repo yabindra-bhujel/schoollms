@@ -10,9 +10,10 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from courses.models import Department
+from tenant.models import UserProfile, ApplicationSettings
 User = get_user_model()
 import csv
-
+from datetime import datetime
 import io
 import traceback
 
@@ -22,20 +23,16 @@ import traceback
 @permission_classes([IsAuthenticated, IsAdminUser])
 def add_newStudent(request):
     try:
-        # Extract department data
         department_name = request.data.get('department')
         department = Department.objects.get(Department_name=department_name)
 
-        # Add the department to the student data
         student_data = request.data.copy()
         student_data['department'] = department.id
 
-        # Create the student serializer
         student_serializer = StudentSerializer(data=student_data)
         if student_serializer.is_valid():
             student = student_serializer.save()
 
-            # Create user data and serializer (your existing code)
             username = str(request.data['studentID'])
             date_of_birth = str(request.data['date_of_birth'])
             password = date_of_birth.replace("-", "")
@@ -55,10 +52,14 @@ def add_newStudent(request):
                 user.is_student = True
                 user.save()
 
-                # Associate the user and email with the student
                 student.user = user
                 student.email = email
                 student.save()
+
+                user_profile = UserProfile.objects.create(user=user)
+                user_profile.save()
+                applicationSetting = ApplicationSettings.objects.create(user=user)
+                applicationSetting.save()
 
                 return Response(student_serializer.data, status=status.HTTP_201_CREATED)
             else:
@@ -73,8 +74,6 @@ def add_newStudent(request):
         print(e)
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
@@ -83,21 +82,16 @@ def add_student_by_csv_file(request):
         uploaded_file = request.data.get('file')
         data_set = uploaded_file.read().decode('UTF-8')
         io_string = io.StringIO(data_set)
-        next(io_string)  # Skip the header row
 
         for column in csv.reader(io_string, delimiter=',', quotechar='"'):
-            # Check if the column list has at least 8 elements
             if len(column) < 8:
                 continue
 
-            # Extract department data
             department_name = column[7]
 
             try:
                 department = Department.objects.get(Department_code=department_name)
             except Department.DoesNotExist:
-                # Handle missing department case
-                print(f"Department '{department_name}' not found. Skipping entry.")
                 continue
 
             studentID = column[0]
@@ -121,12 +115,14 @@ def add_student_by_csv_file(request):
                 date_of_birth=date_of_birth,
                 department=department,
             )
-            user = User.objects.create_user(username=studentID, password=password,
-                                            first_name=first_name, last_name=last_name, email=email, is_student=True)
-
+            user = User.objects.create_user(username=studentID, password=password,first_name=first_name, last_name=last_name, email=email, is_student=True)
             student.user = user
             student.save()
 
+            user_profile = UserProfile.objects.create(user=user)
+            user_profile.save()
+            applicationSetting = ApplicationSettings.objects.create(user=user)
+            applicationSetting.save()
         return Response(status=status.HTTP_201_CREATED)
     except Exception as e:
         traceback.print_exc()
@@ -280,12 +276,6 @@ def student_detail(request, studentID):
         return Response(status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
-
-
-from datetime import datetime
 
 @api_view(["GET"])
 def getStudentTodayClass(request):
@@ -298,11 +288,9 @@ def getStudentTodayClass(request):
         except Student.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-        # Get the current day of the week (Monday=0, Sunday=6)
         current_day_index = datetime.now().weekday()
         current_day = Subject.DAYS_OF_WEEK[current_day_index][0]
 
-        # Filter classes for the current day
         subject_incharge = SubjectEnroll.objects.filter(student=student, course__weekday=current_day)
         
         subjects_data = []

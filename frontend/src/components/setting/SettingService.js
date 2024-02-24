@@ -35,7 +35,7 @@ const getUserProfileInfo = async() =>{
 
 const updateUserInfo = async(data) =>{
     try {
-        const endpoint = `upadte_user_info/`;
+        const endpoint = `update_user_info`;
         const response = await instance.post(endpoint, data);
         return response;
     } catch (error) {
@@ -92,7 +92,29 @@ const updateTwoFactorAuth = async (data) => {
 }
 }
 
+const checkEmailNotification = async () => {
+    try {
+        const endpoint = "haveEmailNotification";
+        const response = await instance.get(endpoint);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+const updateEmailNotification = async (data) => {
+    try {
+        const endpoint = "updateEmailNotification";
+        const response = await instance.post(endpoint, data);
+        return response;
+    } catch (error) {
+        throw error;
+    
+}
+}
 
 
 
-export { getUserProfile , uploadImage, getUserProfileInfo, updateUserInfo, chnagePassword, handleLogout, checkTwoFactorAuth, updateTwoFactorAuth};
+
+export { getUserProfile , uploadImage, getUserProfileInfo, updateUserInfo, chnagePassword, handleLogout, checkTwoFactorAuth, updateTwoFactorAuth,checkEmailNotification, updateEmailNotification};

@@ -7,6 +7,7 @@ import getUserInfo from "../../api/user/userdata";
 import { Link } from "react-router-dom";
 import "./style/class.css";
 import { useTranslation } from "react-i18next";
+
  
 const StudentTableComponent = () => {
   const userData = getUserInfo();
@@ -15,7 +16,10 @@ const StudentTableComponent = () => {
   const isTeacher = userData.isTeacher;
   const { t } = useTranslation();
 
+
   const [subject, setSubject] = useState();
+
+ 
 
   useEffect(() => {
     if(isStudent){
@@ -27,7 +31,6 @@ const StudentTableComponent = () => {
     try {
       const endpoint = `/student/${username}/`;
       const response = await instance.get(endpoint);
-      console.log(response.data)
       setSubject(response.data.courses);
 
 

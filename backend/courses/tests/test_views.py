@@ -1,136 +1,61 @@
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APIClient
 from courses.models import *
-from courses.serializers import *
-import json
 
+class EnrollSubjectTestCase(TestCase):
 
-
-class CourseViewsTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.course_data = {
-            "subject_code": "CS101",
-            "subject_name": "Introduction to Computer Science",
-            "department": "Computer Science",
-            "semester": "1",
-            "year": "2022",
+        self.username = 'test_username'
+        self.teacher = Teacher.objects.create(TeacherID='T123', first_name='John', last_name='Doe')
+        self.student = Student.objects.create(studentID='S123', first_name='Jane', last_name='Smith')
+        self.department = Department.objects.create(Department_name='Test Department')
+        self.subject = Subject.objects.create(subject_code='CS101', subject_name='Computer Science', weekday='Monday', class_period=1, subject_faculty=self.department, subject_teacher=self.teacher)
+    
+    def test_create_enroll_subject(self):
+        url = reverse('create_enroll_subject', args=[self.username])
+        data = {
+            'subject_name': 'Computer Science',
+            'subject_teacher': 'John Doe',
+            'student': ['S123']
         }
-        self.response = self.client.post(
-            reverse("create_course"), self.course_data, format="json"
-        )
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_get_subject_enroll(self):
+        url = reverse('get_subject_enroll', args=[self.username])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+class CourseManagementTestCase(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
 
     def test_create_course(self):
-        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
-
-    def test_get_course_list(self):
-        response = self.client.get(reverse("course_list"))
-        courses = Course.objects.all()
-        serializer = CourseSerializer(courses, many=True)
-        self.assertEqual(response.data, serializer.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_course_details(self):
-        course = Course.objects.get()
-        response = self.client.get(reverse("course_details", kwargs={"subject_code": course.subject_code}))
-        serializer = CourseSerializer(course)
-        self.assertEqual(response.data, serializer.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_enroll_student(self):
-        response = self.client.get(reverse("enroll_student"))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_create_assignment(self):
-        assignment_data = {
-            "title": "Assignment 1",
-            "description": "This is the first assignment",
-            "due_date": "2022-01-31T00:00:00Z",
-            "course": 1,
+        url = reverse('create_course')
+        data = {
+            'course_id': 'CS101',
+            'course_name': 'Computer Science',
+            'weekday': 'Monday',
+            'class_period': 1,
+            'course_department': 'Test Department',
+            'teacher_name': 'John Doe'
         }
-        response = self.client.post(
-            reverse("create_assignment"), assignment_data, format="json"
-        )
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_get_assignment_details(self):
-        assignment = Assignment.objects.get()
-        response = self.client.get(reverse("assignment_details", kwargs={"id": assignment.id}))
-        serializer = AssignmentSerializer(assignment)
-        self.assertEqual(response.data, serializer.data)
+    def test_delete_course(self):
+        teacher = Teacher.objects.create(TeacherID='T123', first_name='John', last_name='Doe')
+        department = Department.objects.create(Department_name='Test Department')
+        subject = Subject.objects.create(subject_code='CS101', subject_name='Computer Science', weekday='Monday', class_period=1, subject_faculty=department, subject_teacher=teacher)
+        url = reverse('delete_course', args=[subject.subject_code, 'test_username'])
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_all_assignment(self):
-        response = self.client.get(reverse("get_all_assignment", kwargs={"username": "testuser"}))
+    def test_department_list(self):
+        url = reverse('department_list')
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_active_assignment(self):
-        response = self.client.get(reverse("get_active_assignment", kwargs={"username": "testuser"}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_past_assignment(self):
-        response = self.client.get(reverse("get_past_assignment", kwargs={"username": "testuser"}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_future_assignment(self):
-        response = self.client.get(reverse("get_future_assignment", kwargs={"username": "testuser"}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-
-class CourseViewsTestCase(APITestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.course_data = {
-            "subject_code": "CS101",
-            "subject_name": "Introduction to Computer Science",
-            "department": "Computer Science",
-            "semester": "1",
-            "year": "2022",
-        }
-        self.response = self.client.post(
-            reverse("create_course"), self.course_data, format="json"
-        )
-
-    def test_assignment_details(self):
-        # Create an assignment
-        assignment_data = {
-            "title": "Assignment 1",
-            "description": "This is the first assignment",
-            "due_date": "2022-01-31T00:00:00Z",
-            "course": 1,
-        }
-        response = self.client.post(
-            reverse("create_assignment"), assignment_data, format="json"
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        # Get the assignment details
-        assignment_id = response.data["id"]
-        response = self.client.get(reverse("assignment_details", kwargs={"id": assignment_id}))
-
-        # Check that the response is successful
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Check that the response data contains the expected fields
-        self.assertIn("id", response.data)
-        self.assertIn("title", response.data)
-        self.assertIn("description", response.data)
-        self.assertIn("due_date", response.data)
-        self.assertIn("course", response.data)
-        self.assertIn("assignment_type", response.data)
-        self.assertIn("submission_count", response.data)
-        self.assertIn("assignment_posted_date", response.data)
-        self.assertIn("assignment_deadline", response.data)
-        self.assertIn("questions", response.data)
-        self.assertIn("submissions", response.data)
-
-        # Check that the questions field contains the expected data
-        self.assertIsInstance(response.data["questions"], list)
-        self.assertEqual(len(response.data["questions"]), 0)
-
-        # Check that the submissions field contains the expected data
-        self.assertIsInstance(response.data["submissions"], list)
-        self.assertEqual(len(response.data["submissions"]), 0)

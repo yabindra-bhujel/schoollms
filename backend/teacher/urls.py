@@ -9,5 +9,4 @@ urlpatterns = [
     path('list/',teacher_list , name="teacher_list"),
     path('add/', add_teacher, name="create_teacher"),
     path('<str:TeacherID>/', teacher_detail, name="teacher_detail" ),
-    path('get_teacher_all_class/', get_teacher_all_class, name="get_teacher_all_class"),
 ]

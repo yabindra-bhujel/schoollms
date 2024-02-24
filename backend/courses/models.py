@@ -3,14 +3,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils import timezone
 from student.models import Student
-from teacher.models import Teacher
-from university import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.deconstruct import deconstructible
-from django.db import transaction
 import random
-
 
 class Department(models.Model):
     Department_name = models.CharField(max_length=50, null=True, unique=True)
@@ -18,11 +12,7 @@ class Department(models.Model):
 
     def __str__(self):
         return self.Department_name
-    
 
-
-
-    
 class Subject(models.Model):
     CLASS_ROOM_CODE = (
         ('U101', 'U101'),
@@ -49,10 +39,7 @@ class Subject(models.Model):
                 ('3', '3'),
                 ('4', '4'),
                 ('5', '5'),
-                ('6', '6'),
-            )
-    
-
+                ('6', '6'),)
     DAYS_OF_WEEK = (
     ('Monday', 'Monday'),
     ('Tuesday', 'Tuesday'),
@@ -72,22 +59,16 @@ class Subject(models.Model):
     subject_teacher = models.ForeignKey('teacher.Teacher', on_delete=models.PROTECT, null=True)
     subject_faculty = models.ForeignKey(Department, on_delete=models.PROTECT, null=True)
 
-
     def __str__(self):
         return self.subject_name
     
-
 class SubjectEnroll(models.Model):
     course = models.ForeignKey(Subject, on_delete=models.CASCADE)
     student = models.ManyToManyField('student.Student')
     teacher = models.ForeignKey('teacher.Teacher', on_delete=models.CASCADE)
-    
 
     def __str__(self):
         return self.course.subject_name + " " + self.teacher.first_name + " " + self.teacher.last_name
-
-
-
 
 class TextAssigemntQuestion(models.Model):
     question = models.TextField(null=True, blank=True)
@@ -127,30 +108,19 @@ class Assignment(models.Model):
             return False
         else:
             return True
-        
-
 
     def has_student_submitted(self, student):
         # Check for file submission
         if self.file_submissions.filter(student=student).exists():
             return True
-
         # Check for text submission
         if self.text_submissions.filter(student=student).exists():
             return True
 
         return False
-    
-
 
     def __str__(self):
         return self.assignment_title
-    
-
-
-
-
-
 
 class AssignmentFile(models.Model):
     file = models.FileField(upload_to='file_submission')
@@ -158,7 +128,6 @@ class AssignmentFile(models.Model):
     def __str__(self):
         return self.file.name
 
-    
 class FileSubmission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='file_submissions')
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -168,16 +137,12 @@ class FileSubmission(models.Model):
     is_graded = models.BooleanField(default=False)
     grade = models.PositiveIntegerField(default=0)
 
-
     def __str__(self):
         return self.assignment.assignment_title
     
 class TextAnswer(models.Model):
     question = models.ForeignKey(TextAssigemntQuestion, on_delete=models.CASCADE)
     answer = models.TextField(null=True, blank=True)
-
-
-
 
 class TextSubmission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='text_submissions')
@@ -192,9 +157,6 @@ class TextSubmission(models.Model):
     def __str__(self):
         return self.assignment.assignment_title
 
-
-
-
 @deconstructible
 class UploadToPathAndRename:
     def __init__(self, sub_path):
@@ -205,21 +167,12 @@ class UploadToPathAndRename:
         filename = f"{today.strftime('%Y%m%d')}_{filename}"
         return f"{self.sub_path}/{filename}"
     
-
 class CourseMateriales(models.Model):
         pdf_file = models.FileField(upload_to=UploadToPathAndRename("Materiales"))
         course = models.ForeignKey(Subject, on_delete=models.CASCADE)
 
         def __str__(self):
             return self.pdf_file.name
-        
-
-
-
-
-
-
-
 
 class StudentAttended(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, blank=True)
@@ -227,11 +180,8 @@ class StudentAttended(models.Model):
     attendance_code = models.CharField(max_length=10, null=True, blank=True)
     attendance = models.ForeignKey('Attendance', on_delete=models.CASCADE, null=True, blank=True)
 
-
     def __str__(self):
         return self.student.first_name + " " + self.student.last_name + " " + str(self.is_present)
-
-
 
 class Attendance(models.Model):
     course = models.ForeignKey(Subject, on_delete=models.CASCADE)
@@ -240,8 +190,6 @@ class Attendance(models.Model):
     attendance_code = models.CharField(max_length=10, unique=True, null=True, blank=True)
     students_attended = models.ManyToManyField(StudentAttended, related_name='attendances')
     is_active = models.BooleanField(default=True)
-
-
 
     def save(self, *args, **kwargs):
         if not self.attendance_code:
@@ -255,25 +203,14 @@ class Attendance(models.Model):
                     student=student,
                     is_present=False,
                     attendance_code=self.attendance_code,
-                    attendance=self
-
-                )
+                    attendance=self)
                 self.students_attended.add(student_attended)
-
-
 
     def generate_attendance_code(self):
         return str(random.randint(100000, 999999))
 
-
     def __str__(self):
         return self.course.subject_name + " " + str(self.date)
-    
-
-
-
-
-
 
 class AnnouncementFile(models.Model):
     file = models.FileField(upload_to='announcement_file')
@@ -292,5 +229,3 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.announcement_title
-    
-

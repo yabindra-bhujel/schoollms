@@ -24,6 +24,7 @@ import Notifications from "./Notification";
 import Snackbar from "@mui/material/Snackbar";
 import ProfileMenu from "./Profile";
 import getUserInfo from "../../api/user/userdata";
+import { use } from "i18next";
 
 const Sidebar = ({}) => {
   const userData = JSON.parse(localStorage.getItem("userData"));
@@ -65,13 +66,12 @@ const Sidebar = ({}) => {
       const endpoint = `/realtimeapi/get_group_list/${userId}`;
       const response = await instance.get(endpoint);
       const groupName = response.data.groups.map(group => group.name); // Extracting group names
-      setGroupName(groupName); // Setting the groupName state
+      setGroupName(groupName); 
     } catch (e) {
       console.log("error");
     }
   };
-
-
+ 
   useEffect(() => {
     if (socket) {
       socket.on("connect", () => {

@@ -18,6 +18,7 @@ export const WebSocketProvider = ({ children }) => {
     // Initialize WebSocket connection
     const newSocket = io("http://127.0.0.1:3001", { transports: ["websocket"] });
     setSocket(newSocket);
+    
 
     // Cleanup on unmount
     return () => {

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {Snackbar, TextField, Button, Grid, Paper, Typography, List, ListItem, ListItemText, InputAdornment, IconButton } from '@mui/material';
+import { Snackbar, TextField, Button, Grid, Paper, Typography, List, ListItem, ListItemText, InputAdornment, IconButton } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import "./style/password.css";
 import HttpsIcon from '@mui/icons-material/Https';
-import { chnagePassword, handleLogout, checkTwoFactorAuth , updateTwoFactorAuth} from './SettingService';
+import { chnagePassword, handleLogout, checkTwoFactorAuth, updateTwoFactorAuth, updateEmailNotification, checkEmailNotification } from './SettingService';
 import { Switch, FormGroup, FormControlLabel } from '@mui/material';
 import { set } from 'date-fns';
 
@@ -21,14 +21,18 @@ const UserManagement = () => {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
   const [isTwoFactorAuthEnabled, setIsTwoFactorAuthEnabled] = useState(false);
+  const [isEmailNotificationEnabled, setIsEmailNotificationEnabled] = useState(false);
 
 
 
   const fatchData = async () => {
-    try{
+    try {
       const response = await checkTwoFactorAuth();
       setIsTwoFactorAuthEnabled(response.data.two_factor_auth);
-    }catch(error){
+
+      const emailNotificationResponse = await checkEmailNotification();
+      setIsEmailNotificationEnabled(emailNotificationResponse.data.is_email_notification);
+    } catch (error) {
       setMessage("Something went wrong while fetching data. Please try again later or contact to service provider.");
       setSnackbarOpen(true);
     }
@@ -56,11 +60,24 @@ const UserManagement = () => {
     }
   };
 
-  
+  const handleEmailToggleChange = async () => {
+    setIsEmailNotificationEnabled((prevValue) => !prevValue);
+
+    const data = {
+      emai_notification: !setIsEmailNotificationEnabled,
+    };
+    const response = await updateEmailNotification(data);
+    if (response.status === 200) {
+      setMessage("Email Notification Updated Successfully");
+      setSnackbarOpen(true);
+    }
+  };
+
+
   const handleClose = () => {
     setSnackbarOpen(false);
   };
-  
+
   useEffect(() => {
     // Fetch login history data
     // This is a placeholder, replace with actual data fetching logic
@@ -71,10 +88,10 @@ const UserManagement = () => {
 
   // const validatePassword = (password) => {
   //   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  
+
   //   return regex.test(password);
   // };
-  
+
 
   const handleFormSubmit = (e) => {
     setErrors({});
@@ -121,7 +138,7 @@ const UserManagement = () => {
         setConfirmPassword("");
         setTimeout(() => {
           handleLogout();
-        } , 10000);
+        }, 10000);
 
 
       })
@@ -135,139 +152,157 @@ const UserManagement = () => {
 
   return (
     <>
-    <Snackbar
-      open={snackbaropen}
-      onClose={handleClose}
-      message={message}
-      autoHideDuration={6000}
-    />
-    <div className="password-security">
-      <div className='password-chnage'>
+      <Snackbar
+        open={snackbaropen}
+        onClose={handleClose}
+        message={message}
+        autoHideDuration={6000}
+      />
+      <div className="password-security">
+        <div className='password-chnage'>
 
-        <HttpsIcon style={{ fontSize: 60,
-        color: 'blue',
-        marginTop: 20,
-        marginBottom: 20,
-        marginLeft: 20,
-        marginRight: 20,
+          <HttpsIcon style={{
+            fontSize: 60,
+            color: 'blue',
+            marginTop: 10,
+            marginBottom: 10,
+            marginLeft: 20,
+            marginRight: 20,
 
-         }} />
-        <Typography
-        style={{ color: 'blue', fontSize: '20px' , fontWeight: 'bold'}}
-         >Change Password</Typography>
-        <Typography 
-        style={{ color: 'black', fontSize: '15px' , fontWeight: 'bold'}}
-        >To change your password, please fill in the fields below.</Typography>
-        <br />
-        <Typography 
-        style={{ color: 'red', fontSize: '15px' , fontWeight: 'bold'}}
-        >Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.</Typography>
-        <div 
-        style={{marginTop: '20px', marginBottom: '20px', width: '70%'}}
+          }} />
+          <Typography
+            style={{ color: 'blue', fontSize: '20px', fontWeight: 'bold' }}
+          >Change Password</Typography>
+          <Typography
+            style={{ color: 'black', fontSize: '15px', fontWeight: 'bold' }}
+          >To change your password, please fill in the fields below.</Typography>
+          <br />
+          <Typography
+            style={{ color: 'red', fontSize: '15px', fontWeight: 'bold' }}
+          >Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.</Typography>
+          <div
+            style={{ marginTop: '20px', marginBottom: '20px', width: '70%' }}
 
-        >
-          <TextField 
-            label="Old Password" 
-            type={showOldPassword ? 'text' : 'password'}
-            fullWidth 
-            value={oldPassword} 
-            onChange={(e) => setOldPassword(e.target.value)} 
-            margin="normal"
-            error={errors.oldPassword}
-            helperText={errors.oldPassword}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowOldPassword(!showOldPassword)}
-                    edge="end"
-                  >
-                    {showOldPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField 
-            label="New Password" 
-            type={showNewPassword ? 'text' : 'password'}
-            fullWidth 
-            value={newPassword} 
-            onChange={(e) => setNewPassword(e.target.value)} 
-            margin="normal"
-            error={errors.newPassword}
-            helperText={errors.newPassword}
-            InputProps={{
-      
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    edge="end"
-                  >
-                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField 
-            label="Confirm Password" 
-            type={showConfirmPassword ? 'text' : 'password'}
-            fullWidth 
-            value={confirmPassword} 
-            onChange={(e) => setConfirmPassword(e.target.value)} 
-            margin="normal"
-            error={errors.confirmPassword}
-            helperText={errors.confirmPassword}
-            InputProps={{
-
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    edge="end"
-                  >
-                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button 
-            type="submit" 
-            variant="outlined"
-            fullWidth
-            style={{marginTop: '40px'}}
-            startIcon={<HttpsIcon />
-          }
-            onClick={handleFormSubmit}
           >
-            Change Password
-          </Button>
+            <TextField
+              label="Old Password"
+              type={showOldPassword ? 'text' : 'password'}
+              fullWidth
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              margin="normal"
+              error={errors.oldPassword}
+              helperText={errors.oldPassword}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowOldPassword(!showOldPassword)}
+                      edge="end"
+                    >
+                      {showOldPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              label="New Password"
+              type={showNewPassword ? 'text' : 'password'}
+              fullWidth
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              margin="normal"
+              error={errors.newPassword}
+              helperText={errors.newPassword}
+              InputProps={{
+
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      edge="end"
+                    >
+                      {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              label="Confirm Password"
+              type={showConfirmPassword ? 'text' : 'password'}
+              fullWidth
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              margin="normal"
+              error={errors.confirmPassword}
+              helperText={errors.confirmPassword}
+              InputProps={{
+
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              type="submit"
+              variant="outlined"
+              fullWidth
+              style={{ marginTop: '20px' }}
+              startIcon={<HttpsIcon />
+              }
+              onClick={handleFormSubmit}
+            >
+              Change Password
+            </Button>
+          </div>
+        </div>
+
+        <div className='other-security'>
+
+          <div className='two-factor-auth'>
+            <Typography >
+              <h2>Two-Factor Authentication</h2>
+              <p>
+                Two-factor authentication enhances security by requiring a code from your <strong>email</strong>  along with your password for login. Ensure your <strong>email</strong> is current in your profile for this feature.
+              </p>
+
+
+            </Typography>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={isTwoFactorAuthEnabled} onChange={handleToggleChange} />}
+                label={isTwoFactorAuthEnabled ? 'Enabled' : 'Disabled'}
+              />
+            </FormGroup>
+          </div>
+
+          <div className='two-factor-auth'>
+            <Typography >
+              <h2>Email Notification</h2>
+              <p>
+                Two-factor authentication enhances security by requiring a code from your <strong>email</strong>  along with your password for login. Ensure your <strong>email</strong> is current in your profile for this feature.
+              </p>
+
+
+            </Typography>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={isEmailNotificationEnabled} onChange={handleEmailToggleChange} />}
+                label={isEmailNotificationEnabled ? 'Enabled' : 'Disabled'}
+              />
+            </FormGroup>
+          </div>
         </div>
       </div>
-
-      <div className='other-security'>
-
-        <div className='two-factor-auth'>
-      <Typography >
-        <h2>Two-Factor Authentication</h2>
-        <p>
-  Two-factor authentication enhances security by requiring a code from your <strong>email</strong>  along with your password for login. Ensure your <strong>email</strong> is current in your profile for this feature.
-</p>
-
-
-        </Typography>
-      <FormGroup>
-        <FormControlLabel
-          control={<Switch checked={isTwoFactorAuthEnabled} onChange={handleToggleChange} />}
-          label={isTwoFactorAuthEnabled ? 'Enabled' : 'Disabled'}
-        />
-      </FormGroup>
-      </div>
-    </div>
-    </div>
     </>
 
   );

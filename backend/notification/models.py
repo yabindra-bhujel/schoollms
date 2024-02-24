@@ -81,7 +81,6 @@ from datetime import datetime
 @receiver(m2m_changed, sender=NotificationModel.user.through)
 def notify_users(sender, instance, action, pk_set, **kwargs):
     if action == "post_add":
-        endpoint = 'http://127.0.0.1:3001/notification'
         user_notifications_data = []
 
         for user_id in pk_set:
@@ -109,11 +108,14 @@ def notify_users(sender, instance, action, pk_set, **kwargs):
             'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         }
 
-        try:
-            response = requests.post(endpoint, json=data)
-            print(f"Notification sent to Flask server: {response.status_code}, {response.reason}")
-        except Exception as e:
-            print(f"Error in sending data: {e}")
+        print(f"Notification data: {data}")
+
+
+        # try:
+        #     response = requests.post(endpoint, json=data)
+        #     print(f"Notification sent to Flask server: {response.status_code}, {response.reason}")
+        # except Exception as e:
+        #     print(f"Error in sending data: {e}")
 
 
 
