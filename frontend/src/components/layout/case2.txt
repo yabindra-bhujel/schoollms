@@ -6,7 +6,7 @@
 }
 
 .main-sidebar {
-  width: 70px;
+  width: 200px;
   height: 100%;
   background-color: #f0f0f0; /* Sidebar background color */
 }
@@ -25,6 +25,5 @@
 .body-content {
   flex: 1;
   overflow-y: auto;
-  display: block;
-  padding: 0px; /* Adjust padding as needed */
+  padding: 20px; /* Adjust padding as needed */
 }
