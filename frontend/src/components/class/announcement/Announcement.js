@@ -46,9 +46,9 @@ const AddButton = styled.button`
 `;
 
 const AnnouncementListWrapper = styled.div`
-  width: 80%;
-  background-color: #d1dace;
+  width: 90%;
   padding: 20px;
+  background-color: #d1dace;
   margin: 10px;
   border-radius: 8px;
 `;

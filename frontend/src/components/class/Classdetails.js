@@ -22,6 +22,7 @@ import AssigmentCreate from "./AssigmentCreate";
 import UploadPDF from "./uploadPDF";
 import CreateExam from "./Exam/CreateExam";
 import { getFile } from "./ClassServices";
+import Syllabus from "./syllabus/Syllabus";
 
 Modal.setAppElement("#root");
 
@@ -42,7 +43,7 @@ const ClassDetails = () => {
       console.error("Error fetching data:", error);
     }
   };
-  
+
 
 
 
@@ -180,16 +181,16 @@ const ClassDetails = () => {
             <Link className={"link-styles"} to={`/attendance/${subject_code}`}>
 
               <div className="link-to-attdance">
-              <div className="icon">
-                <FaListCheck />
-              </div>
-              <div className="card-body">
-                <h4>{t("attendance")}</h4>
-                <p>{t("generate QR code or number")}</p>
-              </div>
+                <div className="icon">
+                  <FaListCheck />
+                </div>
+                <div className="card-body">
+                  <h4>{t("attendance")}</h4>
+                  <p>{t("generate QR code or number")}</p>
+                </div>
 
               </div>
-              
+
             </Link>
           </div>
 
@@ -218,30 +219,29 @@ const ClassDetails = () => {
             </div>
           </div>
 
-{/* survey */}
-<div className="card-attdance">
+          {/* survey */}
+          <div className="card-attdance">
             <Link className={"link-styles"} to={`/survey`}>
 
               <div className="link-to-attdance">
-              <div className="icon">
-                <FcSurvey />
-              </div>
-              <div className="card-body">
-                <h4>{t("attendance")}</h4>
-                <p>{t("generate QR code or number")}</p>
-              </div>
+                <div className="icon">
+                  <FcSurvey />
+                </div>
+                <div className="card-body">
+                  <h4>{t("attendance")}</h4>
+                  <p>{t("generate QR code or number")}</p>
+                </div>
 
               </div>
-              
+
             </Link>
           </div>
         </div>
 
         <div className="all-btn">
           <button
-            className={`assigemnt-btn ${
-              selectedButton === "assignment" ? "menu-active" : ""
-            }`}
+            className={`assigemnt-btn ${selectedButton === "assignment" ? "menu-active" : ""
+              }`}
             onClick={() => handleButtonClick("assignment")}
           >
             {t("assignment")}
@@ -258,20 +258,24 @@ const ClassDetails = () => {
 
 
           <button className={`course-contant-btn ${selectedButton === "course_contant" ? "menu-active" : ""}`}
-          onClick={() => handleButtonClick("course_contant")}
+            onClick={() => handleButtonClick("course_contant")}
           >{t("course materials")}</button>
 
 
 
 
-      <button className={`course-contant-btn ${selectedButton === "announcement" ? "menu-active" : ""}`}
-          onClick={() => handleButtonClick("announcement")}
+          <button className={`course-contant-btn ${selectedButton === "announcement" ? "menu-active" : ""}`}
+            onClick={() => handleButtonClick("announcement")}
           >{t("announcement")}</button>
 
 
+<button className={`course-contant-btn ${selectedButton === "syllabus" ? "menu-active" : ""}`}
+            onClick={() => handleButtonClick("syllabus")}
+          >{t("syllabus")}</button>
+
         </div>
 
-        
+
 
         <section className="main-section">
           {selectedButton === "assignment" && (
@@ -293,11 +297,17 @@ const ClassDetails = () => {
           )}
 
 
-{selectedButton === "announcement" && (
+          {selectedButton === "announcement" && (
             <div className="main-element">
               <Announcement />
 
 
+            </div>
+          )}
+
+          {selectedButton === "syllabus" && (
+            <div className="main-element">
+              <Syllabus />
             </div>
           )}
 

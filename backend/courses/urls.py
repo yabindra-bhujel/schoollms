@@ -3,6 +3,8 @@ from django.urls import path
 from.views import *
 
 urlpatterns = [
+    path('syllabus_update/<int:id>/', updateSyyllabus, name='syllabus'),
+    path('syllabus/<str:subject_code>/', syllabusByCourse, name='syllabus'),
     path('create_enroll_subject/<str:username>/', createEnrollSubject, name='create_enroll_subject'),
     path('get_subject_enroll/<str:username>/', getSubjectEnroll, name='get_subject_enroll'),
     path('create_course/', createCourse, name='create_course'),
@@ -42,4 +44,5 @@ urlpatterns = [
     path('get_active_assigemnt/<str:username>/', getActiveAssigemnt, name='get_active_assigemnt'), 
     path('get_past_assigemnt/<str:username>/', getPastAssigemnt, name='get_past_assigemnt'), 
     path('get_future_assigemnt/<str:username>/', getFutureAssigemnt, name='get_future_assigemnt'),
+
 ]

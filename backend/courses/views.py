@@ -1453,3 +1453,34 @@ def updateAnnouncement(request, id):
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)
+    
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def syllabusByCourse(request, subject_code):
+    try:
+        subject = Subject.objects.get(subject_code=subject_code)
+        syllabus = Syllabus.objects.filter(course=subject)
+        serializer = SyllabusSerializer(syllabus, many=True)
+        return Response(serializer.data, status=200)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+    
+@api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def updateSyyllabus(request, id):
+    try:
+        syllabus = Syllabus.objects.get(id=id)
+        section_description = request.data.get('section_description')
+        syllabus.section_description = section_description
+        syllabus.save()
+        return Response({"message": "OK"}, status=200)
+    except ObjectDoesNotExist as e:
+        logger.error("Syllabus not found") 
+        return Response({"message": "Syllabus not found"}, status=404)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)

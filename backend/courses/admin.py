@@ -16,6 +16,8 @@ admin.site.register(TextAssigemntQuestion)
 admin.site.register(TextAnswer)
 admin.site.register(Announcement)
 admin.site.register(AnnouncementFile)
+admin.site.register(SyllabusSection)
+admin.site.register(Syllabus)
 
 
 

@@ -229,3 +229,17 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.announcement_title
+
+class SyllabusSection(models.Model):
+    section_title = models.CharField(max_length=255, null=False, blank=False)
+    section_description = models.TextField(null=False, blank=False)
+
+    def __str__(self):
+        return self.section_title
+    
+class Syllabus(models.Model):
+    course = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    syllabus_section = models.ManyToManyField(SyllabusSection, related_name='syllabus', blank=True)
+
+    def __str__(self):
+        return self.course.subject_name

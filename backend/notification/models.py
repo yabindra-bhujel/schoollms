@@ -6,7 +6,9 @@ from django.contrib.auth import get_user_model
 import requests
 import json
 from datetime import datetime
-
+from django.core.mail import send_mail
+from django.conf import settings
+from tenant.models import ApplicationSettings
 User = get_user_model()
 
 class CalenderModel(models.Model):
@@ -80,6 +82,7 @@ from datetime import datetime
 
 @receiver(m2m_changed, sender=NotificationModel.user.through)
 def notify_users(sender, instance, action, pk_set, **kwargs):
+    endpoint = "http://127.0.0.1:3001/notification"
     if action == "post_add":
         user_notifications_data = []
 
@@ -107,15 +110,15 @@ def notify_users(sender, instance, action, pk_set, **kwargs):
             'content': instance.content,
             'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         }
+        
 
-        print(f"Notification data: {data}")
 
 
-        # try:
-        #     response = requests.post(endpoint, json=data)
-        #     print(f"Notification sent to Flask server: {response.status_code}, {response.reason}")
-        # except Exception as e:
-        #     print(f"Error in sending data: {e}")
+        try:
+            response = requests.post(endpoint, json=data)
+            print(f"Notification sent to Flask server: {response.status_code}, {response.reason}")
+        except Exception as e:
+            print(f"Error in sending data: {e}")
 
 
 
