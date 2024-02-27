@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, Snackbar, Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
 import { ExpandMore as ExpandMoreIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import instance from "../../../../api/axios";
+import Snackbar from "@mui/material/Snackbar";
 
 const SyllabusForm = ({ courseId, fetchSyllabus }) => {
   const [sections, setSections] = useState([{ title: "", description: "" }]);
@@ -55,6 +56,12 @@ const SyllabusForm = ({ courseId, fetchSyllabus }) => {
 
   return (
     <div>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      />
       <form onSubmit={handleSubmit}>
         {sections.map((section, index) => (
           <Accordion key={index}>
