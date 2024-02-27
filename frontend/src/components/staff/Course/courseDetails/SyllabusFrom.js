@@ -56,12 +56,6 @@ const SyllabusForm = ({ courseId, fetchSyllabus }) => {
 
   return (
     <div>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
       <form onSubmit={handleSubmit}>
         {sections.map((section, index) => (
           <Accordion key={index}>
