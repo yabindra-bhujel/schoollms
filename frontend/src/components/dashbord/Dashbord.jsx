@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import "./style/dashbord.css";
 import instance from "../../api/axios";
 import { useEffect, useState } from "react";
@@ -36,7 +36,7 @@ const Dashboard = () => {
         { name: "Mar", sales: 800 },
         // Add more data points here
     ];
-
+    
     const barChartData = [
         { name: "Jan", revenue: 200 },
         { name: "Feb", revenue: 400 },

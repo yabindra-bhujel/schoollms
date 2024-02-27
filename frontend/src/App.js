@@ -62,17 +62,7 @@ import CourseDetails from "./components/staff/Course/courseDetails/CourseDetsils
 
 function App() {
 
-
-
   const { t } = useTranslation();
-
-
-
-
-
-
-
-
 
   return (
     <WebSocketProvider>

@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../../navigations/Layout";
+import Layout from "../../layout/Layout";
 
 
 const Survey = () => {

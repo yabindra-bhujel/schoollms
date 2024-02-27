@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import "./style/setting.css";
 import Profile from "./Profile";
 import ChnagePassword from "./ChnagePassword";

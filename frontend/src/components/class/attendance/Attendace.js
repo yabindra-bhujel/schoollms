@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Layout from "../../navigations/Layout";
+import Layout from "../../layout/Layout";
 import "./style/attendace.css";
 import instance from "../../../api/axios";
 

@@ -1,12 +1,8 @@
 
 .container {
-    margin-left: 10px;
     display: flex;
-    height: calc(100vh - 72px);
-
-
-
-
+    height: 100%;
+    width: 100%;
     @media screen and (max-width: 1000px) {
         .container{
             margin-top: 0px;
