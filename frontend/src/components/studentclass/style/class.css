@@ -4,7 +4,7 @@
 }
 
 .student-header {
-  height: 90px;
+  height: 80px;
   justify-content: center;
   align-items: center;
   background: rgb(63, 94, 251);
@@ -44,7 +44,7 @@
   font-size: 14px;
   font-weight: bold;
   margin-left: 15px;
-  color: gray;
+  color: white;
   opacity: 0.4;
 }
 .student-container-class table {

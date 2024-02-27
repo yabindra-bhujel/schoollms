@@ -49,13 +49,10 @@ const CalendarComponent = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selected, setSelected] = useState();
   const { t } = useTranslation();
+  
   const [seletedColorButton, setSeletedColorButton] = useState(
     buttonColors.indexOf("#3357FF")
   );
-
-
-
-
 
   const formats = {
     weekdayFormat: (date, culture, localizer) =>

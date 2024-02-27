@@ -3,7 +3,10 @@
 .main-container {
   display: flex;
   height: 100vh;
-}
+  @media screen and (max-width: 720px) {
+    display: flex;
+    flex-direction: row;
+  }
 
 .main-sidebar {
   width: 70px;
@@ -15,16 +18,17 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  .header-bar {
+    height: 70px;
+    width: 100%;
+    background-color: #4caf50; /* Header background color */
+  }
+  
+  .body-content {
+    flex: 1;
+    overflow-y: auto;
+    display: block;
+    padding: 10px; /* Adjust padding as needed */
+  }
 }
-
-.header-bar {
-  height: 70px;
-  background-color: #4caf50; /* Header background color */
-}
-
-.body-content {
-  flex: 1;
-  overflow-y: auto;
-  display: block;
-  padding: 10px; /* Adjust padding as needed */
 }
