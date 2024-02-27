@@ -27,13 +27,15 @@ const toggleSidebar = () => {
   return (
     <div>
       <div className="main-container">
-        <div className="main-sidebar">
+        <div className="main-sidebar" style={{
+          width: sidebarWidth ? "200px" : "70px",
+        }}>
           <Sidebar toggleSidebar={toggleSidebar} sidebarWidth={sidebarWidth} />
         </div>
         <div className="main-content" style={{
-          width: sidebarWidth ? "calc(100% - 200px)" : "calc(100% - 70px)"
+          width: sidebarWidth ? "calc(100% - 200px)" : "calc(100% - 70px)",
         }}>
-          <div className='header-bar'>
+          <div className='header-bar' >
             <Header />
           </div>
           <div className="body-content">

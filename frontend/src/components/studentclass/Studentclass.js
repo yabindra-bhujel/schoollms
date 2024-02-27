@@ -58,9 +58,8 @@ const StudentTableComponent = () => {
         <div className="header">
           <h1>{t("classSchedule")}</h1>
         </div>
+        
         <div className="container-class">
-          
-
           <table>
             <thead>
               <tr>
@@ -79,19 +78,17 @@ const StudentTableComponent = () => {
                       {subject &&
                       subject[index] &&
                       subject[index].weekday === weekday ? (
-                        <p>
-                         <Link
-  to={{
-    pathname: `/studentclassdetails/${encodeURIComponent(subject[index].id)}`,
-    state: {
-      subject_code: subject[index].subject_code,
-    },
-  }}
->
-  {subject[index].name} <br />
-  ({subject[index].class_room})
-</Link>
-
+                        <p className="subject-name">
+                          <Link
+                            to={{
+                              pathname: `/studentclassdetails/${encodeURIComponent(subject[index].id)}`,
+                              state: {
+                                subject_code: subject[index].subject_code,
+                              },
+                            }}>
+                            {subject[index].name} <br />
+                            ({subject[index].class_room})
+                          </Link>
                         </p>
                       ) : (
                         ""
