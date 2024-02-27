@@ -373,7 +373,7 @@ def createSyllabus(request, id):
                     syllabus.syllabus_section.add(section)
         else:
             return Response({"message": "Invalid request"}, status=400)
-        return Response({"message": "Syllabus updated successfully"}, status=200)
+        return Response({"message": "Syllabus updated successfully"}, status=201)
     except Subject.DoesNotExist:
         return Response({"message": "Subject not found"}, status=404)
     except Syllabus.DoesNotExist:

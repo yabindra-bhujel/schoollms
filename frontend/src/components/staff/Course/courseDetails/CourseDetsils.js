@@ -65,7 +65,7 @@ const CourseDetails = () => {
                 onClose={() => setSnackbar(false)}
                 message={snackbarMessage}
             />
-            <Box>
+            <Box style={{ overflowY: "auto"}} >
                 <Typography 
                     sx={{ marginLeft: "20px", marginTop: "20px"}}
                     variant="h4" gutterBottom>

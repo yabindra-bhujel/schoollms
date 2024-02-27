@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Button, Snackbar, Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
+import { TextField, Button, Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
 import { ExpandMore as ExpandMoreIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import instance from "../../../../api/axios";
 import Snackbar from "@mui/material/Snackbar";
@@ -9,6 +9,7 @@ const SyllabusForm = ({ courseId, fetchSyllabus }) => {
   const [loading, setLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
   const handleInputChange = (index, field, value) => {
     const updatedSections = [...sections];
@@ -56,60 +57,61 @@ const SyllabusForm = ({ courseId, fetchSyllabus }) => {
 
   return (
     <div>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
-      <form onSubmit={handleSubmit}>
-        {sections.map((section, index) => (
-          <Accordion key={index}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls={`panel${index}-content`}
-              id={`panel${index}-header`}
-            >
-              <Typography>{section.title ? section.title : `Section ${index + 1}`}</Typography>
-              <Button onClick={() => removeSection(index)}><DeleteIcon /></Button>
-            </AccordionSummary>
-            <AccordionDetails>
-              <TextField
-                label="Title"
-                variant="outlined"
-                fullWidth
-                value={section.title}
-                onChange={(e) => handleInputChange(index, "title", e.target.value)}
-                required
-                margin="normal"
-              />
-              <TextField
-                label="Description"
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                value={section.description}
-                onChange={(e) => handleInputChange(index, "description", e.target.value)}
-                required
-                margin="normal"
-              />
-            </AccordionDetails>
-          </Accordion>
-        ))}
-        <Button style={{ margin: "10px" }} variant="contained" color="primary" onClick={addSection}>
+      {!showForm && (
+        <Button style={{ margin: "10px" }} variant="contained" color="primary" onClick={() => setShowForm(true)}>
           Add Section
         </Button>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={loading || sections.some(section => !section.title || !section.description)}
-          style={{ margin: "10px" }}
-        >
-          {loading ? "Adding..." : "Upload Syllabus"}
-        </Button>
-      </form>
+      )}
+      {showForm && (
+        <form onSubmit={handleSubmit}>
+          {sections.map((section, index) => (
+            <Accordion key={index}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`panel${index}-content`}
+                id={`panel${index}-header`}
+              >
+                <Typography>{section.title ? section.title : `Section ${index + 1}`}</Typography>
+                <Button onClick={() => removeSection(index)}><DeleteIcon /></Button>
+              </AccordionSummary>
+              <AccordionDetails>
+                <TextField
+                  label="Title"
+                  variant="outlined"
+                  fullWidth
+                  value={section.title}
+                  onChange={(e) => handleInputChange(index, "title", e.target.value)}
+                  required
+                  margin="normal"
+                />
+                <TextField
+                  label="Description"
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  value={section.description}
+                  onChange={(e) => handleInputChange(index, "description", e.target.value)}
+                  required
+                  margin="normal"
+                />
+              </AccordionDetails>
+            </Accordion>
+          ))}
+          <Button style={{ margin: "10px" }} variant="contained" color="primary" onClick={addSection}>
+            Add Section
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={loading || sections.some(section => !section.title || !section.description)}
+            style={{ margin: "10px" }}
+          >
+            {loading ? "Adding..." : "Upload Syllabus"}
+          </Button>
+        </form>
+      )}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
