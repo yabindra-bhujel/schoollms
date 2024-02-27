@@ -6,7 +6,7 @@ import "./style/password.css";
 import HttpsIcon from '@mui/icons-material/Https';
 import { chnagePassword, handleLogout, checkTwoFactorAuth, updateTwoFactorAuth, updateEmailNotification, checkEmailNotification } from './SettingService';
 import { Switch, FormGroup, FormControlLabel } from '@mui/material';
-import { set } from 'date-fns';
+
 
 
 const UserManagement = () => {
@@ -53,11 +53,16 @@ const UserManagement = () => {
     const data = {
       two_factor_auth: !isTwoFactorAuthEnabled,
     };
+   try{
     const response = await updateTwoFactorAuth(data);
     if (response.status === 200) {
       setMessage("Two Factor Authentication Updated Successfully");
       setSnackbarOpen(true);
     }
+   }catch (error) {
+    setMessage("Something went wrong while updating Two Factor Authentication. Please try again later or contact to service provider.");
+    setSnackbarOpen(true);
+   }
   };
 
   const handleEmailToggleChange = async () => {
@@ -66,9 +71,14 @@ const UserManagement = () => {
     const data = {
       emai_notification: !setIsEmailNotificationEnabled,
     };
-    const response = await updateEmailNotification(data);
-    if (response.status === 200) {
-      setMessage("Email Notification Updated Successfully");
+    try{
+      const response = await updateEmailNotification(data);
+      if (response.status === 200) {
+        setMessage("Email Notification Updated Successfully");
+        setSnackbarOpen(true);
+      }
+    }catch (error) {
+      setMessage("Something went wrong while updating Email Notification. Please try again later or contact to service provider.");
       setSnackbarOpen(true);
     }
   };
@@ -79,8 +89,6 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
-    // Fetch login history data
-    // This is a placeholder, replace with actual data fetching logic
     setLoginHistory(['Device 1 - 2024-01-01', 'Device 2 - 2024-01-02']);
   }, []);
 

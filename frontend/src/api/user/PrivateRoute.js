@@ -32,11 +32,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     });
   };
 
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      <Navigate to="/login" />;
-    }
-  }, []);
 
 
   return isLoggedIn() && hasRequiredRole() ? children : <Navigate to="/login" />;

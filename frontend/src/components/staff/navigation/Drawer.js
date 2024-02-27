@@ -314,6 +314,7 @@ const AdminSideBar = () =>{
                     className={
                       location.pathname === "/admin/course" ||
                       location.pathname === "/admin/course/add" ||
+                      location.pathname.startsWith("/admin/course/") ||
                       location.pathname === "/admin/course/edit"? "active" : ""
                     }
                   >

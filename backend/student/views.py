@@ -278,6 +278,8 @@ def student_detail(request, studentID):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def getStudentTodayClass(request):
     try:
         user = request.user
@@ -310,4 +312,5 @@ def getStudentTodayClass(request):
         return Response(subjects_data, status=status.HTTP_200_OK)
     
     except Exception as e:
+        print(e)
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

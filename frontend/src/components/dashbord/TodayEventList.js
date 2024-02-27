@@ -24,11 +24,9 @@ const TodayEventList = () => {
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom>
         <strong>Today's Event</strong>
-      </Typography>
       {events.length > 0 ? (
-        <Paper elevation={3} sx={{ borderRadius: "10px", padding: "10px" }}>
+        <Paper elevation={2} sx={{ borderRadius: "5px", padding: "5px" }}>
           <List>
             {events.map((event, index) => (
               <React.Fragment key={index}>
@@ -36,8 +34,8 @@ const TodayEventList = () => {
                   alignItems="center"
                   sx={{
                     backgroundColor: event.color || "transparent",
-                    borderRadius: "10px",
-                    marginBottom: "10px",
+                    borderRadius: "5px",
+                    marginBottom: "5px",
                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                     display: "flex",
                     alignItems: "center",

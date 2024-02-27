@@ -20,6 +20,9 @@ from .serializers import *
 from .models import *
 from .pdfcreator import PDF
 from notification.models import NotificationModel
+from teacher.models import Teacher
+from django.db import transaction
+
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -297,8 +300,88 @@ def admincourseList(request):
 
             }
         )
-    return Response(course_data)
+    return Response(course_data, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def getCourseDetails(request, id):
+    try:
+        course = Subject.objects.get(subject_code=id)
+        serializer = SubjectSerializer(course)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(["PUT"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def updateCourse(request, id):
+    try:
+        course = Subject.objects.get(subject_code=id)
+        data = request.data
+        subject_name = data.get("subject_name")
+        weekday = data.get("weekday")
+        class_room = data.get("class_room")
+        class_period = data.get("class_period")
+        period_start_time = {
+            '1': '9:00',
+            '2': '10:40',
+            '3': '13:00',
+            '4': '14:40',
+        }
+
+        period_end_time = {
+            '1': '10:30',
+            '2': '12:10',
+            '3': '14:30',
+            '4': '16:10',
+        }
+
+        start_time = period_start_time.get(str(class_period), 'N/A')
+        end_time = period_end_time.get(str(class_period), 'N/A')
+
+        course.subject_name = subject_name
+        course.weekday = weekday
+        course.class_room = class_room
+        course.class_period = class_period
+        course.period_start_time = start_time
+        course.period_end_time = end_time
+        course.save()
+
+        return Response({"message": "Course updated successfully"}, status=200)
+    except Exception as e:
+        return Response({"message": "An error occurred"}, status=500)
+    
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def createSyllabus(request, id):
+    try:
+        course = Subject.objects.get(subject_code=id)
+        syllabus = Syllabus.objects.get(course=course)
+        data = request.data
+        if isinstance(data, list):
+            with transaction.atomic():
+                for item in data:
+                    title = item.get("section_title")
+                    description = item.get("section_description")
+                    section = SyllabusSection.objects.create(
+                        section_title=title, section_description=description)
+                    syllabus.syllabus_section.add(section)
+        else:
+            return Response({"message": "Invalid request"}, status=400)
+        return Response({"message": "Syllabus updated successfully"}, status=200)
+    except Subject.DoesNotExist:
+        return Response({"message": "Subject not found"}, status=404)
+    except Syllabus.DoesNotExist:
+        return Response({"message": "Syllabus not found"}, status=404)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+    
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -1460,8 +1543,15 @@ def updateAnnouncement(request, id):
 @permission_classes([IsAuthenticated])
 def syllabusByCourse(request, subject_code):
     try:
-        subject = Subject.objects.get(subject_code=subject_code)
-        syllabus = Syllabus.objects.filter(course=subject)
+        try:
+            subject = Subject.objects.get(subject_code=subject_code)
+            syllabus = Syllabus.objects.filter(course=subject)
+            if not syllabus:
+                new_syllabus = Syllabus.objects.create(course=subject)
+                new_syllabus.save()
+                syllabus = Syllabus.objects.filter(course=subject)
+        except ObjectDoesNotExist as e:
+            return Response({"message": "Subject not found"}, status=404)
         serializer = SyllabusSerializer(syllabus, many=True)
         return Response(serializer.data, status=200)
     except Exception as e:

@@ -56,6 +56,7 @@ import AdminCourse from "./components/staff/Course/Course";
 import AddNewCourse from "./components/staff/Course/AddNewCourse";
 import EnrollStudent from "./components/staff/EnrollStudent/Enroll";
 import AddEnrollSubject from "./components/staff/EnrollStudent/AddEnrollSubject";
+import CourseDetails from "./components/staff/Course/courseDetails/CourseDetsils";
 
 
 
@@ -150,6 +151,9 @@ function App() {
           } />
           <Route path="/admin/enroll/add" element={
             <ProtectedRoute allowedRoles={['staff', 'superuser']}><AddEnrollSubject /></ProtectedRoute>
+          } />
+          <Route path="/admin/course/:id" element={
+            <ProtectedRoute allowedRoles={['staff', 'superuser']}><CourseDetails /></ProtectedRoute>
           } />
 
 

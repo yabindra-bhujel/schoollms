@@ -3,6 +3,9 @@ from django.urls import path
 from.views import *
 
 urlpatterns = [
+    path('create_syllabus/<int:id>/', createSyllabus, name='createSyllabus'),
+    path('update_course/<int:id>/', updateCourse, name='update_course'),
+    path('get_course_details/<int:id>/', getCourseDetails, name='getCourseDetails'),
     path('syllabus_update/<int:id>/', updateSyyllabus, name='syllabus'),
     path('syllabus/<str:subject_code>/', syllabusByCourse, name='syllabus'),
     path('create_enroll_subject/<str:username>/', createEnrollSubject, name='create_enroll_subject'),

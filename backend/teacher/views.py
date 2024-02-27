@@ -211,10 +211,11 @@ def teacher_detail(request, TeacherID):
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_teacher_today_class(request, teacher_id):
+def get_teacher_today_class(request):
     try:
         try:
-            teacher = Teacher.objects.get(TeacherID=teacher_id)
+            user = request.user
+            teacher = Teacher.objects.get(TeacherID=user.username)
         except Teacher.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         

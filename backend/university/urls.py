@@ -9,8 +9,11 @@ from django.contrib.auth.views import PasswordResetConfirmView
 
 
 urlpatterns = [
+    path('updateEmailNotification', updateEmailNotification, name='updateEmailNotification'),
+    path('update_two_factor_auth', update_two_factor_auth, name='update_two_factor_auth'),
     path('admin/', admin.site.urls),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
 
     # User API paths
     path('api/login/', UserTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -21,10 +24,8 @@ urlpatterns = [
 
 
     path('havetwoFactorAuth', check_have_two_factor_auth, name='check_have_two_factor_auth'),
-    path('update_two_factor_auth', update_two_factor_auth, name='update_two_factor_auth'),
 
     path('haveEmailNotification', haveEmailNotification, name='haveEmailNotification'),
-    path('updateEmailNotification', updateEmailNotification, name='updateEmailNotification'),
 
     
     path('get_user_list', get_user_list, name='get_user_list'),

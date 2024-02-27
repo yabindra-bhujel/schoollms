@@ -360,35 +360,43 @@ def haveEmailNotification(request):
         print(e)
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def update_two_factor_auth(request):
     try:
         user_settings = ApplicationSettings.objects.get(user=request.user)
-        two_factor_auth = request.data['two_factor_auth']
-        user_settings.isTwoFactorAuthEnabled = two_factor_auth
+        isTrue = user_settings.isTwoFactorAuthEnabled
+        if isTrue:
+            user_settings.isTwoFactorAuthEnabled = False
+        else:
+            user_settings.isTwoFactorAuthEnabled = True
         user_settings.save()
 
         return Response({"success": "Two factor authentication updated successfully"}, status=status.HTTP_200_OK)
-    except ApplicationSettings.DoesNotExist:
+    except ApplicationSettings.DoesNotExist as e:
+        print(e)
         return Response({"error": "User settings not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         print(e)
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def updateEmailNotification(request):
     try:
         user_settings = ApplicationSettings.objects.get(user=request.user)
-        email_notification = request.data['emai_notification']
-        user_settings.isTwoFactorAuthEnabled = email_notification
+        isTrue = user_settings.isEmailNotification
+        if isTrue:
+            user_settings.isEmailNotification = False
+        else:
+            user_settings.isEmailNotification = True
         user_settings.save()
 
         return Response({"success": "Two factor authentication updated successfully"}, status=status.HTTP_200_OK)
-    except ApplicationSettings.DoesNotExist:
+    except ApplicationSettings.DoesNotExist as e:
+        print(e)
         return Response({"error": "User settings not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         print(e)

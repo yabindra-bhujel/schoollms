@@ -72,7 +72,7 @@ const handleLogout = async () => {
 
 const checkTwoFactorAuth = async () => {
     try {
-        const endpoint = "havetwoFactorAuth";
+        const endpoint = `havetwoFactorAuth`;
         const response = await instance.get(endpoint);
         return response;
     } catch (error) {
@@ -83,8 +83,8 @@ const checkTwoFactorAuth = async () => {
 
 const updateTwoFactorAuth = async (data) => {
     try {
-        const endpoint = "update_two_factor_auth";
-        const response = await instance.post(endpoint, data);
+        const endpoint = `update_two_factor_auth`;
+        const response = await instance.put(endpoint, data);
         return response;
     } catch (error) {
         throw error;
@@ -106,7 +106,7 @@ const checkEmailNotification = async () => {
 const updateEmailNotification = async (data) => {
     try {
         const endpoint = "updateEmailNotification";
-        const response = await instance.post(endpoint, data);
+        const response = await instance.put(endpoint, data);
         return response;
     } catch (error) {
         throw error;
