@@ -90,6 +90,7 @@ class ApplicationSettings(models.Model):
     is_dark_mode = models.BooleanField(default=False)
     is_notification = models.BooleanField(default=False)
     isTwoFactorAuthEnabled = models.BooleanField(default=False)
+    isEmailNotification = models.BooleanField(default=False)
 
     def __str__(self):
         return f" {self.user.username} - Application Settings"

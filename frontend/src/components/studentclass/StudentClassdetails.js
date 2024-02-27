@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import StudentAttdance from "./attendance/attendance";
 import AttendanceInput from "./attendance/attdanceInput";
 import Announcement from "./Announcement/Announcement";
+import Syllabus from "./syllabus/syllabus";
 
 
 import Modal from "react-modal";
@@ -120,6 +121,12 @@ const StudentClassDetails = () => {
     >
       {t("announcement")}
     </button>
+    <button
+      onClick={() => handleButtonClick('Syllabus')}
+      className={selectedButton === 'Syllabus' ? 'active' : ''}
+    >
+      {t("Syllabus")}
+    </button>
   </div>
          
         </section>
@@ -128,51 +135,39 @@ const StudentClassDetails = () => {
           {selectedButton === "assignment" &&(
             <div className="main-element">
             <AssignmentList />
-          </div>
-          )}
+          </div>)}
 
           {selectedButton === "exam" &&(
             <div className="main-element">
              <StudentExamList />
-            </div>
-          )}
+            </div>)}
 
-          {
-            selectedButton === "attendance" &&(
+          {selectedButton === "attendance" &&(
               <div className="main-element-attendance">
                 <StudentAttdance className="attendace-table" />
                 <AttendanceInput className="attendace-input"/>
-              </div>
-            )
-          }
+              </div>)}
 
-          {
-            selectedButton === "coursematerials" &&(
+          {selectedButton === "coursematerials" &&(
               <div className="main-element">
                 <CourseContant/>
-              </div>
-            )
-          }
+              </div>)}
 
-          {
-            selectedButton === "survey" &&(
+          {selectedButton === "survey" &&(
               <div className="main-element">
                 <h2>Survey list</h2>
-              </div>
-            )
+              </div>)}
 
-          }
-
-{
-            selectedButton === "announcement" &&(
+          {selectedButton === "announcement" &&(
               <div className="main-element">
                 <Announcement />
-              </div>
-            )
+              </div>)}
 
-          }
-
-
+          {selectedButton === "Syllabus" &&(
+              <div className="main-element">
+                <Syllabus />
+              </div>)}
+              
         </section>
       </div>
     </Layout>

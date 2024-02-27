@@ -1,40 +1,37 @@
 from django.utils import timezone
-from student.models import Student
-from .serializers import *
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from .models import *
-from rest_framework import status
-from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from dateutil import parser
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-import logging
 from datetime import datetime
 from django.utils.dateparse import parse_datetime
 from django.core.files import File
-import os
-from .pdfcreator import PDF
-from django.conf import settings
-from notification.models import NotificationModel
 from django.contrib.auth import get_user_model
-import re
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import status
+from rest_framework.response import Response
+import logging
+import os
+import re
+from student.models import Student
+from .serializers import *
+from .models import *
+from .pdfcreator import PDF
+from notification.models import NotificationModel
+from teacher.models import Teacher
+from django.db import transaction
+
+
 User = get_user_model()
-from student.permissions import IsStudentPermission
-
-
 logger = logging.getLogger(__name__)
 
-
-
-def extract_teacher_id(data):
+def extractTeacherId(data):
     match = re.search(r"T\d+", data)
     return match.group(0) if match else None
 
-
-
-def extract_student_id(studentData):
+def extractStudentId(studentData):
     studentIDs = []
     for student in studentData:
         match = re.search(r'S?\d+$', student)
@@ -42,24 +39,17 @@ def extract_student_id(studentData):
             studentIDs.append(match.group(0))
     return studentIDs
 
-
-
-# ##################################
-#  Admin API for Course
-# ##################################
-
-
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def create_enroll_subject(request, username):
+def createEnrollSubject(request, username):
     try:
         subject_name = request.data.get('subject_name')
         subject_teacher = request.data.get('subject_teacher')
         student_data = request.data.get('student')
 
-        teacher_id = extract_teacher_id(subject_teacher)
-        student_ids = extract_student_id(student_data)
+        teacher_id = extractTeacherId(subject_teacher)
+        student_ids = extractStudentId(student_data)
         print(student_ids)
 
         try:
@@ -109,13 +99,10 @@ def create_enroll_subject(request, username):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-
-
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def get_subject_enroll(request, username):
+def getSubjectEnroll(request, username):
     try:
         enroll_subject = SubjectEnroll.objects.all()
         enroll_subject_data = []
@@ -137,12 +124,10 @@ def get_subject_enroll(request, username):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def create_course(request):
+def createCourse(request):
     try:
         print(request.data)
         data = request.data
@@ -208,12 +193,10 @@ def create_course(request):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
     
-
-
 @api_view(["DELETE"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def delete_course(request, id, username):
+def deleteCourse(request, id, username):
     try:
         subject = Subject.objects.get(subject_code=id)
         subject.delete()
@@ -225,7 +208,7 @@ def delete_course(request, id, username):
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def department_list(request):
+def departmentList(request):
     try:
         departments = Department.objects.all()
         serializer = DepartmentSerializer(departments, many=True)
@@ -236,14 +219,10 @@ def department_list(request):
             {"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-
-
-
 @api_view(["PUT"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def update_department(request, username, id):
-
+def updateDepartment(request, username, id):
     try:
         department_name = request.data.get("Department_name")
         department_code = request.data.get("Department_code")
@@ -262,14 +241,11 @@ def update_department(request, username, id):
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)
-    
-
-
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def add_department(request, username):
+def addDepartment(request, username):
     try:
         department_name = request.data.get("Department_name")
         department_code = request.data.get("Department_code")
@@ -287,12 +263,10 @@ def add_department(request, username):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-
 @api_view(["DELETE"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def delete_department(request, id, username):
+def deleteDepartment(request, id, username):
     try:
         department = Department.objects.get(id=id)
         department.delete()
@@ -301,18 +275,11 @@ def delete_department(request, id, username):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-
-
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated , IsAdminUser])
-def admincourse_list(request):
+def admincourseList(request):
     courses = Subject.objects.all()
-   
-
-
-
     course_data = []
     for course in courses:
          teacherID = course.subject_teacher
@@ -333,17 +300,93 @@ def admincourse_list(request):
 
             }
         )
-    return Response(course_data)
+    return Response(course_data, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def getCourseDetails(request, id):
+    try:
+        course = Subject.objects.get(subject_code=id)
+        serializer = SubjectSerializer(course)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(["PUT"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def updateCourse(request, id):
+    try:
+        course = Subject.objects.get(subject_code=id)
+        data = request.data
+        subject_name = data.get("subject_name")
+        weekday = data.get("weekday")
+        class_room = data.get("class_room")
+        class_period = data.get("class_period")
+        period_start_time = {
+            '1': '9:00',
+            '2': '10:40',
+            '3': '13:00',
+            '4': '14:40',
+        }
 
+        period_end_time = {
+            '1': '10:30',
+            '2': '12:10',
+            '3': '14:30',
+            '4': '16:10',
+        }
 
+        start_time = period_start_time.get(str(class_period), 'N/A')
+        end_time = period_end_time.get(str(class_period), 'N/A')
+
+        course.subject_name = subject_name
+        course.weekday = weekday
+        course.class_room = class_room
+        course.class_period = class_period
+        course.period_start_time = start_time
+        course.period_end_time = end_time
+        course.save()
+
+        return Response({"message": "Course updated successfully"}, status=200)
+    except Exception as e:
+        return Response({"message": "An error occurred"}, status=500)
+    
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def createSyllabus(request, id):
+    try:
+        course = Subject.objects.get(subject_code=id)
+        syllabus = Syllabus.objects.get(course=course)
+        data = request.data
+        if isinstance(data, list):
+            with transaction.atomic():
+                for item in data:
+                    title = item.get("section_title")
+                    description = item.get("section_description")
+                    section = SyllabusSection.objects.create(
+                        section_title=title, section_description=description)
+                    syllabus.syllabus_section.add(section)
+        else:
+            return Response({"message": "Invalid request"}, status=400)
+        return Response({"message": "Syllabus updated successfully"}, status=200)
+    except Subject.DoesNotExist:
+        return Response({"message": "Subject not found"}, status=404)
+    except Syllabus.DoesNotExist:
+        return Response({"message": "Syllabus not found"}, status=404)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+    
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_file(request):
+def getFile(request):
     request_data = request.data
-
     course_code = request_data["subject_code"]
     subject = get_object_or_404(Subject, subject_code=course_code)
 
@@ -355,24 +398,15 @@ def get_file(request):
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         file = file_serializer.save()
-        return Response(
-            {"message": "Assignment created successfully"},
-            status=status.HTTP_201_CREATED,
-        )
+        return Response({"message": "Assignment created successfully"},status=status.HTTP_201_CREATED)
     except Exception as e:
         print(e)
-        return Response(
-            {"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
-
-
-# 
+        return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['DELETE'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def delete_file(request, id):
+def deleteFile(request, id):
     try:
         file = CourseMateriales.objects.get(id=id)
         file.delete()
@@ -380,34 +414,23 @@ def delete_file(request, id):
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)
-    
 
-
-
-
-
-
-
-
-def format_iso_date(iso_date):
+def formatIsoDate(iso_date):
     try:
         date = parser.isoparse(iso_date)
         return date.strftime("%Y-%m-%d %H:%M")
     except ValueError:
         return None
 
-
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def student_assignment_details(request, id):
+def studentAssignmentDetails(request, id):
     try:
         try:
             assignment = Assignment.objects.get(id=id)
         except Assignment.DoesNotExist:
-            return Response(
-                {"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = AssignmentSerializer(assignment)
         response_data = serializer.data.copy()
@@ -423,22 +446,14 @@ def student_assignment_details(request, id):
         response_data["questions"] = question_list
 
         return Response(response_data, status=status.HTTP_200_OK)
-
-
-
     except Exception as e:
         print(e)
-        return Response(
-            {"error": "An error occurred something wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
-
-   
+        return Response({"error": "An error occurred something wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def assignment_details(request, id):
+def assignmentDetails(request, id):
     try:
         try:
             assignment = Assignment.objects.get(id=id)
@@ -457,10 +472,10 @@ def assignment_details(request, id):
 
 
         posted_date_iso = serializer.data["assignment_posted_date"]
-        formatted_posted_date = format_iso_date(posted_date_iso)
+        formatted_posted_date = formatIsoDate(posted_date_iso)
 
         assignment_deadline_iso = serializer.data["assignment_deadline"]
-        formatted_assignment_deadline = format_iso_date(assignment_deadline_iso)
+        formatted_assignment_deadline = formatIsoDate(assignment_deadline_iso)
 
         if formatted_posted_date:
             response_data["formatted_posted_date"] = formatted_posted_date
@@ -494,7 +509,7 @@ def assignment_details(request, id):
                             "id": text_submission.id,
                             "student_name": f"{student.first_name} {student.last_name}",
                             "student_id": student_id,
-                            "submission_datetime": format_iso_date(submission_datetime),
+                            "submission_datetime": formatIsoDate(submission_datetime),
                             "is_submitted": is_submitted,
                             "assignment_answer": assignment_answer,
                             "type": "Text",
@@ -529,7 +544,7 @@ def assignment_details(request, id):
                         "id": file_submission["id"],
                         "student_name": f"{student.first_name} {student.last_name}",
                         "student_id": student_id,
-                        "submission_datetime": format_iso_date(submission_datetime),
+                        "submission_datetime": formatIsoDate(submission_datetime),
                         "is_submitted": is_submitted,
                         "assignment_submission_file_url": assignment_submission_file,
                         "type": "File",
@@ -550,13 +565,10 @@ def assignment_details(request, id):
             {"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-
-
-
 @api_view(["PUT"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def update_submission(request):
+def updateSubmission(request):
     try:
         for item in request.data:
             submission_id = item.get("id")
@@ -587,14 +599,10 @@ def update_submission(request):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-
-
-
 @api_view(['DELETE'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def delete_assigemnt_question(request, id):
+def deleteAssigemntQuestion(request, id):
     try:
         question = TextAssigemntQuestion.objects.get(id=id)
         question.delete()
@@ -603,12 +611,10 @@ def delete_assigemnt_question(request, id):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def course_details_student(request, subject_code, studentID):
+def courseDetailsStudent(request, subject_code, studentID):
     try:
         subject = Subject.objects.get(subject_code=subject_code)
         student = Student.objects.get(pk=studentID)
@@ -659,101 +665,71 @@ def course_details_student(request, subject_code, studentID):
 
     return Response(course_data)
 
-
-
-
-
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def course_details(request, subject_code):
+def courseDetails(request, subject_code):
     try:
-        subject = Subject.objects.get(subject_code=subject_code)
-    except Subject.DoesNotExist:
-        return Response(
-            {"error": "Subject not found"}, status=status.HTTP_404_NOT_FOUND
-        )
+        try:
+            subject = Subject.objects.get(subject_code=subject_code)
+        except Subject.DoesNotExist:
+            return Response({"error": "Subject not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Access the related SubjectEnroll instances using the subject's reverse relationship
-    serializer = SubjectEnrollSerializers(subject.subjectenroll_set.all(), many=True)
+        serializer = SubjectEnrollSerializers(subject.subjectenroll_set.all(), many=True)
+        course_data = []
 
-    # Create a list to store the course data
-    course_data = []
+        assignments = Assignment.objects.filter(course=subject)
 
-    # Retrieve assignments related to this SubjectEnroll instance
-    assignments = Assignment.objects.filter(course=subject)
+        assignment_serializer = AssignmentSerializer(assignments, many=True)
+        serialized_assignments = assignment_serializer.data  # Serialized assignment data
 
-        # Serialize assignments using AssignmentSerializer
-    assignment_serializer = AssignmentSerializer(assignments, many=True)
-    serialized_assignments = assignment_serializer.data  # Serialized assignment data
+        assignment__data = []
+        for assignment_data in serialized_assignments:
+                assignment_id = assignment_data["id"]
+                assignment_instance = Assignment.objects.get(id=assignment_id)
+                assignment_data["is_active"] = assignment_instance.is_active
+                assignment__data.append(assignment_data)
 
-        # Add is_active property to each assignment
-    assignment__data = []
-    for assignment_data in serialized_assignments:
-            assignment_id = assignment_data["id"]
-            assignment_instance = Assignment.objects.get(id=assignment_id)
-            assignment_data["is_active"] = assignment_instance.is_active
-            assignment__data.append(assignment_data)
+        for enrolled in serializer.data:
+            students = enrolled["student"]
+            teacher = enrolled["teacher"]
 
+            course_materiales = CourseMateriales.objects.filter(course=subject)
+            course_materiales_serializer = CourseMaterialesSerializers(course_materiales, many=True, context={"request": request})
+            serialized_course_materiales = course_materiales_serializer.data  
 
+            course = {
+                "id": enrolled["id"],
+                "subject_code": subject.subject_code,
+                "subject_name": subject.subject_name,
+                "subject_description": subject.subject_description,
+                "weekday": subject.weekday,
+                "start_time": subject.period_start_time,
+                "end_time": subject.period_end_time,
+                "class_room": subject.class_room,
+                "students": students,
+                "teacher": teacher,
+                "assignments": reversed(assignment__data),
+                "course_materiales": reversed(serialized_course_materiales),
+            }
+            course_data.append(course)
 
-    for enrolled in serializer.data:
-        # Get related student and teacher data from SubjectEnroll instance
-        students = enrolled["student"]
-        teacher = enrolled["teacher"]
+        return Response(course_data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        
-
-        # Serialize course_materiales using CourseMaterialesSerializers
-        course_materiales = CourseMateriales.objects.filter(course=subject)
-        course_materiales_serializer = CourseMaterialesSerializers(
-            course_materiales, many=True, context={"request": request}
-        )
-        serialized_course_materiales = course_materiales_serializer.data  # Serialized course_materiales data
-
-        course = {
-            "id": enrolled["id"],
-            "subject_code": subject.subject_code,
-            "subject_name": subject.subject_name,
-            "subject_description": subject.subject_description,
-            "weekday": subject.weekday,
-            "start_time": subject.period_start_time,
-            "end_time": subject.period_end_time,
-            "class_room": subject.class_room,
-            "students": students,
-            "teacher": teacher,
-            "assignments": reversed(assignment__data),
-            "course_materiales": reversed(serialized_course_materiales),
-        }
-        course_data.append(course)
-
-    return Response(course_data)
-
-
-
-
-
-
-
-
-
-
-
-# get course takne student list
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def enroll_student(request):
+def enrollStudent(request):
     enroll_student = SubjectEnroll.objects.all()
     serializer = SubjectEnrollSerializers(enroll_student, many=True)
     return Response(serializer.data)
 
-
-
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def create_assigment(request):
+def createAssigment(request):
     assigment_data = request.data
     course_code = assigment_data["course"]
     subject = get_object_or_404(Subject, subject_code=course_code)
@@ -827,11 +803,10 @@ def create_assigment(request):
             {"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def file_assigment(request):
+def fileAssigment(request):
     try:
         answer_files = request.FILES.getlist("file_submission")
         assignment_id = request.data.get("assignment_id")
@@ -884,62 +859,45 @@ def file_assigment(request):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-
-
-
-
-def ensure_directory_exists(path):
+def ensureDirectoryExists(path):
     if not os.path.exists(path):
         os.makedirs(path)
-
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def text_assignment(request):
+def textAssignment(request):
     try:
-        # Extract data from the request
         student_id = request.data.get("student")
         assignment_id = request.data.get("assignment_id")
         answers = request.data.get("answers", [])
 
-        # Check if data is present
         if not student_id or not assignment_id or not answers:
             return Response({"message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Get the assignment and student objects
         assignment = get_object_or_404(Assignment, pk=assignment_id)
         student = get_object_or_404(Student, studentID=student_id)
 
-        # Check if a submission already exists for the same student and assignment
         textsubmission = TextSubmission.objects.filter(assignment=assignment, student=student).first()
 
         if textsubmission:
-            # Update the existing submission
-            textsubmission.answer.clear()  # Clear existing answers
+            textsubmission.answer.clear()
         else:
-            # Create a new submission
             textsubmission = TextSubmission.objects.create(
                 assignment=assignment,
                 student=student,
-                is_submited=True
-            )
+                is_submited=True)
 
-        # Process and save answers
         for answer_data in answers:
             question_id = answer_data.get("question_id")
             answer_text = answer_data.get("answer")
             question = TextAssigemntQuestion.objects.get(id=question_id)
             text_answer = TextAnswer.objects.create(
                 question_id=question_id,
-                answer=answer_text
-            )
+                answer=answer_text)
             textsubmission.answer.add(text_answer)
-        
         textsubmission.save()
 
-        # Create a PDF file for the assignment
         filename = f"{student.studentID}.pdf"
         assigemnt_title = assignment.assignment_title
         current_date = datetime.now().strftime("%Y-%m-%d")
@@ -949,15 +907,12 @@ def text_assignment(request):
             for answer in textsubmission.answer.all()
         ]
 
-         # Add PDF file to submission directory
         media_dir = 'student_asnwer_file'
         media_base = settings.MEDIA_ROOT 
-        ensure_directory_exists(os.path.join(media_base, media_dir))
+        ensureDirectoryExists(os.path.join(media_base, media_dir))
 
-        # Construct the file path 
         pdf_path = os.path.join(media_base, media_dir, filename)
 
-        # Create and write to the PDF
         pdf = PDF(filename=pdf_path, title=assigemnt_title, username=full_name, date=current_date, student_id=student.studentID)
         pdf.add_header()
         for question_answer in question_answers:
@@ -965,27 +920,15 @@ def text_assignment(request):
             pdf.add_text("回答: " + question_answer["answer"])
         pdf.save()
 
-        # Update the submission with the PDF path
         relative_pdf_path = os.path.join(media_dir, filename)
         textsubmission.student_asnwer_file = relative_pdf_path      
         textsubmission.save()
-
-        # Update the submission count for the assignment
         assignment.submission_count = TextSubmission.objects.filter(assignment=assignment, is_submited=True).count()
         assignment.save()
-
         return Response({"message": "OK"}, status=200)
-
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred something wrong"}, status=500)
-
-
-
-
-
-
-
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -1015,16 +958,11 @@ def upadteAssigemnt(request):
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)
-    
 
-
-
-
-# TODO: write Test
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_all_assignment(request, username):
+def getAllAssignment(request, username):
     try:
         assignments = Assignment.objects.filter(student__user__username=username)
         serializer = AssignmentSerializer(assignments, many=True)
@@ -1034,16 +972,12 @@ def get_all_assignment(request, username):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-# TODO: write Test
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_active_assigemnt(request, username):
+def getActiveAssigemnt(request, username):
     try:
-        assignments = Assignment.objects.filter(
-            student__user__username=username, is_active=True
-        )
+        assignments = Assignment.objects.filter(student__user__username=username, is_active=True)
         serializer = AssignmentSerializer(assignments, many=True)
         return Response(serializer.data)
 
@@ -1051,53 +985,43 @@ def get_active_assigemnt(request, username):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-# TODO: write Test
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_past_assigemnt(request, username):
+def getPastAssigemnt(request, username):
     try:
         current_time = timezone.now()
         assignments = Assignment.objects.filter(
             student__user__username=username,
             is_active=False,
-            assignment_deadline__lte=current_time,
-        )
+            assignment_deadline__lte=current_time)
         serializer = AssignmentSerializer(assignments, many=True)
         return Response(serializer.data)
-
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-# TODO: write Test
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_future_assigemnt(request, username):
+def getFutureAssigemnt(request, username):
     try:
         current_time = timezone.now()
         assignments = Assignment.objects.filter(
             student__user__username=username,
             is_active=False,
-            assignment_deadline__gt=current_time,
-        )
+            assignment_deadline__gt=current_time)
         serializer = AssignmentSerializer(assignments, many=True)
         return Response(serializer.data)
 
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)
-
-
-
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, ])
-def create_attendance(request):
+def createAttendance(request):
     try:
         course_code = request.data.get("course_code")
         teacher_id = request.data.get("teacher_id")
@@ -1163,14 +1087,10 @@ def create_attendance(request):
         logger.error("An error occurred")
         return Response({"message": "An error occurred"}, status=500)
 
-
-
-
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, ])
-def mark_attendance(request):
-
+def markAttendance(request):
     try:
         attendance_code = request.data.get('attendance_code')
         student_id = request.data.get('student_id')
@@ -1219,11 +1139,10 @@ def mark_attendance(request):
         logger.error("An error occurred") 
         return Response({"message": f"An error occurred{e}",}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, ])
-def get_attendance_by_subject(request, subject_code):
+def getAttendanceBySubject(request, subject_code):
     try:
         subject = get_object_or_404(Subject, subject_code=subject_code)
 
@@ -1278,13 +1197,10 @@ def get_attendance_by_subject(request, subject_code):
         logger.error("An error occurred: %s", e) 
         return Response({"message": "An error occurred"}, status=500)
 
-
-
-
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, ])
-def get_attendance_by_student_subject(request, studentID, subjectID):
+def getAttendanceByStudentSubject(request, studentID, subjectID):
     try:
         try:
             student = Student.objects.get(studentID=studentID)
@@ -1329,13 +1245,10 @@ def get_attendance_by_student_subject(request, studentID, subjectID):
         print(e)
         return Response({"message": f"An error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_student_list_by_subject_id(request, subject_code):
+def getStudentListBySubjectId(request, subject_code):
     try:
         subject = Subject.objects.get(subject_code=subject_code)
         enroll_student = SubjectEnroll.objects.filter(course=subject)
@@ -1363,11 +1276,10 @@ def get_student_list_by_subject_id(request, subject_code):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def create_attdenace_and_add_student(request):
+def createAttdenaceAndAddStudent(request):
     try:
         data = request.data
         subject_code = data.get('course_id')
@@ -1407,12 +1319,10 @@ def create_attdenace_and_add_student(request):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
     
-
-
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_attendance_by_student(request, student_id):
+def getAttendanceByStudent(request, student_id):
     try:
         try:
             student = Student.objects.get(studentID=student_id)
@@ -1456,12 +1366,10 @@ def get_attendance_by_student(request, student_id):
         print(e)
         return Response({"message": f"An error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def AddAnnouncement(request):
+def addAnnouncement(request):
     try:
         subject_code = request.data.get('subject_code')
         title = request.data.get('title')
@@ -1526,13 +1434,10 @@ def AddAnnouncement(request):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-
-
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_announcement_by_subject(request, subject_code):
+def getAnnouncementBySubject(request, subject_code):
     try:
         subject = Subject.objects.get(subject_code=subject_code)
         announcement = Announcement.objects.filter(course=subject).order_by('announcement_date')
@@ -1550,7 +1455,7 @@ def get_announcement_by_subject(request, subject_code):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_announcement_by_subject_student(request, subject_code):
+def getAnnouncementBySubjectStudent(request, subject_code):
     try:
         subject = Subject.objects.get(subject_code=subject_code)
         announcement = Announcement.objects.filter(course=subject, is_active=True).order_by('announcement_date')
@@ -1563,9 +1468,6 @@ def get_announcement_by_subject_student(request, subject_code):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
     
-
-
-
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -1585,8 +1487,6 @@ def getAnnouncementByStudent(request):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
-
 @api_view(['PUT'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -1603,11 +1503,10 @@ def handle_active_change_announcement(request, id):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
 @api_view(['DELETE'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def delete_announcement(request, id):
+def deleteAnnouncement(request, id):
     try:
         announcement = Announcement.objects.get(id=id)
         announcement.delete()
@@ -1619,11 +1518,10 @@ def delete_announcement(request, id):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
 
-
 @api_view(['PUT'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def update_announcement(request, id):
+def updateAnnouncement(request, id):
     try:
         announcement = Announcement.objects.get(id=id)
         announcement_title = request.data.get('announcement_title')
@@ -1635,6 +1533,44 @@ def update_announcement(request, id):
     except ObjectDoesNotExist as e:
         logger.error("Announcement not found") 
         return Response({"message": "Announcement not found"}, status=404)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+    
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def syllabusByCourse(request, subject_code):
+    try:
+        try:
+            subject = Subject.objects.get(subject_code=subject_code)
+            syllabus = Syllabus.objects.filter(course=subject)
+            if not syllabus:
+                new_syllabus = Syllabus.objects.create(course=subject)
+                new_syllabus.save()
+                syllabus = Syllabus.objects.filter(course=subject)
+        except ObjectDoesNotExist as e:
+            return Response({"message": "Subject not found"}, status=404)
+        serializer = SyllabusSerializer(syllabus, many=True)
+        return Response(serializer.data, status=200)
+    except Exception as e:
+        print(e)
+        return Response({"message": "An error occurred"}, status=500)
+    
+@api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def updateSyyllabus(request, id):
+    try:
+        syllabus = Syllabus.objects.get(id=id)
+        section_description = request.data.get('section_description')
+        syllabus.section_description = section_description
+        syllabus.save()
+        return Response({"message": "OK"}, status=200)
+    except ObjectDoesNotExist as e:
+        logger.error("Syllabus not found") 
+        return Response({"message": "Syllabus not found"}, status=404)
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)

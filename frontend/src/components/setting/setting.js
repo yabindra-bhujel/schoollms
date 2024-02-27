@@ -26,10 +26,6 @@ const Setting = () => {
       case "Change_Password":
         return <ChnagePassword />;
 
-
-      case "notification":
-        return <NotificationOtherSettings />;
-
       default:
         return null;
     }
@@ -46,13 +42,6 @@ const Setting = () => {
           <div className="setting-menu-items">
             <button className={activeMenuItem === "Profile" ? "act-menu" : ""}
               onClick={() => handleMenuItemClick("Profile")}>Profile Settings</button>
-            <button
-              className={
-                activeMenuItem === "notification" ? "act-menu" : ""
-              }
-              onClick={() => handleMenuItemClick("notification")}
-            >Notification Preferences</button>
-
 
 
             <button
@@ -60,7 +49,7 @@ const Setting = () => {
                 activeMenuItem === "Change_Password" ? "act-menu" : ""
               }
               onClick={() => handleMenuItemClick("Change_Password")}
-            >Password and Security</button>
+            >Security and Others</button>
 
 
             {isTeacher && (

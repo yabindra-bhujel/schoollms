@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 
@@ -31,6 +31,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
       return userData[`is${role.charAt(0).toUpperCase() + role.slice(1)}`];
     });
   };
+
+
 
   return isLoggedIn() && hasRequiredRole() ? children : <Navigate to="/login" />;
 };

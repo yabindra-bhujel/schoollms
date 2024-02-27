@@ -35,7 +35,7 @@ const getUserProfileInfo = async() =>{
 
 const updateUserInfo = async(data) =>{
     try {
-        const endpoint = `upadte_user_info/`;
+        const endpoint = `update_user_info`;
         const response = await instance.post(endpoint, data);
         return response;
     } catch (error) {
@@ -72,7 +72,7 @@ const handleLogout = async () => {
 
 const checkTwoFactorAuth = async () => {
     try {
-        const endpoint = "havetwoFactorAuth";
+        const endpoint = `havetwoFactorAuth`;
         const response = await instance.get(endpoint);
         return response;
     } catch (error) {
@@ -83,8 +83,30 @@ const checkTwoFactorAuth = async () => {
 
 const updateTwoFactorAuth = async (data) => {
     try {
-        const endpoint = "update_two_factor_auth";
-        const response = await instance.post(endpoint, data);
+        const endpoint = `update_two_factor_auth`;
+        const response = await instance.put(endpoint, data);
+        return response;
+    } catch (error) {
+        throw error;
+    
+}
+}
+
+const checkEmailNotification = async () => {
+    try {
+        const endpoint = "haveEmailNotification";
+        const response = await instance.get(endpoint);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+const updateEmailNotification = async (data) => {
+    try {
+        const endpoint = "updateEmailNotification";
+        const response = await instance.put(endpoint, data);
         return response;
     } catch (error) {
         throw error;
@@ -95,4 +117,4 @@ const updateTwoFactorAuth = async (data) => {
 
 
 
-export { getUserProfile , uploadImage, getUserProfileInfo, updateUserInfo, chnagePassword, handleLogout, checkTwoFactorAuth, updateTwoFactorAuth};
+export { getUserProfile , uploadImage, getUserProfileInfo, updateUserInfo, chnagePassword, handleLogout, checkTwoFactorAuth, updateTwoFactorAuth,checkEmailNotification, updateEmailNotification};

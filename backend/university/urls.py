@@ -9,8 +9,11 @@ from django.contrib.auth.views import PasswordResetConfirmView
 
 
 urlpatterns = [
+    path('updateEmailNotification', updateEmailNotification, name='updateEmailNotification'),
+    path('update_two_factor_auth', update_two_factor_auth, name='update_two_factor_auth'),
     path('admin/', admin.site.urls),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
 
     # User API paths
     path('api/login/', UserTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -20,15 +23,19 @@ urlpatterns = [
     path('api/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
 
 
-    path('update_two_factor_auth', update_two_factor_auth, name='update_two_factor_auth'),
-    path('get_user_list', get_user_list, name='get_user_list'),
     path('havetwoFactorAuth', check_have_two_factor_auth, name='check_have_two_factor_auth'),
+
+    path('haveEmailNotification', haveEmailNotification, name='haveEmailNotification'),
+
+    
+    path('get_user_list', get_user_list, name='get_user_list'),
     path('reset_password', reset_password, name='reset_password'),
     path('conform_reset_password/<str:uuid>/<str:token>/', conform_reset_password, name='conform_reset_password'),
     path('get_user_profile', getUserProfile, name='getUserProfile'),
     path('profile_detalis', profileDetails, name='profileDetails'),
     path('update_profile_picture', updateProfilePicture, name='updateProfile'),
     path('chnage_password', changePassword, name='changePassword'),
+    path('update_user_info', upadteUserInfo, name='updateUserProfile'),
     
 
     path('student/', include("student.urls")),

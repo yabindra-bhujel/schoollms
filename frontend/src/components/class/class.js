@@ -73,6 +73,7 @@ const Class = () => {
               <tr>
                 <th>{t("time")}</th>
                 {weekdays.map((weekday) => (
+                  
                   <th key={weekday}>{weekday}</th>
                 ))}
               </tr>

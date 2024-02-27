@@ -6,7 +6,9 @@ from django.contrib.auth import get_user_model
 import requests
 import json
 from datetime import datetime
-
+from django.core.mail import send_mail
+from django.conf import settings
+from tenant.models import ApplicationSettings
 User = get_user_model()
 
 class CalenderModel(models.Model):
@@ -80,8 +82,8 @@ from datetime import datetime
 
 @receiver(m2m_changed, sender=NotificationModel.user.through)
 def notify_users(sender, instance, action, pk_set, **kwargs):
+    endpoint = "http://127.0.0.1:3001/notification"
     if action == "post_add":
-        endpoint = 'http://127.0.0.1:3001/notification'
         user_notifications_data = []
 
         for user_id in pk_set:
@@ -108,6 +110,9 @@ def notify_users(sender, instance, action, pk_set, **kwargs):
             'content': instance.content,
             'timestamp': datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         }
+        
+
+
 
         try:
             response = requests.post(endpoint, json=data)

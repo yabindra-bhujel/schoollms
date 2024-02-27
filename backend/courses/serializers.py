@@ -10,6 +10,20 @@ from django.conf import settings
 from urllib.parse import urljoin
 
 
+class SyllabusSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SyllabusSection
+        fields = '__all__'
+
+
+class SyllabusSerializer(serializers.ModelSerializer):
+    syllabus_section = SyllabusSectionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Syllabus
+        fields = '__all__'
+
+
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department

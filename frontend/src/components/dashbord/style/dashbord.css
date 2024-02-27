@@ -11,7 +11,7 @@
 }
 .container .left-item {
   width: 75%;
-  background-color: #f0f0f0;
+  background-color: #c6dbdc;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   padding: 20px;
@@ -93,7 +93,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .container .right-item {
-  background-color: #f0f0f0;
+  background-color: #c6dbdc;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   width: 25%;

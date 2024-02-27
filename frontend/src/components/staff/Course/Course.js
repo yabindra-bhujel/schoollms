@@ -140,30 +140,32 @@ const AdminCourse = () => {
                     </TableHead>
 
                     <TableBody>
-                        {courseList?.map((course) => (
-                            <TableRow key={course.id}>
-                                <TableCell>{course.subject_name}</TableCell>
-                                <TableCell>{course.subject_code}</TableCell>
-                                <TableCell>{course.weekday}</TableCell>
-                                <TableCell>{course.start_time}</TableCell>
-                                <TableCell>{course.end_time}</TableCell>
-                                <TableCell>{course.class_room}</TableCell>
-                                <TableCell>{course.subject_teacher}</TableCell>
-                                <TableCell>{course.subject_faculty}</TableCell>
-
-                                <TableCell>
-                        
-                                    <Button 
-                                     variant="outlined"
-                                     color="secondary"
-                                        onClick={() => handleDeleteDialog(course.subject_code)}   
-                                     >
-                                        Delete
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
+    {courseList?.map((course) => (
+        <TableRow key={course.id}>
+            <TableCell>
+                <Link to={`/admin/course/${course.subject_code}`}>
+                    {course.subject_name}
+                </Link>
+            </TableCell>
+            <TableCell>{course.subject_code}</TableCell>
+            <TableCell>{course.weekday}</TableCell>
+            <TableCell>{course.start_time}</TableCell>
+            <TableCell>{course.end_time}</TableCell>
+            <TableCell>{course.class_room}</TableCell>
+            <TableCell>{course.subject_teacher}</TableCell>
+            <TableCell>{course.subject_faculty}</TableCell>
+            <TableCell>
+                <Button 
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => handleDeleteDialog(course.subject_code)}   
+                >
+                    Delete
+                </Button>
+            </TableCell>
+        </TableRow>
+    ))}
+</TableBody>
 
                     </Table>
                 </TableContainer>

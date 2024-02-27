@@ -2,8 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-from student.models import Parent, Student
+from student.models import  Student
 from teacher.models import Teacher
 from .serializers import UserSerializer, UniversityLoginScreenInfoSerializer, UserProfileSerializer, AdminUserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -24,7 +23,6 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import send_mail
-from django.urls import reverse
 from django.conf import settings
 
 class BlacklistRefreshView(APIView):
@@ -37,8 +35,6 @@ class BlacklistRefreshView(APIView):
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_200_OK )
-    
-
 
 class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
     
@@ -78,9 +74,6 @@ def get_tokens_for_user(user):
         'access': str(refresh.access_token),
     }
 
-
-
-
 @api_view(['POST'])
 def create_new_user(request):
     if request.method == 'POST':
@@ -95,25 +88,9 @@ def create_new_user(request):
             return Response(data, status=status.HTTP_201_CREATED)
         else:
             data = serializer.errors
-            print(data)  # Add this line to print serializer errors
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'response': 'invalid request.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-@api_view(['GET'])
-def get_university_login_screen_info(request):
-    serializer = UniversityLoginScreenInfoSerializer(UniversityLoginScreenInfo.objects.all().first())
-    data = serializer.data
-    for img_key in ['login_screnn_icon_one', 'login_screnn_icon_two']:
-        if img_key in data and data[img_key] is not None:
-            data[img_key] = request.build_absolute_uri(data[img_key])
-    
-    return Response(data)
-
-
 
 
 @api_view(['GET'])
@@ -122,35 +99,25 @@ def get_university_login_screen_info(request):
 def getUserProfile(request):
     try:
         username = request.user.username
-        # Retrieve the user based on the provided username
         user = User.objects.get(username=username)
 
-        # Check if the user is a student (you may have your own logic for this)
-            # Retrieve the user's profile data
         try:
                 profile = UserProfile.objects.get(user=user)
                 profile_serializer = UserProfileSerializer(profile)
         except UserProfile.DoesNotExist:
-                profile = None  # Set profile to None if it doesn't exist
+                profile = None  
                 profile_serializer = None
-
-            # Serialize user data along with profile data
         user_data = {
                 'username': user.username,
                 'email': user.email,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
-
-                
             }
-
-            # Check if the user has a profile picture and include it in the response
         if profile and profile.image:
                 user_data["image"] = request.build_absolute_uri(profile.image.url)
 
         if profile and profile.cover_image:
                 user_data["cover_image"] = request.build_absolute_uri(profile.cover_image.url)
-
 
         return Response(user_data)
     except User.DoesNotExist:
@@ -158,8 +125,6 @@ def getUserProfile(request):
     except Exception as e:
         print(e)
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
@@ -185,7 +150,6 @@ def updateProfilePicture(request):
         print(e)
         return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -216,9 +180,6 @@ def changePassword(request):
      except Exception as e:
             print(e)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-     
-
-
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -231,14 +192,6 @@ def get_user_list(request):
      except Exception as e:
             print(e)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-     
-
-
-
-
-
-
-
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -259,9 +212,7 @@ def profileDetails(request):
                 "address": teacher.address,
                 "date_of_birth": teacher.date_of_birth,
                 "gender": teacher.gender
-
-                 
-            })
+                })
 
         if is_student:
             student = Student.objects.get(user=user_obj)
@@ -272,13 +223,8 @@ def profileDetails(request):
                     "country": student.country,
                     "state": student.state,
                     "city": student.city,
-                    "zip_code": student.zip_code,
-
-
-               
-            })
-
-    
+                    "zip_code": student.zip_code
+                    })
 
         final_data = {
             "user": {
@@ -292,33 +238,24 @@ def profileDetails(request):
         }
 
         return Response(final_data, status=status.HTTP_200_OK)
-
     except Exception as e:
-        print(e)
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def upadte_user_info(request):
+def upadteUserInfo(request):
     try:
         user = request.user
         first_name = request.data['first_name']
         last_name = request.data['last_name']
         email = request.data['email']
-        # update user info
-
         try:
             user = User.objects.get(username=user)
             user.first_name = first_name
             user.last_name = last_name
             user.email = email
             user.save()
-
-
         except User.DoesNotExist as e:
             print(e)
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -328,49 +265,33 @@ def upadte_user_info(request):
     except Exception as e:
         print(e)
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
-
-
-
 
 @api_view(['POST'])
 def reset_password(request):
     try:
         email = request.data['email']
         username = request.data['username']
-
-        # check user exist or not
         try:
             user = User.objects.get(email=email, username=username)
-
         except User.DoesNotExist as e:
             print(e)
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         
-
        # Generate Password Reset Token
         token_generator = PasswordResetTokenGenerator()
         token = token_generator.make_token(user)
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
 
-        # If uidb64 is a bytes-like object, decode it
         if isinstance(uidb64, bytes):
             uidb64 = uidb64.decode('utf-8')
-
-        # Build the complete reset link
         reset_link = settings.FRONTEND_URL + "/reset_password/" + uidb64 + "/" + token
 
-        # Send the reset link to the user's email
         app_name = settings.APP_NAME
         message = f'Hi {user.username},\n\nPlease click on the link below to reset your password:\n\n{reset_link}\n\nThanks!'
         recipient_list = [user.email]
         email_from = settings.EMAIL_HOST_USER
         subject = f"Password Reset Request for {app_name}"
         message = f'Hi {user.username},\n\nWe received a request to reset the password for your {app_name} account. If you made this request, please set a new password by clicking on the link below:\n {reset_link}\n\nThis link will expire in 1 hour. If you did not request a password reset, please ignore this email or contact our support team if you have any concerns.\n\nThanks!\n{app_name} Team'
-
-
 
         try:
             send_mail(subject, message, email_from, recipient_list)
@@ -382,19 +303,12 @@ def reset_password(request):
         print(e)
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
-
 @api_view(['POST'])
 def conform_reset_password(request, uuid, token):
-
     try:
         uid = force_text(urlsafe_base64_decode(uuid))
         user = User.objects.get(pk=uid)
 
-
-        # Check if the token is valid
         token_generator = PasswordResetTokenGenerator()
         if token_generator.check_token(user, token):
             new_password = request.data['password']
@@ -409,17 +323,12 @@ def conform_reset_password(request, uuid, token):
             return Response({"success": "Password reset successfully"}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Token is invalid"}, status=status.HTTP_400_BAD_REQUEST)
-       
-
     except User.DoesNotExist as e:
         print(e)
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         print(e)
         return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -436,19 +345,58 @@ def check_have_two_factor_auth(request):
         print(e)
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def haveEmailNotification(request):
+    try:
+        user_settings = ApplicationSettings.objects.get(user=request.user)
+        email_notifaction = user_settings.isEmailNotification
 
-@api_view(['POST'])
+        return Response({"is_email_notification": email_notifaction}, status=status.HTTP_200_OK)
+    except ApplicationSettings.DoesNotExist:
+        return Response({"is_email_notification": False}, status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def update_two_factor_auth(request):
     try:
         user_settings = ApplicationSettings.objects.get(user=request.user)
-        two_factor_auth = request.data['two_factor_auth']
-        user_settings.isTwoFactorAuthEnabled = two_factor_auth
+        isTrue = user_settings.isTwoFactorAuthEnabled
+        if isTrue:
+            user_settings.isTwoFactorAuthEnabled = False
+        else:
+            user_settings.isTwoFactorAuthEnabled = True
         user_settings.save()
 
         return Response({"success": "Two factor authentication updated successfully"}, status=status.HTTP_200_OK)
-    except ApplicationSettings.DoesNotExist:
+    except ApplicationSettings.DoesNotExist as e:
+        print(e)
+        return Response({"error": "User settings not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def updateEmailNotification(request):
+    try:
+        user_settings = ApplicationSettings.objects.get(user=request.user)
+        isTrue = user_settings.isEmailNotification
+        if isTrue:
+            user_settings.isEmailNotification = False
+        else:
+            user_settings.isEmailNotification = True
+        user_settings.save()
+
+        return Response({"success": "Two factor authentication updated successfully"}, status=status.HTTP_200_OK)
+    except ApplicationSettings.DoesNotExist as e:
+        print(e)
         return Response({"error": "User settings not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         print(e)
