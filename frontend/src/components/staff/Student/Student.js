@@ -122,7 +122,7 @@ const AdminStudent = () => {
 
   const fetchData = async () => {
     try {
-      const response = await StudentList("admin");
+      const response = await StudentList();
       setStudentList(response.data);
     } catch (err) {
       if (err.response && err.response.status === 403) {

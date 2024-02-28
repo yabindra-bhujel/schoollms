@@ -4,13 +4,14 @@ from .views import  *
 urlpatterns = [
     path('get_group_message_by_groupName/<str:group_name>/', get_group_message_by_groupName, name='get_group_message_by_groupName'),
     path('group_message/', save_group_message, name='save_group_message'),
-    path('get_all_messages/', all_messages, name="get_all_messages"),
+    path('get_all_messagess/', all_messages, name="get_all_messages"),
     path('update_message_status/<str:sender>/<str:receriver>/', update_message_status, name='update_message_status'),
     path('get_group_list/<str:username>/', get_group_list, name='get_group_list'),
-    path('getalluser/<str:username>/', get_all_user, name='get_all_user'),
+    path('getalluser/', get_all_user, name='get_all_user'),
     path('', save_message_to_database, name='save_message_to_database'),
     path('create_group/', create_group, name='create_group'),
     path('get_all_messages/<str:sender>/<str:receiver>/', get_all_messages, name='get_all_messages'),
+
     path('get_all_newsFeed/', get_all_newsFeed, name='get_all_newsFeed'),
     path('add_comment/', add_comment, name='add_comment'),
     path('get_Comment/<int:postID>/', get_Comment, name='get_Comment'),

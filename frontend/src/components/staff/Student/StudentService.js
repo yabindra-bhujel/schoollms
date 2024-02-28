@@ -16,8 +16,8 @@ const deleteStudent = async (studentID) =>{
 }
 
 
-const StudentList = async (username) =>{
-    const endpoint = `/student/list/${username}/`
+const StudentList = async () =>{
+    const endpoint = `/student/list`
     try{
         const response = await instance.get(endpoint)
         return response;

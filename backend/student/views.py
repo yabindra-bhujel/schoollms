@@ -150,12 +150,10 @@ def delete_student(request, studentID):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, IsAdminUser])
-def student_list(request, username):
+def student_list(request):
     try:
         students = Student.objects.all()
-
         student_data = []
-
         for student in students:
             data = {
                 'studentID': student.studentID,
@@ -169,7 +167,6 @@ def student_list(request, username):
                 'user': student.user.username,
             }
             student_data.append(data)
-
         return Response(student_data, status=status.HTTP_200_OK)
 
     except Exception as e:

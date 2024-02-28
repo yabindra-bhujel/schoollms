@@ -1,18 +1,10 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-
-
 User = get_user_model()
 
-
-
-
-
 class UserSocketID(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="user_socket_id"
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_socket_id")
     socket_id = models.CharField(max_length=255)
 
     def __str__(self):
@@ -20,12 +12,8 @@ class UserSocketID(models.Model):
 
 
 class Message(models.Model):
-    sender = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="sent_message"
-    )
-    receiver = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="recive_message"
-    )
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_message")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recive_message")
     message = models.TextField()
     image_data = models.BinaryField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -35,11 +23,8 @@ class Message(models.Model):
     def __str__(self):
         return f"{self.sender.username} to {self.receiver.username}: {self.message}"
 
-
 class Group(models.Model):
-    admin = models.ForeignKey(
-        User, related_name="admin_group", on_delete=models.CASCADE
-    )
+    admin = models.ForeignKey(User, related_name="admin_group", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     members = models.ManyToManyField(User, related_name="member_group")
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -49,12 +34,8 @@ class Group(models.Model):
         return self.name
     
 
-
-
 class GroupMessage(models.Model):
-    sender = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="sent_group_message"
-    )
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_group_message")
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="group")
     message = models.TextField()
     image_data = models.BinaryField(null=True, blank=True)
@@ -111,17 +92,11 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     text = models.TextField(null=True, blank=True)
-    images = models.ManyToManyField(
-        "ImageStore", related_name="posts_with_images", blank=True
-    )
-    videos = models.ManyToManyField(
-        "VideoStore", related_name="posts_with_videos", blank=True
-    )
+    images = models.ManyToManyField("ImageStore", related_name="posts_with_images", blank=True)
+    videos = models.ManyToManyField("VideoStore", related_name="posts_with_videos", blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.ManyToManyField(User, related_name="liked_posts", blank=True)
-    comments = models.ManyToManyField(
-        "Comment", related_name="posts_with_comments", blank=True
-    )
+    comments = models.ManyToManyField("Comment", related_name="posts_with_comments", blank=True)
 
     def __str__(self):
         return f"Post by {self.user.username} at {self.created_at}"
@@ -146,17 +121,11 @@ class VideoStore(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="comments_realtimeapi"
-    )
+    user = models.ForeignKey( User, on_delete=models.CASCADE, related_name="comments_realtimeapi")
     comment = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(
-        User, related_name="liked_comments_realtimeapi", blank=True
-    )
-    post = models.ForeignKey(
-        Post, on_delete=models.CASCADE, related_name="comments_realtimeapi"
-    )
+    likes = models.ManyToManyField(User, related_name="liked_comments_realtimeapi", blank=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments_realtimeapi")
 
     def __str__(self):
         return f"Comment by {self.user.username}: {self.comment}"
