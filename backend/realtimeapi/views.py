@@ -22,8 +22,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_group_message_by_groupName(request, group_name):
     try:
         group = Group.objects.get(name=group_name)
@@ -45,8 +45,8 @@ def get_group_message_by_groupName(request, group_name):
         return Response({"response": "An error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def save_group_message(request):
     try:
         data = request.data
@@ -73,8 +73,8 @@ def save_group_message(request):
         return Response({"response": "An error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_group_list(request, username):
     try:
         request_user = get_object_or_404(User, username=username)
@@ -110,8 +110,8 @@ def get_group_list(request, username):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def create_group(request):
     try:
         data = json.loads(request.body)
@@ -143,8 +143,8 @@ def create_group(request):
         return Response({"response": "An error occurred."},status=status.HTTP_500_INTERNAL_SERVER_ERROR,)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def all_messages(request):
     try:
         messages = Message.objects.filter(is_read=False)
@@ -164,8 +164,8 @@ def all_messages(request):
         return Response({"response": "Messages not found."}, status=status.HTTP_404_NOT_FOUND,)
 
 @api_view(["PUT"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def update_message_status(request, sender, receriver):
     try:
         sender_user = get_object_or_404(User, username=sender)
@@ -181,8 +181,8 @@ def update_message_status(request, sender, receriver):
         return Response({"response": "An error occurred."},status=status.HTTP_500_INTERNAL_SERVER_ERROR,)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_all_messages(request, sender, receiver):
     try:
         sender_user = get_object_or_404(User, username=sender)
@@ -213,8 +213,8 @@ def get_all_messages(request, sender, receiver):
         return Response({"response": "Messages not found."}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def save_message_to_database(request):
     try:
         data = request.data
@@ -242,8 +242,8 @@ def save_message_to_database(request):
         return Response({"response": "An error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_all_user(request):
     try:
         username = request.user.username
@@ -274,8 +274,8 @@ def get_all_user(request):
         return Response({"response": "Users not found."}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def make_friend_request(request):
     try:
         sender_username = request.data["sender"]
@@ -310,8 +310,8 @@ def make_friend_request(request):
         return Response({"response": "An error occurred."},status=status.HTTP_500_INTERNAL_SERVER_ERROR,)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_all_newsFeed(request):
     try:
         newsFeeds = Post.objects.all().order_by("created_at")
@@ -384,8 +384,8 @@ def get_all_newsFeed(request):
         return Response({"response": "An error occurred."},status=status.HTTP_500_INTERNAL_SERVER_ERROR,)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_Comment(request, postID):
     try:
         comments = Comment.objects.filter(post=postID).order_by("timestamp")
@@ -410,8 +410,8 @@ def get_Comment(request, postID):
         return Response({"response": "An error occurred."},status=status.HTTP_500_INTERNAL_SERVER_ERROR,)
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def add_comment(request):
     try:
         data = request.data
@@ -434,8 +434,8 @@ def add_comment(request):
         return Response({"response": "An error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser])
 def add_new_Post(request):
     try:
@@ -463,8 +463,8 @@ def add_new_Post(request):
         return Response({"response": "An error occurred."},status=status.HTTP_500_INTERNAL_SERVER_ERROR,)
 
 @api_view(["DELETE"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def delete_post(request, postid):
     try:
         post = Post.objects.get(id=postid)
@@ -475,8 +475,8 @@ def delete_post(request, postid):
         return Response({"response": "An error occurred."},status=status.HTTP_500_INTERNAL_SERVER_ERROR,)
     
 @api_view(["PUT"])
-@permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def update_post(request, postid):
     try:
         post = Post.objects.get(id=postid)

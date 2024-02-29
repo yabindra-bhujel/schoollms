@@ -18,46 +18,37 @@ from django.db import transaction
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-
 from django.db.models import Q
-
-
-
+import logging
+logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_notification_by_user(request, username):
     try:
         user = get_object_or_404(User, username=username)
-
         user_notifications = UserNotification.objects.filter(user=user).order_by('-notification__timestamp')
         serializer = UserNotificationSerializer(user_notifications, many=True)
-
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 @api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def update_notification(request, username):
     try:
         user = get_object_or_404(User, username=username)
-        
-        # Get UserNotification objects for the user
         user_notifications = UserNotification.objects.filter(user=user).order_by('-notification__timestamp')
-
-        # Update is_read to True for each notification
         for user_notification in user_notifications:
             user_notification.is_read = True
             user_notification.save()
-
-        # Serialize the notifications
         serializer = UserNotificationSerializer(user_notifications, many=True)
-
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['DELETE'])
@@ -67,13 +58,9 @@ def deleteEvent(request, eventID):
     try:
         event = CalenderModel.objects.get(id=eventID)
         event.delete()
-        return Response('Event deleted successfully', status=status.HTTP_200_OK)
+        return Response('Event deleted successfully', status=status.HTTP_204_NO_CONTENT)
     except Exception as e:
-        print(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 @api_view(['PUT'])
 @authentication_classes([JWTAuthentication])
@@ -82,26 +69,19 @@ def updateEvent(request):
     try:
         start_date_data = request.data.get('start', None)
         event_id = request.data.get('id', None)
-        
         if start_date_data is not None  and event_id is not None:
             event = CalenderModel.objects.get(id=event_id)
-
-            # Parse the incoming date strings to datetime objects
             start_date = datetime.fromisoformat(start_date_data[:-1]) 
             end_date = datetime.fromisoformat(start_date_data[:-1])
-
-            # Assign the parsed datetime objects to your model
             event.start_date = timezone.make_aware(start_date)
             event.end_date = timezone.make_aware(end_date)
-
             event.save()
             return Response('Event updated successfully', status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid request data'}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -113,10 +93,8 @@ def getCalenderEvent(request):
         serializer = CalendarSerializers(calender, many=True)
         return Response(serializer.data)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -126,49 +104,24 @@ def getTodayEvent(request):
         username = request.user.username
         user = User.objects.get(username=username)
         today = datetime.now().date()
-
-        calendar_events = CalenderModel.objects.filter(
-            user=user,
-            start_date=today
-        ).exclude(
-            Q(color='red') | Q(color='green')
-        )
-
+        calendar_events = CalenderModel.objects.filter(user=user,start_date=today).exclude(Q(color='red') | Q(color='green'))
         serializer = CalendarSerializers(calendar_events, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def get_dates_of_month(event_days, months=1):
-    # Get the current date
     today = datetime.now()
-
     all_matching_dates = []
-
-    # Generate dates for each month
     for _ in range(months):
-        # Calculate the first day of the current month
         first_day_of_month = today.replace(day=1)
-
-        # Calculate the last day of the current month
         last_day_of_month = (first_day_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-
-        # Generate a list of dates for the entire month
         all_dates = [first_day_of_month + timedelta(days=i) for i in range((last_day_of_month - first_day_of_month).days + 1)]
-
-        # Collect dates that correspond to the specified event days
         matching_dates = [date.strftime('%Y-%m-%d') for date in all_dates if date.strftime('%A') in event_days]
-
         all_matching_dates.extend(matching_dates)
-
-        # Move to the next month
         today = today.replace(day=1) + timedelta(days=32)
-
     return all_matching_dates
-    
-
-
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
@@ -182,123 +135,32 @@ def addCalenderEvent(request):
         end_date = newEvent['end_date']
         color = newEvent['color']
 
-
-        event = CalenderModel.objects.create(
-            user=user,
-            title=title,
-            start_date=start_date,
-            end_date=end_date,
-            color=color,
-        )
+        event = CalenderModel.objects.create(user=user,title=title,start_date=start_date,end_date=end_date,color=color,)
         event.save()
-
-
-     
         return Response('Event added successfully', status=status.HTTP_201_CREATED)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# # add new event
-# @api_view(['POST'])
-# def addCalender_event(request, ):
-#     try:
-#         months_to_generate = 6
-
-#         user_id = request.data["user"]
-
-#         username = request.data["username"]
-#         # user object from userid
-#         user = User.objects.get(id=user_id)
-
-#         is_teacher = user.is_teacher
-#         is_student = user.is_student
-#         if is_teacher:
-#             # get teacher from username
-#             teacher = Teacher.objects.get(TeacherID=username)
-            
-            
-#             subject = Subject.objects.filter(subject_teacher=teacher)
-#             for i in subject:
-#                 subject_name = i.subject_name
-#                 subject_time = i.period_start_time
-
-#                 event_week_days = i.weekday.split(',')  # Assuming weekdays are stored as comma-separated values
-#                 dates = get_dates_of_month(event_week_days,months_to_generate)
-                
-#                 for date in dates:
-#                     # check event is already exist or not
-#                     event = CalenderModel.objects.filter(user=user, title=subject_name, start_date=date).first()
-#                     if not event:
-#                         event = CalenderModel.objects.create(
-#                             user=user,
-#                             title=subject_name,
-#                             start_date=date,
-#                             end_date=date,
-#                             time=subject_time,
-#                             color='red'
-#                         )
-#                         event.save()
-
-#         elif is_student:
-#             # get student from username
-#             student = Student.objects.get(studentID=username)
-#             course = SubjectEnroll.objects.filter(student=student)
-#             for i in course:
-#                 subject_name = i.course.subject_name
-#                 subject_start_time = i.course.period_start_time
-                
-
-#                 event_week_days = i.course.weekday.split(',')
-#                 dates = get_dates_of_month(event_week_days, months_to_generate)
-
-#                 for date in dates:
-#                     # check event is already exist or not
-#                     event = CalenderModel.objects.filter(user=user, title=subject_name, start_date=date).first()
-#                     if not event:
-#                         event = CalenderModel.objects.create(
-#                             user=user,
-#                             title=subject_name,
-#                             start_date=date,
-#                             end_date=date,
-#                             time=subject_start_time,
-#                             color='green'
-#                         )
-#                         event.save()
-
-
-#         serializer = CalendarSerializers(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     except Exception as e:
-#         print(e)
-#         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-# notes
 @api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def updateNotesColor(request, noteid):
     try:
         color_data = request.data.get('color', None)
         if color_data is not None:
-            # Get the existing Notes object
             notes = Notes.objects.get(id=noteid)
             notes.color = color_data
             notes.save()
             serializer = NotesSerializers(instance=notes)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid request data'}, status=status.HTTP_400_BAD_REQUEST)
     except Notes.DoesNotExist:
         return Response({'error': 'Note not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
@@ -306,31 +168,21 @@ def updateNotesColor(request, noteid):
 @permission_classes([IsAuthenticated])
 def addNotes(request):
     try:
-
         data = request.data
         user_id = data["user"]
         user = User.objects.get(username=user_id)
         title = data["title"]
         content = data["content"]
-
-
-        # check how much notes are already exist for this user
         notes_count = Notes.objects.filter(user=user).count()
         if notes_count >= 6:
             return Response({'error': 'You can not add more than 15 notes'}, status=status.HTTP_403_FORBIDDEN)
-
-        
         notes = Notes.objects.create(user=user, title=title, content=content)
         notes.save()
         serializer = NotesSerializers(notes, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
     except Exception as e:
-        print(e)
-        return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
+        logger.error(e)
+        return Response({'error': 'An error occurred'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -362,9 +214,7 @@ def getNotes(request):
                 profile = UserProfile.objects.filter(user=collaborator).first()
                 collaborators.append({
                     'username': collaborator.username,
-                    'image': request.build_absolute_uri(profile.image.url) if profile and profile.image else None,
-                })
-
+                    'image': request.build_absolute_uri(profile.image.url) if profile and profile.image else None,})
             notes.append({
                 'id': notesId,
                 'title': notesTitle,
@@ -376,9 +226,8 @@ def getNotes(request):
             })
         return Response(notes, status=status.HTTP_200_OK)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @api_view(['DELETE'])
 @authentication_classes([JWTAuthentication])
@@ -387,14 +236,14 @@ def deleteNotes(request, pk):
     try:
         notes = Notes.objects.get(id=pk)
         notes.delete()
-        return Response('Notes deleted successfully')
+        return Response('Notes deleted successfully', status=status.HTTP_204_NO_CONTENT)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def getNotesByID(request, username, noteid):
     try:
         user = User.objects.get(username=username)
@@ -402,12 +251,8 @@ def getNotesByID(request, username, noteid):
         serializer = NotesSerializers(notes, many=False)
         return Response(serializer.data)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
-
 
 @api_view(['PUT'])
 @authentication_classes([JWTAuthentication])
@@ -416,41 +261,31 @@ def updateNotes(request, noteid):
     try:
         noteContent = request.data.get('content', None)
         noteTitle = request.data.get('title', None)
-
         if noteContent is not None:
             note = Notes.objects.get(id=noteid)
             note.title = noteTitle
             note.content = noteContent
             note.save()
             serializer = NotesSerializers(instance=note)
-
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid request data'}, status=status.HTTP_400_BAD_REQUEST)
     except Notes.DoesNotExist:
         return Response({'error': 'Note not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
 
 @api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def updateNotesTitle(request, noteid):
     try:
-        print(request.data)
-        # Retrieve only the 'content' field from the request data
         title_data = request.data.get('title', None)
-        
         if title_data is not None:
-            # Get the existing Notes object
             notes = Notes.objects.get(id=noteid)
-
-            # Update the 'content' field
             notes.title = title_data
             notes.save()
-
-            # Serialize the updated Notes object
             serializer = NotesSerializers(instance=notes)
             return Response(serializer.data)
         else:
@@ -458,11 +293,8 @@ def updateNotesTitle(request, noteid):
     except Notes.DoesNotExist:
         return Response({'error': 'Note not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
@@ -473,17 +305,14 @@ def addCollaboratorToNote(request, noteid):
         owner_user = User.objects.get(username=username)
         note = Notes.objects.get(user=owner_user, id=noteid)
         collaborator_usernames = request.data
-
         if note.note_type == 'private':
             note.note_type = 'shared'
-
         with transaction.atomic():
             for collaborator_username in collaborator_usernames:
                 collaborator_user = User.objects.get(username=collaborator_username)
                 note.shared_with.add(collaborator_user)
             note.save()
-
         return Response("Collaborators added successfully", status=status.HTTP_200_OK)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

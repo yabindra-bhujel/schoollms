@@ -8,10 +8,8 @@ urlpatterns = [
     path('addlike/', create_like, name='addlike'),
     path('addvideo/', create_video, name='addvideo'),
      path('search/', search_video_data, name='search'),
-    
 
-    # article
-    path('create_article/<int:username>/', create_article, name='create_article'),
+    path('create_article/<str:username>/', create_article, name='create_article'),
     path('get_article_list/', get_article_list, name='get_article_list'),
     path('get_article_by_id/<int:id>/', get_article_by_id, name='get_article_by_id'),
 ]
