@@ -16,21 +16,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: List files in the repository
-      run: ls -R ${{ github.workspace }}
 
     - name: Change directory to backend
-      run: cd ${{ github.workspace }}/schoollms/backend
+      run: cd ${{ github.workspace }}/backend
       if: ${{ success() }}
       continue-on-error: true
 
     - name: Confirm current directory
       run: pwd
 
-    - name: List files in the backend directory
-      run: ls -la
-      if: ${{ success() }}
-      continue-on-error: true
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
