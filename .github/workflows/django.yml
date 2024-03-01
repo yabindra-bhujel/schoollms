@@ -25,10 +25,11 @@ jobs:
       run: |
         echo "Downloading Python ${PYTHON_VERSION}..."
         curl -sSLO https://github.com/actions/python-versions/releases/download/${PYTHON_VERSION}/python-${PYTHON_VERSION}-linux-22.04-x64.tar.gz
+        ls -l
         echo "Extracting Python ${PYTHON_VERSION}..."
-        tar -xzf python-${PYTHON_VERSION}-linux-22.04-x64.tar.gz
+        tar -xzf python-${PYTHON_VERSION}-linux-22.04-x64.tar.gz || (echo "Extraction failed"; exit 1)
         export PATH="$PWD/$(basename -s .tar.gz python-${PYTHON_VERSION}-linux-22.04-x64)/bin:$PATH"
-        python -m pip install --upgrade pip
+        python -m pip install --upgrade pip || (echo "Pip upgrade failed"; exit 1)
 
     # Install dependencies
     - name: Install Dependencies
