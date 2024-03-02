@@ -12,19 +12,14 @@ import { FcSurvey } from "react-icons/fc";
 import ExamList from "./Exam/ExamList";
 import { useTranslation } from "react-i18next";
 import { BiSolidCloudUpload } from "react-icons/bi";
-
-import { IoCreateOutline } from "react-icons/io5"; // If the icon is part of version 5
+import { IoCreateOutline } from "react-icons/io5";
 import Announcement from "./announcement/Announcement";
-
-import Modal from "react-modal";
-
 import AssigmentCreate from "./AssigmentCreate";
 import UploadPDF from "./uploadPDF";
 import CreateExam from "./Exam/CreateExam";
 import { getFile } from "./ClassServices";
 import Syllabus from "./syllabus/Syllabus";
-
-Modal.setAppElement("#root");
+import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 
 const ClassDetails = () => {
   const params = useParams();
@@ -32,8 +27,10 @@ const ClassDetails = () => {
   const [subject, setSubject] = useState([]);
   const [selectedButton, setSelectedButton] = useState("assignment");
   const { t } = useTranslation();
-
-
+  const [isAssigmentModalOpen, setIsAssigmentModalOpen] = useState(false);
+  const [isPDFModelOpen, setIsPDFModelOpen] = useState(false);
+  const [isExamModelOpen, setIsExamModelOpen] = useState(false);
+  const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -43,9 +40,6 @@ const ClassDetails = () => {
       console.error("Error fetching data:", error);
     }
   };
-
-
-
 
   useEffect(() => {
     getCourseData();
@@ -61,25 +55,13 @@ const ClassDetails = () => {
     }
   };
 
-  const [isAssigmentModalOpen, setIsAssigmentModalOpen] = useState(false);
-  const [isPDFModelOpen, setIsPDFModelOpen] = useState(false);
-  const [isExamModelOepn, setIsExamModelOepn] = useState(false);
-  const [isattendanceOpen, setIsattendanceOpen] = useState(false);
-
-  const openattendacne = () => {
-    setIsattendanceOpen(true);
-  };
-
-  const closeattendacne = () => {
-    setIsattendanceOpen(false);
-  };
 
   const openExamModel = () => {
-    setIsExamModelOepn(true);
+    setIsExamModelOpen(true);
   };
 
   const closeExamModel = () => {
-    setIsExamModelOepn(false);
+    setIsExamModelOpen(false);
   };
 
   const openAssigmentModal = () => {
@@ -127,42 +109,37 @@ const ClassDetails = () => {
           </div>
         </div>
 
-        <Modal
-          className="exam-model"
-          isOpen={isExamModelOepn}
-          onRequestClose={closeExamModel}
-          contentLabel="Create Exam Modal"
-          shouldCloseOnOverlayClick={false}
-        >
-          <div className="modal-content-exam">
+        <Dialog 
+        open={isExamModelOpen}
+         onClose={closeExamModel}
+          fullWidth
+          maxWidth="md"
+
+         >
+          <DialogTitle>Create Exam Modal</DialogTitle>
+          <DialogContent>
             <CreateExam closeExamModel={closeExamModel} />
-          </div>
-        </Modal>
+          </DialogContent>
+        </Dialog>
 
-        <Modal
-          className="model"
-          isOpen={isAssigmentModalOpen}
-          onRequestClose={closeAssigmentModal}
-          contentLabel="Create Assignment Modal"
-          shouldCloseOnOverlayClick={false}
-        >
-          <div className="modal-content">
+        <Dialog
+         open={isAssigmentModalOpen}
+          onClose={closeAssigmentModal}
+          fullWidth
+          maxWidth="md"
+          >
+          <DialogTitle>Create Assignment Modal</DialogTitle>
+          <DialogContent>
             <AssigmentCreate closeAssigmentModal={closeAssigmentModal} />
-          </div>
-        </Modal>
+          </DialogContent>
+        </Dialog>
 
-        <Modal
-          className="upload-pdf-model"
-          isOpen={isPDFModelOpen}
-          onRequestClose={closePDFModel}
-          contentLabel="Upload PDF"
-          shouldCloseOnOverlayClick={false}
-        >
-          <div className="pdf-modal-content">
+        <Dialog open={isPDFModelOpen} onClose={closePDFModel}>
+          <DialogTitle>Upload PDF</DialogTitle>
+          <DialogContent>
             <UploadPDF closePDFModel={closePDFModel} fetchData={fetchData} />
-
-          </div>
-        </Modal>
+          </DialogContent>
+        </Dialog>
 
         <div className="card-item">
           <div className="card">
@@ -179,7 +156,6 @@ const ClassDetails = () => {
 
           <div className="card-attdance">
             <Link className={"link-styles"} to={`/attendance/${subject_code}`}>
-
               <div className="link-to-attdance">
                 <div className="icon">
                   <FaListCheck />
@@ -188,12 +164,9 @@ const ClassDetails = () => {
                   <h4>{t("attendance")}</h4>
                   <p>{t("generate QR code or number")}</p>
                 </div>
-
               </div>
-
             </Link>
           </div>
-
 
           <div className="card">
             <div className="icon">
@@ -222,7 +195,6 @@ const ClassDetails = () => {
           {/* survey */}
           <div className="card-attdance">
             <Link className={"link-styles"} to={`/survey`}>
-
               <div className="link-to-attdance">
                 <div className="icon">
                   <FcSurvey />
@@ -231,17 +203,14 @@ const ClassDetails = () => {
                   <h4>{t("attendance")}</h4>
                   <p>{t("generate QR code or number")}</p>
                 </div>
-
               </div>
-
             </Link>
           </div>
         </div>
 
         <div className="all-btn">
           <button
-            className={`assigemnt-btn ${selectedButton === "assignment" ? "menu-active" : ""
-              }`}
+            className={`assigemnt-btn ${selectedButton === "assignment" ? "menu-active" : ""}`}
             onClick={() => handleButtonClick("assignment")}
           >
             {t("assignment")}
@@ -255,27 +224,25 @@ const ClassDetails = () => {
 
           <button className="survey-btn">{t("survey")}</button>
 
-
-
           <button className={`course-contant-btn ${selectedButton === "course_contant" ? "menu-active" : ""}`}
             onClick={() => handleButtonClick("course_contant")}
-          >{t("course materials")}</button>
-
-
-
+          >
+            {t("course materials")}
+          </button>
 
           <button className={`course-contant-btn ${selectedButton === "announcement" ? "menu-active" : ""}`}
             onClick={() => handleButtonClick("announcement")}
-          >{t("announcement")}</button>
+          >
+            {t("announcement")}
+          </button>
 
-
-<button className={`course-contant-btn ${selectedButton === "syllabus" ? "menu-active" : ""}`}
+          <button className={`course-contant-btn ${selectedButton === "syllabus" ? "menu-active" : ""}`}
             onClick={() => handleButtonClick("syllabus")}
-          >{t("syllabus")}</button>
+          >
+            {t("syllabus")}
+          </button>
 
         </div>
-
-
 
         <section className="main-section">
           {selectedButton === "assignment" && (
@@ -291,17 +258,12 @@ const ClassDetails = () => {
           {selectedButton === "course_contant" && (
             <div className="main-element">
               <CourseContant fetchData={fetchData} />
-
-
             </div>
           )}
-
 
           {selectedButton === "announcement" && (
             <div className="main-element">
               <Announcement />
-
-
             </div>
           )}
 
@@ -310,8 +272,6 @@ const ClassDetails = () => {
               <Syllabus />
             </div>
           )}
-
-
         </section>
       </div>
     </Layout>

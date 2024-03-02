@@ -50,7 +50,6 @@ def createEnrollSubject(request, username):
 
         teacher_id = extractTeacherId(subject_teacher)
         student_ids = extractStudentId(student_data)
-        print(student_ids)
 
         try:
             teacher = Teacher.objects.get(TeacherID=teacher_id)
@@ -129,7 +128,6 @@ def getSubjectEnroll(request, username):
 @permission_classes([IsAuthenticated, IsAdminUser])
 def createCourse(request):
     try:
-        print(request.data)
         data = request.data
         course_id = data.get('course_id')
         course_name = data.get('course_name')
@@ -200,7 +198,7 @@ def deleteCourse(request, id, username):
     try:
         subject = Subject.objects.get(subject_code=id)
         subject.delete()
-        return Response({"message": "Course deleted successfully"}, status=200)
+        return Response({"message": "Course deleted successfully"}, status=204)
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)
@@ -270,10 +268,9 @@ def deleteDepartment(request, id, username):
     try:
         department = Department.objects.get(id=id)
         department.delete()
-        return Response({"message": "Department deleted successfully"}, status=200)
+        return Response({"message": "Department deleted successfully"}, status=204)
     except Exception as e:
-        print(e)
-        return Response({"message": "An error occurred"}, status=500)
+        return Response({"message": "Department Object not Found"}, status=404)
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -1429,7 +1426,7 @@ def addAnnouncement(request):
             logger.error("An error occurred")
             return Response({"message": "An error occurred"}, status=500)
    
-        return Response({"message": "OK"}, status=200)
+        return Response({"message": "OK"}, status=201)
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)
@@ -1510,7 +1507,7 @@ def deleteAnnouncement(request, id):
     try:
         announcement = Announcement.objects.get(id=id)
         announcement.delete()
-        return Response({"message": "OK"}, status=200)
+        return Response({"message": "OK"}, status=204)
     except ObjectDoesNotExist as e:
         logger.error("Announcement not found") 
         return Response({"message": "Announcement not found"}, status=404)
