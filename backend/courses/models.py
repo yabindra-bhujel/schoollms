@@ -98,6 +98,25 @@ class Assignment(models.Model):
     assignment_start_date = models.DateTimeField(default=timezone.now)
     assignment_duration = models.DurationField(null=True, blank=True)
     is_published = models.BooleanField(default=True)
+    is_actived = models.BooleanField(default=True)
+    is_visible = models.BooleanField(default=True)
+
+    def make_invisible(self):
+        now = timezone.now()
+        if self.assignment_deadline <= now:
+            self.is_visible = False
+        else:
+            self.is_visible = True
+
+    def save(self, *args, **kwargs):
+        now = timezone.now()
+        if self.assignment_deadline <= now or self.assignment_start_date > now:
+            self.is_actived = False
+        else:
+            self.is_actived = True
+        super().save(*args, **kwargs)
+
+
 
     @property
     def is_active(self):
@@ -110,10 +129,8 @@ class Assignment(models.Model):
             return True
 
     def has_student_submitted(self, student):
-        # Check for file submission
         if self.file_submissions.filter(student=student).exists():
             return True
-        # Check for text submission
         if self.text_submissions.filter(student=student).exists():
             return True
 

@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Typography from "@mui/material/Typography";
 import instance from "../../../api/axios";
 import styled from "styled-components";
 import AnnouncementList from "./AnnouncementList";
-import { Link, useParams } from "react-router-dom";
+import {useParams } from "react-router-dom";
 
 
 const AnnouncementWrapper = styled.div`
@@ -23,8 +15,7 @@ const AnnouncementWrapper = styled.div`
 `;
 
 const AnnouncementListWrapper = styled.div`
-  width: 80%;
-  background-color: #d1dace;
+  background: rgb(199, 214, 217);
   padding: 20px;
   margin: 10px;
   border-radius: 8px;

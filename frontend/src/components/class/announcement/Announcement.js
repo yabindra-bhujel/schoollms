@@ -22,9 +22,6 @@ import Stack from "@mui/material/Stack";
 import { Link, useParams } from "react-router-dom";
 import instance from "../../../api/axios";
 
-
-
-// Define the styled components
 const AnnouncementWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -33,7 +30,6 @@ const AnnouncementWrapper = styled.div`
   background: rgb(226, 222, 222);
   border-radius: 10px;
 `;
-
 const AddButton = styled.button`
   padding: 10px;
   border-radius: 5px;
@@ -44,7 +40,6 @@ const AddButton = styled.button`
   border: none;
   color: white;
 `;
-
 const AnnouncementListWrapper = styled.div`
   width: 90%;
   padding: 20px;
@@ -54,7 +49,6 @@ const AnnouncementListWrapper = styled.div`
 `;
 
 const Announcement = () => {
-  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [title, setTitle] = useState("");
@@ -76,18 +70,15 @@ const Announcement = () => {
   const handleFileChange = (event) => {
     const selectedFiles = event.target.files;
 
-    // Check each selected file's size
     const validFiles = Array.from(selectedFiles).filter(
       (file) => file.size <= 10 * 1024 * 1024
-    ); // 10MB limit
+    );
 
     if (validFiles.length > 0) {
-      // Append the valid files to the existing ones in the state
       setFile((prevFiles) => [...prevFiles, ...validFiles]);
-      setFileUploadMessage(""); // Clear any previous error message
+      setFileUploadMessage("");
     } else {
-      // Display an error message if the selected files exceed the size limit
-      setFileUploadMessage(t("studentAssigemnt.fileerror"));
+      setFileUploadMessage(t("ファイルのサイズが大きすぎます。最大サイズは10MBです。"));
       setTimeout(() => {
         setFileUploadMessage("");
       }, 2000);
@@ -100,7 +91,6 @@ const Announcement = () => {
     );
   };
 
-
   const handleOpenAddDialog = () => {
     setOpenAddDialog(true);
   };
@@ -109,24 +99,22 @@ const Announcement = () => {
     setOpenAddDialog(false);
   };
 
-
-
-  useEffect(() =>{
+  useEffect(() => {
     getAnnouncementData();
-  },[])
+  }, [])
 
-  const getAnnouncementData = async() =>{
+  const getAnnouncementData = async () => {
     const endpoint = `course/get_announcement_by_subject/${subject_code}`;
-    try{
+    try {
       const response = await instance.get(endpoint);
       setAnnouncements(response.data);
-    }catch(error){
-      console.log(error);
+    } catch (error) {
+
     }
   }
 
 
-  const handlePostAnnouncemnet = async() =>{
+  const handlePostAnnouncemnet = async () => {
     const announcementData = new FormData();
     announcementData.append("subject_code", subject_code);
     announcementData.append("title", title);
@@ -135,7 +123,7 @@ const Announcement = () => {
       announcementData.append("file", file[i]);
     }
     const endpoint = `course/AddAnnouncement/`;
-    try{
+    try {
       const response = await instance.post(endpoint, announcementData,
         {
           headers: {
@@ -144,20 +132,20 @@ const Announcement = () => {
         }
       );
 
-    if(response.status === 200){
-      setNewMessage("Announcement Added Successfully")
-      setTimeout(() => {
-        setNewMessage("");
-      }, 3000);
-      handleCloseAddDialog()
-      setTitle("")
-      setContent("")
-      setFile([])
-      getAnnouncementData();
+      if (response.status === 200) {
+        setNewMessage("Announcement Added Successfully")
+        setTimeout(() => {
+          setNewMessage("");
+        }, 3000);
+        handleCloseAddDialog()
+        setTitle("")
+        setContent("")
+        setFile([])
+        getAnnouncementData();
 
-    }
+      }
 
-    }catch(error){
+    } catch (error) {
       console.log(error);
     }
   }
@@ -174,26 +162,26 @@ const Announcement = () => {
           <AddButton onClick={handleOpenAddDialog}>Add Announcement</AddButton>
         </div>
       </AnnouncementWrapper>
-            {/*  */}
-            {updateMessage && (
-              <Stack sx={{ width: "100%" }} spacing={2}>
-                <Alert severity="success">{updateMessage}</Alert>
-              </Stack>
-            )}
-            {deleteMessage && (
-              <Stack sx={{ width: "100%" }} spacing={2}>
-                <Alert severity="success">{deleteMessage}</Alert>
-              </Stack>
-            )}
+      {/*  */}
+      {updateMessage && (
+        <Stack sx={{ width: "100%" }} spacing={2}>
+          <Alert severity="success">{updateMessage}</Alert>
+        </Stack>
+      )}
+      {deleteMessage && (
+        <Stack sx={{ width: "100%" }} spacing={2}>
+          <Alert severity="success">{deleteMessage}</Alert>
+        </Stack>
+      )}
 
-            {newMessage && (
-              <Stack sx={{ width: "100%" }} spacing={2}>
-                <Alert severity="success">{newMessage}</Alert>
-              </Stack>
-            )}
+      {newMessage && (
+        <Stack sx={{ width: "100%" }} spacing={2}>
+          <Alert severity="success">{newMessage}</Alert>
+        </Stack>
+      )}
 
       <AnnouncementListWrapper>
-        <AnnouncementList announcements={announcements} setDeleteMessage ={setDeleteMessage} getAnnouncementData = {getAnnouncementData} setUpdateMessage = {setUpdateMessage} />
+        <AnnouncementList announcements={announcements} setDeleteMessage={setDeleteMessage} getAnnouncementData={getAnnouncementData} setUpdateMessage={setUpdateMessage} />
       </AnnouncementListWrapper>
 
 
@@ -206,20 +194,19 @@ const Announcement = () => {
       >
         <DialogTitle>Add Announcement</DialogTitle>
 
-        {/* show if have any error mesage  */}
         {fileUploadMessage && (
-              <Stack sx={{ width: "100%" }} spacing={2}>
-                <Alert severity="error">{fileUploadMessage}</Alert>
-              </Stack>
-            )}
+          <Stack sx={{ width: "100%" }} spacing={2}>
+            <Alert severity="error">{fileUploadMessage}</Alert>
+          </Stack>
+        )}
 
 
         <DialogContent>
-          <TextField 
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          label="Title" 
-          fullWidth margin="normal" />
+          <TextField
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            label="Title"
+            fullWidth margin="normal" />
           <ReactQuill
             theme="snow"
             value={content}
@@ -233,61 +220,54 @@ const Announcement = () => {
               ],
             }}
           />
-
           <div style={{ textAlign: "center", margin: "20px 0" }}>
             <input
               type="file"
               ref={fileInputRef}
               style={{ display: "none" }}
               onChange={handleFileChange}
-              multiple
-            />
-
+              multiple/>
             <Button
               variant="outlined"
               color="primary"
               startIcon={<BackupIcon />}
               onClick={handleButtonClick}
-            >
-              Upload File
+            >ファイル選択
             </Button>
             {file.length > 0 && (
-  <List dense>
-    {file.map((file, index) => (
-      <ListItem key={index} disableGutters>
-        <ListItemText
-          primary={
-            <>
-              <strong>{file.name}</strong> <br />
-              {file && file.size
-                ? (file.size / (1024 * 1024)).toFixed(2)
-                : 0}{" "}
-              MB
-            </>
-          }
-        />
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          onClick={() => handleFileDelete(index)}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </ListItem>
-    ))}
-  </List>
-)}
-
-
+              <List dense>
+                {file.map((file, index) => (
+                  <ListItem key={index} disableGutters>
+                    <ListItemText
+                      primary={
+                        <>
+                          <strong>{file.name}</strong> <br />
+                          {file && file.size
+                            ? (file.size / (1024 * 1024)).toFixed(2)
+                            : 0}{" "}
+                          MB
+                        </>
+                      }
+                    />
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => handleFileDelete(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItem>
+                ))}
+              </List>
+            )}
             <Typography variant="body2" style={{ marginTop: "10px" }}>
-              
               <strong>JPEG, PNG, PDF, ZIP | Max size: 10MB</strong>
             </Typography>
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAddDialog}>Cancel</Button>
-          <Button onClick={handlePostAnnouncemnet}>Add</Button>
+          <Button onClick={handleCloseAddDialog}>キャンセル</Button>
+          <Button onClick={handlePostAnnouncemnet}>送信</Button>
         </DialogActions>
       </Dialog>
     </div>

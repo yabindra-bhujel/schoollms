@@ -20,7 +20,6 @@ export default function DataTable({ attendanceData, newcolumns, setColumns, setS
     ? attendanceData.reduce((acc, entry) => {
         entry.students_attended?.forEach((student) => {
           const existingRow = acc.find((row) => row.id === student.student_id);
-
           if (existingRow) {
             existingRow[entry.date] = student.is_present;
           } else {
@@ -39,10 +38,8 @@ export default function DataTable({ attendanceData, newcolumns, setColumns, setS
     : [];
 
   let final_data = [];
-
   if (rows && rows.length > 0) {
     final_data = rows;
-
   } else if (attendanceData) {
     final_data = attendanceData.map((student) => ({
       id: student.student_id,
@@ -50,18 +47,15 @@ export default function DataTable({ attendanceData, newcolumns, setColumns, setS
       course: student.course,
     }));
   }
-
-
-  // Existing columns (id, fullName, course, dates)
   let existingColumns = [
-    { field: 'id', headerName: t('teacherAttdance.studentNumber'), width: 200 },
-    { field: 'fullName', headerName: t('teacherAttdance.studentName'), width: 200, sortable: false },
-    { field: 'course', headerName: t('teacherAttdance.courseName'), width: 200, sortable: false },
+    { field: 'id', headerName: t('teacherAttdance.studentNumber'), width: 100 },
+    { field: 'fullName', headerName: t('teacherAttdance.studentName'), width: 100, sortable: false },
+    { field: 'course', headerName: t('teacherAttdance.courseName'), width: 100, sortable: false },
     ...(rows && rows.length > 0
       ? uniqueDates.map((date) => ({
           field: date,
           headerName: date,
-          width: 200,
+          width: 100,
           sortable: false,
           renderCell: (params) => (
             <span>
@@ -77,27 +71,21 @@ export default function DataTable({ attendanceData, newcolumns, setColumns, setS
     ... newcolumns.map((column, columnIndex) => ({
     field: column.columnName,
     headerName: column.columnName,
-    width: 200,
+    width: 100,
     sortable: false,
     renderCell: (params) => {
       const studentId = params.row.id; 
       const isChecked = column.values[studentId];
       const handleCheckboxChange = (event) => {
         let updatedColumns = [...newcolumns];
-        // Ensure that the values object exists for the column
         if (!updatedColumns[columnIndex].values) {
           updatedColumns[columnIndex].values = {};
         }
-        // Update the value for this specific student ID
 
         updatedColumns[columnIndex].values[studentId] = event.target.checked;
-        // Update the state with the new columns array
-
         setStudentIds({ ...studentIds, [studentId]: event.target.checked });
         setColumns(updatedColumns);
-        console.log(updatedColumns)
       };
-
       return (
         <input
           type="checkbox"
@@ -111,7 +99,7 @@ export default function DataTable({ attendanceData, newcolumns, setColumns, setS
 
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <div style={{ height: 400 }}>
       <DataGrid
         rows={final_data}
         columns={existingColumns}

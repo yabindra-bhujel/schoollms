@@ -2,17 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import Layout from "../../navigations/Layout";
 import "./style/attendace.css";
 import instance from "../../../api/axios";
-
+import { MdArrowBack } from "react-icons/md";
 import getUserInfo from "../../../api/user/userdata";
 import { Link, useParams } from "react-router-dom";
-import Modal from "react-modal";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 import Table from "./AttendaceTable";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-
-Modal.setAppElement("#root");
 
 const Attendace = () => {
   const username = getUserInfo().username;
@@ -29,7 +27,6 @@ const Attendace = () => {
 
   const addNewColumn = () => {
     const newColumnName = format(new Date(), "yyyy-MM-dd");
-    // Check if the column already exists in tableData or columns
     const columnExistsInTableData = tableData.some(
       (row) => row.date === newColumnName
     );
@@ -38,42 +35,38 @@ const Attendace = () => {
     );
 
     if (!columnExistsInTableData && !columnExistsInColumns) {
-      // Dynamically determine the number of rows based on existing data
       const rowCount = tableData.length;
       const newColumn = {
         columnName: newColumnName,
-        values: Array(rowCount).fill(true), // Creates an array with 'rowCount' elements, all set to true
+        values: Array(rowCount).fill(true),
       };
 
-      // Add the new column to the columns data
       setColumns((prevColumnsData) => [...prevColumnsData, newColumn]);
     } else {
-      // Column already exists, handle this case (e.g., show a message)
-      setCreateAttendanceMessage("Attendance already created for today");
+      setCreateAttendanceMessage("今日の出席はすでに作成されています。");
     }
   };
 
-  const openDiglog = () => {
+  const handleOpenDialog = () => {
     setConform(true);
   };
-  const closeDialog = () => {
+  const handleCloseDialog = () => {
     setConform(false);
   };
 
-  const openCodeDiglog = () => {
+  const handleOpenCodeDialog = () => {
     setOpenCode(true);
   };
-  const closCodeDialog = () => {
+  const handleCloseCodeDialog = () => {
     setOpenCode(false);
   };
 
-  // check in tableData already have attdance date is todya
   const todayDate = format(new Date(), "yyyy-MM-dd");
   const columnExistsInTableData = tableData.some(
     (row) => row.date === todayDate
   );
 
-  const create_attendance = async () => {
+  const createAttendance = async () => {
     try {
       const endpoint = `/course/create_attendance/`;
       const response = await instance.post(endpoint, {
@@ -81,14 +74,14 @@ const Attendace = () => {
         course_code: subject_code,
       });
       setNewattendance(response.data.attendance);
-      closeDialog();
-      openCodeDiglog();
+      handleCloseDialog();
+      handleOpenCodeDialog();
     } catch {
       console.log("error");
     }
   };
 
-  const get_attendance = async () => {
+  const getAttendance = async () => {
     try {
       const endpoint = `/course/get_attendance_by_subject/${subject_code}/`;
 
@@ -96,9 +89,7 @@ const Attendace = () => {
       const student_list = response.data.student_list;
       const attendance_list = response.data.attendance;
 
-      // Clear existing columns before setting new ones
       setColumns([]);
-      // Reset studentIds state
       setStudentIds({});
       if (student_list) {
         setTableData(student_list);
@@ -106,11 +97,10 @@ const Attendace = () => {
         setTableData(attendance_list);
       }
     } catch (e) {
-      console.log("Error", e);
     }
   };
 
-  const makeattendance = async () => {
+  const makeAttendance = async () => {
     try {
       const endpoint = `/course/create_attdenace_and_add_student/`;
       const response = await instance.post(endpoint, {
@@ -118,110 +108,104 @@ const Attendace = () => {
         studentIds: studentIds,
       });
       if (response.status === 200) {
-        setCreateAttendanceMessage("Attendance updated successfully");
-        // set timeout
+        setCreateAttendanceMessage("出席が更新されました。");
         setTimeout(() => {
           setCreateAttendanceMessage("");
         }, 3000);
-        get_attendance();
+        getAttendance();
       }
     } catch {
-      console.log("error");
     }
   };
 
   useEffect(() => {
-    get_attendance();
+    getAttendance();
   }, []);
 
   const handleClick = () => {
     if (columnExistsInTableData) {
-      // Column already exists, handle this case (e.g., show a message)
-      setCreateAttendanceMessage("Attendance already created for today");
-      // set timeout
+      setCreateAttendanceMessage("今日の出席はすでに作成されています。");
       setTimeout(() => {
         setCreateAttendanceMessage("");
       }, 3000);
     } else {
-      openDiglog();
+      handleOpenDialog();
     }
   };
 
   function formatCode(code) {
-    // Assuming code is a string of 6 digits
     return code.replace(/(\d{3})(\d{3})/, "$1  $2");
   }
-
   const formattedCode = newattendance
     ? formatCode(newattendance.attendance_code)
     : "";
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
 
-    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    return () => clearInterval(intervalId);
+  }, []);
 
-    useEffect(() => {
-      // Update currentDateTime every second
-      const intervalId = setInterval(() => {
-        setCurrentDateTime(new Date());
-      }, 1000);
-  
-      // Clear interval on component unmount
-      return () => clearInterval(intervalId);
-    }, []);
-  
-    const formattedDate = currentDateTime.toLocaleDateString();
-    const formattedTime = currentDateTime.toLocaleTimeString();
-    const dayOfWeek = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(currentDateTime);
-  
+  const formattedDate = currentDateTime.toLocaleDateString();
+  const formattedTime = currentDateTime.toLocaleTimeString();
+  const dayOfWeek = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(currentDateTime);
+
 
   return (
     <Layout>
-      <Modal
-        className="attdence-model"
-        isOpen={conform}
-        onRequestClose={closeDialog}
-        contentLabel="Create Attdnace Modal"
-        shouldCloseOnOverlayClick={false}
+      <Dialog
+        open={conform}
+        onClose={handleCloseDialog}
+        aria-labelledby="form-dialog-title"
       >
-        <div className="modal-content-attdence">
-          <div className="modal-header-attdence">
-            <h2>{t("teacherAttdance.generateCode")}</h2>
-          </div>
+        <DialogTitle id="form-dialog-title">{t("teacherAttdance.generateCode")}</DialogTitle>
+        <DialogContent>
+          <p>{t("teacherAttdance.areYouSure")}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            {t("teacherAttdance.cancel")}
+          </Button>
+          <Button onClick={createAttendance} color="primary">
+            {t("teacherAttdance.generate")}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-          <div className="modal-body-attdence">
-            <p>{t("teacherAttdance.areYouSure")}</p>
-          </div>
-
-          <div className="model-footer-attdence">
-            <button className="cancle-btn" onClick={closeDialog}>
-              {t("teacherAttdance.cancel")}
-            </button>
-            <button className="creaet-btn" onClick={create_attendance}>
-              {t("teacherAttdance.generate")}
-            </button>
-          </div>
-        </div>
-      </Modal>
-
-      <Modal
-        className="show-code"
-        isOpen={openCode}
-        onRequestClose={closCodeDialog}
-        contentLabel="Show Attdnace code"
-        shouldCloseOnOverlayClick={false}
+      <Dialog
+        open={openCode}
+        onClose={handleCloseCodeDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth={true}
+        maxWidth="sm"
       >
-        <div className="attdence-code-content">
-          <div className="code">
-            <h1>{formattedCode}</h1>
+        <DialogTitle id="alert-dialog-title">出席番号</DialogTitle>
+        <DialogContent>
+          <div className="attdence-code-content">
+            <div className="code">
+              <h4>{formattedCode}</h4>
+            </div>
           </div>
-
-          <button onClick={closCodeDialog}>Close</button>
-        </div>
-      </Modal>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCodeDialog} color="primary" autoFocus>
+            閉じる
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <div className="attendace">
         <div className="attendace__header">
+        
           <div className="generate-button">
+          <Link to={`/class/${subject_code}`}>
+        <MdArrowBack className="back" />
+        </Link>
+        
             <button className="btn-attdance" onClick={handleClick}>
               {t("teacherAttdance.generateCode")}
             </button>
@@ -232,32 +216,38 @@ const Attendace = () => {
           </div>
 
           <div className="today-date">
-          <div className="subject-name">
-  {Array.from(new Set(tableData.map(item => item.course))).map((course, index) => (
-    <p key={index}>{course}</p>
-  ))}
-</div>
+            <div className="subject-name">
+              {Array.from(new Set(tableData.map(item => item.course))).map((course, index) => (
+                <p key={index}>{course}</p>
+              ))}
+            </div>
 
-
-      <div className="time">
-            <p>{formattedDate}</p>
-            <p>{formattedTime}</p>
-            <p>{dayOfWeek}</p>
-          </div>
+            <div className="time">
+              <p>{formattedDate}</p>
+              <p>{formattedTime}</p>
+              <p>{dayOfWeek}</p>
+            </div>
           </div>
         </div>
 
         <div>
+          <p style={{
+            fontSize: "20px",
+            fontWeight: "bold",
+            color: "black",
+            textAlign: "center",
+            margin: "10px 0px",
+          }}>{t("teacherAttdance.allStudentAttendanceList")}</p>
+
           <div className="all-table">
             {createAttendanceMessage && (
               <Stack sx={{ width: "100%" }} spacing={2}>
                 <Alert severity="info">{createAttendanceMessage}</Alert>
               </Stack>
             )}
-            <p>{t("teacherAttdance.allStudentAttendanceList")}</p>
           </div>
           <Table
-            className="filnal-table"
+            className="table"
             attendanceData={tableData}
             newcolumns={columns}
             setColumns={setColumns}
@@ -266,7 +256,7 @@ const Attendace = () => {
           />
 
           <div className="update-btn">
-            <button onClick={makeattendance}>
+            <button onClick={makeAttendance}>
               {t("teacherAttdance.update")}
             </button>
           </div>

@@ -5,10 +5,12 @@ import "react-quill/dist/quill.snow.css";
 import AssignmentPreview from "./AssignmentPreview";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import instance from "../../api/axios";
 import AssigmentForm from "./AssigemntFrom";
 import { useTranslation } from "react-i18next";
+import { getCourseDetails } from "./ClassServices";
+import Snackbar from '@mui/material/Snackbar';
 
 const AssigmentCreate = (props) => {
   const params = useParams();
@@ -17,10 +19,13 @@ const AssigmentCreate = (props) => {
   const [studentList, setStudentList] = useState([]);
   const [studentIds, setStudentIds] = useState([]);
   const [showAddMoreButton, setShowAddMoreButton] = useState(false);
-
+  const [message, setMessage] = useState(null);
+  const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
-
+  const handleCloseSnackbar = () => {
+    setOpen(false);
+  };
 
   const toolbarOptions = {
     toolbar: [
@@ -42,7 +47,6 @@ const AssigmentCreate = (props) => {
 
   useEffect(() => {
     getSubjectData();
-    // Extract Student_id values from the array
     const extractedStudentIds = studentList.map(
       (student) => student.Student_id
     );
@@ -53,19 +57,24 @@ const AssigmentCreate = (props) => {
     try {
       const endpoint = `/course/${subject_code}/`;
       const response = await instance.get(endpoint);
-
       if (response.data[0] && response.data[0].students) {
         const student = response.data[0].students;
         setStudentList(student);
-
-        // Extract Student_id values from the array after setting the state
         const studentIds = student.map((student) => student.Student_id);
         setStudentIds(studentIds);
       } else {
-        console.log("No students found in the response.");
+        setMessage("データが見つかりませんでした。");
+        setTimeout(() => {
+          setOpen(false);
+          setMessage("");
+        }, 5000);
       }
     } catch (e) {
-      console.log(e);
+      setMessage("データの取得に失敗しました。");
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 5000);
     }
   };
 
@@ -82,7 +91,7 @@ const AssigmentCreate = (props) => {
   });
 
   const handleChange = (e, name) => {
-    const newValue = e.target ? e.target.value : e; // Handle input elements and ReactQuill
+    const newValue = e.target ? e.target.value : e;
     setFormData((prevData) => ({
       ...prevData,
       [name]: newValue,
@@ -91,7 +100,6 @@ const AssigmentCreate = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // ... (handle form submission)
   };
 
   const handleNextClick = () => {
@@ -116,9 +124,24 @@ const AssigmentCreate = (props) => {
         ...formData,
         students: studentIds,
       });
-      props.closeAssigmentModal();
+      if (response.status === 201) {
+        getCourseDetails(subject_code);
+        setMessage("課題が作成されました。");
+        setOpen(true);
+        setTimeout(() => {
+          setOpen(false);
+          setMessage("");
+        }, 5000);
+        props.closeAssigmentModal();
+      }
     } catch (e) {
-      console.log(e);
+      setMessage("課題の作成に失敗しました。");
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 5000);
+      
     }
   };
   const isVallidFrom = () => {
@@ -129,7 +152,6 @@ const AssigmentCreate = (props) => {
       formData.assignment_deadline !== ""
     );
   };
-
 
   const handleAssignmentTypeChange = (e) => {
     const selectedType = e.target.value;
@@ -142,13 +164,17 @@ const AssigmentCreate = (props) => {
     }else{
       setShowAddMoreButton(false)
     }
-
-  }
+}
 
   return (
     <div>
+      <Snackbar
+        open={open}
+        autoHideDuration={5000}
+        onClose={handleCloseSnackbar}
+        message={message}
+      />
       <div className="assignment-form">
-        {/* shwo previw */}
         {isPreviewMode ? (
           <AssignmentPreview formData={formData} />
         ) : (
@@ -172,14 +198,12 @@ const AssigmentCreate = (props) => {
                     <select
                       name="assignment_type"
                       value={formData.assignment_type}
-                      onChange= {handleAssignmentTypeChange}
-                    >
+                      onChange= {handleAssignmentTypeChange}>
                       <option value="File">File</option>
                       <option value="Text">Text</option>
                     </select>
                   </div>
                 </div>
-
                 <div className="col">
                   <div className="form-group">
                     <label>{t("assignmentDeadline")}</label>
@@ -194,7 +218,6 @@ const AssigmentCreate = (props) => {
                     />
                   </div>
                 </div>
-
                 <div className="col">
                   <div className="form-group">
                     <label>{t("maxGrade")}</label>
@@ -207,27 +230,21 @@ const AssigmentCreate = (props) => {
                     />
                   </div>
                 </div>
-
                 <div className="col">
                   <div className="form-group">
                     <label>{t("assignmentStartDate")}</label>
                     <DatePicker
                       selected={formData.assignment_start_date}
                       onChange={(date) =>
-                        handleDateChange("assignment_start_date", date)
-                      }
+                        handleDateChange("assignment_start_date", date)}
                       showTimeSelect
                       dateFormat="yyyy-MM-dd HH:mm:ss"
-                      required
-                    />
+                      required/>
                   </div>
                 </div>
               </div>
             </div>
-
             <div className="assigment_question_area">
-
-
             <label>
            {t("assignmentDescription")}
             </label>
@@ -235,46 +252,19 @@ const AssigmentCreate = (props) => {
               theme="snow"
               value={formData.assignment_description}
               onChange={(value) =>
-                handleChange(value, "assignment_description")
-              }
-              modules={{
-                toolbar: toolbarOptions.toolbar,
-              }}
-            />
+                handleChange(value, "assignment_description")}
+              modules={{toolbar: toolbarOptions.toolbar,}}/>
             </div>
-
-
-
-            {/* add more filds buttom */}
-
-            {showAddMoreButton && (
-              <AssigmentForm onQuestionsChange={handleQuestionsChange} />
-
-       
-            )}
-            
-
+            {showAddMoreButton && (<AssigmentForm onQuestionsChange={handleQuestionsChange} />)}
           </form>
-
-          
         )}
       </div>
       <div className="btn">
-        {isPreviewMode ? (
-          <button type="button" onClick={handleBackClick}>
-            Back
-          </button>
-        ) : null}
-        {isPreviewMode ? (
-          <button type="submit" onClick={sendData}>
-            Submit
-          </button>
+        {isPreviewMode ? ( <button type="button" onClick={handleBackClick}>戻る</button>) : null}
+        {isPreviewMode ? (<button type="submit" onClick={sendData}>送信</button>
         ) : (
           <>
-            <button type="button" onClick={props.closeAssigmentModal}>
-              Close
-            </button>
-
+            <button type="button" onClick={props.closeAssigmentModal}>キャンセル</button>
             {isVallidFrom() && <button type="submit" onClick={handleNextClick}>Next</button>}
           </>
         )}

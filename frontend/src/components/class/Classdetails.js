@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "../navigations/Layout";
 import "./style/classdetals.css";
-import instance from "../../api/axios";
 import { MdArrowBack } from "react-icons/md";
 import CourseContant from "./CourseContant";
 import AssignmentList from "./AssigemtList";
@@ -17,9 +16,13 @@ import Announcement from "./announcement/Announcement";
 import AssigmentCreate from "./AssigmentCreate";
 import UploadPDF from "./uploadPDF";
 import CreateExam from "./Exam/CreateExam";
-import { getFile } from "./ClassServices";
+import { getFile, getCourseDetails } from "./ClassServices";
 import Syllabus from "./syllabus/Syllabus";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
+import { set } from "date-fns";
+
+
 
 const ClassDetails = () => {
   const params = useParams();
@@ -30,35 +33,47 @@ const ClassDetails = () => {
   const [isAssigmentModalOpen, setIsAssigmentModalOpen] = useState(false);
   const [isPDFModelOpen, setIsPDFModelOpen] = useState(false);
   const [isExamModelOpen, setIsExamModelOpen] = useState(false);
-  const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+
 
   const fetchData = async () => {
     try {
+      setIsLoaded(true);
       const response = await getFile(subject_code);
+      setIsLoaded(false);
       return response;
     } catch (error) {
-      console.error("Error fetching data:", error);
+      setMessage("データの取得に失敗しました 。");
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 5000);
     }
   };
 
   useEffect(() => {
-    getCourseData();
+    fetchCourseData();
   }, []);
 
-  const getCourseData = async () => {
+  const fetchCourseData = async () => {
     try {
-      const endpoint = `/course/${subject_code}/`;
-      const response = await instance.get(endpoint);
+      setIsLoaded(true);
+      const response = await getCourseDetails(subject_code);
+      setIsLoaded(false);
       setSubject(response.data);
     } catch {
-      console.log("error");
+      setMessage("データの取得に失敗しました 。");
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 5000);
     }
   };
 
-
-  const openExamModel = () => {
-    setIsExamModelOpen(true);
-  };
 
   const closeExamModel = () => {
     setIsExamModelOpen(false);
@@ -86,6 +101,13 @@ const ClassDetails = () => {
 
   return (
     <Layout>
+      
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={() => setOpen(false)}
+        message={message}
+      />
       <div className="class-details-container">
         <div className="class-header">
           <div className="retun-bnt">
@@ -104,13 +126,21 @@ const ClassDetails = () => {
                 </p>
               </>
             ) : (
-              <h3>Loading...</h3>
+              <>
+              <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={() => setOpen(false)}
+                message="データの取得中"
+              />
+              </>
+              
             )}
           </div>
         </div>
 
         <Dialog 
-        open={isExamModelOpen}
+          open={isExamModelOpen}
          onClose={closeExamModel}
           fullWidth
           maxWidth="md"
@@ -123,31 +153,34 @@ const ClassDetails = () => {
         </Dialog>
 
         <Dialog
-         open={isAssigmentModalOpen}
+          open={isAssigmentModalOpen} 
           onClose={closeAssigmentModal}
           fullWidth
           maxWidth="md"
           >
-          <DialogTitle>Create Assignment Modal</DialogTitle>
+          <DialogTitle>
+            <h3>{t("create assignment")}</h3>
+          </DialogTitle>
           <DialogContent>
             <AssigmentCreate closeAssigmentModal={closeAssigmentModal} />
           </DialogContent>
         </Dialog>
 
-        <Dialog open={isPDFModelOpen} onClose={closePDFModel}>
-          <DialogTitle>Upload PDF</DialogTitle>
+        <Dialog 
+          open={isPDFModelOpen}
+        onClose={closePDFModel}>
           <DialogContent>
             <UploadPDF closePDFModel={closePDFModel} fetchData={fetchData} />
           </DialogContent>
         </Dialog>
 
         <div className="card-item">
-          <div className="card">
+          <div  className="card" disabled>
             <div className="icon">
               <PiExamThin />
             </div>
-            <div className="card-body">
-              <button onClick={openExamModel}>
+            <div   className="card-body">
+              <button disabled>
                 <h4>{t("exam")}</h4>
                 <p>{t("create new exam")}</p>
               </button>
@@ -168,44 +201,42 @@ const ClassDetails = () => {
             </Link>
           </div>
 
-          <div className="card">
+          <div onClick={openAssigmentModal} className="card">
             <div className="icon">
               <IoCreateOutline />
             </div>
             <div className="card-body">
-              <button onClick={openAssigmentModal}>
+              <button>
                 <h4>{t("create assignment")}</h4>
                 <p>{t("create assignment for this subject")}</p>
               </button>
             </div>
           </div>
 
-          <div className="card">
+          <div onClick={openPDFModel} className="card">
             <div className="icon">
               <BiSolidCloudUpload />
             </div>
             <div className="card-body">
-              <button onClick={openPDFModel}>
+              <button>
                 <h4>{t("teaching materials")}</h4>
                 <p>{t("share materials related to the class")}</p>
               </button>
             </div>
           </div>
 
-          {/* survey */}
-          <div className="card-attdance">
-            <Link className={"link-styles"} to={`/survey`}>
-              <div className="link-to-attdance">
-                <div className="icon">
-                  <FcSurvey />
-                </div>
-                <div className="card-body">
-                  <h4>{t("attendance")}</h4>
-                  <p>{t("generate QR code or number")}</p>
-                </div>
-              </div>
-            </Link>
-          </div>
+          <div className="card" disabled>
+            <div className="icon">
+              <FcSurvey />
+            </div>
+            <div   className="card-body">
+              <button disabled>
+                <h4>アンケート</h4>
+                <p>授業に関するアンケート</p>
+              </button>
+            </div>
+            </div>
+
         </div>
 
         <div className="all-btn">
@@ -218,11 +249,12 @@ const ClassDetails = () => {
           <button
             className={`test-btn ${selectedButton === "test" ? "menu-active" : ""}`}
             onClick={() => handleButtonClick("test")}
+            disabled
           >
             {t("exam")}
           </button>
 
-          <button className="survey-btn">{t("survey")}</button>
+          <button className="survey-btn" disabled>{t("survey")}</button>
 
           <button className={`course-contant-btn ${selectedButton === "course_contant" ? "menu-active" : ""}`}
             onClick={() => handleButtonClick("course_contant")}
@@ -233,13 +265,13 @@ const ClassDetails = () => {
           <button className={`course-contant-btn ${selectedButton === "announcement" ? "menu-active" : ""}`}
             onClick={() => handleButtonClick("announcement")}
           >
-            {t("announcement")}
+            コースアナウンス
           </button>
 
           <button className={`course-contant-btn ${selectedButton === "syllabus" ? "menu-active" : ""}`}
             onClick={() => handleButtonClick("syllabus")}
           >
-            {t("syllabus")}
+            シラバス
           </button>
 
         </div>
