@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import Layout from "../navigations/Layout";
-
 import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
 import { Link } from "react-router-dom";
 import "./style/class.css";
 import { useTranslation } from "react-i18next";
+import Snackbar from "@mui/material/Snackbar";
 
- 
 const StudentTableComponent = () => {
   const userData = getUserInfo();
   const username = userData.username;
   const isStudent = userData.isStudent;
-  const isTeacher = userData.isTeacher;
   const { t } = useTranslation();
-
-
   const [subject, setSubject] = useState();
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const weekdays = [];
+  const [isLoading, setIsLoading] = useState(false);
 
- 
+  const handleClose = () => {
+    setOpen(false);
+  }
 
   useEffect(() => {
-    if(isStudent){
+    if (isStudent) {
       getSubjectData();
     }
   }, []);
@@ -30,23 +32,21 @@ const StudentTableComponent = () => {
   const getSubjectData = async () => {
     try {
       const endpoint = `/student/${username}/`;
+      setIsLoading(true);
       const response = await instance.get(endpoint);
       setSubject(response.data.courses);
-
-
     } catch {
-      console.log("error in get student");
+      setMessage("でーたを取得できませんでした。しばらくしてからもう一度お試しください。");
+      setOpen(true);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const weekdays = [];
-
   for (let day = 1; day <= 6; day++) {
     const date = moment().isoWeekday(day);
     const weekday = date.format("dddd");
     weekdays.push(weekday);
   }
-
   const classTime = [
     { id: 1, time: "9:00-10:30" },
     { id: 2, time: "10:40-12:10" },
@@ -55,15 +55,28 @@ const StudentTableComponent = () => {
     { id: 5, time: "16:20-17:40" },
   ];
 
+  if (isLoading) {
+    <Snackbar
+      open={open}
+      autoHideDuration={6000}
+      onClose={handleClose}
+      message="データを取得中"
+    />;
+  }
+
   return (
     <Layout>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={message}
+      />
       <div>
         <div className="header">
           <h1>{t("classSchedule")}</h1>
         </div>
         <div className="container-class">
-          
-
           <table>
             <thead>
               <tr>
@@ -80,20 +93,19 @@ const StudentTableComponent = () => {
                   {weekdays.map((weekday, weekdayIndex) => (
                     <td key={weekdayIndex}>
                       {subject &&
-                      subject[index] &&
-                      subject[index].weekday === weekday ? (
+                        subject[index] &&
+                        subject[index].weekday === weekday ? (
                         <p>
-                         <Link
-  to={{
-    pathname: `/studentclassdetails/${encodeURIComponent(subject[index].id)}`,
-    state: {
-      subject_code: subject[index].subject_code,
-    },
-  }}
->
-  {subject[index].name} <br />
-  ({subject[index].class_room})
-</Link>
+                          <Link
+                            to={{
+                              pathname: `/studentclassdetails/${encodeURIComponent(subject[index].id)}`,
+                              state: {
+                                subject_code: subject[index].subject_code,
+                              },}}
+                          >
+                            {subject[index].name} <br />
+                            ({subject[index].class_room})
+                          </Link>
 
                         </p>
                       ) : (

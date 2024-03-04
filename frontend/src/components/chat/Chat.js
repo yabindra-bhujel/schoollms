@@ -7,7 +7,6 @@ import getUserInfo from "../../api/user/userdata";
 import instance from "../../api/axios";
 import { useWebSocket } from "../../WebSocketContext";
 
-
 const Chat = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const userId = getUserInfo().username;
@@ -56,7 +55,7 @@ const Chat = () => {
 
   const getall = async () => {
     try {
-      const endpoint = `/realtimeapi/getalluser/${userId}/`;
+      const endpoint = `/realtimeapi/getalluser/`;
       const response = await instance.get(endpoint);
       const userData = response.data.users;
 

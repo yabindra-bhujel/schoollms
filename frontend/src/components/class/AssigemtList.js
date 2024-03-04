@@ -1,98 +1,149 @@
 import React, { useState, useEffect } from "react";
-import "./style/AssigemtList.css";
 import { Link, useParams } from "react-router-dom";
-import instance from "../../api/axios";
 import { format } from 'date-fns-tz';
 import { useTranslation } from "react-i18next";
 import Switch from '@mui/material/Switch';
-
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Snackbar from '@mui/material/Snackbar';
+import Typography from '@mui/material/Typography';
+import instance from "../../api/axios";
 
 const AssignmentList = () => {
   const params = useParams();
   const subject_code = params.subject_code;
-  const [assigemtList, setAssigemtList] = useState([]);
+  const [assignmentList, setAssignmentList] = useState([]);
   const [totalStudents, setTotalStudents] = useState(0);
   const { t } = useTranslation();
-
-  console.log("assigemtList", assigemtList);
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    getAssigemtList();
+    getAssignmentList();
   }, []);
-  //get assigement list by subject code
-  const getAssigemtList = async () => {
+
+  const getAssignmentList = async () => {
     try {
       const endpoint = `/course/${subject_code}/`;
+      setIsLoading(true);
       const response = await instance.get(endpoint);
-      console.log("response", response);
       if (response.data[0] && response.data[0].assignments) {
-        const assigement = response.data[0].assignments;
-        console.log("asss", assigement);
-        setAssigemtList(assigement);
-        // Calculate total number of unique students
+        const assignments = response.data[0].assignments;
+        setAssignmentList(assignments);
         const studentSet = new Set();
-        assigement.forEach(assignment => {
-            assignment.student.forEach(studentId => studentSet.add(studentId));
+        assignments.forEach(assignment => {
+          assignment.student.forEach(studentId => studentSet.add(studentId));
         });
         const totalUniqueStudents = studentSet.size;
         setTotalStudents(totalUniqueStudents);
-      } else {
       }
-    } catch {
-      console.log("error");
+    } catch (error) {
+      setError("Error fetching assignment list.");
+      setTimeout(() =>{
+        setOpen(false);
+        setError("")
+      }, 5000)
+    } finally {
+      setIsLoading(false);
     }
   };
 
-
   const formatDate = (dateString) => {
     const inputDate = new Date(dateString);
-    const formattedDate = format(inputDate, 'yyyy-MM-dd HH:mm', { timeZone: 'Asia/Tokyo' });
-    return formattedDate;
+    return format(inputDate, 'yyyy-MM-dd HH:mm', { timeZone: 'Asia/Tokyo' });
   };
 
-  const label = { inputProps: { 'aria-label': 'Color switch demo' } };
+  const handleVisibilityChange = async (assignmentId, newValue) => {
+    try {
+      const assignment = assignmentList.find(assignment => assignment.id === assignmentId);
+      const deadline = new Date(assignment.assignment_deadline);
+      const currentDate = new Date();
+      // 課題の締め切りが過ぎていないかチェックする
+      if (currentDate <= deadline) {
+        setError("課題の締め切りがまだ過ぎていません。表示を変更できません。");
+        setOpen(true);
+        setTimeout(() =>{
+          setOpen(false);
+          setError("")
+        }, 5000)
 
+        return;
+      }
+  
+      const updatedAssignments = assignmentList.map(assignment => {
+        if (assignment.id === assignmentId) {
+          assignment.is_visible = newValue;
+        }
+        return assignment;
+      });
+      setAssignmentList(updatedAssignments);
+      // 課題の表示を更新するためのPATCHリクエストを送信
+      const endpoint = `course/assignment/${assignmentId}/`;
+      await instance.patch(endpoint, { is_visible: newValue });
+    } catch (error) {
+      setError("課題の表示を更新する際にエラーが発生しました。");
+      setOpen(true);
+      setTimeout(() =>{
+        setOpen(false);
+        setError("")
+      }, 5000)
+    }
+  };
   
 
+  const handleCloseSnackbar = () => {
+    setError(null);
+  };
+
+  if (isLoading) return <Snackbar open={true} message="データの取得中" />;
 
   return (
     <div>
-      <div className="assigment-list">
-        <table className="content-table">
-          <thead>
-            <tr>
-              <th>{t("task")}</th>
-              <th>{t("status")}</th>
-              <th>{t("submitted")}</th>
-              <th>{t("start date")}</th>
-              <th>{t("deadline")}</th>
-              <th colSpan={2}>Action</th>
-             
-            </tr>
-          </thead>
-          <tbody>
-            {assigemtList.map((assignment) => (
-              <tr key={assignment.id}>
-                <td>
-                  <Link to={`/assignment/${assignment.id}`}>
-                    {assignment.assignment_title}
+      <Snackbar 
+        open={open}
+        autoHideDuration={5000} 
+        onClose={handleCloseSnackbar}
+        message={error} />
+      <div className="assignment-list">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell><Typography  style={{ fontSize: '30px', fontWeight: 'bold' }}>{t("task")}</Typography></TableCell>
+              <TableCell><Typography  style={{ fontSize: '30px', fontWeight: 'bold' }}>{t("status")}</Typography></TableCell>
+              <TableCell><Typography  style={{ fontSize: '30px', fontWeight: 'bold' }}>{t("submitted")}</Typography></TableCell>
+              <TableCell><Typography  style={{ fontSize: '30px', fontWeight: 'bold' }}>{t("start date")}</Typography></TableCell>
+              <TableCell><Typography  style={{ fontSize: '30px', fontWeight: 'bold' }}>{t("deadline")}</Typography></TableCell>
+              <TableCell><Typography  style={{ fontSize: '30px', fontWeight: 'bold' }}>表示/非表示</Typography></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {assignmentList.map((assignment) => (
+              <TableRow key={assignment.id}>
+                <TableCell>
+                  <Link to={`/assignment/${assignment.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                    <Typography variant="body1" style={{ fontSize: '25px' }}>{assignment.assignment_title}</Typography>
                   </Link>
-                </td>
-                <td className={assignment.is_active ? "active-assigment" : "inactive"}>
-  {assignment.is_active ? "Active" : "Inactive"}
-</td>
-
-                <td>{assignment.submission_count}/ {totalStudents}</td>
-                <td>{formatDate(assignment.assignment_posted_date)}</td>
-                <td>{formatDate(assignment.assignment_deadline)}</td>
-                <td><Switch {...label} defaultChecked /></td>
-
-                
-                
-              </tr>
+                </TableCell>
+                <TableCell className={assignment.is_active ? "active-assignment" : "inactive"}>
+                  <Typography variant="body1" style={{fontSize: '20px', color: assignment.is_actived ? 'green' : 'red'  }}>{assignment.is_actived ? "提出可能" : "提出不可"}</Typography>
+                </TableCell>
+                <TableCell><Typography variant="body1" style={{ fontSize: '20px' }}>{assignment.submission_count} / {totalStudents}</Typography></TableCell>
+                <TableCell><Typography variant="body1" style={{ fontSize: '20px' }}>{formatDate(assignment.assignment_posted_date)}</Typography></TableCell>
+                <TableCell><Typography variant="body1" style={{ fontSize: '20px' }}>{formatDate(assignment.assignment_deadline)}</Typography></TableCell>
+                <TableCell>
+                  <Switch 
+                    defaultChecked={assignment.is_visible}
+                    disabled={new Date(assignment.assignment_deadline) > new Date()}
+                    onChange={(event) => handleVisibilityChange(assignment.id, event.target.checked)} />
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

@@ -6,8 +6,6 @@ import { MdCloudUpload } from "react-icons/md";
 import { CiCircleRemove } from "react-icons/ci";
 import { useTranslation } from "react-i18next";
 
-
-
 const UploadPDF = ({ closePDFModel, fetchData }) => {
   const params = useParams();
   const subject_code = params.subject_code;
@@ -18,19 +16,14 @@ const UploadPDF = ({ closePDFModel, fetchData }) => {
   const [fileInputError, setFileInputError] = useState("")
   const { t } = useTranslation();
 
-  // handel file input
  const handleFileInput = (e) =>{
     fileInputRef.current.click();
  }
-
-    // handle file removal
     function handleFileRemoval() {
       setFile(null);
       setFileName(null);
       setUploadedFile(null);
     }
-
-
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -47,11 +40,9 @@ const UploadPDF = ({ closePDFModel, fetchData }) => {
       setUploadedFile({ fileName, filePath });
       setFileName("");
     } catch (err) {
-      console.log(err);
     }
     closePDFModel();
     fetchData();
-
   }
 
   function handleChange(event) {
@@ -64,13 +55,12 @@ const UploadPDF = ({ closePDFModel, fetchData }) => {
         "application/vnd.ms-powerpoint",
         "text/csv",
       ];
-
       if (validTypes.includes(fileType)) {
         setFile(selectedFile);
         setFileName(selectedFile.name);
-        setFileInputError(""); // Clear any previous error
+        setFileInputError(""); 
       } else {
-        setFileInputError(t("fileInput.fileUploadError"));
+        setFileInputError(t("ファイル形式が無効です。有効な形式は: .zip, .pdf, .csv, .pptxです。"));
         setTimeout(() => {
           setFileInputError("");
         }, 3000);
@@ -80,7 +70,6 @@ const UploadPDF = ({ closePDFModel, fetchData }) => {
 
   const isValidForm = () => {
     return fileName !== "";
-
   };
 
   return (
@@ -91,9 +80,6 @@ const UploadPDF = ({ closePDFModel, fetchData }) => {
           <MdCloudUpload className="file-icon" />
           <span>{t("fileInput.uploadFiles")}</span>
           <span>{t("fileInput.maxFileSize")} <strong>100MB.</strong></span>
-
-
-
         </button >
         <input
           type="file"
@@ -101,9 +87,6 @@ const UploadPDF = ({ closePDFModel, fetchData }) => {
           onChange={handleChange}
           style={{ display: "none" }}
         />
-
-
-        {/* file list */}
         {fileName && 
         <div className="file-list">
           <li>
@@ -111,19 +94,12 @@ const UploadPDF = ({ closePDFModel, fetchData }) => {
           <button className="remove-btn" onClick={handleFileRemoval}>
             <CiCircleRemove   className="remove-btn"/>
           </button>
-
           </li>
-         
-        </div>
-
-
-}
-        
+        </div>}
         {fileInputError &&
         <div className="error">
           <p>{fileInputError}</p>
-        </div>
-}
+        </div>}
         <div className="fotter-butt">
           <button className="cancel-btn" type="button" onClick={closePDFModel}>
             {t("fileInput.cancelButton")}
@@ -131,8 +107,7 @@ const UploadPDF = ({ closePDFModel, fetchData }) => {
           {fileName && isValidForm() && (
             <button className="upload-btn" type="submit" onClick={handleSubmit}>
               {t("fileInput.uploadButton")}
-            </button>
-          )}
+            </button>)}
         </div>
       </div>
     </div>

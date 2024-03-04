@@ -17,7 +17,7 @@ const StudentAttendance = () => {
 
   const getAttendanceList = async () => {
     try {
-      const endpoint = `/course/get_attendance_by_student_subject/${studentID}/${id}/`;
+      const endpoint = `/course/get_attendance_by_student_subject/${id}/`;
       const response = await instance.get(endpoint);
       if (response.data && response.data.attendance) {
         const formattedData = response.data.attendance.map((item, index) => ({

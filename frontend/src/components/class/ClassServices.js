@@ -18,4 +18,15 @@ const getFile = async (subject_code) => {
     }
   };
 
-  export { getFile };
+const getCourseDetails = async (subject_code) => {
+  try {
+      const endpoint = `/course/${subject_code}/`;
+      const response = await instance.get(endpoint);
+      return response;
+  } catch (error){
+      throw new Error(error);
+  }
+}
+
+
+  export { getFile, getCourseDetails };

@@ -1,36 +1,51 @@
 import React, { useState, useEffect } from "react";
-import "./style/AssigemtList.css";
-
 import { Link, useParams } from "react-router-dom";
 import instance from "../../api/axios";
 import { format } from 'date-fns-tz';
 import { useTranslation } from "react-i18next";
-import getUserInfo from "../../api/user/userdata";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
+import Snackbar from "@mui/material/Snackbar";
+import CircularProgress from "@mui/material/CircularProgress";
+
 
 
 const AssignmentList = () => {
   const { id } = useParams();
-  const [assigemtList, setAssigemtList] = useState([]);
+  const [assignmentList, setAssignmentList] = useState([]);
   const { t } = useTranslation();
-  const studentID = getUserInfo().username
-
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    getAssigemtList();
+    getAssignmentList();
   }, []);
-  //get assigement list by subject code
-  const getAssigemtList = async () => {
+
+  const getAssignmentList = async () => {
     try {
-      const endpoint = `/course/${id}/${studentID}/`;
+      const endpoint = `/course/${id}/`;
+      setIsLoading(true);
       const response = await instance.get(endpoint);
       if (response.data[0] && response.data[0].assignments) {
-        const assigement = response.data[0].assignments;
-        setAssigemtList(assigement);
+        const assignments = response.data[0].assignments;
+        setAssignmentList(assignments);
       } else {
-        console.log("No students found in the response.");
+        setMessage("データを取得できませんでした。しばらくしてからもう一度お試しください。");
+        setOpen(true);
+        setTimeout(() => {
+          setOpen(false);
+          setMessage("");
+        }, 3000);
       }
-    } catch {
-      console.log("error");
+    } catch (error) {
+      setMessage("データを取得できませんでした。しばらくしてからもう一度お試しください。");
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 3000);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -39,56 +54,84 @@ const AssignmentList = () => {
     const formattedDate = format(inputDate, 'yyyy-MM-dd HH:mm', { timeZone: 'Asia/Tokyo' });
     return formattedDate;
   };
-
+  
+  if (isLoading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
+        <CircularProgress />
+      </div>
+    );
+  }
   
 
   return (
     <div>
-      <div className="assigment-list">
-        <table className="content-table">
-          <thead>
-            <tr>
-              <th>{t("task")}</th>
-              <th>{t("status")}</th>
-              <th>{t("start date")}</th>
-              <th>{t("deadline")}</th>
-              <th>{t("studentAssigemnt.submit")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assigemtList.map((assignment) => (
-              <tr key={assignment.id}
-              >
-                <td>
-                  {assignment.is_active ? (
-                    <Link to={`/studentassignment/${assignment.id}`}>
-                      {assignment.assignment_title}
-                    </Link>
-                  ) : (
-                    <span>{assignment.assignment_title}</span>
-                  )}
-                </td>
-                <td className={assignment.is_active ? "" : "inactive-assigment"  }>{assignment.is_active ? "Active" : "Inactive"}</td>
-                <td>
-                  {formatDate(assignment.assignment_posted_date)}
-                </td>
-                <td>
-                  {formatDate(assignment.assignment_deadline)}
-                </td>
-                <td
-                  className={
-                    assignment.has_submitted
-                      ? "submitted"
-                      : "not-submitted"
-                  }
-                >
-                  {assignment.has_submitted ? t("studentAssigemnt.submit") : t("studentAssigemnt.notsubmit")}
-                </td>
-              </tr>
-            ))}
-          </tbody>
+      <Snackbar
 
-        </table>
+        open={open}
+        autoHideDuration={3000}
+        message={message}
+        onClose={() => setOpen(false)}
+      />
+      <div className="assignment-list">
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="h6">{t("task")}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6">{t("status")}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6">{t("start date")}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6">{t("deadline")}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6">{t("studentAssigemnt.submit")}</Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {assignmentList.map((assignment) => (
+                <TableRow key={assignment.id}>
+                  <TableCell>
+                    <Typography>{assignment.is_active ? (
+                      <Link to={`/studentassignment/${assignment.id}`}>
+                        {assignment.assignment_title}
+                      </Link>
+                    ) : (
+                      <span>{assignment.assignment_title}</span>
+                    )}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography style={
+                      assignment.is_active ? { color: "green" } : { color: "red" }
+                    }>
+                      {assignment.is_active ? "可" : "不可"}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography>{formatDate(assignment.assignment_posted_date)}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography>{formatDate(assignment.assignment_deadline)}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography style={
+                      assignment.has_submitted ? { color: "green" } : { color: "red" }
+                    }>
+                      {assignment.has_submitted ? t("studentAssigemnt.submit") : t("studentAssigemnt.notsubmit")}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </div>
   );

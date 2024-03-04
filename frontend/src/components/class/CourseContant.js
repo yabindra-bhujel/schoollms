@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./style/coursecontant.css";
 import { useParams } from "react-router-dom";
 import instance from "../../api/axios";
 import { useTranslation } from "react-i18next";
@@ -7,11 +6,11 @@ import { AiOutlineEye } from "react-icons/ai";
 import { FaTrash } from "react-icons/fa6";
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 
-
-
-
-const CourseContant = ({fetchData}) => {
+const CourseContant = ({ fetchData }) => {
   const params = useParams();
   const subject_code = params.subject_code;
   const [file, setFile] = useState([]);
@@ -19,85 +18,66 @@ const CourseContant = ({fetchData}) => {
   const [fileDeleteMessage, setFileDeleteMessage] = useState("")
 
   useEffect(() => {
-    const response = fetchData();
-    response.then((res) => {
-      setFile(res);
-    });
+    getData();
   }, []);
 
-
-  useEffect(() => {
-    getData()
-
-  }, []);
-
-  const getData = async() =>{
-    try{
-      const response = await fetchData()
-      setFile(response)
-    }
-    catch{
+  const getData = async () => {
+    try {
+      const response = await fetchData();
+      setFile(response);
+    } catch {
       console.log("error")
-      }
+    }
   }
-  
 
-
-
-   // Function to extract file name from URL
-   const getFileNameFromURL = (url) => {
+  const getFileNameFromURL = (url) => {
     const parts = url.split("/");
     return parts[parts.length - 1];
   };
 
-
-
-  const deleteFile = async(fileID) =>{
-    try{
+  const deleteFile = async (fileID) => {
+    try {
       const endpoint = `/course/delete_file/${fileID}/`;
       console.log(endpoint)
       const response = await instance.delete(endpoint);
-      if(response.status === 200){
+      if (response.status === 200) {
         setFileDeleteMessage("File deleted successfully")
-        setTimeout(()=>{setFileDeleteMessage("")},5000)
+        setTimeout(() => { setFileDeleteMessage("") }, 5000)
         getData();
-      }else{
+      } else {
         console.log("something wrong")
       }
-    }catch{
+    } catch {
       console.log("error");
     }
   }
 
-
-
   return (
-    <div className="course-materials">
-      <div className="course-contant-header">
-        <h2>授業材料</h2>
-      </div>
-      <section className="materialse-body">
-      {fileDeleteMessage && <Stack sx={{ width: '100%' }} spacing={2}>
-        <Alert severity="success">{fileDeleteMessage}</Alert>
-      </Stack>}
-      
+    <Paper style={{ padding: "16px", marginBottom: "16px" }}>
+      <Typography variant="h5" gutterBottom>授業材料</Typography>
+      {fileDeleteMessage && 
+        <Stack sx={{ width: '100%' }} spacing={2}>
+          <Alert severity="success">{fileDeleteMessage}</Alert>
+        </Stack>
+      }
       {file.map((courseMaterial) => (
-        <div className="course-contant-body" key={courseMaterial.id}>
-          
-          <div className="file-name">
-          <FaTrash className="delete-icons"  onClick={()=>deleteFile(courseMaterial.id)}/>
-            <p>{getFileNameFromURL(courseMaterial.pdf_file)}</p>
-          </div>
-          <div className="download-button">
-            <a href={courseMaterial.pdf_file} download>
-              <AiOutlineEye  className="view-icons"/>
-            </a>
+        <div key={courseMaterial.id} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+          <FaTrash 
+            style={{ marginRight: "8px", cursor: "pointer" }}
+            onClick={() => deleteFile(courseMaterial.id)}
+          />
+          <Typography>{getFileNameFromURL(courseMaterial.pdf_file)}</Typography>
+          <div style={{ marginLeft: "auto" }}>
+            <Button variant="text">
+              <a href={courseMaterial.pdf_file} download>
+                <AiOutlineEye size={30}/>
+              </a>
+            </Button>
           </div>
         </div>
       ))}
-
-      </section>
-    </div>
+    </Paper>
   );
 };
+
 export default CourseContant;

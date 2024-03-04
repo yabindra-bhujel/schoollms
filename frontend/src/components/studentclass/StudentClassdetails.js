@@ -4,8 +4,6 @@ import Layout from "../navigations/Layout";
 import "./style/classdetals.css";
 import instance from "../../api/axios";
 import { MdArrowBack } from "react-icons/md";
-import { GrNotification } from "react-icons/gr";
-import { AiFillMessage } from "react-icons/ai";
 import CourseContant from "./CourseContant";
 import AssignmentList from "./AssigemtList";
 import { useTranslation } from "react-i18next";
@@ -13,19 +11,16 @@ import StudentAttdance from "./attendance/attendance";
 import AttendanceInput from "./attendance/attdanceInput";
 import Announcement from "./Announcement/Announcement";
 import Syllabus from "./syllabus/syllabus";
-
-
-import Modal from "react-modal";
 import StudentExamList from "./Exam/ExamList";
-
-
-Modal.setAppElement("#root");
+import Snackbar from "@mui/material/Snackbar";
 
 const StudentClassDetails = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const [subject, setSubject] = useState([]);
   const [selectedButton, setSelectedButton] = useState("assignment")
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleButtonClick = (buttonType) =>{
     setSelectedButton(buttonType)
@@ -42,22 +37,25 @@ const StudentClassDetails = () => {
       const response = await instance.get(endpoint);
       setSubject(response.data);
     } catch {
-      console.log("error");
+      setMessage("データを取得できませんでした。しばらくしてからもう一度お試しください。");
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 3000);
     }
   };
-
-
-  console.log(subject)
-
-  
-
-
   return (
     <Layout>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        message={message}
+        onClose={() => setOpen(false)}
+      />
       <div className="class-details-container">
         <div className="student-class-header">
           <div className="back-btn">
-
           <Link to="/studentclass">
             <MdArrowBack className="student-back" />
           </Link>
@@ -72,61 +70,47 @@ const StudentClassDetails = () => {
               </p>
             </>
           ) : (
-            <h3>Loading...</h3>
+            <h3>......</h3>
           )}
-
           </div>
-
-       
         </div>
-
-
         <section>
         <div className="all-buttons">
     <button
       onClick={() => handleButtonClick('assignment')}
-      className={selectedButton === 'assignment' ? 'active' : ''}
-    >
+      className={selectedButton === 'assignment' ? 'active' : ''}>
       {t("assignment")}
     </button>
     <button
+    disabled
       onClick={() => handleButtonClick('exam')}
-      className={selectedButton === 'exam' ? 'active' : ''}
-    >
+      >
       {t("exam")}
     </button>
     <button
       onClick={() => handleButtonClick('attendance')}
-      className={selectedButton === 'attendance' ? 'active' : ''}
-    >
+      className={selectedButton === 'attendance' ? 'active' : ''}>
       {t("attendance")}
     </button>
     <button
       onClick={() => handleButtonClick('coursematerials')}
-      className={selectedButton === 'coursematerials' ? 'active' : ''}
-    >
+      className={selectedButton === 'coursematerials' ? 'active' : ''}>
       {t("course materials")}
     </button>
     <button
+    disabled
       onClick={() => handleButtonClick('survey')}
-      className={selectedButton === 'survey' ? 'active' : ''}
-    >
+      >
       {t("survey")}
     </button>
-
-
     <button
       onClick={() => handleButtonClick('announcement')}
-      className={selectedButton === 'announcement' ? 'active' : ''}
-    >
-      {t("announcement")}
+      className={selectedButton === 'announcement' ? 'active' : ''}>
+      コースアナウンス
     </button>
     <button
       onClick={() => handleButtonClick('Syllabus')}
-      className={selectedButton === 'Syllabus' ? 'active' : ''}
-    >
-      {t("Syllabus")}
-    </button>
+      className={selectedButton === 'Syllabus' ? 'active' : ''}>シラバス </button>
   </div>
          
         </section>

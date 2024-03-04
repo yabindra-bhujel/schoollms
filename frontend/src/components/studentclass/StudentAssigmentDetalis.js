@@ -14,8 +14,6 @@ import AnswerFrom from "./AswerInputArea";
 import ReactQuill from "react-quill";
 import { useTranslation } from "react-i18next";
 
-
-
 const StudentAssigmentDetalis = () => {
   const userid = getUserInfo();
   const user = userid.username;
@@ -30,6 +28,7 @@ const StudentAssigmentDetalis = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState(Array(questions.length).fill(""));
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
 
 
   const MakeTextSubmission = async () => {
@@ -49,26 +48,29 @@ const StudentAssigmentDetalis = () => {
     }
   };
 
-
-
   const MakeFileSubmission = async () => {
     try {
-      const formData = new FormData(); // Create a new FormData object
+      const formData = new FormData();
       formData.append("student", user);
       formData.append("assignment_id", id);
       file.forEach((file) => {
         formData.append("file_submission", file);
       });
       const endpoint = `/course/file_assigment/`;
+      setIsLoading(true);
       const response = await instance.post(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data", 
         },
       });
+      if (response.status === 201) {
+        window.history.back();
+      }
 
-      console.log("response", response.data);
     } catch (e) {
       console.log("error", e);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -79,20 +81,17 @@ const StudentAssigmentDetalis = () => {
     } 
   };
 
-  // Event handler for "Save" button to update local state
   const handleSave = () => {
     setLocalTextSubmission(textsubmission);
   };
 
   const handleFileButtonClick = () => {
-    // Trigger the file input dialog when the button is clicked
     fileInputRef.current.click();
   };
 
   const handleFileChange = (event) => {
     const selectedFiles = event.target.files;
 
-    // Check each selected file's size
     const validFiles = Array.from(selectedFiles).filter(
       (file) => file.size <= 10 * 1024 * 1024
     ); // 10MB limit
@@ -132,7 +131,6 @@ const StudentAssigmentDetalis = () => {
     }
   };
 
-  // Update answers when the user inputs an answer
   const handleAnswerChange = (index, value) => {
     const newAnswers = [...answers];
     newAnswers[index] = value;
@@ -145,7 +143,6 @@ const StudentAssigmentDetalis = () => {
     <Layout>
       <div className="assigemt-details-student">
         <div className="class-header-student">
-
           <Link to="/studentclass/">
             <MdArrowBack className="back" />
           </Link>
@@ -176,9 +173,8 @@ const StudentAssigmentDetalis = () => {
                       ref={fileInputRef}
                       style={{ display: "none" }}
                       onChange={handleFileChange}
-                      multiple // Allow multiple file selection
+                      multiple 
                     />
-
                     <div className="file-items">
                       {file.length > 0 && (
                         <ul className="file-list">
@@ -260,6 +256,9 @@ const StudentAssigmentDetalis = () => {
                     <button
                       className="submit-button "
                       onClick={MakeTextSubmission}
+                      // disable while loadin
+                      
+                      
                     >
                       <span>{t("studentAssigemnt.submit")}</span>
                       <BiSolidSend className="submit-icon" />

@@ -687,6 +687,7 @@ def courseDetails(request, subject_code):
                 assignment_data["is_active"] = assignment_instance.is_active
                 assignment__data.append(assignment_data)
 
+
         for enrolled in serializer.data:
             students = enrolled["student"]
             teacher = enrolled["teacher"]
@@ -955,6 +956,21 @@ def upadteAssigemnt(request):
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred"}, status=500)
+    
+@api_view(["PATCH"]) 
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def updateAssigmentvisibility(request, id):
+    try:
+        assignment = Assignment.objects.get(id=id)
+        assignment.is_visible = not assignment.is_visible  
+        assignment.save()
+        return Response({"message": "Assignment updated."}, status=200)
+    except Assignment.DoesNotExist:
+        return Response({"message": "Assignment not found."}, status=404)
+    except Exception as e:
+        return Response({"message": "An error occurred"}, status=500)
+
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -1197,12 +1213,14 @@ def getAttendanceBySubject(request, subject_code):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated, ])
-def getAttendanceByStudentSubject(request, studentID, subjectID):
+def getAttendanceByStudentSubject(request, subjectID):
     try:
         try:
-            student = Student.objects.get(studentID=studentID)
+            username = request.user.username
+            student = Student.objects.get(studentID=username)
             course = Subject.objects.get(subject_code=subjectID)
         except ObjectDoesNotExist as e:
+            print(e)
             logger.error("Student not found")
             return Response({"message": "Student not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -1286,17 +1304,15 @@ def createAttdenaceAndAddStudent(request):
             subject = Subject.objects.get(subject_code=subject_code)
             enroll_students = SubjectEnroll.objects.filter(course=subject)
 
-
-            # Create attendance object
+            today = timezone.now().date()
+            if Attendance.objects.filter(course=subject, subject_enroll=enroll_students.first(), date=today).exists():
+                return Response({"message": "Attendance already created for today"}, status=400)
+            
             try:
                 attendance = Attendance.objects.create(course=subject, subject_enroll=enroll_students.first())
                 attendance.save()
             except Exception as e:
-                print(e)
-                logger.error("An error occurred")
-                return Response({"message": "An error occurred"}, status=500)
-            
-
+                return Response({"message": "An error occurred"}, status=400)
 
             selected_student_ids = [student_id for student_id, is_selected in student_list.items() if is_selected]
 
@@ -1306,7 +1322,6 @@ def createAttdenaceAndAddStudent(request):
                 student_attended.is_present = True
                 student_attended.save()
 
-            # get all student id from enroll_student
         except ObjectDoesNotExist as e:
             logger.error("Subject not found") 
             return Response({"message": "Subject not found"}, status=404)

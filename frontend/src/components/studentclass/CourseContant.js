@@ -1,32 +1,14 @@
 import React, { useEffect, useState } from "react";
-import "./style/coursecontant.css";
-import { AiOutlineDownload } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 import instance from "../../api/axios";
 import { useTranslation } from "react-i18next";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import IconButton from "@mui/material/IconButton";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 
-const FileItem = ({ file }) => {
-  // Function to extract file name from URL
-  const getFileNameFromURL = (url) => {
-    const parts = url.split("/");
-    return parts[parts.length - 1];
-  };
-
-  return (
-    <div className="course-contant-body" key={file.id}>
-      <div className="file-name">
-        <p>{getFileNameFromURL(file.pdf_file)}</p>
-      </div>
-      <div className="download-button">
-        <a href={file.pdf_file} download>
-          <AiOutlineDownload />
-        </a>
-      </div>
-    </div>
-  );
-};
-
-const CourseContant = () => {
+const CourseContent = () => {
   const { id } = useParams();
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,22 +37,49 @@ const CourseContant = () => {
 
   return (
     <div>
-      <div className="course-contant-header">
-        <h2>{t("studentAssigemnt.materiales")}</h2>
-      </div>
-      <section className="materials-body">
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : (
-          files.map((courseMaterial) => (
-            <FileItem key={courseMaterial.id} file={courseMaterial} />
-          ))
-        )}
-      </section>
+      <Typography variant="h4" gutterBottom>
+        {t("studentAssigemnt.materiales")}
+      </Typography>
+      {loading ? (
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
+          <CircularProgress />
+        </div>
+      ) : error ? (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "16px" }}>
+          <Typography variant="body1" color="error" gutterBottom>
+            {error}
+          </Typography>
+          <Button variant="contained" color="primary" onClick={getFile} style={{ marginTop: "8px" }}>
+            Retry
+          </Button>
+        </div>
+      ) : (
+        <div>
+          {files.map((courseMaterial, index) => (
+
+            <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "8px", background: "rgb(223, 227, 230)", padding: "10px", borderRadius: "5px" }}>
+              <IconButton
+                variant="contained"
+                color="primary"
+                component="a"
+                href={courseMaterial.pdf_file}
+                download
+                style={{ marginRight: "8px" }}
+              >
+                <CloudDownloadIcon />
+              </IconButton>
+
+              <Typography style={{ marginRight: "8px" }}>
+                {courseMaterial.pdf_file.split("/").pop().replace(/_/g, '')}
+              </Typography>
+
+
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-export default CourseContant;
+export default CourseContent;
