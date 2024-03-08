@@ -151,8 +151,10 @@ const CalendarComponent = () => {
   const formattedEvents = events.map((event) => ({
     id: event.id,
     title: event.title,
-    start: new Date(`${event.start_date} ${event.start_time}`),
-    end: new Date(`${event.end_date} ${event.end_time}`),
+    start: new Date(`${event.start_date}`),
+    end: new Date(`${event.end_date}`),
+    start_time:  event.start_time,
+    end_time: event.end_time,
     color: event.color,
   }));
 
