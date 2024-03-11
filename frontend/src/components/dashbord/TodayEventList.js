@@ -14,9 +14,10 @@ const TodayEventList = () => {
         setEvents(response.data);
       }
     } catch (error) {
-      console.log(error);
     }
   };
+
+  console.log(events);
 
   useEffect(() => {
     getTodayEvent();
