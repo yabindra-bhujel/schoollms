@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import Layout from "../navigations/Layout";
+=======
+import moment from "moment";
+import Layout from "../layout/Layout";
+>>>>>>> 9bdbe49ee235700db43227133b53bb56680bfe21
 import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
 import { Link } from "react-router-dom";

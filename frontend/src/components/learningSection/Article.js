@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from "react";
 
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import { getArticlebyID } from "./LearningSectionService";
 import { useParams } from "react-router-dom";
 import "./style/article.css";

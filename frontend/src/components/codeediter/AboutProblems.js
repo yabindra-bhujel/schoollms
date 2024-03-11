@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Collapse, Divider } from "antd";
 import instance from "../../api/axios";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import Editor from "@monaco-editor/react";
 import getUserInfo from "../../api/user/userdata";
 import "./style/code.css";

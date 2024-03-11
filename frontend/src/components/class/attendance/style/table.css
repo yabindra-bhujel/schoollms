@@ -1,0 +1,37 @@
+.table-container {
+  margin-left: 10px;
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+thead th,
+tbody td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+  font-weight: bold;
+  font-size: 18px;
+  color: #333333;
+}
+thead th input[type=checkbox],
+tbody td input[type=checkbox] {
+  margin-right: 5px;
+  height: 40px;
+  width: 40px;
+}
+
+.student-name,
+.student-id {
+  min-width: 150px;
+  margin-left: 20px;
+}
+
+.date {
+  min-width: 120px; /* Set the fixed width for date columns */
+}

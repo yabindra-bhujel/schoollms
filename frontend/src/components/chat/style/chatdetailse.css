@@ -34,8 +34,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 .do__chat__left .profile__pic .status-circle {
   width: 15px;
@@ -156,8 +155,7 @@
 .message_image img {
   height: 100%;
   width: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   border-radius: 150px;
 }
 
@@ -257,4 +255,4 @@
 }
 .write_message .write__message__button .include_file {
   margin-left: 10px;
-}/*# sourceMappingURL=chatdetailse.css.map */
+}

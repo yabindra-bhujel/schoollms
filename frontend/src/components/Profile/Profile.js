@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
 import "./style/profile.css";

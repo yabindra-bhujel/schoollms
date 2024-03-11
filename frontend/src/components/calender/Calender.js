@@ -3,7 +3,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "./style/Calendar.css";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./style/CustomToolbar.css";

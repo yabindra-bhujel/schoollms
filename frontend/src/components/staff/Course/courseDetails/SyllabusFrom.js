@@ -56,61 +56,60 @@ const SyllabusForm = ({ courseId, fetchSyllabus }) => {
 
   return (
     <div>
-      {!showForm && (
-        <Button style={{ margin: "10px" }} variant="contained" color="primary" onClick={() => setShowForm(true)}>
-          Show Form
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      />
+      <form onSubmit={handleSubmit}>
+        {sections.map((section, index) => (
+          <Accordion key={index}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`panel${index}-content`}
+              id={`panel${index}-header`}
+            >
+              <Typography>{section.title ? section.title : `Section ${index + 1}`}</Typography>
+              <Button onClick={() => removeSection(index)}><DeleteIcon /></Button>
+            </AccordionSummary>
+            <AccordionDetails>
+              <TextField
+                label="Title"
+                variant="outlined"
+                fullWidth
+                value={section.title}
+                onChange={(e) => handleInputChange(index, "title", e.target.value)}
+                required
+                margin="normal"
+              />
+              <TextField
+                label="Description"
+                variant="outlined"
+                fullWidth
+                multiline
+                rows={4}
+                value={section.description}
+                onChange={(e) => handleInputChange(index, "description", e.target.value)}
+                required
+                margin="normal"
+              />
+            </AccordionDetails>
+          </Accordion>
+        ))}
+        <Button style={{ margin: "10px" }} variant="contained" color="primary" onClick={addSection}>
+          Add Section
         </Button>
-      )}
-      {showForm && (
-        <form onSubmit={handleSubmit}>
-          {sections.map((section, index) => (
-            <Accordion key={index}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={`panel${index}-content`}
-                id={`panel${index}-header`}
-              >
-                <Typography>{section.title ? section.title : `Section ${index + 1}`}</Typography>
-                <Button onClick={() => removeSection(index)}><DeleteIcon /></Button>
-              </AccordionSummary>
-              <AccordionDetails>
-                <TextField
-                  label="Title"
-                  variant="outlined"
-                  fullWidth
-                  value={section.title}
-                  onChange={(e) => handleInputChange(index, "title", e.target.value)}
-                  required
-                  margin="normal"
-                />
-                <TextField
-                  label="Description"
-                  variant="outlined"
-                  fullWidth
-                  multiline
-                  rows={4}
-                  value={section.description}
-                  onChange={(e) => handleInputChange(index, "description", e.target.value)}
-                  required
-                  margin="normal"
-                />
-              </AccordionDetails>
-            </Accordion>
-          ))}
-          <Button style={{ margin: "10px" }} variant="contained" color="primary" onClick={addSection}>
-            Add Section
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={loading || sections.some(section => !section.title || !section.description)}
-            style={{ margin: "10px" }}
-          >
-            {loading ? "Adding..." : "Upload Syllabus"}
-          </Button>
-        </form>
-      )}
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={loading || sections.some(section => !section.title || !section.description)}
+          style={{ margin: "10px" }}
+        >
+          {loading ? "Adding..." : "Upload Syllabus"}
+        </Button>
+      </form>
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}

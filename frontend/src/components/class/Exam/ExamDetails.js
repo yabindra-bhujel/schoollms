@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../../navigations/Layout";
+import Layout from "../../layout/Layout";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getExambyID, updateExma } from "./ExamService";
