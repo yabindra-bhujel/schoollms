@@ -289,7 +289,7 @@ const ClassDetails = () => {
           )}
           {selectedButton === "course_contant" && (
             <div className="main-element">
-              <CourseContant fetchData={fetchData} />
+              <CourseContant fetchData={fetchData}  setMessage={setMessage} setOpen={setOpen} />
             </div>
           )}
 

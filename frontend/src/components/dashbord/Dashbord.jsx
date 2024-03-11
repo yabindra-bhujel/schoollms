@@ -4,18 +4,7 @@ import "./style/dashbord.css";
 import instance from "../../api/axios";
 import { useEffect, useState } from "react";
 import jwtDecode from "jwt-decode";
-import {
-    ResponsiveContainer,
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    BarChart,
-    Bar,
-} from "recharts";
+import {ResponsiveContainer,LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,Legend} from "recharts";
 import BasicDateCalendar from "./Calender";
 import TodayCourseList from "./TodayCourseList";
 import TodayEventList from "./TodayEventList";
@@ -34,7 +23,6 @@ const Dashboard = () => {
         { name: "Jan", sales: 500 },
         { name: "Feb", sales: 600 },
         { name: "Mar", sales: 800 },
-        // Add more data points here
     ];
 
     const barChartData = [
@@ -45,9 +33,6 @@ const Dashboard = () => {
         { name: "Mar", revenue: 250 },
         { name: "Mar", revenue: 500 },
         { name: "Mar", revenue: 450 },
-
-
-        // Add more data points here
     ];
 
     return (
@@ -63,28 +48,19 @@ const Dashboard = () => {
                             <p>600</p>
                         </div>
                         <div className="card">
-                            <HeatmapChart/>
+                            <h2>Total Teachers</h2>
+                            <p>20</p>
                         </div>
                     </div>
 
                     <div className="chart-section-one">
                         <div className="chart-item-big">
-                            <ResponsiveContainer width="100%" height={200}>
-                                <LineChart data={lineChartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Line type="monotone" dataKey="sales" stroke="#8884d8" />
-                                </LineChart>
-                            </ResponsiveContainer>
                         </div>
-                        <div className="chart-item">
-                            <h2>Chart 2</h2>
+                        <div className="calender-item">
+                        <BasicDateCalendar />
                         </div>
                     </div>
-                    <div className="dashbord-section-two">
+                    {/* <div className="dashbord-section-two">
                         <div className="dashbord-announcement">
                             {isTeacher ?(
                                 <h2>
@@ -101,24 +77,15 @@ const Dashboard = () => {
                         <div className="chart-item">
                             <h2>Chart 4</h2>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="right-item">
-                    <div className="event-top">
-                        <div className="calender-basic">
-                    <BasicDateCalendar />
-
-
-                        </div>
-
                     <div className="subject-list">
                     <TodayCourseList/>
 
                     </div>
                     <div className="event-list">
                     <TodayEventList/>
-
-                    </div>
 
                     </div>
                 </div>

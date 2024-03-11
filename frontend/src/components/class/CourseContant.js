@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import instance from "../../api/axios";
-import { useTranslation } from "react-i18next";
-import { AiOutlineEye } from "react-icons/ai";
-import { FaTrash } from "react-icons/fa6";
-import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import IconButton from "@mui/material/IconButton";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import DeleteIcon from '@mui/icons-material/Delete';
 
-const CourseContant = ({ fetchData }) => {
-  const params = useParams();
-  const subject_code = params.subject_code;
+
+const CourseContant = ({ fetchData, setOpen, setMessage }) => {
   const [file, setFile] = useState([]);
-  const { t } = useTranslation();
-  const [fileDeleteMessage, setFileDeleteMessage] = useState("")
 
   useEffect(() => {
     getData();
@@ -26,57 +19,69 @@ const CourseContant = ({ fetchData }) => {
       const response = await fetchData();
       setFile(response);
     } catch {
-      console.log("error")
+      setMessage("データの取得中にエラーが発生しました");
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
     }
   }
 
-  const getFileNameFromURL = (url) => {
-    const parts = url.split("/");
-    return parts[parts.length - 1];
-  };
 
   const deleteFile = async (fileID) => {
     try {
       const endpoint = `/course/delete_file/${fileID}/`;
-      console.log(endpoint)
+      console.log(endpoint);
       const response = await instance.delete(endpoint);
       if (response.status === 200) {
-        setFileDeleteMessage("File deleted successfully")
-        setTimeout(() => { setFileDeleteMessage("") }, 5000)
+        setMessage("ファイルが正常に削除されました。");
         getData();
       } else {
-        console.log("something wrong")
+        throw new Error("ファイルの削除中にエラーが発生しました");
       }
-    } catch {
-      console.log("error");
+    } catch (error) {
+      setMessage(error.message);
+      setOpen(true);
     }
-  }
+  };
+  
 
   return (
+    <>
     <Paper style={{ padding: "16px", marginBottom: "16px" }}>
-      <Typography variant="h5" gutterBottom>授業材料</Typography>
-      {fileDeleteMessage && 
-        <Stack sx={{ width: '100%' }} spacing={2}>
-          <Alert severity="success">{fileDeleteMessage}</Alert>
-        </Stack>
-      }
-      {file.map((courseMaterial) => (
-        <div key={courseMaterial.id} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
-          <FaTrash 
-            style={{ marginRight: "8px", cursor: "pointer" }}
+      <Typography style={{ marginBottom: "16px", fontWeight: "bold" }} variant="h5" gutterBottom>授業材料</Typography>
+      {file.map((courseMaterial, index) => (
+        <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "8px", background: "rgb(223, 227, 230)", padding: "10px", borderRadius: "5px" }}>
+          <IconButton
+            variant="contained"
+            color="primary"
+            component="a"
+            target="_blank"
+            style={{ marginRight: "8px" }}
             onClick={() => deleteFile(courseMaterial.id)}
-          />
-          <Typography>{getFileNameFromURL(courseMaterial.pdf_file)}</Typography>
-          <div style={{ marginLeft: "auto" }}>
-            <Button variant="text">
-              <a href={courseMaterial.pdf_file} download>
-                <AiOutlineEye size={30}/>
-              </a>
-            </Button>
-          </div>
+          >
+            <DeleteIcon />
+          </IconButton>
+          <IconButton
+            variant="contained"
+            color="primary"
+            component="a"
+            href={courseMaterial.pdf_file}
+            download
+            style={{ marginRight: "8px" }}
+          >
+            <CloudDownloadIcon />
+          </IconButton>
+
+          <Typography style={{ marginRight: "8px" }}>
+            {courseMaterial.pdf_file.split("/").pop().replace(/_/g, '')}
+          </Typography>
+
+
         </div>
       ))}
     </Paper>
+    </>
   );
 };
 

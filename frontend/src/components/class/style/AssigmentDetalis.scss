@@ -2,39 +2,11 @@
 .assigemnt-submission{
   body {font-family: Arial, Helvetica, sans-serif;}
   * {box-sizing: border-box;}
-  
-}
-.success-message{
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  background-color: #d6e9e9;
-  padding: 10px;
-
-  .success-icon{
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 30px;
-    color: #78dc71;
-
-    
-  }
-  
-
-  p{
-    font-size: 20px;
-    font-weight: bold;
-    color: #78dc71;
-    
-  }
+  overflow: hidden;
 }
 
 .assigment-section {
-  background-color: white;
+  background-color: rgb(218, 227, 232);
   height: calc(100vh -  80px);
   padding: 20px;
   width: 100%;
@@ -50,10 +22,11 @@
     overflow-y: auto;
     max-height: 100%;
   }
-  
 
   .assigment-body {
     width: 80%;
+    min-height: calc(100vh -  200px);
+    max-height: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -84,9 +57,6 @@
       }
     }
 
-
-
-
     .short-form{
       display: flex;
       gap: 10px;
@@ -97,69 +67,34 @@
         width: 40%;
       }
 
-
-
-
     }
 
     .editor {
       border: solid gray 1px;
       width: 100%;
-      height: 300px;
+      min-height: 100px;
+      max-height: 300px;
       overflow-y: auto !important;
       background-color: white;
   }
 
   .assignment-question{
+    margin-top: 20px;
     margin-bottom: 50px;
-
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     .item{
+      margin-top: 10px;
       padding: 20px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       background-color: white;
       border-radius: 5px;
       display: flex;
       justify-content: space-between;
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.19); /* Adding box shadow */
-
-
-
-      button{
-        border: none;
-        outline: none;
-        background-color: transparent;
-        position: relative;
-
-        .remove-icon{
-          color: white;
-          font-size: 40px;
-          background-color: red;
-          border-radius: 150px;
-        }
-
-        .tooltip-text {
-          visibility: hidden;
-          width: 120px;
-          background-color: black;
-          color: white;
-          text-align: center;
-          border-radius: 6px;
-          padding: 5px 0;
-          position: absolute;
-          z-index: 1;
-          bottom: 100%; 
-          left: 50%;
-          margin-left: -60px; 
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-      
-        &:hover .tooltip-text {
-          visibility: visible;
-          opacity: 1;
-        }
-      }
+      box-shadow: 0 2px 2px 0 rgba(156, 127, 127, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.19); 
 
     }
 

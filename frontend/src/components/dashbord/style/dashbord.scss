@@ -2,18 +2,9 @@
 .container {
     margin-left: 10px;
     display: flex;
+    // height: -webkit-fill-available;
     height: calc(100vh - 72px);
-
-
-
-
-    @media screen and (max-width: 1000px) {
-        .container{
-            margin-top: 0px;
-            flex-direction: row;
-        }
-        
-    }
+    overflow: hidden;
 
     .left-item{
         width: 75%;
@@ -68,18 +59,17 @@
         margin-top: 20px;
         display: flex;
         gap: 10px;
-        // flex-wrap: wrap;
 
         .chart-item-big{
-            height: 280px;
+            height: auto;
             width: 60%;
             background-color: white;
             border-radius: 5px;
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .chart-item{
-            height: 200px;
+        .calender-item{
+            height: auto;
             width: 32%;
             background-color: white;
             border-radius: 5px;
@@ -94,7 +84,7 @@
 
 
         .dashbord-announcement{
-          height: 300px;
+          height: auto;
           width: 60%;
           background-color: white;
           border-radius: 5px;
@@ -108,7 +98,8 @@
           }
       }
       .chart-item{
-          height: 200px;
+          height: auto;
+          min-height: 300px;
           width: 32%;
           background-color: white;
           border-radius: 5px;
@@ -119,72 +110,57 @@
     }
 }
 
-.right-item{
-    background-color: #c6dbdc;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+.right-item {
+  background-color: #c6dbdc;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  width: 25%;
+  padding: 10px;
 
-    width: 25%;
+  .subject-list{
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    overflow-y: auto;
+    height: 43%;
 
-
-    .event-top{
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-       
-    
-    }
-    .calender-basic{
-      background-color: white;
-      border-radius: 5px;
+    p{
+      font-size: 18px;
       font-weight: bold;
-      font-size: 15px;
-
-    }
-    .subject-list{
-      background-color: white;
-      border-radius: 5px;
-      padding: 10px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      height: 220px;
-      overflow-y: scroll;
-      ::-webkit-scrollbar {
-        width: 5px;
-      }
-
-      
-      
+      padding: 5px;
     }
 
-    .event-list{
-      background-color: white;
-      border-radius: 5px;
-      padding: 10px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      height: 210px;
-      overflow-y: scroll;
-      ::-webkit-scrollbar {
-        width: 5px;
-      }
-
+      // desktop only media 
+      @media screen and (min-width: 1500px) {
+        max-height: 46%;
     }
 
+  }
+  .event-list{
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    height: 43%;
+    margin-bottom: 15px;
+
+
+    p{
+      font-size: 18px;
+      font-weight: bold;
+      padding: 5px;
+    }
+
+       // desktop only media 
+       @media screen and (min-width: 1500px) {
+        max-height: 46%;
+    }
+  }
 
 
 }
-
-
-
-
   }
   

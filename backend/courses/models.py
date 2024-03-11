@@ -98,8 +98,12 @@ class Assignment(models.Model):
     assignment_start_date = models.DateTimeField(default=timezone.now)
     assignment_duration = models.DurationField(null=True, blank=True)
     is_published = models.BooleanField(default=True)
-    is_actived = models.BooleanField(default=True)
     is_visible = models.BooleanField(default=True)
+    reminder_email_sent = models.BooleanField(default=False)
+    deadline_email_sent = models.BooleanField(default=False)
+    create_notification_start = models.BooleanField(default=False)
+    create_notification_end = models.BooleanField(default=False)
+
 
     def make_invisible(self):
         now = timezone.now()
@@ -116,17 +120,6 @@ class Assignment(models.Model):
             self.is_actived = True
         super().save(*args, **kwargs)
 
-
-
-    @property
-    def is_active(self):
-        now = timezone.now()
-        if self.assignment_deadline <= now:
-            return False
-        elif self.assignment_start_date > now:
-            return False
-        else:
-            return True
 
     def has_student_submitted(self, student):
         if self.file_submissions.filter(student=student).exists():

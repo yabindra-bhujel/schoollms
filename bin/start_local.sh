@@ -16,9 +16,16 @@ kill_processes_on_port 3001
 echo "Processes on ports 3000 and 8000 stopped"
 echo "Starting local development environment"
 
-cd backend
-source venv/bin/activate
-python3 manage.py runserver &
-cd ../frontend
+cd frontend
 npm start &
 echo "Local development environment started"
+
+
+
+cd ../backend
+source venv/bin/activate
+python3 manage.py runserver &
+celery -A university worker -l info
+celery -A university beat -l info
+
+

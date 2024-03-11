@@ -40,6 +40,11 @@ const AnnouncementDialog = ({
   }, [announcement]);
 
 
+  const deleteAnnouncement =  () => {
+    handleDelete();
+    onClose();
+    getAnnouncementData();
+  }
   const handleEdit = () => {
     setIsEditMode(!isEditMode);
   };
@@ -160,7 +165,7 @@ const AnnouncementDialog = ({
             <IconButton onClick={handleEdit} color="primary">
               <EditIcon />
             </IconButton>
-            <IconButton onClick={handleDelete} color="error">
+            <IconButton onClick={deleteAnnouncement} color="error">
               <DeleteIcon />
             </IconButton>
           </Box>

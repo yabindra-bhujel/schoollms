@@ -206,6 +206,7 @@
 }
 .bottom-button .disabled-button {
   pointer-events: none;
+  background-color: gray;
 }
 
 .file-bottom-button {
@@ -242,12 +243,10 @@
   font-size: 20px;
   margin-right: 10px;
 }
-.file-bottom-button button .submit-icon {
-  font-weight: bold;
-  font-size: 20px;
-}
 .file-bottom-button .disabled-button {
   pointer-events: none;
+  background-color: rgb(197, 197, 197);
+  border: none;
 }
 
 .file-items .fileerror {

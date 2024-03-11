@@ -1,3 +1,7 @@
+.teacher-class{
+    overflow: hidden;
+    height: calc(100vh - 72px);
+}
 .header {
     justify-content: center;
     align-items: center;
@@ -12,11 +16,9 @@
         font-size: 15px;
         font-weight: bold;
         text-align: center;
-
     }
 
 }
-
 .container-class {
     display: flex;
     flex-direction: column;

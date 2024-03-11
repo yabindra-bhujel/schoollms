@@ -40,9 +40,9 @@ const Announcement = () =>{
           const response = await instance.get(endpoint);
           setAnnouncements(response.data);
         }catch(error){
-          console.log(error);
         }
       }
+
     
   
 

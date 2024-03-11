@@ -13,22 +13,27 @@ import { AiFillFilePdf } from "react-icons/ai";
 import AnswerFrom from "./AswerInputArea";
 import ReactQuill from "react-quill";
 import { useTranslation } from "react-i18next";
+import { Snackbar } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+
 
 const StudentAssigmentDetalis = () => {
   const userid = getUserInfo();
   const user = userid.username;
   const { id } = useParams();
+  const { assignmentId, courseId } = useParams();
   const [assignment, setAssignment] = useState([]);
   const fileInputRef = useRef(null);
   const [file, setFile] = useState([]);
   const [textsubmission, setTextsubmission] = useState("");
-  const [localTextSubmission, setLocalTextSubmission] = useState(""); // Local state for text submission
-  const [totalTimeSpend, setTotalTimeSpend] = useState(0);
+  const [localTextSubmission, setLocalTextSubmission] = useState("");
   const [fileUploadMessage, setFileUploadMessage] = useState("");
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState(Array(questions.length).fill(""));
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
 
 
   const MakeTextSubmission = async () => {
@@ -36,15 +41,26 @@ const StudentAssigmentDetalis = () => {
       const endpoint = `/course/text_assignment/`;
       const data = {
         student: user,
-        assignment_id: id,
+        assignment_id: assignmentId,
         answers: answers.map((answer, index) => ({
           question_id: questions[index].id,
           answer: answer,
         })),
       };
+      setIsLoading(true);
       const response = await instance.post(endpoint, data);
+      if (response.status === 201) {
+        window.history.back();
+      }
     } catch {
-      console.log("error");
+      setMessage("リクエスト失敗しました。しばらくしてからもう一度お試しください。");
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,7 +68,7 @@ const StudentAssigmentDetalis = () => {
     try {
       const formData = new FormData();
       formData.append("student", user);
-      formData.append("assignment_id", id);
+      formData.append("assignment_id", assignmentId);
       file.forEach((file) => {
         formData.append("file_submission", file);
       });
@@ -60,31 +76,31 @@ const StudentAssigmentDetalis = () => {
       setIsLoading(true);
       const response = await instance.post(endpoint, formData, {
         headers: {
-          "Content-Type": "multipart/form-data", 
+          "Content-Type": "multipart/form-data",
         },
       });
       if (response.status === 201) {
         window.history.back();
       }
-
     } catch (e) {
-      console.log("error", e);
-    }finally{
+      setMessage("リクエスト失敗しました。しばらくしてからもう一度お試しください。");
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 3000);
+    } finally {
       setIsLoading(false);
     }
   };
 
-
   const isInputEmpty = () => {
     if (assignment.assignment_type === "File") {
       return file.length === 0;
-    } 
+    }
   };
 
-  const handleSave = () => {
-    setLocalTextSubmission(textsubmission);
-  };
-
+ 
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
@@ -94,14 +110,12 @@ const StudentAssigmentDetalis = () => {
 
     const validFiles = Array.from(selectedFiles).filter(
       (file) => file.size <= 10 * 1024 * 1024
-    ); // 10MB limit
+    );
 
     if (validFiles.length > 0) {
-      // Append the valid files to the existing ones in the state
       setFile((prevFiles) => [...prevFiles, ...validFiles]);
-      setFileUploadMessage(""); // Clear any previous error message
+      setFileUploadMessage("");
     } else {
-      // Display an error message if the selected files exceed the size limit
       setFileUploadMessage(t("studentAssigemnt.fileerror"));
       setTimeout(() => {
         setFileUploadMessage("");
@@ -120,14 +134,23 @@ const StudentAssigmentDetalis = () => {
   }, []);
   const getAssignmentData = async () => {
     try {
-      const endpoint = `/course/student_assignment_details/${id}/`;
+      const endpoint = `/course/student_assignment_details/${assignmentId}/`;
+      setIsLoading(true);
       const response = await instance.get(endpoint);
-      console.log("response", response.data);
+      console.log(response.data);
       setAssignment(response.data);
       setQuestions(response.data.questions || []);
-      setAnswers(Array(response.data.questions.length).fill(""));
+      setAnswers(response.data.questions.map(question => question.answer || ""));
+
     } catch {
-      console.log("error");
+      setMessage("データを取得できませんでした。しばらくしてからもう一度お試しください。");
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -137,44 +160,66 @@ const StudentAssigmentDetalis = () => {
     setAnswers(newAnswers);
   };
 
+  const haveValidAnswer = () => {
+    return answers.every(answer => answer !== null && answer !== "");
+  };
+
+  if (isLoading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
+        <CircularProgress />
+      </div>
+    );
+  }
+  const currentDate = new Date();
+  const deadline = new Date(assignment.assignment_deadline);
+
+  const isDeadlinePassed = currentDate > deadline;
 
 
   return (
     <Layout>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        message={message}
+        onClose={() => setOpen(false)}
+      />
+
       <div className="assigemt-details-student">
         <div className="class-header-student">
-          <Link to="/studentclass/">
+          <Link to={`/studentclassdetails/${courseId}`}>
             <MdArrowBack className="back" />
           </Link>
           <p>{assignment.assignment_title}</p>
         </div>
         <div className="assigment-section-student">
           <div className="assigment-body-st">
-         
+
             <div className="body-st">
-              <ReactQuill
-                value={assignment.assignment_description}
-                readOnly={true}
-
-              />
-              </div>
-
+              <ReactQuill value={assignment.assignment_description} readOnly={true} />
+            </div>
             <div className="assigment-input">
               {assignment.assignment_type === "File" ? (
                 <>
                   <div className="file-attagement">
-                    <button className="button" onClick={handleFileButtonClick}>
-                      <FiPlusCircle className="add-btn" />
-                      <span>{t("studentAssigemnt.drag")}</span>
-                      <span>{t("studentAssigemnt.maxFile")}</span>
-                    </button>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      style={{ display: "none" }}
-                      onChange={handleFileChange}
-                      multiple 
-                    />
+                    {!isDeadlinePassed && (
+                      <>
+                        <button className="button" onClick={handleFileButtonClick}>
+                          <FiPlusCircle className="add-btn" />
+                          <span>{t("studentAssigemnt.drag")}</span>
+                          <span>{t("studentAssigemnt.maxFile")}</span>
+                        </button>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                          multiple
+                        />
+                      </>
+                    )}
+
                     <div className="file-items">
                       {file.length > 0 && (
                         <ul className="file-list">
@@ -193,6 +238,7 @@ const StudentAssigmentDetalis = () => {
                                   </span>
                                 </p>
                               </div>
+
                               <button>
                                 <IoMdRemoveCircleOutline
                                   onClick={() => handleFileDelete(index)}
@@ -207,16 +253,19 @@ const StudentAssigmentDetalis = () => {
                     </div>
                   </div>
                   <div className="file-bottom-button">
-                    <button
-                      className={`submit-file ${
-                        isInputEmpty() ? "disabled-button" : ""
-                      }`}
-                      disabled={isInputEmpty()}
-                      onClick={MakeFileSubmission}
-                    >
-                      <span>{t("studentAssigemnt.submit")}</span>
-                      <BiSolidSend className="submit-icon" />
-                    </button>
+                    {!isDeadlinePassed && (
+
+                      <button
+                        className={`submit-file ${isInputEmpty() ? "disabled-button" : ""
+                          }`}
+                        disabled={isInputEmpty()}
+                        onClick={MakeFileSubmission}
+                      >
+                        <span>提出</span>
+                      </button>
+                    )}
+
+
                   </div>
                 </>
               ) : (
@@ -235,36 +284,26 @@ const StudentAssigmentDetalis = () => {
                         <AnswerFrom
                           value={answers[index]}
                           onChange={(value) => handleAnswerChange(index, value)}
+                          isDeadlinePassed={isDeadlinePassed}
                         />
                       </div>
                     </div>
                   ))}
-
-              
-              
                   <div className="bottom-button">
-                    <button
-                      className={`save-button ${
-                        isInputEmpty() ? "disabled-button" : ""
-                      }`}
-                      onClick={handleSave} // Update local state
-                      disabled={isInputEmpty()}
-                    >
-                      <CiSaveDown2 className="save-icon" />
-                      <span>{t("studentAssigemnt.save")}</span>
-                    </button>
-                    <button
-                      className="submit-button "
-                      onClick={MakeTextSubmission}
-                      // disable while loadin
-                      
-                      
-                    >
-                      <span>{t("studentAssigemnt.submit")}</span>
-                      <BiSolidSend className="submit-icon" />
-                    </button>
-                  </div>
-                </>
+                      {!isDeadlinePassed  && (
+                        <>
+                          <button
+                            className="submit-button "
+                            onClick={MakeTextSubmission}
+                            disabled={!haveValidAnswer()}
+                          >
+                            <span>{t("studentAssigemnt.submit")}</span>
+                            <BiSolidSend className="submit-icon" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                   </>
               )}
             </div>
           </div>

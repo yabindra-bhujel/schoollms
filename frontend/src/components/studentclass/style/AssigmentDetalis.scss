@@ -258,6 +258,7 @@
 
     .disabled-button{
         pointer-events: none;
+        background-color: gray;
     }
 
 
@@ -299,15 +300,12 @@
             font-size: 20px;
             margin-right: 10px;
         }
-        .submit-icon{
-
-            font-weight: bold;
-            font-size: 20px;
-        }
        
     }
     .disabled-button{
         pointer-events: none;
+        background-color: rgb(197, 197, 197);
+        border: none;
     }
 }
 
