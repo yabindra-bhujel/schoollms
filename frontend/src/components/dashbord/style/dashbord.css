@@ -2,12 +2,7 @@
   margin-left: 10px;
   display: flex;
   height: calc(100vh - 72px);
-}
-@media screen and (max-width: 1000px) {
-  .container .container {
-    margin-top: 0px;
-    flex-direction: row;
-  }
+  overflow: hidden;
 }
 .container .left-item {
   width: 75%;
@@ -51,15 +46,15 @@
   gap: 10px;
 }
 .container .left-item .chart-section-one .chart-item-big {
-  height: 280px;
+  height: auto;
   width: 60%;
   background-color: white;
   border-radius: 5px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.container .left-item .chart-section-one .chart-item {
-  height: 200px;
+.container .left-item .chart-section-one .calender-item {
+  height: auto;
   width: 32%;
   background-color: white;
   border-radius: 5px;
@@ -72,7 +67,7 @@
   gap: 10px;
 }
 .container .left-item .dashbord-section-two .dashbord-announcement {
-  height: 300px;
+  height: auto;
   width: 60%;
   background-color: white;
   border-radius: 5px;
@@ -85,7 +80,8 @@
   padding: 5px;
 }
 .container .left-item .dashbord-section-two .chart-item {
-  height: 200px;
+  height: auto;
+  min-height: 300px;
   width: 32%;
   background-color: white;
   border-radius: 5px;
@@ -97,46 +93,43 @@
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   width: 25%;
-}
-.container .right-item .event-top {
   padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.container .right-item .calender-basic {
-  background-color: white;
-  border-radius: 5px;
-  font-weight: bold;
-  font-size: 15px;
 }
 .container .right-item .subject-list {
   background-color: white;
   border-radius: 5px;
-  padding: 10px;
+  padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  height: 220px;
-  overflow-y: scroll;
+  margin-bottom: 15px;
+  overflow-y: auto;
+  height: 43%;
 }
-.container .right-item .subject-list ::-webkit-scrollbar {
-  width: 5px;
+.container .right-item .subject-list p {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 5px;
+}
+@media screen and (min-width: 1500px) {
+  .container .right-item .subject-list {
+    max-height: 46%;
+  }
 }
 .container .right-item .event-list {
   background-color: white;
   border-radius: 5px;
-  padding: 10px;
+  padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  height: 210px;
-  overflow-y: scroll;
+  overflow-y: auto;
+  height: 43%;
+  margin-bottom: 15px;
 }
-.container .right-item .event-list ::-webkit-scrollbar {
-  width: 5px;
+.container .right-item .event-list p {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 5px;
+}
+@media screen and (min-width: 1500px) {
+  .container .right-item .event-list {
+    max-height: 46%;
+  }
 }/*# sourceMappingURL=dashbord.css.map */

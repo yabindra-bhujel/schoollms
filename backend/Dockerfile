@@ -1,18 +1,19 @@
-FROM python:3.11.7-bullseye
+FROM python:3.11.0
 
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-WORKDIR /backend
+WORKDIR /app/api
 
-
-
-COPY requirements.txt requirements.txt
-
-RUN pip3 install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir --index-url=https://pypi.org/simple/ -r requirements.txt
 
 COPY . .
 
-CMD python3 manage.py runserver 0.0.0.0:8000
+# Migrate the database
+RUN python3 manage.py makemigrations
+RUN python3 manage.py migrate --no-input
 
-
+# Collect static files
+RUN python3 manage.py collectstatic --no-input
 

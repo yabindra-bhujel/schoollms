@@ -3,30 +3,19 @@ import "./style/AssigmentDetalis.css";
 import { useParams } from "react-router-dom";
 import Layout from "../navigations/Layout";
 import instance from "../../api/axios";
-import Modal from "react-modal";
 import { useTranslation } from "react-i18next";
 import DataTable from "./AssigmentSubmitTable";
 import ReactQuill from "react-quill";
 import "./style/AssigmentCreate.css";
-import { CiCircleRemove } from "react-icons/ci";
 import TextDataTable from "./TextSubmitTable";
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Button,
-} from "@mui/material";
+import {Accordion,AccordionSummary,AccordionDetails,Typography,Dialog,DialogActions,DialogContent,DialogContentText,DialogTitle,Button,} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
+import Snackbar from "@mui/material/Snackbar";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from '@mui/material/IconButton';
 
-Modal.setAppElement("#root");
+
+
 
 const AssigmentDetalis = () => {
   const { t } = useTranslation();
@@ -37,8 +26,8 @@ const AssigmentDetalis = () => {
       ["bold", "italic", "underline", "strike", "removeFormat"],
       [{ list: "ordered" }, { list: "bullet" }],
       [{ align: [] }],
-      [{ font: [] }], // This line adds font style options
-      [{ size: ["small", false, "large", "huge"] }], // Add this line for font size options
+      [{ font: [] }],
+      [{ size: ["small", false, "large", "huge"] }],
       ["link", "image", "video"],
       ["clean"],
     ],
@@ -47,13 +36,12 @@ const AssigmentDetalis = () => {
   const params = useParams();
   const assignmentID = params.assignmentID;
   const [assignment, setAssignment] = useState([]);
-  const [openDetailModelIndex, setOpenDetailModelIndex] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState();
+  const [message, setMessage] = useState(null);
   const [submissions, setSubmissions] = useState([]);
   const [question, setQquestion] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -69,15 +57,22 @@ const AssigmentDetalis = () => {
       const response = await instance.delete(endpoint);
       if (response.status === 200) {
         getAssignmentData();
-        setSuccessMessage("Question deleted successfully");
+        setMessage("問題が正常に削除されました");
+        setOpen(true);
         setTimeout(() => {
-          setSuccessMessage(null);
+          setMessage(null);
+          setOpen(false);
         }, 3000);
       }
     } catch (error) {
-      setErrorMessage("Failed to delete question");
+      setMessage("問題の削除中にエラーが発生しました");
+      setOpen(true);
+      setTimeout(() => {
+        setMessage(null);
+        setOpen(false);
+      }, 3000);
     } finally {
-      callback(); // Close the dialog after deletion
+      callback(); 
     }
   };
 
@@ -86,20 +81,26 @@ const AssigmentDetalis = () => {
       const endpoint = `/course/upadteAssigemnt/`;
       const response = await instance.post(endpoint, assignment);
       if (response.status === 200) {
-        console.log("success");
         getAssignmentData();
-        setSuccessMessage("Assignment updated successfully");
-
+        setOpen(true);
+        setMessage("課題更新されました。");
         setTimeout(() => {
-          setSuccessMessage(null);
+          setMessage(null);
+          setOpen(false);
         }, 3000);
       } else {
-        console.log("error");
-        setSuccessMessage("Failed to update assignment");
+        setMessage("課題の更新中にエラーが発生しました。");
+        setTimeout(() => {
+          setMessage(null);
+          setOpen(false);
+        }, 3000);
       }
     } catch {
-      console.log("error");
-      setSuccessMessage("An error occurred while updating assignment");
+      setMessage("課題の更新中にエラーが発生しました。");
+        setTimeout(() => {
+          setMessage(null);
+          setOpen(false);
+        }, 3000);
     }
   };
   const handleInputChange = (field, value) => {
@@ -113,13 +114,6 @@ const AssigmentDetalis = () => {
     handleInputChange("assignment_description", content);
   };
 
-  const openDetailModel = (index) => {
-    setOpenDetailModelIndex(index);
-  };
-
-  const closeDetailModel = () => {
-    setOpenDetailModelIndex(null);
-  };
 
   useEffect(() => {
     getAssignmentData();
@@ -135,25 +129,24 @@ const AssigmentDetalis = () => {
       console.log(response.data.submissions);
       setQquestion(response.data.questions);
     } catch (e) {
-      console.log("error", e);
+      setMessage("課題のデータを取得中にエラーが発生しました。");
+      setOpen(true);
+      setTimeout(() => {
+        setMessage(null);
+        setOpen(false);
+      }, 3000);
     }
-  };
-
-  const getFileNameFromURL = (url) => {
-    const parts = url.split("/");
-    return parts[parts.length - 1];
   };
 
   return (
     <Layout>
       <div className="assigemnt-submission">
-        <Stack sx={{ width: "100%" }} spacing={2}>
-          {successMessage && (
-            <Alert variant="outlined" severity="success">
-              <p>{t("successMessage")}</p>
-            </Alert>
-          )}
-        </Stack>
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={() => setOpen(false)}
+          message={message}
+        />
 
         <div className="assigment-section">
           <Accordion className="assigment-details-forms">
@@ -162,7 +155,7 @@ const AssigmentDetalis = () => {
               aria-controls="assignment-body-content"
               id="assignment-body-header"
             >
-              <Typography variant="h5">{assignment.assignment_title}</Typography>
+              <Typography style={{fontWeight: "bold"}} variant="h5">{assignment.assignment_title}</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <div className="assigment-body">
@@ -180,6 +173,7 @@ const AssigmentDetalis = () => {
                     <div className="assigemnt-type">
                       <label>{t("assignmentType")}</label>
                       <input
+                      disabled
                         type="text"
                         value={assignment.assignment_type}
                         onChange={(e) =>
@@ -211,43 +205,28 @@ const AssigmentDetalis = () => {
                           toolbar: toolbarOptions.toolbar,
                         }}
                         style={{
-                          height: "300px",
+                          minHeight: "100px",
+                          maxHeight: "300px",
                           border: "none",
                         }}
                       />
                     </div>
 
-                    {assignment.assignment_type == "Text" && (
-                      <>
-                        {assignment.assignment_type === "Text" && (
-                          <div className="assignment-question">
-                            <label>{t("assignmentQuestion")}</label>
-                            {question.map((questionItem, index) => (
-                              <div className="item" key={index}>
-                                <div className="question">
-                                  <p
-                                    dangerouslySetInnerHTML={{
-                                      __html: questionItem.question,
-                                    }}
-                                  />
-                                </div>
-                                <button
-                                  onClick={() => {
-                                    setSelectedQuestionId(questionItem.id);
-                                    handleClickOpen();
-                                  }}
-                                >
-                                  <CiCircleRemove className="remove-icon" />
-                                  <span className="tooltip-text">
-                                    {t("deleteQuestionhover")}
-                                  </span>
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    )}
+                    {assignment.assignment_type === "Text" && (
+                    <div className="assignment-question">
+                      <Typography>{t("assignmentQuestion")}</Typography>
+                      {question.map((questionItem, index) => (
+                        <div className="item" key={index}>
+                          <Typography dangerouslySetInnerHTML={{ __html: questionItem.question }} />
+                          <IconButton onClick={() => handleClickOpen()}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+
                   </div>
                 </div>
 
@@ -259,17 +238,13 @@ const AssigmentDetalis = () => {
           </Accordion>
 
           <div className="assigment-submit-table">
-            {/* Submission Table */}
             <h2>{t("assigemnttabletitile")}</h2>
-            {/* if submision type file */}
             {assignment.assignment_type === "File" && (
               <DataTable submissions={submissions} />
             )}
-            {/* if submision type text */}
             {assignment.assignment_type === "Text" && (
               <TextDataTable submissions={submissions} />
             )}
-            
           </div>
         </div>
       </div>

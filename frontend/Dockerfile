@@ -1,19 +1,12 @@
-# Use the official Node.js image with Alpine Linux as the base image
-FROM node:alpine
+FROM node:19.5.0-alpine
 
-# Set the working directory inside the container
-WORKDIR /frontend
+WORKDIR /client
 
-# Copy the package.json and package-lock.json files to the working directory
-COPY package*.json ./
-
-# Install the project dependencies
-RUN npm install
-
-# Copy the rest of the application code to the working directory
 COPY . .
 
-EXPOSE 3000
 
-# Define the default command to run your React app
-CMD ["npm", "start"]
+RUN npm install
+
+
+
+

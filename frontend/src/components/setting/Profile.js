@@ -10,25 +10,17 @@ import UserInfoForm from "./UserInfoForm";
 const Profile = () => {
   const [image, setImage] = useState("");
   const imageRef = useRef(null);
-
   const [profile, setProfile] = useState({});
   const [userData, setUserData] = useState({});
-
   const username = getUserInfo().username;
   const isTeacher = getUserInfo().isTeacher;
   const [snackbaropen, setSnackbarOpen] = useState(false);
   const [message, setMessage] = useState("");
 
 
-
-
-
-
   const handleClose = () => {
     setSnackbarOpen(false);
   };
-
-
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -48,49 +40,40 @@ const Profile = () => {
       .then((response) => {
         imageRef.current.value = null;
         setImage("");
-        setMessage("Image uploaded successfully");
+        setMessage("画像を正常にアップロードしました");
         setSnackbarOpen(true);
-        fatchData();
+        fetchData();
 
       })
       .catch((error) => {
-        setMessage("Something went wrong while uploading image");
+        setMessage("画像のアップロード中に問題が発生しました");
         setSnackbarOpen(true);
       });
   };
 
-
-
-
-  const fatchData = async () => {
+  const fetchData = async () => {
     try {
-        const response = await getUserProfile();
-        setProfile(response.data);
+      const response = await getUserProfile();
+      setProfile(response.data);
     } catch (error) {
-      setMessage("Something went wrong");
+      setMessage("何か問題が発生しました");
       setSnackbarOpen(true);
-
-
     }
-  }
+  };
 
-
-  const fatchUserInfo = async () => {
+  const fetchUserInfo = async () => {
     try {
       const response = await getUserProfileInfo();
       setUserData(response.data);
     } catch (error) {
-      setMessage("Something went wrong");
+      setMessage("何か問題が発生しました");
       setSnackbarOpen(true);
-  }
-
-}
+    }
+  };
 
   useEffect(() => {
-
-    fatchData();
-    fatchUserInfo();
-
+    fetchData();
+    fetchUserInfo();
   }, []);
 
   return (
@@ -103,7 +86,7 @@ const Profile = () => {
       />
       <div className="setting-profile">
         <div className="profile-header">
-          <Typography variant="h4">Personal Information</Typography>
+          <Typography variant="h4">個人情報</Typography>
         </div>
 
         <div className="profile-image-name">
@@ -119,17 +102,14 @@ const Profile = () => {
                   id="profile-image"
                   style={{ display: "none" }}
                   accept="image/*"
-
                 />
               </label>
               <Avatar
-                alt="Profile Picture"
-
+                alt="プロフィール画像"
                 src={image || profile.image}
                 sx={{ width: 80, height: 80 }}
               />
             </button>
-
           </div>
 
           <div className="profile-details">
@@ -142,19 +122,17 @@ const Profile = () => {
 
             <Typography variant="body2" style={{ color: 'red', fontWeight: 'bold' }}>
               <small>
-                We support PNG, JPG, JPEG under 10MB.
+                PNG、JPG、JPEGの画像形式がサポート（10MB未満）。
               </small>
             </Typography>
-
           </div>
         </div>
 
         <div className="userinfofrom">
-          <UserInfoForm userData = {userData} isTeacher= {isTeacher} setUserData = {setUserData} />
+          <UserInfoForm userData={userData} isTeacher={isTeacher} setUserData={setUserData} />
         </div>
       </div>
     </>
-
   );
 };
 

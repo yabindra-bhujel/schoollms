@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import instance from "../../../api/axios";
 
 const AnnouncementWrapper = styled.div`
@@ -132,7 +132,7 @@ const Announcement = () => {
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         setNewMessage("Announcement Added Successfully")
         setTimeout(() => {
           setNewMessage("");

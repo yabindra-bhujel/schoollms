@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReactQuill from "react-quill";
 
 
-const AnswerFrom = ({ value, onChange }) => {
+const AnswerFrom = ({ value, onChange, isDeadlinePassed }) => {
     const toolbarOptions = {
       toolbar: [
         [{ header: [1, 2, 3] }],
@@ -21,6 +21,7 @@ const AnswerFrom = ({ value, onChange }) => {
             }}
             value={value}
             onChange={(content) => onChange(content)}
+            readOnly={isDeadlinePassed}
           />
         </div>
       </div>

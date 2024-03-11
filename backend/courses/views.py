@@ -3,9 +3,6 @@ from django.shortcuts import get_object_or_404
 from dateutil import parser
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from datetime import datetime
-from django.utils.dateparse import parse_datetime
-from django.core.files import File
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -15,6 +12,7 @@ from rest_framework.response import Response
 import logging
 import os
 import re
+from datetime import datetime
 from student.models import Student
 from .serializers import *
 from .models import *
@@ -22,6 +20,7 @@ from .pdfcreator import PDF
 from notification.models import NotificationModel
 from teacher.models import Teacher
 from django.db import transaction
+from django.utils.timezone import make_aware
 
 
 User = get_user_model()
@@ -436,16 +435,23 @@ def studentAssignmentDetails(request, id):
         response_data.pop("student")
         response_data.pop("submission_count")
 
-
-        # Get all question associated with this assignment
+        # Get all questions associated with this assignment
         questions = TextAssigemntQuestion.objects.filter(assignment=assignment)
         question_list = [{"id": question.id, "question": question.question} for question in questions]
+
+        # Fetch and serialize answers for each question
+        answers = TextAnswer.objects.filter(question__in=questions)
+        answer_dict = {answer.question.id: answer.answer for answer in answers}
+        for question in question_list:
+            question['answer'] = answer_dict.get(question['id'], None)
+
         response_data["questions"] = question_list
 
         return Response(response_data, status=status.HTTP_200_OK)
     except Exception as e:
         print(e)
         return Response({"error": "An error occurred something wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
@@ -551,16 +557,13 @@ def assignmentDetails(request, id):
 
                     submission_data.append(student_submission)
         except Exception as e:
-            print(e)
+            return Response({"error": "An error occurred"}, status=status.HTTP_400_BAD_REQUEST)
 
         response_data["submissions"] = submission_data
 
         return Response(response_data)
     except Exception as e:
-        print(e)
-        return Response(
-            {"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["PUT"])
 @authentication_classes([JWTAuthentication])
@@ -585,7 +588,6 @@ def updateSubmission(request):
             elif assignment_type == "Text":
                 submission = TextSubmission.objects.get(id=submission_id, student=student)
         except ObjectDoesNotExist as e:
-            print(e)
             return Response({"message": "Submission not found"}, status=404)
         
         submission.is_graded = True
@@ -627,7 +629,7 @@ def courseDetailsStudent(request, subject_code, studentID):
         students = enrolled["student"]
         teacher = enrolled["teacher"]
 
-        assignments = Assignment.objects.filter(course=subject)
+        assignments = Assignment.objects.filter(course=subject, is_visible=True)
         course_materiales = CourseMateriales.objects.filter(course=subject)
 
         assignment_data = []
@@ -861,6 +863,8 @@ def ensureDirectoryExists(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+
+from datetime import datetime
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -923,10 +927,12 @@ def textAssignment(request):
         textsubmission.save()
         assignment.submission_count = TextSubmission.objects.filter(assignment=assignment, is_submited=True).count()
         assignment.save()
-        return Response({"message": "OK"}, status=200)
+        return Response({"message": "OK"}, status=201)
     except Exception as e:
         print(e)
         return Response({"message": "An error occurred something wrong"}, status=500)
+
+
 
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
@@ -936,17 +942,14 @@ def upadteAssigemnt(request):
         assignment_id = request.data.get("id")
         assignment_title = request.data.get("assignment_title")
         assignment_description = request.data.get("assignment_description")
-        assignment_deadline = request.data.get("assignment_deadline")
+        formatted_assignment_deadline = request.data.get("formatted_assignment_deadline")
 
-
+        converted_assignment_deadline = datetime.datetime.strptime(formatted_assignment_deadline, "%Y-%m-%d %H:%M")
+        assignment_deadline = make_aware(converted_assignment_deadline)
         try:
             assignment = Assignment.objects.get(id=assignment_id)
         except Assignment.DoesNotExist:
-            return Response(
-                {"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-        
-        assignment_deadline = parse_datetime(assignment_deadline)
+            return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
 
         assignment.assignment_title = assignment_title
         assignment.assignment_description = assignment_description
@@ -957,7 +960,7 @@ def upadteAssigemnt(request):
         print(e)
         return Response({"message": "An error occurred"}, status=500)
     
-@api_view(["PATCH"]) 
+@api_view(["PUT"]) 
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def updateAssigmentvisibility(request, id):
@@ -969,6 +972,7 @@ def updateAssigmentvisibility(request, id):
     except Assignment.DoesNotExist:
         return Response({"message": "Assignment not found."}, status=404)
     except Exception as e:
+        print(e)
         return Response({"message": "An error occurred"}, status=500)
 
 

@@ -7,13 +7,10 @@ import HttpsIcon from '@mui/icons-material/Https';
 import { chnagePassword, handleLogout, checkTwoFactorAuth, updateTwoFactorAuth, updateEmailNotification, checkEmailNotification } from './SettingService';
 import { Switch, FormGroup, FormControlLabel } from '@mui/material';
 
-
-
 const UserManagement = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loginHistory, setLoginHistory] = useState([]);
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -23,17 +20,14 @@ const UserManagement = () => {
   const [isTwoFactorAuthEnabled, setIsTwoFactorAuthEnabled] = useState(false);
   const [isEmailNotificationEnabled, setIsEmailNotificationEnabled] = useState(false);
 
-
-
   const fatchData = async () => {
     try {
       const response = await checkTwoFactorAuth();
       setIsTwoFactorAuthEnabled(response.data.two_factor_auth);
-
       const emailNotificationResponse = await checkEmailNotification();
       setIsEmailNotificationEnabled(emailNotificationResponse.data.is_email_notification);
     } catch (error) {
-      setMessage("Something went wrong while fetching data. Please try again later or contact to service provider.");
+      setMessage("データの取得中に問題が発生しました。後でもう一度試すか、サービスプロバイダーに問い合わせてください.");
       setSnackbarOpen(true);
     }
 
@@ -56,11 +50,11 @@ const UserManagement = () => {
    try{
     const response = await updateTwoFactorAuth(data);
     if (response.status === 200) {
-      setMessage("Two Factor Authentication Updated Successfully");
+      setMessage("二要素認証が正常に更新されました");
       setSnackbarOpen(true);
     }
    }catch (error) {
-    setMessage("Something went wrong while updating Two Factor Authentication. Please try again later or contact to service provider.");
+    setMessage("二要素認証の更新中に問題が発生しました。後でもう一度試すか、サービスプロバイダーに問い合わせてください。");
     setSnackbarOpen(true);
    }
   };
@@ -74,11 +68,11 @@ const UserManagement = () => {
     try{
       const response = await updateEmailNotification(data);
       if (response.status === 200) {
-        setMessage("Email Notification Updated Successfully");
+        setMessage("電子メール通知が正常に更新されました");
         setSnackbarOpen(true);
       }
     }catch (error) {
-      setMessage("Something went wrong while updating Email Notification. Please try again later or contact to service provider.");
+      setMessage("電子メール通知の更新中に問題が発生しました。後でもう一度試すか、サービスプロバイダーに問い合わせてください。");
       setSnackbarOpen(true);
     }
   };
@@ -88,9 +82,6 @@ const UserManagement = () => {
     setSnackbarOpen(false);
   };
 
-  useEffect(() => {
-    setLoginHistory(['Device 1 - 2024-01-01', 'Device 2 - 2024-01-02']);
-  }, []);
 
 
 
@@ -105,22 +96,22 @@ const UserManagement = () => {
     setErrors({});
 
     if (oldPassword === "") {
-      setErrors({ oldPassword: "Old Password is required" });
+      setErrors({ oldPassword: "必須" });
       return;
     }
 
     if (newPassword === "") {
-      setErrors({ newPassword: "New Password is required" });
+      setErrors({ newPassword: "必須" });
       return;
     }
 
     if (confirmPassword === "") {
-      setErrors({ confirmPassword: "Confirm Password is required" });
+      setErrors({ confirmPassword: "必須" });
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setErrors({ confirmPassword: "Confirm Password must be same as new password" });
+      setErrors({ confirmPassword: "パスワードは新しいパスワードと同じであることを確認してください" });
       return;
     }
 
@@ -170,7 +161,7 @@ const UserManagement = () => {
         <div className='password-chnage'>
 
           <HttpsIcon style={{
-            fontSize: 60,
+            fontSize: 50,
             color: 'blue',
             marginTop: 10,
             marginBottom: 10,
@@ -179,21 +170,21 @@ const UserManagement = () => {
 
           }} />
           <Typography
-            style={{ color: 'blue', fontSize: '20px', fontWeight: 'bold' }}
-          >Change Password</Typography>
+            style={{ color: 'blue', fontSize: '18px', fontWeight: 'bold' }}
+          >パスワードを変更</Typography>
           <Typography
-            style={{ color: 'black', fontSize: '15px', fontWeight: 'bold' }}
-          >To change your password, please fill in the fields below.</Typography>
+            style={{ color: 'black', fontSize: '14px', fontWeight: 'bold' }}
+          >パスワードを変更するには、以下のフィールドに入力してください</Typography>
           <br />
           <Typography
-            style={{ color: 'red', fontSize: '15px', fontWeight: 'bold' }}
-          >Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.</Typography>
+            style={{ color: 'red', fontSize: '14px', fontWeight: 'bold' }}
+          >パスワードは 8 文字以上で、大文字、小文字、数字、および特殊文字を少なくとも 1 つずつ含める必要があります。</Typography>
           <div
             style={{ marginTop: '20px', marginBottom: '20px', width: '70%' }}
 
           >
             <TextField
-              label="Old Password"
+              label="古いパスワード"
               type={showOldPassword ? 'text' : 'password'}
               fullWidth
               value={oldPassword}
@@ -215,7 +206,7 @@ const UserManagement = () => {
               }}
             />
             <TextField
-              label="New Password"
+              label="新しいパスワード"
               type={showNewPassword ? 'text' : 'password'}
               fullWidth
               value={newPassword}
@@ -238,7 +229,7 @@ const UserManagement = () => {
               }}
             />
             <TextField
-              label="Confirm Password"
+              label="新しいパスワードを確認"
               type={showConfirmPassword ? 'text' : 'password'}
               fullWidth
               value={confirmPassword}
@@ -269,18 +260,18 @@ const UserManagement = () => {
               }
               onClick={handleFormSubmit}
             >
-              Change Password
+              パスワードを変更
             </Button>
           </div>
         </div>
 
         <div className='other-security'>
 
-          <div className='two-factor-auth'>
+          <div className='two-factor-auth' aria-disabled>
             <Typography >
-              <h2>Two-Factor Authentication</h2>
+              <h2>二要素認証</h2>
               <p>
-                Two-factor authentication enhances security by requiring a code from your <strong>email</strong>  along with your password for login. Ensure your <strong>email</strong> is current in your profile for this feature.
+              二要素認証では、ログイン時にパスワードとともに<strong>電子メール</strong>からのコードが必要になるため、セキュリティが強化されます。この機能のプロフィールに<strong>電子メール</strong>が最新であることを確認してください。
               </p>
 
 
@@ -295,12 +286,10 @@ const UserManagement = () => {
 
           <div className='two-factor-auth'>
             <Typography >
-              <h2>Email Notification</h2>
+            <h2>電子メール通知</h2>
               <p>
-                Two-factor authentication enhances security by requiring a code from your <strong>email</strong>  along with your password for login. Ensure your <strong>email</strong> is current in your profile for this feature.
+                二要素認証では、ログイン時にパスワードとともに<strong>電子メール</strong>からのコードが必要になるため、セキュリティが強化されます。この機能のプロフィールに<strong>電子メール</strong>が最新であることを確認してください。
               </p>
-
-
             </Typography>
             <FormGroup>
               <FormControlLabel

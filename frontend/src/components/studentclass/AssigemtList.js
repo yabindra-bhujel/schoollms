@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 import Snackbar from "@mui/material/Snackbar";
 import CircularProgress from "@mui/material/CircularProgress";
+import getUserInfo from "../../api/user/userdata";
 
 
 
@@ -16,6 +17,7 @@ const AssignmentList = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const username = getUserInfo().username;
 
   useEffect(() => {
     getAssignmentList();
@@ -23,7 +25,7 @@ const AssignmentList = () => {
 
   const getAssignmentList = async () => {
     try {
-      const endpoint = `/course/${id}/`;
+      const endpoint = `/course/${id}/${username}/`;
       setIsLoading(true);
       const response = await instance.get(endpoint);
       if (response.data[0] && response.data[0].assignments) {
@@ -99,13 +101,18 @@ const AssignmentList = () => {
               {assignmentList.map((assignment) => (
                 <TableRow key={assignment.id}>
                   <TableCell>
-                    <Typography>{assignment.is_active ? (
-                      <Link to={`/studentassignment/${assignment.id}`}>
+                    <Typography>
+                    <Link to={`/studentassignment/${assignment.id}/${id}`}>
+                        {assignment.assignment_title}
+                      </Link>
+                    </Typography>
+                    {/* <Typography>{assignment.is_active ? (
+                      <Link to={`/studentassignment/${assignment.id}/${id}`}>
                         {assignment.assignment_title}
                       </Link>
                     ) : (
                       <span>{assignment.assignment_title}</span>
-                    )}</Typography>
+                    )}</Typography> */}
                   </TableCell>
                   <TableCell>
                     <Typography style={

@@ -32,12 +32,11 @@ DEBUG = True
 
 
 
-# for now alow all host
-ALLOWED_HOSTS = ['*']
-
-
-# Application definition
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0'
+]
 
 
 INSTALLED_APPS = (
@@ -102,7 +101,7 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
