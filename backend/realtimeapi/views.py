@@ -24,9 +24,9 @@ logger = logging.getLogger(__name__)
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_group_message_by_groupName(request, group_name):
+def get_group_message_by_groupName(request, group_id):
     try:
-        group = Group.objects.get(name=group_name)
+        group = Group.objects.get(id=group_id)
         group_message = GroupMessage.objects.filter(group=group).order_by('timestamp')
         group_message_serializer = GroupMessageSerializer(group_message, many=True)
 
@@ -267,6 +267,8 @@ def get_all_user(request):
                     if profile and profile.cover_image
                     else None,
                 })
+            
+            user_data = [user for user in user_data if user["is_teacher"] or user["is_student"]]
 
         return Response({"users": user_data}, status=status.HTTP_200_OK)
     except Exception as e:
@@ -489,3 +491,30 @@ def update_post(request, postid):
         return Response({"response": "Post updated successfully."},status=status.HTTP_200_OK,)
     else:
         return Response({"response": "Invalid data."},status=status.HTTP_400_BAD_REQUEST,)
+    
+@api_view(["PUT"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def addGroupImage(request):
+    try:
+        group_id = request.data.get("group_id")
+        group = Group.objects.get(id=group_id)
+        group.group_image = request.FILES.get("group_image")
+        group.save()
+        return Response({"response": "Group image added successfully."},status=status.HTTP_200_OK,)
+    except Exception as e:
+        logger.error(e)
+        return Response({"response": "An error occurred."},status=status.HTTP_500_INTERNAL_SERVER_ERROR,)
+    
+@api_view(["PUT"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def leaveGroup(request, group_id):
+    try:
+        group = Group.objects.get(id=group_id)
+        user = request.user
+        group.members.remove(user)
+        return Response({"response": "You have left the group."},status=status.HTTP_200_OK,)
+    except Exception as e:
+        logger.error(e)
+        return Response({"response": "An error occurred."},status=status.HTTP_500_INTERNAL_SERVER_ERROR,)

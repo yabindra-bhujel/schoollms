@@ -152,7 +152,7 @@ const Sidebar = ({}) => {
 
   const handleLogout = async () => {
     try {
-        const endpoint = "api/logout/";
+        const endpoint = "/logout/";
         const userData = JSON.parse(localStorage.getItem("userData"));
         if (userData && userData.refresh) {
             const response = await instance.post(endpoint, { "refresh": userData.refresh });

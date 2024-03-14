@@ -34,7 +34,7 @@ class User(AbstractUser):
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="user_profile/", null=True, blank=True, default="/defult.png")
+    image = models.ImageField(upload_to="user_profile/", null=True, blank=True, default="user_profile/defutl_user.png")
     upload_at = models.DateTimeField(auto_now_add=True)
     cover_image = models.ImageField(upload_to="user_cover/", null=True, blank=True)
 
