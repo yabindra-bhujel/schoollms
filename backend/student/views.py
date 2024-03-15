@@ -125,6 +125,7 @@ def add_student_by_csv_file(request):
             applicationSetting.save()
         return Response(status=status.HTTP_201_CREATED)
     except Exception as e:
+        print(e)
         traceback.print_exc()
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

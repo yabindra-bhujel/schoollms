@@ -134,8 +134,10 @@ def addCalenderEvent(request):
         start_date = newEvent['start_date']
         end_date = newEvent['end_date']
         color = newEvent['color']
+        start_time = newEvent['start_time']
+        end_time = newEvent['end_time']
 
-        event = CalenderModel.objects.create(user=user,title=title,start_date=start_date,end_date=end_date,color=color,)
+        event = CalenderModel.objects.create(user=user,title=title,start_date=start_date,end_date=end_date,color=color, start_time=start_time, end_time=end_time)
         event.save()
         return Response('Event added successfully', status=status.HTTP_201_CREATED)
     except Exception as e:
