@@ -44,12 +44,6 @@ import AddEnrollSubject from "./components/staff/EnrollStudent/AddEnrollSubject"
 import CourseDetails from "./components/staff/Course/courseDetails/CourseDetsils";
 
 function App() {
-<<<<<<< HEAD
-=======
-
-  const { t } = useTranslation();
-
->>>>>>> 9bdbe49ee235700db43227133b53bb56680bfe21
   return (
     <WebSocketProvider>
       <BrowserRouter>

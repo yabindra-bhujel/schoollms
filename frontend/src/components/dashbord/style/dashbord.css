@@ -1,18 +1,8 @@
 .container {
   display: flex;
-<<<<<<< HEAD
   height: calc(100vh - 72px);
   overflow: hidden;
-=======
-  height: 100%;
-  width: 100%;
-}
-@media screen and (max-width: 1000px) {
-  .container .container {
-    margin-top: 0px;
-    flex-direction: row;
-  }
->>>>>>> 9bdbe49ee235700db43227133b53bb56680bfe21
+
 }
 .container .left-item {
   width: 75%;
@@ -132,7 +122,6 @@
   height: 43%;
   margin-bottom: 15px;
 }
-<<<<<<< HEAD
 .container .right-item .event-list p {
   font-size: 18px;
   font-weight: bold;
@@ -143,8 +132,3 @@
     max-height: 46%;
   }
 }/*# sourceMappingURL=dashbord.css.map */
-=======
-.container .right-item .event-list ::-webkit-scrollbar {
-  width: 5px;
-}
->>>>>>> 9bdbe49ee235700db43227133b53bb56680bfe21

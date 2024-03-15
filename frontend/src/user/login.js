@@ -25,7 +25,7 @@ function Login() {
     }
 
     try {
-      const endpoint = "/api/token/";
+      const endpoint = "/token/";
       const response = await instance.post(endpoint, { username, password,
         
        });

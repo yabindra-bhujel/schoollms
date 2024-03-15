@@ -22,7 +22,7 @@ const StudentTableComponent = () => {
 
   const handleClose = () => {
     setOpen(false);
-  }
+  };
 
   useEffect(() => {
     if (isStudent) {
@@ -37,17 +37,19 @@ const StudentTableComponent = () => {
       const response = await instance.get(endpoint);
       setSubject(response.data.courses);
     } catch {
-      setMessage("でーたを取得できませんでした。しばらくしてからもう一度お試しください。");
+      setMessage("データを取得できませんでした。しばらくしてからもう一度お試しください。");
       setOpen(true);
     } finally {
       setIsLoading(false);
     }
   };
+
   for (let day = 1; day <= 6; day++) {
     const date = moment().isoWeekday(day);
     const weekday = date.format("dddd");
     weekdays.push(weekday);
   }
+
   const classTime = [
     { id: 1, time: "9:00-10:30" },
     { id: 2, time: "10:40-12:10" },
@@ -55,15 +57,6 @@ const StudentTableComponent = () => {
     { id: 4, time: "14:40-16:10" },
     { id: 5, time: "16:20-17:40" },
   ];
-
-  if (isLoading) {
-    <Snackbar
-      open={open}
-      autoHideDuration={6000}
-      onClose={handleClose}
-      message="データを取得中"
-    />;
-  }
 
   return (
     <Layout>
@@ -73,11 +66,18 @@ const StudentTableComponent = () => {
         onClose={handleClose}
         message={message}
       />
+      {isLoading && (
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message="データを取得中"
+        />
+      )}
       <div>
         <div className="header">
           <h1>{t("classSchedule")}</h1>
         </div>
-        
         <div className="container-class">
           <table>
             <thead>
@@ -96,35 +96,22 @@ const StudentTableComponent = () => {
                     <td key={weekdayIndex}>
                       {subject &&
                         subject[index] &&
-                        subject[index].weekday === weekday ? (
-                        <p>
+                        subject[index].weekday === weekday && (
+                        <p className="subject-name">
                           <Link
                             to={{
-                              pathname: `/studentclassdetails/${encodeURIComponent(subject[index].id)}`,
+                              pathname: `/studentclassdetails/${encodeURIComponent(
+                                subject[index].id
+                              )}`,
                               state: {
                                 subject_code: subject[index].subject_code,
-                              },}}
+                              },
+                            }}
                           >
                             {subject[index].name} <br />
                             ({subject[index].class_room})
                           </Link>
-
-                      subject[index] &&
-                      subject[index].weekday === weekday ? (
-                        <p className="subject-name">
-                          <Link
-                            to={{
-                              pathname: `/studentclassdetails/${encodeURIComponent(subject[index].id)}`,
-                              state: {
-                                subject_code: subject[index].subject_code,
-                              },
-                            }}>
-                            {subject[index].name} <br />
-                            ({subject[index].class_room})
-                          </Link>
                         </p>
-                      ) : (
-                        ""
                       )}
                     </td>
                   ))}

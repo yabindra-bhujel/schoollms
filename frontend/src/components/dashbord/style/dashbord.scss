@@ -1,22 +1,9 @@
 
 .container {
     display: flex;
-<<<<<<< HEAD
     // height: -webkit-fill-available;
     height: calc(100vh - 72px);
     overflow: hidden;
-=======
-    height: 100%;
-    width: 100%;
-    @media screen and (max-width: 1000px) {
-        .container{
-            margin-top: 0px;
-            flex-direction: row;
-        }
-        
-    }
->>>>>>> 9bdbe49ee235700db43227133b53bb56680bfe21
-
     .left-item{
         width: 75%;
         background-color: #c6dbdc;
