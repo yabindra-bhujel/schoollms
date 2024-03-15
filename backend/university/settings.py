@@ -62,7 +62,6 @@ INSTALLED_APPS = (
     "video_learning",
     "editer",
     "realtimeapi",
-    "file_manager",
     "exam",
 
 

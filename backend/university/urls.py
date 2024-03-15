@@ -45,7 +45,6 @@ urlpatterns = [
     path('api/video_learning/', include('video_learning.urls')),
     path('api/editer/', include('editer.urls')),
     path('api/realtimeapi/', include('realtimeapi.urls')),
-    path('api/file_manager/', include('file_manager.urls')),
     path('api/exam/', include('exam.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
