@@ -4,7 +4,6 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "./style/Calendar.css";
 import Layout from "../layout/Layout";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./style/CustomToolbar.css";
 import "./style/weekday.css";
@@ -61,7 +60,6 @@ const CalendarComponent = () => {
 
   const buttonColors = ["#FFD600", "#FF5733", "#33FF57", "#3357FF", "#FF33DC"];
   const [events, setEvents] = useState([]);
-  const [todayevent, setTodayevent] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [openNewEventDialog, setOpenNewEventDialog] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -69,6 +67,10 @@ const CalendarComponent = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selected, setSelected] = useState();
   const { t } = useTranslation();
+
+
+  console.log("events", events);
+
 
   const [seletedColorButton, setSeletedColorButton] = useState(
     buttonColors.indexOf("#3357FF")
@@ -340,6 +342,12 @@ const CalendarComponent = () => {
               <div className="event-datetime">
                 <p>{moment(selectedEvent.start).format("dddd, D MMMM")}</p>
               </div>
+              <div className="event-datetime">
+                <p>
+               { moment(selectedEvent.start_time, "HH:mm:ss").format("HH:mm")} - {moment(selectedEvent.end_time, "HH:mm:ss").format("HH:mm")}
+
+                </p>
+                </div>
             </div>
           )}
         </DialogContent>
