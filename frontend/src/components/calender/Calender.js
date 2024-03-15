@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import getUserInfo from "../../api/user/userdata";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
-import {Dialog,DialogTitle,DialogContent} from "@mui/material";
+import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,25 +21,45 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { addNewEvent, deleteEvent, getEvents, updateEvent } from "./CalenderService";
 import CustomToolbar from "./CustomToolbar";
-import {TextField, Button } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const DnDCalendar = withDragAndDrop(Calendar);
 const localizer = momentLocalizer(moment);
 
+// ColorSelector component
+const ColorSelector = ({ buttonColors, selectedColor, onColorChange }) => {
+  return (
+    <div className="color-selector">
+      {buttonColors.map((color, index) => (
+        <button
+          key={index}
+          className={`color-button ${selectedColor === index && "selected"}`}
+          style={{ backgroundColor: color }}
+          onClick={() => onColorChange(index)}
+        ></button>
+      ))}
+    </div>
+  );
+};
+
 const CalendarComponent = () => {
   const userData = getUserInfo();
   const user = userData.user_id;
+  // set today 's date as default view
+  const currentDate = new Date();
+  const currentDateFormatted = currentDate.toISOString().split('T')[0];
   const [newEvent, setNewEvent] = useState({
     title: "",
-    start_date: new Date().toISOString().split('T')[0],
-    end_date: new Date().toISOString().split('T')[0],
+    start_date: currentDateFormatted,
+    end_date: currentDateFormatted,
+    start_time: "09:00",
+    end_time: "23:59",
     user: user,
     color: "#FFD600",
-
   });
-  
-  const buttonColors = ["#FFD600", "#FF5733", "#33FF57", "#3357FF", "#FF33DC"]; 
+
+  const buttonColors = ["#FFD600", "#FF5733", "#33FF57", "#3357FF", "#FF33DC"];
   const [events, setEvents] = useState([]);
   const [todayevent, setTodayevent] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
@@ -49,12 +69,13 @@ const CalendarComponent = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selected, setSelected] = useState();
   const { t } = useTranslation();
+
   const [seletedColorButton, setSeletedColorButton] = useState(
     buttonColors.indexOf("#3357FF")
   );
-
-
-
+  const handleColorChange = (index) => {
+    setSeletedColorButton(index);
+  };
 
 
   const formats = {
@@ -75,7 +96,7 @@ const CalendarComponent = () => {
     setSnackbarOpen(false);
   };
 
- 
+
 
 
   const onEventDrop = ({ event, start, end, isAllDay }) => {
@@ -125,14 +146,15 @@ const CalendarComponent = () => {
   };
   useEffect(() => {
     fatchData();
-
   }, []);
 
   const formattedEvents = events.map((event) => ({
     id: event.id,
     title: event.title,
     start: new Date(`${event.start_date}`),
-    end: new Date(`${event.end_date}`), 
+    end: new Date(`${event.end_date}`),
+    start_time:  event.start_time,
+    end_time: event.end_time,
     color: event.color,
   }));
 
@@ -151,7 +173,7 @@ const CalendarComponent = () => {
       [name]: value,
     }));
   };
-  
+
   const handleEndDateChange = (event) => {
     const { name, value } = event.target;
     setNewEvent((prevEvent) => ({
@@ -159,7 +181,22 @@ const CalendarComponent = () => {
       [name]: value,
     }));
   };
-  
+
+  const handleStartTimeChange = (event) => {
+    const { name, value } = event.target;
+    setNewEvent((prevEvent) => ({
+      ...prevEvent,
+      [name]: value,
+    }));
+  };
+
+  const handleEndTimeChange = (event) => {
+    const { name, value } = event.target;
+    setNewEvent((prevEvent) => ({
+      ...prevEvent,
+      [name]: value,
+    }));
+  };
 
   const addEvent = async () => {
     try {
@@ -167,24 +204,29 @@ const CalendarComponent = () => {
         title: newEvent.title,
         start_date: newEvent.start_date,
         end_date: newEvent.end_date,
+        start_time: moment(newEvent.start_time, "HH:mm").format("HH:mm"),
+        end_time: moment(newEvent.end_time, "HH:mm").format("HH:mm"),
         color: buttonColors[seletedColorButton],
       };
 
 
-      
       const response = await addNewEvent(formattedEvent);
       if (response.status === 201) {
         console.log("Event added successfully");
-      }else{
+      } else {
         console.log(response)
       }
       setNewEvent({
         title: "",
         start_date: "",
         end_date: "",
+        start_time: "09:00",
+        end_time: "23:59",
       });
       setOpenNewEventDialog(false);
-    } catch (e) {}
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleAddEvent = async () => {
@@ -199,7 +241,9 @@ const CalendarComponent = () => {
     return (
       newEvent.title !== "" &&
       newEvent.start_date !== "" &&
-      newEvent.end_date !== ""
+      newEvent.end_date !== "" &&
+      newEvent.start_time !== "" &&
+      newEvent.end_time !== ""
     );
   };
   const eventStyleGetter = (event, start, end, isSelected) => {
@@ -224,14 +268,15 @@ const CalendarComponent = () => {
   };
 
   const handleSelectSlot = (slotInfo) => {
+    const formattedStartDate = moment(slotInfo.start).format("YYYY-MM-DD");
     setNewEvent(prevEvent => ({
       ...prevEvent,
-      start_date: slotInfo.start,
-      end_date: slotInfo.start, 
+      start_date: formattedStartDate,
+      end_date: formattedStartDate,
     }));
-    setOpenNewEventDialog(true); 
+    setOpenNewEventDialog(true);
   };
-  
+
 
 
   return (
@@ -300,75 +345,96 @@ const CalendarComponent = () => {
         </DialogContent>
       </Dialog>
 
-<Dialog
-  open={openNewEventDialog}
-  onClose={() => setOpenNewEventDialog(false)}
-  fullWidth={true}
-  maxWidth="sm" // Adjust the width of the dialog if necessary
->
-  <DialogTitle>
-    <div className="close-delete-btn">
-      <IconButton
-        aria-label="close"
-        onClick={() => setOpenNewEventDialog(false)}
-        style={{ marginRight: 8 }}
+      <Dialog
+        open={openNewEventDialog}
+        onClose={() => setOpenNewEventDialog(false)}
+        fullWidth={true}
+        maxWidth="sm" // Adjust the width of the dialog if necessary
       >
-        <CloseIcon />
-      </IconButton>
-    </div>
-  </DialogTitle>
-  <DialogContent dividers style={{ minHeight: 250 }}> {/* Set the minimum height */}
-    <div className="input-area" style={{ padding: "16px" }}> {/* Add padding for better spacing */}
-      <TextField
-        type="text"
-        label={t("event")}
-        name="title"
-        value={newEvent.title}
-        onChange={handleInputChange}
-        required
-        fullWidth
-        autoFocus
-        style={{ marginBottom: "16px" }} 
-      />
-<TextField
-  type="date"
-  label="Start Date"
-  name="start_date"
-  value={newEvent.start_date}
-  onChange={handleStartDateChange}
-  InputLabelProps={{ shrink: true }}
-  style={{ marginBottom: "16px" }}
-  fullWidth
-/>
-<TextField
-  type="date"
-  label="End Date"
-  name="end_date"
-  value={newEvent.end_date}
-  onChange={handleEndDateChange}
-  InputLabelProps={{ shrink: true }}
-  style={{ marginBottom: "16px" }}
-  fullWidth
-/>
+        <DialogTitle>
+          <div className="close-delete-btn">
+            <IconButton
+              aria-label="close"
+              onClick={() => setOpenNewEventDialog(false)}
+              style={{ marginRight: 8 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </div>
+        </DialogTitle>
+        <DialogContent dividers style={{ minHeight: 250 }}> {/* Set the minimum height */}
+          <div className="input-area" style={{ padding: "16px" }}> {/* Add padding for better spacing */}
+            <ColorSelector
+              buttonColors={buttonColors}
+              selectedColor={seletedColorButton}
+              onColorChange={handleColorChange}
+            />
+            <TextField
+              type="text"
+              label={t("event")}
+              name="title"
+              value={newEvent.title}
+              onChange={handleInputChange}
+              required
+              fullWidth
+              autoFocus
+              style={{ marginBottom: "16px" }}
+            />
+            <TextField
+              type="date"
+              label="Start Date"
+              name="start_date"
+              value={newEvent.start_date}
+              onChange={handleStartDateChange}
+              InputLabelProps={{ shrink: true }}
+              style={{ marginBottom: "16px" }}
+              fullWidth
+            />
+            <TextField
+              type="date"
+              label="End Date"
+              name="end_date"
+              value={newEvent.end_date}
+              onChange={handleEndDateChange}
+              InputLabelProps={{ shrink: true }}
+              style={{ marginBottom: "16px" }}
+              fullWidth
+            />
+
+            <TextField
+              type="time"
+              label="Start Time"
+              name="start_time"
+              value={newEvent.start_time}
+              onChange={handleStartTimeChange}
+              style={{ marginBottom: "16px" }}
+              fullWidth
+            />
+
+            <TextField
+              type="time"
+              label="End Time"
+              name="end_time"
+              value={newEvent.end_time}
+              onChange={handleEndTimeChange}
+              style={{ marginBottom: "16px" }}
+              fullWidth
+            />
+          </div>
+          <div className="add-event-btn" style={{ textAlign: "right", padding: "16px" }}> {/* Align button to the right and add padding */}
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddCircleIcon />}
+              onClick={handleAddEvent}
+            >
+              {t("add")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
 
-
-      {/* color selet btn */}
-    </div>
-    <div className="add-event-btn" style={{ textAlign: "right", padding: "16px" }}> {/* Align button to the right and add padding */}
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<AddCircleIcon />}
-        onClick={handleAddEvent}
-      >
-        {t("add")}
-      </Button>
-    </div>
-  </DialogContent>
-</Dialog>
- 
-            
 
       <div className="calender-container-main">
         <div className="calendar-container">
@@ -376,7 +442,7 @@ const CalendarComponent = () => {
             selected={selected}
             onSelectEvent={(event, target) => handleEventClick(event, target)}
             localizer={localizer}
-            onSelectSlot={handleSelectSlot} 
+            onSelectSlot={handleSelectSlot}
             onEventDrop={onEventDrop}
             onEventResize={onEventResize}
             resizable

@@ -196,7 +196,7 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://root:pAYCUjbQ1bKo8DLXG5uCZBGlc2toL7mr@dpg-cnams7uv3ddc73dama5g-a.singapore-postgres.render.com/lms_vzx1',
+        default='postgres://root:h4A1808tOmkBUC3ZsXfQ1oyI0gpFCpLx@dpg-cnq12jv109ks73ecckc0-a.singapore-postgres.render.com/lms_db_pqo5',
         conn_max_age=600,
         ssl_require=False
     )

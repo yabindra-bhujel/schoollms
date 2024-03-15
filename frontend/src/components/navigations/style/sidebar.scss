@@ -99,7 +99,7 @@ nav {
   top: 0;
   left: 0;
   bottom: 0;
-  width: $side-width;
+  width: 100%;
   z-index: 99;
   overflow-y: auto;
   height: 100vh;
@@ -157,6 +157,7 @@ nav {
           display: block;
         }
       }
+      // button 
       .toggleBtn {
         font-size: 30px;
         padding: 0 20px;

@@ -48,7 +48,9 @@ const CustomToolbar = ({ view, label, onView, onNavigate }) => {
           <button onClick={() => onNavigate("NEXT")}>Next</button>
           <div className="toolbar-label">{formattedDate}</div>
         </div>
-  
+        <div className="centered">
+            <span>{month}</span>
+          </div>
         <div className="toolbar-views">
          
           <button

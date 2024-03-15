@@ -23,7 +23,8 @@ import Snackbar from "@mui/material/Snackbar";
 import ProfileMenu from "../header/Profile";
 import getUserInfo from "../../../api/user/userdata";
 
-const Sidebar = ({ }) => {
+
+const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
   const userData = JSON.parse(localStorage.getItem("userData"));
   const accessToken = userData.access;
   const decoded = jwtDecode(accessToken);
@@ -40,26 +41,6 @@ const Sidebar = ({ }) => {
   
   const userId = getUserInfo().username;
   const [groupName, setGroupName] = useState(false);
-
-  // set sidebar width (70px or 200)
-const [sidebarWidth, setSidebarWidth] = useState(() => {
-  const storedWidth = localStorage.getItem('sidebarWidth');
-  try {
-    return storedWidth !== null ? JSON.parse(storedWidth) : true;
-  } catch (error) {
-    console.error('Error parsing storedWidth:', error);
-    return true; // Use a default value or handle the error accordingly
-  }
-});
-
-const toggleSidebar = () => {
-  setSidebarWidth((prevWidth) => {
-    const newWidth = !prevWidth;
-    localStorage.setItem('sidebarWidth', JSON.stringify(newWidth));
-    return newWidth;
-  });
-};
-
 
 
   const handleLogout = async () => {

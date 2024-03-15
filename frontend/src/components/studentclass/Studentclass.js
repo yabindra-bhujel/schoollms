@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-<<<<<<< HEAD
-import Layout from "../navigations/Layout";
-=======
 import Layout from "../layout/Layout";
 
->>>>>>> 9bdbe49ee235700db43227133b53bb56680bfe21
 import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
 import { Link } from "react-router-dom";
@@ -81,6 +77,7 @@ const StudentTableComponent = () => {
         <div className="header">
           <h1>{t("classSchedule")}</h1>
         </div>
+        
         <div className="container-class">
           <table>
             <thead>
@@ -112,6 +109,19 @@ const StudentTableComponent = () => {
                             ({subject[index].class_room})
                           </Link>
 
+                      subject[index] &&
+                      subject[index].weekday === weekday ? (
+                        <p className="subject-name">
+                          <Link
+                            to={{
+                              pathname: `/studentclassdetails/${encodeURIComponent(subject[index].id)}`,
+                              state: {
+                                subject_code: subject[index].subject_code,
+                              },
+                            }}>
+                            {subject[index].name} <br />
+                            ({subject[index].class_room})
+                          </Link>
                         </p>
                       ) : (
                         ""
