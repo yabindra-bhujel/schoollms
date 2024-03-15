@@ -24,8 +24,7 @@ echo "Local development environment started"
 
 cd ../backend
 source venv/bin/activate
-python3 manage.py runserver &
-celery -A university worker -l info
-celery -A university beat -l info
+
+python3 manage.py runserver 
 
 

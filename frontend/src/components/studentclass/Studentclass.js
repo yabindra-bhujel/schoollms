@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import Layout from "../layout/Layout";
-
 import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
 import { Link } from "react-router-dom";
@@ -96,13 +95,11 @@ const StudentTableComponent = () => {
                     <td key={weekdayIndex}>
                       {subject &&
                         subject[index] &&
-                        subject[index].weekday === weekday && (
-                        <p className="subject-name">
+                        subject[index].weekday === weekday ? (
+                        <p>
                           <Link
                             to={{
-                              pathname: `/studentclassdetails/${encodeURIComponent(
-                                subject[index].id
-                              )}`,
+                              pathname: `/studentclassdetails/${encodeURIComponent(subject[index].id)}`,
                               state: {
                                 subject_code: subject[index].subject_code,
                               },
@@ -112,7 +109,7 @@ const StudentTableComponent = () => {
                             ({subject[index].class_room})
                           </Link>
                         </p>
-                      )}
+                      ) : null}
                     </td>
                   ))}
                 </tr>

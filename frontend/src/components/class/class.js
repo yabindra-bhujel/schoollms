@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import moment from "moment";
 import Layout from "../layout/Layout";
 import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";

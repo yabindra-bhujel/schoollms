@@ -109,6 +109,7 @@ const Chat = () => {
             unread = {unread}
             onselectGroup = {handleGroupSelect}
             selectGroup = {selectGroup}
+            get_Group_data = {get_Group_data}
           />
         </div>
         <div className="chat__details">

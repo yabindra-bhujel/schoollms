@@ -5,13 +5,9 @@ import { FaUserCircle } from "react-icons/fa";
 import { BsArrowRightCircleFill } from "react-icons/bs";
 import { IoIosRemoveCircle } from "react-icons/io";
 import getUserInfo from "../../api/user/userdata";
+import instance from "../../api/axios";
 
-
-
-
-
-
-const CreatGroup = ({ closeMethod, allusers, socket }) => {
+const CreatGroup = ({ closeMethod, allusers, socket, get_Group_data }) => {
     const [groupName, setGroupName] = useState("");
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [filteruser, setFilteruser] = useState("");
@@ -43,12 +39,21 @@ const CreatGroup = ({ closeMethod, allusers, socket }) => {
         )
       : allusers;
   
-    const handleCreaetGroup = () => {
+    const handleCreaetGroup = async () => {
       const data = {
         group_name: groupName,
         users: selectedUsers.map((user) => user.username),
         admin: username,
       };
+      const endpoint = 'realtimeapi/create_group/'
+      try{
+        const res = await instance.post(endpoint, data);
+        if (res.status === 201) {
+          get_Group_data();
+        }
+      }catch(err){
+        
+      }
       socket.emit("create_group", data);
     };
   
