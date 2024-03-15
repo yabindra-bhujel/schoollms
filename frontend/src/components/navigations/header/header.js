@@ -161,7 +161,7 @@ useEffect(() => {
 
   const handleLogout = async () => {
     try {
-      const endpoint = "api/logout/";
+      const endpoint = "/logout/";
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (userData && userData.refresh) {
         const response = await instance.post(endpoint, { "refresh": userData.refresh });
@@ -176,7 +176,6 @@ useEffect(() => {
   }
 
   useEffect(() => {
-    getUniveristyName();
     getLoginUserData();
   }, []);
 
@@ -190,15 +189,6 @@ useEffect(() => {
     }
   };
 
-  const getUniveristyName = async () => {
-    try {
-      const endpoint = "/get_university_login_screen_info";
-      const response = await instance.get(endpoint);
-      setuniversityName(response.data);
-    } catch (e) {
-      console.log("error", e);
-    }
-  };
 
   return (
     <div>

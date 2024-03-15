@@ -17,8 +17,6 @@ import AssigmentDetalis from "./components/class/AssigmentDetalis";
 import VideoDetails from "./components/learningSection/VideoDetails";
 import VideoList from "./components/learningSection/VideoList";
 import AboutProblems from "./components/codeediter/AboutProblems"
-import FileManager from "./components/filemanager/FileManager";
-import { Folder } from "./components/filemanager/Folder";
 import Chat from "./components/chat/Chat";
 import Attendace from "./components/class/attendance/Attendace";
 import Notes from "./components/notes/notes";
@@ -71,8 +69,6 @@ function App() {
           <Route path="/article/:id" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><ArticlePage /></ProtectedRoute>} />
           <Route path="/setting" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><Setting /></ProtectedRoute>} />
           <Route path="/codeediter" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><AboutProblems /></ProtectedRoute>} />
-          <Route path="/filemanager" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><FileManager /></ProtectedRoute>} />
-          <Route path="/folder/:name" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><Folder /></ProtectedRoute>} />
           <Route path="/chat" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><Chat /></ProtectedRoute>} />
           <Route path="/admin/student" element={
             <ProtectedRoute allowedRoles={['staff', 'superuser']}><AdminStudent /></ProtectedRoute>

@@ -45,7 +45,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
 
   const handleLogout = async () => {
     try {
-      const endpoint = "api/logout/";
+      const endpoint = "/logout/";
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (userData && userData.refresh) {
         const response = await instance.post(endpoint, { "refresh": userData.refresh });
@@ -60,7 +60,6 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
   }
 
   useEffect(() => {
-    getUniveristyName();
     getLoginUserData();
   }, []);
 
@@ -74,15 +73,6 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
     }
   };
 
-  const getUniveristyName = async () => {
-    try {
-      const endpoint = "/get_university_login_screen_info";
-      const response = await instance.get(endpoint);
-      setuniversityName(response.data);
-    } catch (e) {
-      console.log("error", e);
-    }
-  };
 
   return (
     <div>
@@ -232,24 +222,6 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                     <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Chat</span></div>
                 </NavLink>
               </li>
-
-              <li>
-                <NavLink
-                  to="/filemanager"
-                  className={
-                    currentLocation.pathname.startsWith("/folder") ||
-                      currentLocation.pathname === "/filemanager"
-                      ? "active"
-                      : ""
-                  }
-                ><div className="menu-items">
-                    <span>
-                      <AiFillFolderOpen />
-                    </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>File Manager</span></div>
-                </NavLink>
-              </li>
-
               <li>
                 <NavLink
                   to="/learningsection"
