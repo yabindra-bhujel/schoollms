@@ -12,7 +12,7 @@ const Profile = () => {
   const [userData, setUserData] = useState([]);
 
   const getUser_data = async () => {
-    const endpoint = `/get_user_profile_pic/${user}/`;
+    const endpoint = `/get_user_profile/`;
     try {
       let response = await instance.get(endpoint);
       const user_data = response.data;

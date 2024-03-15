@@ -260,9 +260,7 @@ def get_all_user(request):
                     "username": user.username,
                     "first_name": user.first_name,
                     "last_name": user.last_name,
-                    "image": request.build_absolute_uri(profile.image.url)
-                    if profile and profile.image
-                    else None,
+                    "image": request.build_absolute_uri(profile.image.url)if profile and profile.image else None,
                     "cover_image": request.build_absolute_uri(profile.cover_image.url)
                     if profile and profile.cover_image
                     else None,

@@ -38,7 +38,7 @@ const ChatList = ({
     setOpenCreateGroup(false);
   };
 
-  console.log("groupList", groupList);
+  console.log("userList", userList);
 
 
 

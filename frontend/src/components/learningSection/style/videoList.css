@@ -46,7 +46,8 @@
 .videoList .videoList__container .videoList__container__video img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   position: static;
 }
 .videoList .videoList__container .videoList__container__video .videoList__container__video:hover + .play-button {
@@ -104,4 +105,4 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+}/*# sourceMappingURL=videoList.css.map */

@@ -181,7 +181,7 @@ useEffect(() => {
 
   const getLoginUserData = async () => {
     try {
-      const endpoint = `/get_user_profile_pic/${username}/`;
+      const endpoint = `/get_user_profile/`;
       const response = await instance.get(endpoint);
       setLoginuserData(response.data);
     } catch (e) {
