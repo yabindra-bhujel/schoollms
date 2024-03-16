@@ -220,7 +220,7 @@ DATABASES = {
         'NAME': 'lmsdatabase',   
         'USER': 'root',         
         'PASSWORD': 'root',      
-        'HOST': 'localhost',     
+        'HOST': 'database',     
         'PORT': '5432',         
     }
 }
