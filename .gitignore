@@ -25,6 +25,7 @@ TestResults.xml
 *.pdf
 # image
 
+*.db
 
 # evn
 .env
