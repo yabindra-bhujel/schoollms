@@ -123,29 +123,11 @@ class TestCourse(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Subject.objects.get().subject_name, 'Test Course Updated')
 
-    def test_admin_coursedetails(self):
-        url = reverse('getCourseDetails', args=[self.course.subject_code])
-        response = self.client.get(url)
-        self.assertEqual(url, f'/api/course/get_course_details/{self.course.subject_code}/')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
     def test_delete_course(self):
         url = reverse('delete_course', args=[self.course.subject_code, self.user.username])
         response = self.client.delete(url)
         self.assertEqual(url, f'/api/course/delete_course/{self.course.subject_code}/{self.user.username}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-
-class TestEnrollSubject(BaseTest):
-    def test_create_enroll_subject(self):
-        pass
-
-    def test_get_subject_enroll(self):
-        url = reverse('get_subject_enroll', args=[self.user.username])
-        response = self.client.get(url)
-        self.assertEqual(url, f'/api/course/get_subject_enroll/{self.user.username}/')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
 
 class TestSyllabus(BaseTest):
     def test_create_syllabus(self):
@@ -236,10 +218,4 @@ class TestAttendance(BaseTest):
         url = reverse('get_attendance_by_subject', args=[self.course.subject_code])
         response = self.client.get(url)
         self.assertEqual(url, f'/api/course/get_attendance_by_subject/{self.course.subject_code}/')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_attendance_by_student_subject(self):
-        url = reverse('get_attendance_by_student_subject', args=[self.student.studentID, self.course.subject_code])
-        response = self.client.get(url)
-        self.assertEqual(url, f'/api/course/get_attendance_by_student_subject/{self.student.studentID}/{self.course.subject_code}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)

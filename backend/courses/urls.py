@@ -3,6 +3,9 @@ from django.urls import path
 from.views import *
 
 urlpatterns = [
+    path('update_announcement/<int:id>/', updateAnnouncement, name='update_announcement'),
+    path('create_syllabus/<int:id>/', createSyllabus, name='createSyllabus'),
+    path('update_course/<int:id>/', updateCourse, name='update_course'),
     path('add_department/<str:username>/', addDepartment, name='add_department'),
     path('handle_active_change_announcement/<int:id>/', handle_active_change_announcement, name='handle_active_change_announcement'),
     path('get_attendance_by_subject/<int:subject_code>/', getAttendanceBySubject, name='get_attendance_by_subject'),
@@ -17,10 +20,8 @@ urlpatterns = [
     path('get_attendance_by_student_subject/<int:subjectID>/', getAttendanceByStudentSubject, name='get_attendance_by_student_subject'),
     path('student_assignment_details/<int:id>/', studentAssignmentDetails, name='student_assignment_details'),
     path('<str:subject_code>/<str:studentID>/', courseDetailsStudent, name='course_details_student'),
-    path('create_syllabus/<int:id>/', createSyllabus, name='createSyllabus'),
-    path('update_course/<int:id>/', updateCourse, name='update_course'),
     path('get_course_details/<int:id>/', getCourseDetails, name='getCourseDetails'),
-    path('syllabus_update/<int:id>/', updateSyyllabus, name='syllabus'),
+    path('syllabus_update/<int:id>/', updateSyyllabus, name='update_syllabus'),
     path('create_enroll_subject/<str:username>/', createEnrollSubject, name='create_enroll_subject'),
     path('get_subject_enroll/<str:username>/', getSubjectEnroll, name='get_subject_enroll'),
     path('create_course/', createCourse, name='create_course'),
@@ -28,7 +29,6 @@ urlpatterns = [
     path('delete_department/<int:id>/<str:username>/', deleteDepartment, name='delete_department'),
     path('update_department/<str:username>/<int:id>/', updateDepartment, name='update_department'),
     path('get_announcement_by_student/', getAnnouncementByStudent, name='get_announcement_by_student'),
-    path('update_announcement/<int:id>/', updateAnnouncement, name='update_announcement'),
     path('AddAnnouncement/', addAnnouncement, name='AddAnnouncement'),
     path('update_submission/', updateSubmission, name='update_submission'),
     path('upadteAssigemnt/', upadteAssigemnt, name='upadteAssigemnt'),
