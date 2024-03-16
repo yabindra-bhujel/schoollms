@@ -19,6 +19,11 @@ jobs:
         python-version: [3.11]
 
     services:
+      api:
+        image: backend:latest
+        ports:
+          - 8000:8000
+
       database:
         image: postgres:latest
         env:
@@ -42,15 +47,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Build Docker Images
+    - name: Build Docker Image for Backend
       run: |
         docker build -t backend .
 
-    - name: Run Docker Containers
+    - name: Run Tests inside API Container
       run: |
-        docker run -d --name database database
-        docker run -d --name backend --network host backend
-
-    - name: Run Tests
-      run: |
-        pytest
+        docker run backend pytest
