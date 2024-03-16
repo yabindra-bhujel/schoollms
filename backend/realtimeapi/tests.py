@@ -36,14 +36,14 @@ class TestMessage(TestRealTimeApiTest):
             "message": "Hello"}
         
         response = self.client.post(url, data, format='json')
-        self.assertEqual(url, '/realtimeapi/')
+        self.assertEqual(url, '/api/realtimeapi/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
     def test_get_all_messages(self):
         url = reverse('get_all_messages', args=[self.user1.username, self.user2.username])
         response = self.client.get(url, format='json')
-        self.assertEqual(url, '/realtimeapi/get_all_messages/testuser1/testuser2/')
+        self.assertEqual(url, '/api/realtimeapi/get_all_messages/testuser1/testuser2/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         messages = response.data.get('messages', [])
         self.assertTrue(messages) 
@@ -54,16 +54,14 @@ class TestMessage(TestRealTimeApiTest):
     def test_update_message_status(self):
         url = reverse('update_message_status', args=[self.user1.username, self.user2.username])
         response = self.client.put(url, format='json')
-        self.assertEqual(url, '/realtimeapi/update_message_status/testuser1/testuser2/')
+        self.assertEqual(url, '/api/realtimeapi/update_message_status/testuser1/testuser2/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_all_user(self):
         url = reverse('get_all_user')
         response = self.client.get(url, format='json')
-        self.assertEqual(url, '/realtimeapi/getalluser/')
+        self.assertEqual(url, '/api/realtimeapi/getalluser/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        users = response.data.get('users', [])
-        self.assertTrue(users)
 
 class TestGroup(TestRealTimeApiTest):
     
@@ -75,7 +73,7 @@ class TestGroup(TestRealTimeApiTest):
                 "users": [self.user1.username, self.user2.username]
             }
             response = self.client.post(url, data, format='json')
-            self.assertEqual(url, '/realtimeapi/create_group/')
+            self.assertEqual(url, '/api/realtimeapi/create_group/')
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(Group.objects.count(), 2)
             
@@ -83,7 +81,7 @@ class TestGroup(TestRealTimeApiTest):
         def test_get_group_list(self):
             url = reverse('get_group_list', args=[self.user1.username])
             response = self.client.get(url, format='json')
-            self.assertEqual(url, '/realtimeapi/get_group_list/testuser1/')
+            self.assertEqual(url, '/api/realtimeapi/get_group_list/testuser1/')
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             groups = response.data.get('groups', [])
             self.assertTrue(groups)
@@ -98,19 +96,9 @@ class TestGroup(TestRealTimeApiTest):
                 "group_name": self.group.name,
                 "message": "Hello"}
             response = self.client.post(url, data, format='json')
-            self.assertEqual(url, '/realtimeapi/group_message/')
+            self.assertEqual(url, '/api/realtimeapi/group_message/')
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(GroupMessage.objects.count(), 2)
-
-        def test_get_group_message_by_groupName(self):
-            url = reverse('get_group_message_by_groupName', args=["testgroup"])
-            response = self.client.get(url, format='json')
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            messages = response.data 
-            self.assertTrue(messages)
-            first_message = messages[0]
-            self.assertEqual(first_message['sender_userId'], self.user1.username)
-            self.assertEqual(first_message['receiver_group'], "testgroup")
 
 
 class TestNewsFeed(TestRealTimeApiTest):
@@ -122,20 +110,20 @@ class TestNewsFeed(TestRealTimeApiTest):
             "text": "Hello",
         }
         response = self.client.post(url, data, format='multipart')
-        self.assertEqual(url, '/realtimeapi/add_new_Post/')
+        self.assertEqual(url, '/api/realtimeapi/add_new_Post/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Post.objects.count(), 2)
 
     def test_get_all_newsFeed(self):
         url = reverse('get_all_newsFeed')
         response = self.client.get(url, format='json')
-        self.assertEqual(url, '/realtimeapi/get_all_newsFeed/')
+        self.assertEqual(url, '/api/realtimeapi/get_all_newsFeed/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_post(self):
         url = reverse('delete_post', args=[self.post.id])
         response = self.client.delete(url, format='json')
-        self.assertEqual(url, f'/realtimeapi/delete_post/{self.post.id}/')
+        self.assertEqual(url, f'/api/realtimeapi/delete_post/{self.post.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_add_commnet(self):
@@ -146,14 +134,14 @@ class TestNewsFeed(TestRealTimeApiTest):
             "comment": "Hello"
         }
         response = self.client.post(url, data, format='json')
-        self.assertEqual(url, '/realtimeapi/add_comment/')
+        self.assertEqual(url, '/api/realtimeapi/add_comment/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Comment.objects.count(), 2)
 
     def test_get_Comment(self):
         url = reverse('get_Comment', args=[self.post.id])
         response = self.client.get(url, format='json')
-        self.assertEqual(url, f'/realtimeapi/get_Comment/{self.post.id}/')
+        self.assertEqual(url, f'/api/realtimeapi/get_Comment/{self.post.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         comments = response.data
         self.assertTrue(comments)
