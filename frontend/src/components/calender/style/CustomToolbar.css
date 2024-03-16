@@ -2,9 +2,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 60px;
-  padding: 5px;
+  height: 50px;
+  padding: 10px;
   background-color: #c5c8d4;
+}
+.custom-toolbar .toolbar-navigation {
+  margin-top: 10px;
 }
 .custom-toolbar .toolbar-navigation button {
   background-color: transparent;
@@ -24,36 +27,11 @@
   color: #333;
   padding: 10px 20px;
 }
-.custom-toolbar .toolbar-views .time-weather {
-  margin-left: 100px;
-  display: flex;
-  gap: 10px;
-}
-.custom-toolbar .toolbar-views .time-weather .time p {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 0;
-  padding: 0;
-}
-.custom-toolbar .toolbar-views .time-weather .time small {
-  font-size: 15px;
-  font-weight: bold;
-  color: rgb(199, 79, 201);
-  opacity: 0.5;
-}
-.custom-toolbar .toolbar-views .time-weather .weather {
-  float: right;
-}
-.custom-toolbar .toolbar-views .time-weather .weather span {
-  font-size: 45px;
-  font-weight: bold;
-  color: #537ee1;
-}
 .custom-toolbar .toolbar-views button {
   background-color: transparent;
   border: none;
   cursor: pointer;
-  padding: 10px 20px;
+  padding: 20px 20px;
   font-size: 15px;
   color: #333;
 }

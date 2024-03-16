@@ -99,7 +99,7 @@
 .login-form button:hover {
   background-color: #2A71B9;
   color: white;
-  border: none;
+  border: 1px solid transparent;
 }
 @media only screen and (max-width: 742px) {
   .login-form {

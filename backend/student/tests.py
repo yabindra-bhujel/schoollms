@@ -46,7 +46,7 @@ class TestAPIStudent(APITestCase):
             'image': None}
         
         response = self.client.post(url, student_data, format='json')
-        self.assertEqual(url, '/student/add/')
+        self.assertEqual(url, '/api/student/add/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Student.objects.count(), 2)
         self.assertEqual(Student.objects.get(studentID=1232132).first_name, 'Jane')
@@ -54,7 +54,7 @@ class TestAPIStudent(APITestCase):
     def test_get_student_detail(self):
         url = reverse('student_detail', args=[self.teacher.studentID])
         response = self.client.get(url)
-        self.assertEqual(url, f'/student/{self.teacher.studentID}/')
+        self.assertEqual(url, f'/api/student/{self.teacher.studentID}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(type(response.data), dict)
         self.assertEqual(Student.objects.count(), 1)
@@ -62,6 +62,6 @@ class TestAPIStudent(APITestCase):
     def test_delete_student(self):
         url = reverse('delete_student', args=[self.teacher.studentID])
         response = self.client.delete(url)
-        self.assertEqual(url, f'/student/delete_student/{self.teacher.studentID}/')
+        self.assertEqual(url, f'/api/student/delete_student/{self.teacher.studentID}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Student.objects.count(), 0)

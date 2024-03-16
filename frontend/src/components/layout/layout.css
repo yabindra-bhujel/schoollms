@@ -1,0 +1,35 @@
+/* layout.css */
+.main-container {
+  display: flex;
+  height: 100vh;
+}
+@media screen and (max-width: 720px) {
+  .main-container {
+    display: flex;
+    flex-direction: row;
+  }
+}
+.main-container .main-sidebar {
+  width: 70px;
+  height: 100%;
+  background-color: #f0f0f0; /* Sidebar background color */
+}
+.main-container .main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.main-container .main-content .header-bar {
+  height: 70px;
+  width: 100%;
+  z-index: 99;
+  display: block;
+  background-color: #4caf50; /* Header background color */
+}
+.main-container .main-content .body-content {
+  flex: 1;
+  top: 70px;
+  overflow-y: auto;
+  display: block;
+  padding: 20px 10px; /* Adjust padding as needed */
+}/*# sourceMappingURL=layout.css.map */

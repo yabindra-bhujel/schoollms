@@ -2,7 +2,9 @@ from django.urls import path
 from .views import  *
 
 urlpatterns = [
-    path('get_group_message_by_groupName/<str:group_name>/', get_group_message_by_groupName, name='get_group_message_by_groupName'),
+    path('leave_group/<str:group_id>/', leaveGroup, name='leaveGroup'),
+    path('add_group_image/', addGroupImage, name='add_group_image'),
+    path('get_group_message_by_groupName/<str:group_id>/', get_group_message_by_groupName, name='get_group_message_by_groupName'),
     path('group_message/', save_group_message, name='save_group_message'),
     path('get_all_messagess/', all_messages, name="get_all_messages"),
     path('update_message_status/<str:sender>/<str:receriver>/', update_message_status, name='update_message_status'),

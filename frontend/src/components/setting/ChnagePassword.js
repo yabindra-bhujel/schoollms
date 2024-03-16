@@ -138,8 +138,6 @@ const UserManagement = () => {
         setTimeout(() => {
           handleLogout();
         }, 10000);
-
-
       })
       .catch((error) => {
         setMessage("Something went wrong while updating password. Please try again later or contact to service provider.");

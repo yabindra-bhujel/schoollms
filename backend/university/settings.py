@@ -62,7 +62,6 @@ INSTALLED_APPS = (
     "video_learning",
     "editer",
     "realtimeapi",
-    "file_manager",
     "exam",
 
 
@@ -194,25 +193,25 @@ CHANNEL_LAYERS = {
 
 import dj_database_url
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default='postgres://root:pAYCUjbQ1bKo8DLXG5uCZBGlc2toL7mr@dpg-cnams7uv3ddc73dama5g-a.singapore-postgres.render.com/lms_vzx1',
-        conn_max_age=600,
-        ssl_require=False
-    )
-}
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'testDatabase',
-#         'USER': 'yabindrabhujel',
-#         'PASSWORD': 'yabindra12',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-        
-#     }
+#     'default': dj_database_url.config(
+#         default='postgres://root:h4A1808tOmkBUC3ZsXfQ1oyI0gpFCpLx@dpg-cnq12jv109ks73ecckc0-a.singapore-postgres.render.com/lms_db_pqo5',
+#         conn_max_age=600,
+#         ssl_require=False
+#     )
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'testDatabase',
+        'USER': 'yabindrabhujel',
+        'PASSWORD': 'yabindra12',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+        
+    }
+}
 
 
 

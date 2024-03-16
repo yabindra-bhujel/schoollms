@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import ChatList from "./chatList";
 import ChatDetils from "./ChatDetils";
 import "./style/Chat.css";
@@ -109,6 +109,7 @@ const Chat = () => {
             unread = {unread}
             onselectGroup = {handleGroupSelect}
             selectGroup = {selectGroup}
+            get_Group_data = {get_Group_data}
           />
         </div>
         <div className="chat__details">

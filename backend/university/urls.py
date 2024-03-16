@@ -9,6 +9,7 @@ from django.contrib.auth.views import PasswordResetConfirmView
 
 
 urlpatterns = [
+    path('api/get_user_profile/', getUserProfile, name='getUserProfile'),
     path('api/updateEmailNotification', updateEmailNotification, name='updateEmailNotification'),
     path('api/update_two_factor_auth', update_two_factor_auth, name='update_two_factor_auth'),
     path('api/admin/', admin.site.urls),
@@ -31,7 +32,6 @@ urlpatterns = [
     path('api/get_user_list', get_user_list, name='get_user_list'),
     path('api/reset_password', reset_password, name='reset_password'),
     path('api/conform_reset_password/<str:uuid>/<str:token>/', conform_reset_password, name='conform_reset_password'),
-    path('api/get_user_profile', getUserProfile, name='getUserProfile'),
     path('api/profile_detalis', profileDetails, name='profileDetails'),
     path('api/update_profile_picture', updateProfilePicture, name='updateProfile'),
     path('api/chnage_password', changePassword, name='changePassword'),
@@ -45,7 +45,6 @@ urlpatterns = [
     path('api/video_learning/', include('video_learning.urls')),
     path('api/editer/', include('editer.urls')),
     path('api/realtimeapi/', include('realtimeapi.urls')),
-    path('api/file_manager/', include('file_manager.urls')),
     path('api/exam/', include('exam.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -46,9 +46,10 @@ const CustomToolbar = ({ view, label, onView, onNavigate }) => {
           <button onClick={() => onNavigate("PREV")}>Previous</button>
           <button onClick={() => onNavigate("TODAY")}>Today</button>
           <button onClick={() => onNavigate("NEXT")}>Next</button>
-          <div className="toolbar-label">{formattedDate}</div>
         </div>
-  
+        <div className="centered">
+        <div className="toolbar-label">{formattedDate}</div>
+          </div>
         <div className="toolbar-views">
          
           <button

@@ -3,10 +3,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 60px;
-    padding: 5px;
+    height: 50px;
+    padding: 10px;
     background-color: #c5c8d4;
     .toolbar-navigation {
+      margin-top: 10px;
       button {
         background-color: transparent;
         border: none;
@@ -32,47 +33,11 @@
   
     .toolbar-views {
 
-        .time-weather{
-            margin-left: 100px;
-            display: flex;
-            gap: 10px;
-
-
-            .time{
-        
-                p{
-                    font-size: 20px;
-                    font-weight: bold;
-                    margin: 0;
-                    padding: 0;
-                    
-                }
-
-                small{
-                    font-size: 15px;
-                    font-weight: bold;
-                    color: rgb(199, 79, 201);
-                    opacity: 0.5;
-                }
-            }
-            .weather{
-                float: right;
-        
-    
-
-                span{
-                    font-size: 45px;
-                    font-weight: bold;
-                    color: #537ee1;
-                }
-            }
-        }
-
       button {
         background-color: transparent;
         border: none;
         cursor: pointer;
-        padding: 10px 20px;
+        padding: 20px 20px;
         font-size: 15px;
         color: #333;
   

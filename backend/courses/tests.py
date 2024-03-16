@@ -55,13 +55,13 @@ class TestDepartment(BaseTest):
             'Department_code': 'TD'
         }
         response = self.client.post(url, data, format='json')
-        self.assertEqual(url, f'/course/add_department/{self.user.username}/')
+        self.assertEqual(url, f'/api/course/add_department/{self.user.username}/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_department_list(self):
         url = reverse('department_list')
         response = self.client.get(url)
-        self.assertEqual(url, '/course/department_list/')
+        self.assertEqual(url, '/api/course/department_list/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_department(self):
@@ -71,7 +71,7 @@ class TestDepartment(BaseTest):
             'Department_code': 'TDU'
         }
         response = self.client.put(url, data, format='json')
-        self.assertEqual(url, f'/course/update_department/{self.user.username}/{self.department.id}/')
+        self.assertEqual(url, f'/api/course/update_department/{self.user.username}/{self.department.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Department.objects.get().Department_name, 'Test Department Updated')
         self.assertEqual(Department.objects.get().Department_code, 'TDU')
@@ -92,19 +92,19 @@ class TestCourse(BaseTest):
             'class_period': '1'
         }
         response = self.client.post(url, data, format='json')
-        self.assertEqual(url, '/course/create_course/')
+        self.assertEqual(url, '/api/course/create_course/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_admincourse_list(self):
         url = reverse('admincourse_list')
         response = self.client.get(url)
-        self.assertEqual(url, '/course/admin/')
+        self.assertEqual(url, '/api/course/admin/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_course_details(self):
         url = reverse('course_details', args=[self.course.subject_code])
         response = self.client.get(url)
-        self.assertEqual(url, f'/course/{self.course.subject_code}/')
+        self.assertEqual(url, f'/api/course/{self.course.subject_code}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_course(self):
@@ -119,20 +119,20 @@ class TestCourse(BaseTest):
             'class_period': '1'
         }
         response = self.client.put(url, data, format='json')
-        self.assertEqual(url, f'/course/update_course/{self.course.subject_code}/')
+        self.assertEqual(url, f'/api/course/update_course/{self.course.subject_code}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Subject.objects.get().subject_name, 'Test Course Updated')
 
     def test_admin_coursedetails(self):
         url = reverse('getCourseDetails', args=[self.course.subject_code])
         response = self.client.get(url)
-        self.assertEqual(url, f'/course/get_course_details/{self.course.subject_code}/')
+        self.assertEqual(url, f'/api/course/get_course_details/{self.course.subject_code}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_course(self):
         url = reverse('delete_course', args=[self.course.subject_code, self.user.username])
         response = self.client.delete(url)
-        self.assertEqual(url, f'/course/delete_course/{self.course.subject_code}/{self.user.username}/')
+        self.assertEqual(url, f'/api/course/delete_course/{self.course.subject_code}/{self.user.username}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
@@ -143,7 +143,7 @@ class TestEnrollSubject(BaseTest):
     def test_get_subject_enroll(self):
         url = reverse('get_subject_enroll', args=[self.user.username])
         response = self.client.get(url)
-        self.assertEqual(url, f'/course/get_subject_enroll/{self.user.username}/')
+        self.assertEqual(url, f'/api/course/get_subject_enroll/{self.user.username}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -164,7 +164,7 @@ class TestSyllabus(BaseTest):
             'section_description': 'Test Syllabus 3'}]
 
         response = self.client.post(url, data, format='json')
-        self.assertEqual(url, f'/course/create_syllabus/{self.course.subject_code}/')
+        self.assertEqual(url, f'/api/course/create_syllabus/{self.course.subject_code}/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Syllabus.objects.count(), 1)
 
@@ -172,7 +172,7 @@ class TestSyllabus(BaseTest):
     def test_get_syllabus(self):
         url = reverse('syllabus', args=[self.course.subject_code])
         response = self.client.get(url)
-        self.assertEqual(url, f'/course/syllabus/{self.course.subject_code}/')
+        self.assertEqual(url, f'/api/course/syllabus/{self.course.subject_code}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -185,7 +185,7 @@ class TestAnnouncement(BaseTest):
             'content': 'Test Announcement Description'
         }
         response = self.client.post(url, data, format='json')
-        self.assertEqual(url, '/course/AddAnnouncement/')
+        self.assertEqual(url, '/api/course/AddAnnouncement/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Announcement.objects.count(), 2)
 
@@ -193,19 +193,19 @@ class TestAnnouncement(BaseTest):
     def test_get_announcement_by_subject_student(self):
         url = reverse('get_announcement_by_subject_student', args=[self.course.subject_code])
         response = self.client.get(url)
-        self.assertEqual(url, f'/course/get_announcement_by_subject_student/{self.course.subject_code}/')
+        self.assertEqual(url, f'/api/course/get_announcement_by_subject_student/{self.course.subject_code}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def tets_handle_active_change_announcement(self):
         url = reverse('handle_active_change_announcement', args=[self.announcement.id])
         response = self.client.get(url)
-        self.assertEqual(url, f'/course/handle_active_change_announcement/{self.announcement.id}/')
+        self.assertEqual(url, f'/api/course/handle_active_change_announcement/{self.announcement.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_announcement(self):
         url = reverse('delete_announcement', args=[self.announcement.id])
         response = self.client.delete(url)
-        self.assertEqual(url, f'/course/delete_announcement/{self.announcement.id}/')
+        self.assertEqual(url, f'/api/course/delete_announcement/{self.announcement.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_update_announcement(self):
@@ -215,7 +215,7 @@ class TestAnnouncement(BaseTest):
             'announcement_description': 'Test Announcement Description Updated'
         }
         response = self.client.put(url, data, format='json')
-        self.assertEqual(url, f'/course/update_announcement/{self.announcement.id}/')
+        self.assertEqual(url, f'/api/course/update_announcement/{self.announcement.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Announcement.objects.get().announcement_title, 'Test Announcement Updated')
         self.assertEqual(Announcement.objects.get().announcement_description, 'Test Announcement Description Updated')
@@ -228,18 +228,18 @@ class TestAttendance(BaseTest):
             'teacher_id': self.teacher.TeacherID,
         }
         response = self.client.post(url, data, format='json')
-        self.assertEqual(url, '/course/create_attendance/')
+        self.assertEqual(url, '/api/course/create_attendance/')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Attendance.objects.count(), 1)
 
     def test_get_attendance_by_subject(self):
         url = reverse('get_attendance_by_subject', args=[self.course.subject_code])
         response = self.client.get(url)
-        self.assertEqual(url, f'/course/get_attendance_by_subject/{self.course.subject_code}/')
+        self.assertEqual(url, f'/api/course/get_attendance_by_subject/{self.course.subject_code}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_attendance_by_student_subject(self):
         url = reverse('get_attendance_by_student_subject', args=[self.student.studentID, self.course.subject_code])
         response = self.client.get(url)
-        self.assertEqual(url, f'/course/get_attendance_by_student_subject/{self.student.studentID}/{self.course.subject_code}/')
+        self.assertEqual(url, f'/api/course/get_attendance_by_student_subject/{self.student.studentID}/{self.course.subject_code}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../../navigations/Layout";
+import Layout from "../../layout/Layout";
 import "./style/examinfo.css";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";

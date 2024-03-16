@@ -1,10 +1,6 @@
 import React from "react";
 import { Chart } from "react-charts";
 
-
-
-
-
 import React from "react";
 import { AxisOptions, Chart } from "react-charts";
 
@@ -14,25 +10,26 @@ export default function Bar() {
     dataType: "ordinal",
   });
 
-  const primaryAxis = React.useMemo<
-    AxisOptions<typeof data[number]["data"][number]>
-  (
-    () => ({
+  const primaryAxis =
+    React.useMemo <
+    AxisOptions <
+    typeof data[number]["data"][number] >
+    (() => ({
       getValue: (datum) => datum.primary,
     }),
-    []
-  );
+    []);
 
-  const secondaryAxes = React.useMemo<
-    AxisOptions<typeof data[number]["data"][number]>[]
-  >(
-    () => [
+  const secondaryAxes =
+    React.useMemo <
+    AxisOptions <
+    typeof data[number]["data"][number] >
+    [] >
+    (() => [
       {
         getValue: (datum) => datum.secondary,
       },
     ],
-    []
-  );
+    []);
 
   return (
     <>
@@ -51,4 +48,3 @@ export default function Bar() {
     </>
   );
 }
-

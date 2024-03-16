@@ -1,0 +1,38 @@
+/* layout.css */
+
+.main-container {
+  display: flex;
+  height: 100vh;
+  @media screen and (max-width: 720px) {
+    display: flex;
+    flex-direction: row;
+  }
+
+.main-sidebar {
+  width: 70px;
+  height: 100%;
+  background-color: #f0f0f0; /* Sidebar background color */
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .header-bar {
+    height: 70px;
+    width: 100%;
+    z-index: 99;
+    display: block;
+    background-color: #4caf50; /* Header background color */
+  }
+  
+  .body-content {
+    flex: 1;
+    top: 70px;
+    overflow-y: auto;
+    display: block;
+    padding: 20px 10px; /* Adjust padding as needed */
+  }
+}
+}

@@ -18,8 +18,7 @@ const ChatList = ({
   selectedChat,
   unread,
   groupList,
-  onselectGroup,
-  selectGroup
+  get_Group_data
 
 }) => {
   const [filteruser, setFilteruser] = useState("");
@@ -39,6 +38,8 @@ const ChatList = ({
     setOpenCreateGroup(false);
   };
 
+  console.log("userList", userList);
+
 
 
   return (
@@ -54,6 +55,7 @@ const ChatList = ({
             closeMethod={closeCreateGroupModal}
             allusers={userList}
             socket={socket}
+            get_Group_data={get_Group_data}
           />
         </div>
       </Modal>
@@ -74,7 +76,6 @@ const ChatList = ({
       </div>
 
       <div className="chat__list__body">
-        {/* Render Group Items */}
         <div className="group-section">
           {groupList.map((group, index) => {
             const unreadmessage =
@@ -89,7 +90,7 @@ const ChatList = ({
                 onClick={() => onChatSelect(group, "user")}
               >
                 <div className="icon-container">
-                  {/* show image if have  */}
+              
                   {group.image ? (
                     <img src={group.image} alt={group.name} />
                   ) : (
@@ -121,7 +122,6 @@ const ChatList = ({
 
 
 
-        {/* Render User Items */}
         <div className="user-section">
           {filteredUsers.map((user, index) => {
             const isOnline = onlineUsers.some(onlineUser => onlineUser.userId === user.username);
@@ -155,7 +155,6 @@ const ChatList = ({
                       )}
                     </Badge>
                   ) : (
-                    // User is offline, render the avatar without the Badge
                     user.image ? (
                       <img src={user.image} alt={user.username} />
                     ) : (
@@ -182,10 +181,6 @@ const ChatList = ({
             );
           })}
         </div>
-
-
-
-
       </div>
     </>
   );

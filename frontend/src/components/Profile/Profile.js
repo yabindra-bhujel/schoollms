@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../navigations/Layout";
+import Layout from "../layout/Layout";
 import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
 import "./style/profile.css";
@@ -12,7 +12,7 @@ const Profile = () => {
   const [userData, setUserData] = useState([]);
 
   const getUser_data = async () => {
-    const endpoint = `/get_user_profile_pic/${user}/`;
+    const endpoint = `/get_user_profile/`;
     try {
       let response = await instance.get(endpoint);
       const user_data = response.data;

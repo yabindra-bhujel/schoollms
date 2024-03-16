@@ -7,7 +7,6 @@ import { PiStudentBold } from "react-icons/pi";
 import { BsCalendarFill } from "react-icons/bs";
 import { AiFillSetting } from "react-icons/ai";
 import { RiLogoutCircleFill } from "react-icons/ri";
-import { FaFolder } from "react-icons/fa";
 import { MdCastForEducation } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { AiFillFolderOpen } from "react-icons/ai";
@@ -24,7 +23,6 @@ import Notifications from "./Notification";
 import Snackbar from "@mui/material/Snackbar";
 import ProfileMenu from "./Profile";
 import getUserInfo from "../../api/user/userdata";
-import { use } from "i18next";
 
 const Sidebar = ({}) => {
   const userData = JSON.parse(localStorage.getItem("userData"));
@@ -34,7 +32,6 @@ const Sidebar = ({}) => {
   const first_name = decoded.first_name;
   const last_name = decoded.last_name;
   const fullname = first_name + " " + last_name;
-  const [universityName, setuniversityName] = useState("");
   const [loginuserData, setLoginuserData] = useState("");
   const is_student = decoded.is_student;
   const is_teacher = decoded.is_teacher;
@@ -152,7 +149,7 @@ const Sidebar = ({}) => {
 
   const handleLogout = async () => {
     try {
-        const endpoint = "api/logout/";
+        const endpoint = "/logout/";
         const userData = JSON.parse(localStorage.getItem("userData"));
         if (userData && userData.refresh) {
             const response = await instance.post(endpoint, { "refresh": userData.refresh });
@@ -172,7 +169,7 @@ const Sidebar = ({}) => {
 
   const getLoginUserData = async () => {
     try {
-      const endpoint = `get_user_profile`;
+      const endpoint = `get_user_profile/`;
       const response = await instance.get(endpoint);
       setLoginuserData(response.data);
     } catch (e) {

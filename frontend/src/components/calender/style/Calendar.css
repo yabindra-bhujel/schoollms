@@ -39,4 +39,23 @@
 .event-datetime {
   font-size: 16px;
   color: #555;
+}
+
+.color-selector {
+  display: flex;
+  margin: 10px 0;
+  justify-content: space-around;
+}
+
+.color-button {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  outline: none;
+}
+
+.color-button.selected {
+  border: 2px solid #333; /* Add a border to indicate the selected color */
 }/*# sourceMappingURL=Calendar.css.map */

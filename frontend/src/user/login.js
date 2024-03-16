@@ -5,8 +5,7 @@ import "./login.css";
 import instance from "../api/axios";
 import Alert from "@mui/material/Alert";
 import logo from "../components/images/unv_logo.png";
-import axios from "axios";
-import Cookies from "js-cookie";
+
 
 function Login() {
   const [message, setMessage] = useState("");

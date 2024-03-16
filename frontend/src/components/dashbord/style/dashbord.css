@@ -1,5 +1,4 @@
 .container {
-  margin-left: 10px;
   display: flex;
   height: calc(100vh - 72px);
   overflow: hidden;
@@ -9,10 +8,9 @@
   background-color: #c6dbdc;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-  padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-right: 20px;
   top: 0;
+  padding: 5px;
 }
 .container .left-item .dashboard-cards {
   display: flex;

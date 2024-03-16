@@ -26,7 +26,8 @@
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-.note-list .note-card .note-item:hover .update, .note-list .note-card .note-item:hover .note-item-header button {
+.note-list .note-card .note-item:hover .update,
+.note-list .note-card .note-item:hover .note-item-header button {
   display: flex;
 }
 .note-list .note-card .note-item h3 {

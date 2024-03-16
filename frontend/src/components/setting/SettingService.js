@@ -3,7 +3,7 @@ import instance from "../../api/axios";
 
 const getUserProfile = async () => {
     try {
-        const endpoint = `get_user_profile`;
+        const endpoint = `get_user_profile/`;
         const response = await instance.get(endpoint);
         return response;
     } catch (error) {
