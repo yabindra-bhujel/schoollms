@@ -45,7 +45,6 @@ jobs:
     - name: Build Docker Images
       run: |
         docker build -t backend .
-        docker build -t database -f database/Dockerfile database
 
     - name: Run Docker Containers
       run: |
