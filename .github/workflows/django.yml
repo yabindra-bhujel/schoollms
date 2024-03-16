@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build_and_test:
 
     runs-on: ubuntu-latest
     defaults:
@@ -17,20 +17,41 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.11]
-    
+
+    services:
+      database:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: lmsdatabase
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Run Tests
-      env:
-        SECRET_KEY: django-insecure-324-f+674e6s0(ng9$qzu9j)=44xom(vtsn#o+11_#7*e!az$0
+
+    - name: Build Docker Images
       run: |
-       pytest
+        docker build -t backend .
+        docker build -t database -f database/Dockerfile database
+
+    - name: Run Docker Containers
+      run: |
+        docker run -d --name database database
+        docker run -d --name backend --network host -e DB_HOST=localhost backend
+
+    - name: Run Tests
+      run: |
+        pytest

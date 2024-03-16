@@ -193,13 +193,13 @@ CHANNEL_LAYERS = {
 
 import dj_database_url
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default='postgres://root:h4A1808tOmkBUC3ZsXfQ1oyI0gpFCpLx@dpg-cnq12jv109ks73ecckc0-a.singapore-postgres.render.com/lms_db_pqo5',
-        conn_max_age=600,
-        ssl_require=False
-    )
-}
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default='postgres://root:h4A1808tOmkBUC3ZsXfQ1oyI0gpFCpLx@dpg-cnq12jv109ks73ecckc0-a.singapore-postgres.render.com/lms_db_pqo5',
+#         conn_max_age=600,
+#         ssl_require=False
+#     )
+# }
 
 # DATABASES = {
 #     'default': {
@@ -212,6 +212,18 @@ DATABASES = {
         
 #     }
 # }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'lmsdatabase',   
+        'USER': 'root',         
+        'PASSWORD': 'root',      
+        'HOST': 'database',     
+        'PORT': '5432',         
+    }
+}
 
 
 
