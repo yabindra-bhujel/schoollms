@@ -50,7 +50,7 @@ jobs:
     - name: Run Docker Containers
       run: |
         docker run -d --name database database
-        docker run -d --name backend --network host -e DB_HOST=localhost backend
+        docker run -d --name backend --network host backend
 
     - name: Run Tests
       run: |
