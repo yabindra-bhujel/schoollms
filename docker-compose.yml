@@ -14,7 +14,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
     volumes:
-      - ./backend:/app/api   # Adjusted volume declaration
+      - ./backend:/app/api  
 
   database:
     build:

@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -16,41 +17,23 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.11]
+    
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v1 
-        with:
-          username: yabindra123
-          password: dckr_pat_lRmwAtmx4Vepnt_aX1axtRaHGT4
-
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v2
-
-        with:
-          context: .
-          file: backend/Dockerfile
-          push: true
-          tags: user/app:latest
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run Tests
-        env:
-          SECRET_KEY: django-insecure-324-f+674e6s0(ng9$qzu9j)=44xom(vtsn#o+11_#7*e!az$0
-        run: |
-          pytest
+    - uses: actions/checkout@v3
+    - name: Docker build
+      run: |
+        docker-compose build
+    - name: Docker run
+      run: |
+        docker-compose up -d
+    - name: Wait for services
+      run: |
+        sleep 10
+    - name: Run tests
+      run: |
+        docker-compose exec backend pytest
+    - name: Docker stop
+      run: |
+        docker-compose down
+        
