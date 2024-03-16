@@ -7,30 +7,57 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  build_and_test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
+
     strategy:
       max-parallel: 4
       matrix:
         python-version: [3.11]
-    
+
+    services:
+      docker:
+        image: docker:stable-dind
+        options: --privileged
+
+      database:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: lmsdatabase
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+        ports:
+          - 5432:5432
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Run Tests
-      env:
-        SECRET_KEY: django-insecure-324-f+674e6s0(ng9$qzu9j)=44xom(vtsn#o+11_#7*e!az$0
-      run: |
-       pytest
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build Docker Images
+        run: |
+          docker build -t backend:api ./backend
+          docker build -t backend:database ./backend
+
+      - name: Start Docker Containers
+        run: |
+          docker-compose -f docker-compose.yml up -d
+
+      - name: Run Tests
+        env:
+          SECRET_KEY: django-insecure-324-f+674e6s0(ng9$qzu9j)=44xom(vtsn#o+11_#7*e!az$0
+        run: |
+          docker-compose -f docker-compose.yml exec api pytest
+
+      - name: Stop Docker Containers
+        run: |
+          docker-compose -f docker-compose.yml down
