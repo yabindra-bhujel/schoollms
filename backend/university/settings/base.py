@@ -7,37 +7,20 @@ import django
 from django.utils.encoding import force_str
 django.utils.encoding.force_text = force_str
 
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# font path for pdf
 FONT_PATH = os.path.join(BASE_DIR, 'font/NotoSansJP-Regular.ttf')
 
 
-
-# Add .env variables anywhere before SECRET_KEY
-dotenv_file = os.path.join(BASE_DIR, ".env")
+dotenv_file = os.path.join(BASE_DIR, "../.env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
 
-# UPDATE secret key
 SECRET_KEY = os.environ['SECRET_KEY'] 
 
 CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-DEBUG = True
-
-
-
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0'
-]
-
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -47,9 +30,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_yasg',
-
-
-
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -63,41 +43,20 @@ INSTALLED_APPS = (
     "editer",
     "realtimeapi",
     "exam",
-
-
-
-
-   
 )
-
-
 
 REST_FRAMEWORK = {
 
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAdminUser',
         'rest_framework.permissions.IsAuthenticated',
-
-
-
-
     ],
-
     'DEFAULT_AUTHENTICATION_CLASSES': [
             'rest_framework_simplejwt.authentication.JWTAuthentication',
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.BasicAuthentication',
-
-
-
-
     ]
 }
-
-
-
-
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -125,8 +84,6 @@ SIMPLE_JWT = {
 
     'JTI_CLAIM': 'jti',
 }
-
-
 
 REST_FRAMEWORK  = {
     'DEFULT_PARSER_CLASSES': (
@@ -169,19 +126,8 @@ TEMPLATES = [
     },
 ]
 
-
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.request',
-)
-
+TEMPLATE_CONTEXT_PROCESSORS = ('django.core.context_processors.request',)
 WSGI_APPLICATION = 'university.wsgi.application'
-# ASGI_APPLICATION = 'university.asgi.application'
-
-
-
-
-
 
 CHANNEL_LAYERS = {
     "default": {
@@ -189,50 +135,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-
-
-import dj_database_url
-
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default='postgres://root:h4A1808tOmkBUC3ZsXfQ1oyI0gpFCpLx@dpg-cnq12jv109ks73ecckc0-a.singapore-postgres.render.com/lms_db_pqo5',
-#         conn_max_age=600,
-#         ssl_require=False
-#     )
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'testDatabase',
-#         'USER': 'yabindrabhujel',
-#         'PASSWORD': 'yabindra12',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-        
-#     }
-# }
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'lmsdatabase',   
-        'USER': 'root',         
-        'PASSWORD': 'root',      
-        'HOST': 'localhost',     
-        'PORT': '5432',         
-    }
-}
-
-
-
-
-
-
 TENANT_MODEL = "tenant.University"
-
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -250,9 +153,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Tokyo'
@@ -262,10 +162,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
@@ -273,8 +169,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -299,7 +193,6 @@ FRONTEND_URL = "http://localhost:3000"
 EMAIL_IMAP_USERNAME = os.environ.get('EMAIL_IMAP_USERNAME')
 EMAIL_IMAP_PASSWORD = os.environ.get('EMAIL_IMAP_PASSWORD')
 
-# imap backend config for get email
 EMAIL_IMAP_HOST = 'imap.gmail.com'
 EMAIL_IMAP_PORT = 993
 EMAIL_IMAP_USERNAME = EMAIL_IMAP_USERNAME
@@ -308,7 +201,6 @@ EMAIL_IMAP_USE_SSL = True
 
 
 
-#  smapt backend config for send email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587 
@@ -319,10 +211,6 @@ EMAIL_USE_TLS = True
 X_FRAME_OPTIONS = 'ALLOWALL'
 
 XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
-
-
-
-
 
 TEST_RUNNER = 'pytest_django.test.runner.TestRunner'
 

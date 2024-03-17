@@ -2,11 +2,22 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import dotenv
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'university.settings')
+    dotenv_file = os.path.join(".env")
+    if os.path.isfile(dotenv_file):
+        dotenv.load_dotenv(dotenv_file)
+    
+    isDev = os.environ.get('DEVELOPMENT_MODE') == 'True'
+    if isDev:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'university.settings.dev')
+    else:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'university.settings.prod')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
