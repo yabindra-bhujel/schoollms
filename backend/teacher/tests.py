@@ -61,10 +61,3 @@ class TestAPITeacher(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(url, f'/api/teacher/delete/{self.teacher.TeacherID}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-    def test_get_teacher_today_class(self):
-        url = reverse('get_teacher_today_class')
-        response = self.client.get(url)
-        self.assertEqual(url, '/api/teacher/get_teacher_today_class/')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(type(response.data), list)

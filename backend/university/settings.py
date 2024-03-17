@@ -201,29 +201,29 @@ import dj_database_url
 #     )
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'testDatabase',
-#         'USER': 'yabindrabhujel',
-#         'PASSWORD': 'yabindra12',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-        
-#     }
-# }
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'lmsdatabase',   
-        'USER': 'root',         
-        'PASSWORD': 'root',      
-        'HOST': 'localhost',     
-        'PORT': '5432',         
+        'NAME': 'testDatabase',
+        'USER': 'yabindrabhujel',
+        'PASSWORD': 'yabindra12',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+        
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'lmsdatabase',   
+#         'USER': 'root',         
+#         'PASSWORD': 'root',      
+#         'HOST': 'localhost',     
+#         'PORT': '5432',         
+#     }
+# }
 
 
 
