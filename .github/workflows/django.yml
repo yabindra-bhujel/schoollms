@@ -55,6 +55,9 @@
         deploy:
           name: Deploy to Google Cloud
           runs-on: ubuntu-latest
+          defaults:
+            run:
+              working-directory: backend
           steps:
           - name: Checkout code
             uses: actions/checkout@v2
