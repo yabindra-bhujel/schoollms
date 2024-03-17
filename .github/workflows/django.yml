@@ -11,10 +11,13 @@
       jobs:
         build:
           runs-on: ubuntu-latest
+
+          env:
+            SECRET_KEY: django-insecure-324-f+674e6s0(ng9$qzu9j)=44xom(vtsn#o+11_#7*e!az$0
           defaults:
             run:
               working-directory: backend
-              
+
           services:
             postgres:
               image: postgres:latest
