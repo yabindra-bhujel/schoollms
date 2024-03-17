@@ -1,5 +1,4 @@
       name: Django CI/CD
-
       on:
         push:
           branches:
@@ -14,6 +13,7 @@
 
           env:
             SECRET_KEY: django-insecure-324-f+674e6s0(ng9$qzu9j)=44xom(vtsn#o+11_#7*e!az$0
+            DEVELOPMENT_MODE: "False"
           defaults:
             run:
               working-directory: backend
