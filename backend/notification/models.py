@@ -9,23 +9,22 @@ from datetime import datetime
 from django.core.mail import send_mail
 from django.conf import settings
 from tenant.models import ApplicationSettings
+from courses.models import Subject
 User = get_user_model()
 
 class CalenderModel(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
     color = models.CharField(max_length=20, null=True, blank=True)
     start_time = models.TimeField(null=True, blank=True)
     end_time = models.TimeField(null=True, blank=True)
-
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return str(self.title)
     
-
-
 class Notes(models.Model):
     NOTE_TYPE = (
         ('private', 'private'),

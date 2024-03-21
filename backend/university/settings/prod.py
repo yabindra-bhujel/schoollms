@@ -1,7 +1,7 @@
 # prod.py
 from .base import *
 
-DEBUG = False
+DEBUG=False
 
 DATABASES = {
     'default': {
@@ -9,7 +9,7 @@ DATABASES = {
         'NAME': 'lmsdatabase',   
         'USER': 'root',         
         'PASSWORD': 'root',      
-        'HOST': 'localhost',     
+        'HOST': 'db',     
         'PORT': '5432',         
     }
 }
@@ -18,4 +18,5 @@ DATABASES = {
 ALLOWED_HOSTS = [
     'localhost',
     'myapp.com',
+    '0.0.0.0'
 ]

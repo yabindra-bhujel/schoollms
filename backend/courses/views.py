@@ -61,7 +61,6 @@ def createEnrollSubject(request, username):
             try:
                 student = Student.objects.get(studentID=student_id)
                 students.append(student)
-                print(student)
             except ObjectDoesNotExist as e:
                 print(e)
                 return Response({"message": f"Student object with ID {student_id} not found."}, status=404)

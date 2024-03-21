@@ -2,8 +2,7 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'university.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'university.settings.prod')
 
 app = Celery('university')
 
@@ -23,5 +22,9 @@ app.conf.beat_schedule = {
     'send-passed-deadline-email': {
         'task': 'courses.tasks.send_passed_deadline_email',
         'schedule': crontab(minute='*'),
-    }
+    },
+    'generate-events': {
+        'task': 'notification.tasks.generate_events',
+        'schedule': crontab(minute='*'),
+    },
 }

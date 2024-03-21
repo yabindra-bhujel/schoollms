@@ -3,6 +3,8 @@ from django.urls import path
 from.views import *
 
 urlpatterns = [
+    path('create_enroll_subject/<str:username>/', createEnrollSubject, name='create_enroll_subject'),
+    path('get_subject_enroll/<str:username>/', getSubjectEnroll, name='get_subject_enroll'),
     path('update_announcement/<int:id>/', updateAnnouncement, name='update_announcement'),
     path('create_syllabus/<int:id>/', createSyllabus, name='createSyllabus'),
     path('update_course/<int:id>/', updateCourse, name='update_course'),
@@ -22,8 +24,6 @@ urlpatterns = [
     path('<str:subject_code>/<str:studentID>/', courseDetailsStudent, name='course_details_student'),
     path('get_course_details/<int:id>/', getCourseDetails, name='getCourseDetails'),
     path('syllabus_update/<int:id>/', updateSyyllabus, name='update_syllabus'),
-    path('create_enroll_subject/<str:username>/', createEnrollSubject, name='create_enroll_subject'),
-    path('get_subject_enroll/<str:username>/', getSubjectEnroll, name='get_subject_enroll'),
     path('create_course/', createCourse, name='create_course'),
     path('delete_course/<str:id>/<str:username>/', deleteCourse, name='delete_course'),
     path('delete_department/<int:id>/<str:username>/', deleteDepartment, name='delete_department'),

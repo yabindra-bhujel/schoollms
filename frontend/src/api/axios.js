@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const BaseUrl = () => {
-  return `http://127.0.0.1:8000/api`;
+  // return `http://127.0.0.1:8000/api`;
+  return `http://0.0.0.0:8000/api`;
+
 };
 
 const instance = axios.create({

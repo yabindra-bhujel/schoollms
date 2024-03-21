@@ -88,6 +88,7 @@ def updateEvent(request):
 @permission_classes([IsAuthenticated])
 def getCalenderEvent(request):
     try:
+
         username = request.user.username
         calender = CalenderModel.objects.filter(user__username=username)
         serializer = CalendarSerializers(calender, many=True)

@@ -1,4 +1,3 @@
-# Stage 1: Build API
 FROM python:3.11.0 as api
 
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -11,15 +10,12 @@ RUN pip install --no-cache-dir --index-url=https://pypi.org/simple/ -r requireme
 
 COPY . .
 
-# Stage 2: Build Database
-FROM postgres:latest as database
+COPY entrypoint.sh .
+RUN sed -i 's/\r$//g' entrypoint.sh
 
-# Additional steps for setting up the database service, if needed
+RUN chmod +x entrypoint.sh
 
-# Main image
-FROM api as final
+CMD ["celery", "-A", "university", "worker", "--loglevel=info"]
 
-RUN wget -O /usr/local/bin/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
-    chmod +x /usr/local/bin/wait-for-it.sh
 
-CMD ["sh", "-c", "/usr/local/bin/wait-for-it.sh database:5432 -- python manage.py runserver 0.0.0.0:8000"]
+ENTRYPOINT ["/app/api/entrypoint.sh"]
