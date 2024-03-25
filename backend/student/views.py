@@ -275,6 +275,7 @@ def student_detail(request, studentID):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(["GET"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -284,26 +285,25 @@ def getStudentTodayClass(request):
         
         try:
             if user.is_student:
-                student = Student.objects.get(user=user)
+                student = user.student
         except Student.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Student not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        current_day_index = datetime.now().weekday()
-        current_day = Subject.DAYS_OF_WEEK[current_day_index][0]
+        current_day = datetime.now().strftime('%A')  # Get the current day as a string
 
-        subject_incharge = SubjectEnroll.objects.filter(student=student, course__weekday=current_day)
+        student_classes_today = SubjectEnroll.objects.filter(student=student, course__weekday=current_day)
         
         subjects_data = []
-        for enroll in subject_incharge:
+        for enrollment in student_classes_today:
             subject_data = {
-                "subject_code": enroll.course.subject_code,
-                "subject_name": enroll.course.subject_name,
-                "subject_description": enroll.course.subject_description,
-                "weekday": enroll.course.weekday,
-                "period_start_time": enroll.course.period_start_time,
-                "period_end_time": enroll.course.period_end_time,
-                "class_room": enroll.course.class_room,
-                "class_period": enroll.course.class_period,
+                "subject_code": enrollment.course.subject_code,
+                "subject_name": enrollment.course.subject_name,
+                "subject_description": enrollment.course.subject_description,
+                "weekday": enrollment.course.weekday,
+                "period_start_time": enrollment.course.period_start_time,
+                "period_end_time": enrollment.course.period_end_time,
+                "class_room": enrollment.course.class_room,
+                "class_period": enrollment.course.class_period,
             }
             subjects_data.append(subject_data)
         

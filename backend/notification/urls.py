@@ -4,6 +4,8 @@ from .views import *
 
 
 urlpatterns = [
+    path('make_class_cancellation/', make_class_cancellation, name='make_class_cancellation'),
+    path('event_by_subject/', getEventBySubject, name='event_by_subject'),
     path('add_collaborator_to_note/<int:noteid>/', addCollaboratorToNote, name='add_collaborator_to_note'),
     path('updateNotesColor/<int:noteid>/', updateNotesColor, name='updateNotesColor'),
     path('delete_event/<int:eventID>/', deleteEvent, name='delete_event'),

@@ -1,34 +1,9 @@
 
-import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import axios from "axios";
-import moment from "moment";
-import { TiWeatherPartlySunny } from "react-icons/ti";
 import "./style/Calendar.css";
 
-// CustomToolbar component for styling the toolbar
 const CustomToolbar = ({ view, label, onView, onNavigate }) => {
     const { t } = useTranslation();
-  
-    const apiKey = "cbc5ac4d514d4c48ba271633232008";
-    const location = "Tokushima Japan";
-  
-    const [weatherData, setWeatherData] = useState({});
-  
-    useEffect(() => {
-      getweater();
-    }, []);
-  
-    const getweater = async () => {
-      try {
-        const endpoint = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=no`;
-        const response = await axios.get(endpoint);
-        setWeatherData(response.data);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0'); 

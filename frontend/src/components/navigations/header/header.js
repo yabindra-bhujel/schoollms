@@ -256,7 +256,6 @@ useEffect(() => {
             </li>
 
             <div className="profile">
-              {/* <img src={loginuserData.image} alt="" /> */}
               <ProfileMenu loginUserData={loginuserData} />
             </div>
           </div>

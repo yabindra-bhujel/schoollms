@@ -47,4 +47,15 @@ const updateEvent = async (event) => {
 
 }
 
-export { addNewEvent , deleteEvent, getEvents, updateEvent}
+const makeClassCancellation = async (event) => {
+    const endpoint = `/notification/make_class_cancellation/`;
+    try{
+        const response = await instance.put(endpoint, event);
+        return response;
+    }catch(error){
+        return error.response;
+    }
+
+}
+
+export { addNewEvent , deleteEvent, getEvents, updateEvent, makeClassCancellation}

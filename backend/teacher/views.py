@@ -213,31 +213,30 @@ def teacher_detail(request, TeacherID):
 @permission_classes([IsAuthenticated])
 def get_teacher_today_class(request):
     try:
-        try:
-            user = request.user
-            teacher = Teacher.objects.get(TeacherID=user.username)
-        except Teacher.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        user = request.user
+        if hasattr(user, 'is_teacher') and user.is_teacher:
+            teacher = user.teacher
+        else:
+            return Response({"error": "User is not a teacher"}, status=status.HTTP_403_FORBIDDEN)
         
-        current_day_index = datetime.now().weekday()
-        current_day = Subject.DAYS_OF_WEEK[current_day_index][0]
+        current_day = datetime.now().strftime('%A')
+        teacher_classes_today = Subject.objects.filter(subject_teacher=teacher, weekday=current_day)
 
-        subject_incharge = SubjectEnroll.objects.filter(teacher=teacher, course__weekday=current_day)
-        
-        subjects_data = []
-        for enroll in subject_incharge:
-            subject_data = {
-                "subject_code": enroll.course.subject_code,
-                "subject_name": enroll.course.subject_name,
-                "subject_description": enroll.course.subject_description,
-                "weekday": enroll.course.weekday,
-                "period_start_time": enroll.course.period_start_time,
-                "period_end_time": enroll.course.period_end_time,
-                "class_room": enroll.course.class_room,
-                "class_period": enroll.course.class_period,
-            }
-            subjects_data.append(subject_data)
-        
-        return Response(subjects_data, status=status.HTTP_200_OK)
+        course_data = []
+        for course in teacher_classes_today:
+            course_data.append({
+                "subject_code": course.subject_code,
+                "subject_name": course.subject_name,
+                "subject_description": course.subject_description,
+                "weekday": course.weekday,
+                "period_start_time": course.period_start_time,
+                "period_end_time": course.period_end_time,
+                "class_room": course.class_room,
+                "class_period": course.class_period,
+            })
+
+        return Response(course_data, status=status.HTTP_200_OK)
+    
     except Exception as e:
+        print(e)
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

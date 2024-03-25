@@ -1,14 +1,9 @@
 from django.db import models
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models.signals import m2m_changed
 from django.contrib.auth import get_user_model
 import requests
-import json
 from datetime import datetime
-from django.core.mail import send_mail
-from django.conf import settings
-from tenant.models import ApplicationSettings
 from courses.models import Subject
 User = get_user_model()
 
@@ -21,6 +16,7 @@ class CalenderModel(models.Model):
     start_time = models.TimeField(null=True, blank=True)
     end_time = models.TimeField(null=True, blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True, blank=True)
+    is_class_cancellation = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.title)
@@ -41,11 +37,6 @@ class Notes(models.Model):
 
     def __str__(self):
         return str(self.title)
-    
-
-
-
-
 
 class NotificationModel(models.Model):
     title = models.CharField(max_length=100)

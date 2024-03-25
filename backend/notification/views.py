@@ -83,20 +83,78 @@ def updateEvent(request):
         logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+from .Service import get_calendar_events, make_class_cancellation
+
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def getCalenderEvent(request):
     try:
-
         username = request.user.username
-        calender = CalenderModel.objects.filter(user__username=username)
-        serializer = CalendarSerializers(calender, many=True)
-        return Response(serializer.data)
+        user = User.objects.get(username=username)
+        
+        calendar_events = get_calendar_events(user)
+        if calendar_events is None:
+            return Response({'error': 'No calendar events found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = CalendarSerializers(calendar_events, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     except Exception as e:
         logger.error(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
+@api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def make_class_cancellation(request):
+    try:
+        event = request.data
+        event_id = event['id']
+        event = CalenderModel.objects.get(id=event_id)
+        today = datetime.now().date()
+        if event.start_date < today:
+            return Response({'error': '講義日が過ぎているため 休講できません。'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if event.is_class_cancellation:
+            event.is_class_cancellation = False
+            event.save()
+        else:
+            event.is_class_cancellation = True
+            event.save()
+        return Response('Class cancellation updated successfully', status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error(e)
+        return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def getEventBySubject(request):
+    try:
+        username = request.user.username
+        user = User.objects.get(username=username)
+        if user.is_student:
+            student = Student.objects.get(user=user)
+            enrolled_subjects = SubjectEnroll.objects.filter(student=student)
+            subject_ids = enrolled_subjects.values_list('course__id', flat=True)
+            calendar_events = CalenderModel.objects.filter(subject_id__in=subject_ids)
+            serializer = CalendarSerializers(calendar_events, many=True)
+            print(serializer.data)
+            return Response(serializer.data)
+        
+        if user.is_teacher:
+            teacher = Teacher.objects.get(user=user)
+            calendar_events = CalenderModel.objects.filter(subject__subject_teacher=teacher)
+            serializer = CalendarSerializers(calendar_events, many=True)
+            print(serializer.data)
+            return Response(serializer.data)
+    except Exception as e:
+        logger.error(e)
+        print(e)
+        return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])

@@ -18,15 +18,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EventIcon from "@mui/icons-material/Event";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import { addNewEvent, deleteEvent, getEvents, updateEvent } from "./CalenderService";
+import { addNewEvent, deleteEvent, getEvents, updateEvent, makeClassCancellation } from "./CalenderService";
 import CustomToolbar from "./CustomToolbar";
 import { TextField, Button } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { Switch } from '@mui/material';
+
+
 
 const DnDCalendar = withDragAndDrop(Calendar);
 const localizer = momentLocalizer(moment);
 
-// ColorSelector component
 const ColorSelector = ({ buttonColors, selectedColor, onColorChange }) => {
   return (
     <div className="color-selector">
@@ -45,7 +47,6 @@ const ColorSelector = ({ buttonColors, selectedColor, onColorChange }) => {
 const CalendarComponent = () => {
   const userData = getUserInfo();
   const user = userData.user_id;
-  // set today 's date as default view
   const currentDate = new Date();
   const currentDateFormatted = currentDate.toISOString().split('T')[0];
   const [newEvent, setNewEvent] = useState({
@@ -67,10 +68,17 @@ const CalendarComponent = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selected, setSelected] = useState();
   const { t } = useTranslation();
+  const isTeacher = userData.isTeacher;
+  const [isClassCancellation, setIsClassCancellation] = useState(false);
 
 
-  console.log("events", events);
-
+  useEffect(() => {
+    if (selectedEvent !== null) {
+      setIsClassCancellation(selectedEvent.is_class_cancellation);
+    }
+  }, [selectedEvent]);
+  
+  
 
   const [seletedColorButton, setSeletedColorButton] = useState(
     buttonColors.indexOf("#3357FF")
@@ -97,9 +105,6 @@ const CalendarComponent = () => {
     }
     setSnackbarOpen(false);
   };
-
-
-
 
   const onEventDrop = ({ event, start, end, isAllDay }) => {
     if (event.color === "red" || event.color === "green") {
@@ -136,6 +141,14 @@ const CalendarComponent = () => {
     }
   };
 
+  const handleClassCancellation = async (event) => {
+    const response = await makeClassCancellation(event);
+    if (response.status === 200) {
+      fatchData();
+      setOpenDialog(false);
+    }
+  }
+
   const onEventResize = ({ event, start, end }) => {
     const updatedEvents = events.map((evt) => {
       if (evt.id === event.id) {
@@ -144,7 +157,6 @@ const CalendarComponent = () => {
       return evt;
     });
     setEvents(updatedEvents);
-    // Optionally, update the event in your backend here
   };
   useEffect(() => {
     fatchData();
@@ -158,6 +170,9 @@ const CalendarComponent = () => {
     start_time:  event.start_time,
     end_time: event.end_time,
     color: event.color,
+    is_class_cancellation: event.is_class_cancellation,
+    subject: event.subject,
+
   }));
 
   const handleInputChange = (event) => {
@@ -248,17 +263,23 @@ const CalendarComponent = () => {
       newEvent.end_time !== ""
     );
   };
-  const eventStyleGetter = (event, start, end, isSelected) => {
-    const backgroundColor = event.color;
+
+  const eventStyleGetter = (event) => {
+    let backgroundColor = event.color;
+    if (event.is_class_cancellation) {
+      backgroundColor = "black";
+    }
     const style = {
       backgroundColor,
       borderRadius: "5px",
       color: "white",
+      padding: "5px",
     };
     return {
       style,
     };
   };
+  
 
   const handleDelete = async (event) => {
     const eventID = event.id;
@@ -279,6 +300,11 @@ const CalendarComponent = () => {
     setOpenNewEventDialog(true);
   };
 
+  const eventDateisPast = (event) => {
+    const eventDate = new Date(event.start);
+    const currentDate = new Date();
+    return eventDate < currentDate;
+  }
 
 
   return (
@@ -294,9 +320,7 @@ const CalendarComponent = () => {
           severity="warning"
           elevation={6}
           variant="filled"
-        >
-          Drag and drop is not allowed for red or green events.
-        </MuiAlert>
+        >講義の日程は変更できません。</MuiAlert>
       </Snackbar>
 
       <Dialog
@@ -307,30 +331,54 @@ const CalendarComponent = () => {
         anchorPosition={{ top: 50, left: 50 }}
         fullWidth={true}
       >
-        <DialogTitle>
-          <div className="close-delete-btn">
-            {/* Conditionally render the delete button */}
-            {selectedEvent &&
-              selectedEvent.color !== "red" &&
-              selectedEvent.color !== "green" && (
-                <IconButton
-                  aria-label="delete"
-                  onClick={() => handleDelete(selectedEvent)}
-                  style={{ marginRight: 8, color: "red" }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              )}
+<DialogTitle>
+  <div className="close-delete-btn">
+    {selectedEvent && (
+      selectedEvent.color !== "red" &&
+      selectedEvent.color !== "green" ? (
+        <IconButton
+          aria-label="delete"
+          onClick={() => handleDelete(selectedEvent)}
+          style={{ marginRight: 8, color: "red" }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      ) : (
+        isTeacher && selectedEvent.subject !== null && (
+          <div>
+            <Switch
+              disabled={eventDateisPast(selectedEvent)}
+              checked={isClassCancellation}
+              onChange={() => handleClassCancellation(selectedEvent)}
+            />
 
-            <IconButton
-              aria-label="close"
-              onClick={() => setOpenDialog(false)}
-              style={{ marginRight: 8 }}
-            >
-              <CloseIcon />
-            </IconButton>
+            <strong style={{ marginRight: 8, color:"red" }}>
+            {isClassCancellation ? "休講" : "講義"} <br />
+            </strong>
+            {eventDateisPast(selectedEvent) ? (
+              <small style={{ color: "red" }}>
+                過去の講義は休講に変更できません。
+              </small>
+            ) : (
+              <strong style={{ color: "red" }}>
+                {selectedEvent.is_class_cancellation ? "" : "休講にすると、生徒に通知が行きます。"}
+              </strong>
+            )}
           </div>
-        </DialogTitle>
+        )
+      )
+    )}
+
+    <IconButton
+      aria-label="close"
+      onClick={() => setOpenDialog(false)}
+      style={{ marginRight: 8 }}
+    >
+      <CloseIcon />
+    </IconButton>
+  </div>
+</DialogTitle>
+
 
         <DialogContent>
           {selectedEvent && (
@@ -357,7 +405,7 @@ const CalendarComponent = () => {
         open={openNewEventDialog}
         onClose={() => setOpenNewEventDialog(false)}
         fullWidth={true}
-        maxWidth="sm" // Adjust the width of the dialog if necessary
+        maxWidth="sm" 
       >
         <DialogTitle>
           <div className="close-delete-btn">
@@ -370,8 +418,8 @@ const CalendarComponent = () => {
             </IconButton>
           </div>
         </DialogTitle>
-        <DialogContent dividers style={{ minHeight: 250 }}> {/* Set the minimum height */}
-          <div className="input-area" style={{ padding: "16px" }}> {/* Add padding for better spacing */}
+        <DialogContent dividers style={{ minHeight: 250 }}> 
+          <div className="input-area" style={{ padding: "16px" }}> 
             <ColorSelector
               buttonColors={buttonColors}
               selectedColor={seletedColorButton}
@@ -429,7 +477,7 @@ const CalendarComponent = () => {
               fullWidth
             />
           </div>
-          <div className="add-event-btn" style={{ textAlign: "right", padding: "16px" }}> {/* Align button to the right and add padding */}
+          <div className="add-event-btn" style={{ textAlign: "right", padding: "16px" }}>
             <Button
               variant="contained"
               color="primary"
