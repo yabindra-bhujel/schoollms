@@ -18,6 +18,7 @@ if os.path.isfile(dotenv_file):
 
 SECRET_KEY = os.environ['SECRET_KEY'] 
 
+
 CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
