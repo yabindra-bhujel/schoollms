@@ -16,6 +16,8 @@ nav {
   display: flex;
   justify-content: space-between;
   position: relative;
+  transition: width 0.3s ease; /* Add smooth transition */
+
 
   .user_info_side {
     margin-left: 100px;
@@ -104,6 +106,8 @@ nav {
   z-index: 99;
   overflow-y: auto;
   height: 100vh;
+  transition: width 0.3s ease; /* Add smooth transition */
+
 
   ul {
     list-style-type: none;
