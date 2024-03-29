@@ -7,7 +7,7 @@ import getUserInfo from "../../api/user/userdata";
 import instance from "../../api/axios";
 import { useWebSocket } from "../../WebSocketContext";
 
-const Chat = () => {
+const Chat = ({sidebarWidth}) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const userId = getUserInfo().username;
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -94,10 +94,10 @@ const Chat = () => {
 
   return (
     <Layout>
-      <div className="chat">
-
       <div className="chat__system">
-        <div className="chat__list">
+        <div className="chat__list" style={{ 
+          flex: sidebarWidth ? "25%" : "20%"
+          }}>
           <ChatList
             unreadMessages={unreadMessages}
             socket={socket}
@@ -112,7 +112,9 @@ const Chat = () => {
             get_Group_data = {get_Group_data}
           />
         </div>
-        <div className="chat__details">
+        <div className="chat__details" style={{ 
+          flex: sidebarWidth ? "75%" : "90%" 
+          }}>
           <ChatDetils
             selectedChat={selectedUser}
             socket={socket}
@@ -123,8 +125,6 @@ const Chat = () => {
             onlineUsers = {onlineUsers}
           />
         </div>
-      </div>
-
       </div>
     </Layout>
   );

@@ -1,20 +1,21 @@
 .chat__system {
-    display: flex;
-    position: fixed;
-    max-width: 100%;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  transition: width 0.3s ease; /* Add smooth transition */
 }
 
 .chat__list {
-    height: calc(100vh - 72px);
-    width: 25%;
-    border-right: solid 2px gray;
+  height: calc(100% - 150px);
+  border-right: solid 2px gray;
+  overflow-y: scroll;
+  transition: width 0.3s ease; /* Add smooth transition */
 }
 
 .chat__details {
-    width: 75%;
-    margin-right: 88px;
-    height: calc(100vh - 70px); /* Subtract the fixed header height from the viewport height */
+  overflow: hidden;
+  top: 70px;
+  height: calc(100% - 140px);
+  transition: width 0.3s ease; /* Add smooth transition */
 }

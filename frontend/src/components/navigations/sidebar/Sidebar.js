@@ -237,7 +237,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                     <span>
                       <MdCastForEducation />
                     </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Learn More..</span></div>
+                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>LearnMore</span></div>
                 </NavLink>
               </li>
 

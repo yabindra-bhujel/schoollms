@@ -3,8 +3,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
   height: 820px;
+  padding: 10px;
 }
 .not__seleted_chat .not_select {
   font-size: 30px;
@@ -45,8 +45,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 .do__chat__left .profile__pic .status-circle {
   width: 15px;
@@ -106,8 +105,9 @@
 
 .messages__container {
   height: calc(100vh - 290px);
+  width: 100%;
   overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-x: scroll;
 }
 
 .chat_body {
@@ -167,8 +167,7 @@
 .message_image img {
   height: 100%;
   width: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   border-radius: 150px;
 }
 
@@ -268,4 +267,4 @@
 }
 .write_message .write__message__button .include_file {
   margin-left: 10px;
-}/*# sourceMappingURL=chatdetailse.css.map */
+}
