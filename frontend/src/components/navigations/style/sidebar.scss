@@ -148,6 +148,9 @@ nav {
             }
           }
         }
+        &:last-child {
+          margin-bottom: 5px;
+        }
       }
       .active {
         background-color: $main-background-color;

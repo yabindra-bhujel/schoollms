@@ -95,7 +95,7 @@
   margin-bottom: 100px;
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
 }
 .assigment-section .assigment-body .update-btn button {
   margin-top: 20px;
