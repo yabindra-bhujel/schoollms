@@ -39,9 +39,9 @@ const CustomToolbar = ({ view, label, onView, onNavigate }) => {
   return (
     <div className="custom-toolbar">
       <div className="toolbar-navigation">
-        <button onClick={() => onNavigate("PREV")}>Previous</button>
-        <button onClick={() => onNavigate("TODAY")}>Today</button>
-        <button onClick={() => onNavigate("NEXT")}>Next</button>
+        <button onClick={() => onNavigate("PREV")}>t{'Previous'}</button>
+        <button onClick={() => onNavigate("TODAY")}>t{'Today'}</button>
+        <button onClick={() => onNavigate("NEXT")}>t{'Next'}</button>
         <div className="toolbar-label">{label}</div>
       </div>
 

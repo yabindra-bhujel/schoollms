@@ -8,6 +8,13 @@
     "week": "週",
     "day": "日",
     "event list": "イベントリスト",
+    "Monday" : "月曜日",
+    "Tuesday" : "火曜日",
+    "Wednesday":  "水曜日",
+    "Thursday" : "木曜日",
+    "Friday": "金曜日",
+    "Saturday": "土曜日",
+    "Sunday": "日曜日",
 
     "exam title": "試験のタイトル",
     "status": "状態",
@@ -17,7 +24,6 @@
     "not have exam": "この科目の試験はありません",
 
     "task": "課題",
-    "status": "状態",
     "submitted": "提出済み",
     "start date": "開始日",
     "deadline": "締め切り",
@@ -37,10 +43,7 @@
 
 
     "assignment": "課題",
-    "exam": "テースト",
-    "attendance": "出席",
     "course materials": "コースコンテンツ",
-    "survey": "アンケート",
 
     "examInfo": [
       "試験中にブラウザ画面を変更することはできません。",
@@ -86,7 +89,6 @@
     "articla_cancel": "キャンセル",
 
     "classSchedule": "クラススケジュール",
-    "time": "時間",
     "weekDay": ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
 
     "assignmentTitle": "課題タイトル",
@@ -101,7 +103,6 @@
     "studentId": "学生番号",
     "assigemnttabletitile": "課題提出一覧",
     "submissionDate": "提出日時",
-    "status": "状態",
     "grade": "評価点",
     "submittedFileHeader": "提出済みファイル",
     "assignmentBody": "課題内容変更",
@@ -175,7 +176,6 @@
   "drag": "ファイルをドラッグ＆ドロップするか、クリックしてファイルを選択",
   "maxFile": "最大ファイルサイズ：10MB",
   "save": "保存",
-  "submit": "提出",
   "notsubmit": "未提出",
   "subject": "科目",
   "date": "日付",

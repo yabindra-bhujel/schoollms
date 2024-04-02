@@ -124,6 +124,9 @@ nav .profile img {
     display: none;
   }
 }
+.sidebar ul li a:last-child {
+  margin-bottom: 5px;
+}
 .sidebar ul li .active {
   background-color: #2a71b9;
   color: white;

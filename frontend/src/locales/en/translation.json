@@ -8,16 +8,21 @@
     "week": "Week",
     "day": "Day",
     "event list": "Event List",
+    
+    "Monday" : "Monday",
+    "Tuesday" : "Tuesday",
+    "Wednesday":  "Wednesday",
+    "Thursday" : "Thursday",
+    "Friday": "Friday",
+    "Saturday": "Saturday",
+    "Sunday": "Sunday",
 
     "exam title": "Test Title",
-    "status": "Status",
-    "time": "Time",
     "start time": "Start Time",
     "end time": "End Time",
     "not have exam": "Not have any exam for this subject.",
 
     "task": "Assigment",
-    "status": "Status",
     "submitted": "Submitted",
     "start date": "Start Date",
     "deadline": "Deadline",
@@ -35,10 +40,7 @@
     "announcement":"Announcement",
 
     "assignment": "Assigment",
-    "exam": "Exam",
-    "attendance": "Attendance",
     "course materials": "Materials",
-    "survey": "Survey",
     "examInfo": [
       "You cannot change the browser screen during the exam.",
       "Make sure to read all the instructions carefully.",
@@ -185,7 +187,6 @@
   "drag": "Drag & drop or click to choose file",
   "maxFile": "Max file size: 10MB",
   "save": "Save",
-  "submit": "Submitted",
   "notsubmit": "Not Submitted",
   "subject": "Subject",
   "date": "Date",
