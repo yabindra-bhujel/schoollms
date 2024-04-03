@@ -8,22 +8,6 @@ services:
       target: api
     ports:
       - "8001:8001"
-    # command: gunicorn university.wsgi:application --bind 0.0.0.0:8001
     command: python manage.py runserver 0.0.0.0:8001
     volumes:
       - ./api:/app/api
-    # depends_on:
-    #   - db
-
-  # db:
-  #   image: postgres:16
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data/
-  #   environment:
-  #     - POSTGRES_USER=root
-  #     - POSTGRES_PASSWORD=root
-  #     - POSTGRES_DB=lmsdatabase
-
-      
-# volumes:
-#   postgres_data:
