@@ -1,8 +1,8 @@
 from celery import shared_task
 import logging
 from datetime import datetime, timedelta
-from common.models import CalendarEvent
 from courses.subjects.models import Subject
+from .models import CalendarEvent
 
 logger = logging.getLogger(__name__)
 

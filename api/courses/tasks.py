@@ -1,7 +1,7 @@
 from datetime import timedelta
 from celery import shared_task
 from django.utils import timezone
-from courses.subjects.models import Subject, SubjectRegistration, Assignment
+from .subjects.models import  SubjectRegistration, Assignment
 import logging
 from django.core.mail import send_mail
 from django.conf import settings
@@ -71,7 +71,7 @@ def send_passed_deadline_email():
                 
                 send_mail(
                     subject='期限切れの課題',
-                    message=f' "{assignment.assignment_title}" の提出期限が切れました。\n\n 合計{assignment.submission_count} 人の学生が提出しました。詳しくは {settings.FRONTEND_URL} で確認お願いします。 \n\n四国大学',
+                    message=f' "{assignment.title}" の提出期限が切れました。\n\n 合計{assignment.submission_count} 人の学生が提出しました。詳しくは {settings.FRONTEND_URL} で確認お願いします。 \n\n四国大学',
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[teacher_email],
                     fail_silently=False,
@@ -81,6 +81,6 @@ def send_passed_deadline_email():
                 assignment.deadline_email_sent = True
                 assignment.save()
                 
-                logger.info(f"Passed deadline email sent to teacher {teacher_email} for assignment: {assignment.assignment_title}")
+                logger.info(f"Passed deadline email sent to teacher {teacher_email} for assignment: {assignment.title}")
     except Exception as e:
         logger.error(f"An error occurred while sending passed deadline emails: {e}")
