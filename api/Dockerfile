@@ -10,12 +10,5 @@ RUN pip install --no-cache-dir --index-url=https://pypi.org/simple/ -r requireme
 
 COPY . .
 
-COPY entrypoint.sh .
-RUN sed -i 's/\r$//g' entrypoint.sh
-
-RUN chmod +x entrypoint.sh
-
-CMD ["celery", "-A", "university", "worker", "--loglevel=info"]
-
-
-ENTRYPOINT ["/app/api/entrypoint.sh"]
+# Collect static files
+RUN python manage.py collectstatic --no-input --clear
