@@ -17,12 +17,9 @@ cd api
 
 
 echo Creating virtual environment
-# if already exists, delete it
-if exist venv (
-    rmdir /s /q venv
-)
-python -m venv venv
-call venv\Scripts\activate
+
+python -m venv lms
+call lms\Scripts\activate
 pip install -r requirements.txt
 
 echo Starting Django server
