@@ -74,7 +74,7 @@ const StudentTableComponent = () => {
         />
       )}
       <div>
-        <div className="header">
+        <div className="student-header">
           <h1>{t("classSchedule")}</h1>
         </div>
         <div className="container-class">

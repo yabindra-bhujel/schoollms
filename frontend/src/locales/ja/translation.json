@@ -1,5 +1,8 @@
 {
   "translation": {
+
+    "Japanese": "日本語",
+    "notices": "お知らせ",
     "event": "イベント",
     "today event": "今日のイベント",
     "dont miss": "スケジュールされたイベントを見逃さないでください",
@@ -141,10 +144,6 @@
   "creeateExma": "試験作成",
   "createQuestion": "問題作成",
   "finish": "終了"
-  
-  
-
-
 },
 
 "examD":{
@@ -169,6 +168,17 @@
   "takeTime": "受験時間",
   "submissionFile": "提出ファイル"
 },
+
+"studentInfo": {
+  "idNumber": "ID 番号",
+  "studentName": "名前",
+  "mail": "メール",
+  "gender": "性別",
+  "phone": "電話番号",
+  "department": "学部"
+},
+
+
 "studentAssigemnt": {
   "fileerror": "ファイルのサイズは10 MBまでしかアップロードできません",
   "submit": "提出",
@@ -201,7 +211,12 @@
   "unexpectedError": "予期しないエラーが発生しました。",
   "noResponse": "サーバーからの応答がありません。",
   "errorSendingRequest": "リクエストの送信中にエラーが発生しました。",
-  "send": "送信"
+  "send": "送信",
+  "setInfoOk": "ユーザー情報を更新しました",
+  "err": "何か問題が発生しました",
+  "setInfoErr": "ユーザー情報の更新中に問題が発生しました。後でもう一度お試しください。または、サービスプロバイダに連絡してください。",
+  "imgUpdated": "画像を正常にアップロードしました !",
+  "imgUpdateErr":  "画像のアップロード中に問題が発生しました!!"
 
 },
 "exma":{
@@ -235,11 +250,62 @@
   "fileUploadError": "このタイプのファイルはアップロードできません。",
   "cancelButton": "キャンセル",
   "uploadButton": "アップロード"
+},
+"sidebar": {
+  "dashboard":"ダッシュボード",
+  "courses":"教科",
+  "groups":"グループ",
+  "students":"生徒",
+  "files":"ファイル",
+  "calendar":"カレンダー",
+  "settings":"設定",
+  "logout":"ログアウト",
+  "assigment": "課題",
+  "class": "クラス",
+  "note": "ノート",
+  "chat": "チャット",
+  "learnmore": "もっと学習"
+},
+"header": {
+
+  "profile": "プロフィル",
+  "settings":"設定",
+  "logout":  "ログアウト",
+  "noNotice": "通知なし",
+  "welcome": "ようこそ"
+},
+
+"settings": {
+
+  "title": "設定",
+  "attention": "設定と環境設定を管理しましょう。",
+  "setProfile": "プロフィル設定",
+  "securities":  "セキュリティとその他",
+  "individual": "個人情報",
+  "imgInfo": "PNG、JPG、JPEGの画像形式がサポート（10MB未満）。",
+  "userName": "ユーザ名",
+  "firstName": "姓",
+  "lastName": "名",
+  "email": "メールアドレス",
+  "normalInfo": "一般の情報",
+  "detailAdd": "住所の詳細",
+  "phone":  "電話番号",
+  "address": "住所",
+  "district":  "市区町村",
+  "prefect" : "都道府県",
+  "postCode":  "郵便番号",
+  "country": "国",
+  "update": "更新"
+},
+
+"weekdays": {
+  "mon": "月曜日",
+  "tue": "火曜日",
+  "wed": "水曜日",
+  "thu": "木曜日",
+  "fri": "金曜日",
+  "sat": "土曜日",
+  "sun": "日曜日"
 }
-
-
-
-
-
   }
 }

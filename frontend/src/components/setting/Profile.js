@@ -6,6 +6,8 @@ import { getUserProfile, uploadImage, getUserProfileInfo } from "./SettingServic
 import getUserInfo from "../../api/user/userdata";
 import { Snackbar } from "@mui/material";
 import UserInfoForm from "./UserInfoForm";
+import { useTranslation } from "react-i18next";
+
 
 const Profile = () => {
   const [image, setImage] = useState("");
@@ -16,7 +18,7 @@ const Profile = () => {
   const isTeacher = getUserInfo().isTeacher;
   const [snackbaropen, setSnackbarOpen] = useState(false);
   const [message, setMessage] = useState("");
-
+  const { t } = useTranslation();
 
   const handleClose = () => {
     setSnackbarOpen(false);
@@ -31,6 +33,9 @@ const Profile = () => {
       }
     }
   };
+  const imgUpdated = t("messages.imgUpdated");
+  const imgUpdateErr = t("messages.imgUpdateErr");
+  const err = t("messages.err");
 
   const handleImageUpload = (file) => {
     const formData = new FormData();
@@ -40,13 +45,13 @@ const Profile = () => {
       .then((response) => {
         imageRef.current.value = null;
         setImage("");
-        setMessage("画像を正常にアップロードしました");
+        setMessage(imgUpdated);
         setSnackbarOpen(true);
         fetchData();
 
       })
       .catch((error) => {
-        setMessage("画像のアップロード中に問題が発生しました");
+        setMessage(imgUpdateErr);
         setSnackbarOpen(true);
       });
   };
@@ -56,7 +61,7 @@ const Profile = () => {
       const response = await getUserProfile();
       setProfile(response.data);
     } catch (error) {
-      setMessage("何か問題が発生しました");
+      setMessage(err);
       setSnackbarOpen(true);
     }
   };
@@ -66,7 +71,7 @@ const Profile = () => {
       const response = await getUserProfileInfo();
       setUserData(response.data);
     } catch (error) {
-      setMessage("何か問題が発生しました");
+      setMessage(err);
       setSnackbarOpen(true);
     }
   };
@@ -86,7 +91,7 @@ const Profile = () => {
       />
       <div className="setting-profile">
         <div className="profile-header">
-          <Typography variant="h4">個人情報</Typography>
+          <Typography variant="h4">{t("settings.individual")}</Typography>
         </div>
 
         <div className="profile-image-name">
@@ -122,7 +127,7 @@ const Profile = () => {
 
             <Typography variant="body2" style={{ color: 'red', fontWeight: 'bold' }}>
               <small>
-                PNG、JPG、JPEGの画像形式がサポート（10MB未満）。
+                {t("settings.imgInfo")}
               </small>
             </Typography>
           </div>

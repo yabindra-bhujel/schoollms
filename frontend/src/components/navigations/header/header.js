@@ -188,6 +188,8 @@ useEffect(() => {
       console.log("error", e);
     }
   };
+  const { t } = useTranslation();
+
 
 
   return (
@@ -206,15 +208,15 @@ useEffect(() => {
         <nav>
           <div className="user_info_side">
 
-            <p> CampusFlow  Welcome, {fullname}!</p>
+            <p> CampusFlow  {t("header.welcome")}, {fullname}!</p>
           </div>
           <div className="quick_acess">
             <li>
               <select
                 value={selectedLanguage}
                 onChange={(e) => changeLanguage(e.target.value)}>
-                <option value="en">English</option>
-                <option value="ja">Japanese</option>
+                <option value="en">{t("English")}</option>
+                <option value="ja">{t("Japanese")}</option>
               </select>
             </li>
 
@@ -248,7 +250,7 @@ useEffect(() => {
 
                 <Box p={2}>
                   <Typography variant="h6" color="inherit">
-                    Notifications
+                    {t("notices")}
                   </Typography>
                   <Notifications notifications={notify} />
                 </Box>

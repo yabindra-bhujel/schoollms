@@ -101,8 +101,8 @@ const AddStudent = () => {
         e.preventDefault();
         if (validateForm()) {
          const response = await addStudent(studentData);
-            console.log(response);
-            if (response.status === 200) {
+         console.log("response",response);
+            if (response.status === 201) {
               alert('Student added successfully');
             } else {
               alert('An error occurred. Please try again.');

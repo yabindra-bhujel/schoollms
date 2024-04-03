@@ -49,7 +49,7 @@ const addStudent = async(data) =>{
 
     try{
         const response = await instance.post(endpoint, data)
-        return response.data
+        return response
 
     }
     catch(err){

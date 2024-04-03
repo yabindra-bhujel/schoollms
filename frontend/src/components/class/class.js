@@ -4,6 +4,8 @@ import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
 import { Link } from "react-router-dom";
 import "./style/class.css";
+import { useTranslation } from "react-i18next";
+
 
 const Class = () => {
   const userData = getUserInfo();
@@ -27,14 +29,20 @@ const Class = () => {
     } catch (error) {
     }
   };
-
+  const  { t } = useTranslation();
+  const mon = t("weekdays.mon");
+  const tue = t("weekdays.tue");
+  const wed = t("weekdays.wed");
+  const thu = t("weekdays.thu");
+  const fri = t("weekdays.fri");
+  const sat = t("weekdays.sat");
   const weekdays = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    mon,
+    tue,
+    wed,
+    thu,
+    fri,
+    sat,
     ];
   const classTime = [
     { id: 1, time: "9:00-10:30" },
@@ -52,7 +60,7 @@ const Class = () => {
           <table>
             <thead>
               <tr>
-                <th>時間</th>
+                <th>{t('time')}</th>
                 {weekdays.map((weekday) => (
                   <th key={weekday}>{weekday}</th>
                 ))}
