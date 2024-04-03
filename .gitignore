@@ -21,8 +21,6 @@ rad.json
 #Test results file
 TestResults.xml
 
-venv/
-
 *.db
 
 # evn
