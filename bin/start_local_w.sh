@@ -1,33 +1,36 @@
-#!/bin/bash
-echo "Stopping processes on ports 3000 and 8000"
+@echo off
+echo Stopping processes on ports 3000 and 8000
 
-kill_processes_on_port() {
-    port=$1
-    echo "Killing processes on port $port"
-    pid=$(lsof -t -i:$port)
-    if [ -n "$pid" ]; then
-        kill -9 $pid
-    fi
-}
-kill_processes_on_port 3000
-kill_processes_on_port 8000
-kill_processes_on_port 3001
+:kill_processes_on_port
+set "port=%~1"
+echo Killing processes on port %port%
+for /f "tokens=2" %%a in ('netstat -aon ^| findstr /r /c:"%port%"') do (
+    taskkill /f /pid %%a
+)
 
-echo "Processes on ports 3000 and 8000 stopped"
-echo "Starting local development environment"
+echo Processes on ports 3000 and 8000 stopped
+echo Starting local development environment
 
 cd frontend
 npm install
 
-npm start &
+start npm start
 
-echo "Local development environment started"
+echo Local development environment started
 
-cd ../api
+cd ..
 
-pip install -r requirements.txt
+cd api
 
-echo "Starting Django server"
-python3 manage.py runserver
+if exist "venv" (
+    echo Activating existing virtual environment
+    call venv\Scripts\activate
+) else (
+    echo Creating virtual environment
+    python -m venv venv
+    call venv\Scripts\activate
+    pip install -r requirements.txt
+)
 
-
+echo Starting Django server
+python manage.py runserver
