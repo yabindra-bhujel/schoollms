@@ -3,7 +3,7 @@ version: '3.8'
 services:
   api:
     build:
-      context: ./backend
+      context: ./api
       dockerfile: Dockerfile
       target: api
     ports:
@@ -11,62 +11,19 @@ services:
     # command: gunicorn university.wsgi:application --bind 0.0.0.0:8001
     command: python manage.py runserver 0.0.0.0:8001
     volumes:
-      - ./backend:/app/api
-    depends_on:
-      - db
-      - redis
-      - celery
-  celery:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      target: api
-    volumes:
-      - ./backend:/app/api
-    depends_on:
-      - db
-      - redis
-    command: celery -A university worker --loglevel=info
-  celery-beat:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      target: api
-    volumes:
-      - ./backend:/app/api
-    depends_on:
-      - db
-      - redis
-      - celery
-    command: celery -A university beat --loglevel=info
-    
-  db:
-    image: postgres:16
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=lmsdatabase
-  
-  redis:
-    image: redis:3.0-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+      - ./api:/app/api
+    # depends_on:
+    #   - db
 
-  client:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app/client
-    depends_on:
-      - api
+  # db:
+  #   image: postgres:16
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data/
+  #   environment:
+  #     - POSTGRES_USER=root
+  #     - POSTGRES_PASSWORD=root
+  #     - POSTGRES_DB=lmsdatabase
+
       
-volumes:
-  postgres_data:
-  redis_data:
+# volumes:
+#   postgres_data:
