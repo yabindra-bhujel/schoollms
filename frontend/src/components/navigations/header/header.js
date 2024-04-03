@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import {useLocation } from "react-router-dom";
 import "../style/sidebar.css";
 import jwtDecode from "jwt-decode";
 import instance from "../../../api/axios";
@@ -30,10 +30,6 @@ function Header() {
   const [notify, setNotify] = useState([]);
   const hasUnread = notify.some((item) => !item.is_read);
   const { socket } = useWebSocket();
-  const currentLocation = useLocation();
-  const [universityName, setuniversityName] = useState("");
-  const is_student = decoded.is_student;
-  const is_teacher = decoded.is_teacher;
 
   const [snackbarState, setSnackbarState] = useState({
     isOpen: false,
@@ -64,21 +60,6 @@ const toggleSidebar = () => {
   });
 };
 
-useEffect(() => {
-  get_Group_data();
-}, []);
-
-
-  const get_Group_data = async () => {
-    try {
-      const endpoint = `/realtimeapi/get_group_list/${userId}`;
-      const response = await instance.get(endpoint);
-      const groupName = response.data.groups.map(group => group.name); // Extracting group names
-      setGroupName(groupName); // Setting the groupName state
-    } catch (e) {
-      console.log("error");
-    }
-  };
 
 
   useEffect(() => {
@@ -107,7 +88,7 @@ useEffect(() => {
   }, [socket, sidebarWidth]);
 
   useEffect(() => {
-    getNotificationDataFromServer();
+    getNotification();
   }, []);
 
   const totalunreadnotify = notify.filter((item) => item.is_read === false)
@@ -117,9 +98,9 @@ useEffect(() => {
     setSnackbarState({ ...snackbarState, isOpen: false });
   };
 
-  const getNotificationDataFromServer = async () => {
+  const getNotification = async () => {
     try {
-      const endpoint = `/notification/get_notification_by_user/${username}/`;
+      const endpoint = `/notifications/notification_by_user/`;
       const response = await instance.get(endpoint);
       setNotify(response.data);
     } catch (e) {
@@ -129,10 +110,10 @@ useEffect(() => {
 
   const handleUpdate = async () => {
     try {
-      const endpoint = `/notification/update_notification/${username}/`;
+      const endpoint = `notifications/read/`;
       const response = await instance.put(endpoint);
       if (response.status === 200) {
-        getNotificationDataFromServer();
+        getNotification();
       }
     } catch (e) {
       console.log("error", e);
@@ -157,35 +138,16 @@ useEffect(() => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-
-
-  const handleLogout = async () => {
-    try {
-      const endpoint = "/logout/";
-      const userData = JSON.parse(localStorage.getItem("userData"));
-      if (userData && userData.refresh) {
-        const response = await instance.post(endpoint, { "refresh": userData.refresh });
-        if (response.status === 200) {
-          localStorage.removeItem("userData");
-          window.location.href = "/login";
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   useEffect(() => {
     getLoginUserData();
   }, []);
 
   const getLoginUserData = async () => {
     try {
-      const endpoint = `/get_user_profile/`;
+      const endpoint = `users/profile/`;
       const response = await instance.get(endpoint);
       setLoginuserData(response.data);
     } catch (e) {
-      console.log("error", e);
     }
   };
 

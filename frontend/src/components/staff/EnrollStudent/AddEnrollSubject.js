@@ -7,8 +7,6 @@ import { AdminCourseList } from "../Course/CourseService";
 import { StudentList } from "../Student/StudentService";
 import { addEnrollSubject } from "./EnrollService";
 
-
-
 const AddEnrollSubject = () => {
     const [teacherList, setTeacherList] = useState([]);
     const [departmentList, setDepartmentList] = useState([]);
@@ -17,13 +15,9 @@ const AddEnrollSubject = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
 
-
     const handleSnackbarClose = () => {
         setOpenSnackbar(false);
     };
-
-    
-
 
     const handleSelectStudent = (student) => {
         if (!selectedStudents.includes(student)) {
@@ -36,9 +30,6 @@ const AddEnrollSubject = () => {
         setSelectedStudents(selectedStudents.filter(s => s !== student));
         setStudentList([...studentList, student]);
     };
-
-
-
 
     const [enrollSubjectData, setEnrollSubjectData] = useState({
         subject_name: '',
@@ -55,7 +46,7 @@ const AddEnrollSubject = () => {
             try {
                 const teacherresponse = await getTeacherList();
                 const full_name = teacherresponse.map((teacher) => {
-                    return teacher.first_name + " " + teacher.last_name + " " + teacher.TeacherID;
+                    return teacher.first_name + " " + teacher.last_name + " " + teacher.teacher_id;
                 }
                 );
                 setTeacherList(full_name);
@@ -68,10 +59,10 @@ const AddEnrollSubject = () => {
                 setDepartmentList(department_name);
 
 
-                const response = await StudentList("admin");
+                const response = await StudentList();
                 const student = response.data;
                 const student_name_id = student.map((student) =>
-                 student.first_name + " " + student.last_name  + " " + student.studentID);
+                 student.first_name + " " + student.last_name  + " " + student.student_id);
                 setStudentList(student_name_id);
                 
                
@@ -93,7 +84,6 @@ const AddEnrollSubject = () => {
 
     }
 
-
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -102,11 +92,6 @@ const AddEnrollSubject = () => {
             subject_teacher: enrollSubjectData.subject_teacher,
             student: selectedStudents
         }
-
-
-
-
-
 
 
         // Validation
@@ -132,7 +117,7 @@ const AddEnrollSubject = () => {
 
         try {
             if(!hasError) {
-            const response = await addEnrollSubject("admin", data);
+            const response = await addEnrollSubject(data);
             }
         } catch (error) {
             console.log(error);

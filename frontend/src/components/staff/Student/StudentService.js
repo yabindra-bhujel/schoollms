@@ -1,9 +1,9 @@
 import instance from "../../../api/axios";
-import React, { useEffect, useState } from "react";
 
+const baseURL = 'admin/students/'
 
 const deleteStudent = async (studentID) =>{
-    const endpoint = `/student/delete_student/${studentID}/`
+    const endpoint = `${baseURL}${studentID}/`
 
     try{
         const response = await instance.delete(endpoint)
@@ -15,9 +15,8 @@ const deleteStudent = async (studentID) =>{
     }
 }
 
-
 const StudentList = async () =>{
-    const endpoint = `/student/list`
+    const endpoint = `${baseURL}`
     try{
         const response = await instance.get(endpoint)
         return response;
@@ -28,9 +27,8 @@ const StudentList = async () =>{
 
 }
 
-
 const getDepartementList = async() =>{
-    const endpoint = `/course/department_list/`
+  const endpoint = 'admin/departments/'
 
     try{
         const response = await instance.get(endpoint)
@@ -45,12 +43,11 @@ const getDepartementList = async() =>{
 
 
 const addStudent = async(data) =>{
-    const endpoint = `/student/add/`
+    const endpoint = `${baseURL}`
 
     try{
         const response = await instance.post(endpoint, data)
-        return response.data
-
+        return response
     }
     catch(err){
         throw err
@@ -59,7 +56,7 @@ const addStudent = async(data) =>{
 
 
 const addStudentFile = async(data) =>{
-    const endpoint = `/student/add_student_by_csv_file/`
+    const endpoint = `${baseURL}add-student-from-file/`
 
     try{
         const response = await instance.post(endpoint, data)

@@ -62,8 +62,9 @@ const ClassDetails = () => {
     try {
       setIsLoaded(true);
       const response = await getCourseDetails(subject_code);
+      console.log(response.data[1]);
       setIsLoaded(false);
-      setSubject(response.data);
+      setSubject(response.data[1]);
     } catch {
       setMessage("データの取得に失敗しました 。");
       setOpen(true);
@@ -116,13 +117,13 @@ const ClassDetails = () => {
             </Link>
           </div>
 
-          <div className="subject-info">
-            {subject.length > 0 ? (
+          <div className="other-onfo">
+            {subject.subject_name ? (
               <>
-                <h3>{subject[0].subject_name}</h3>
+                <h3>{subject.subject_name}</h3>
                 <p>
-                  {subject[0].weekday} {subject[0].start_time} -{" "}
-                  {subject[0].end_time} {subject[0].class_room}
+                  {subject.weekday} {subject.period_start_time} -{" "}
+                  {subject.period_end_time} {subject.class_room}
                 </p>
               </>
             ) : (
@@ -134,7 +135,6 @@ const ClassDetails = () => {
                 message="データの取得中"
               />
               </>
-              
             )}
           </div>
         </div>
@@ -289,7 +289,7 @@ const ClassDetails = () => {
           )}
           {selectedButton === "course_contant" && (
             <div className="main-element">
-              <CourseContant fetchData={fetchData}  setMessage={setMessage} setOpen={setOpen} />
+              <CourseContant setMessage={setMessage} setOpen={setOpen} />
             </div>
           )}
 

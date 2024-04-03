@@ -28,15 +28,15 @@ const AssignmentList = () => {
 
   const getAssignmentList = async () => {
     try {
-      const endpoint = `/course/${subject_code}/`;
+      const endpoint = `assignments/assignment-list/${subject_code}/`;
       setIsLoading(true);
       const response = await instance.get(endpoint);
-      if (response.data[0] && response.data[0].assignments) {
-        const assignments = response.data[0].assignments;
+      if (response.data && response.data.length > 0) {
+        const assignments = response.data;
         setAssignmentList(assignments);
         const studentSet = new Set();
         assignments.forEach(assignment => {
-          assignment.student.forEach(studentId => studentSet.add(studentId));
+          assignment.students.forEach(studentId => studentSet.add(studentId));
         });
         const totalUniqueStudents = studentSet.size;
         setTotalStudents(totalUniqueStudents);
@@ -60,17 +60,15 @@ const AssignmentList = () => {
   const handleVisibilityChange = async (assignmentId, newValue) => {
     try {
       const assignment = assignmentList.find(assignment => assignment.id === assignmentId);
-      const deadline = new Date(assignment.assignment_deadline);
+      const deadline = new Date(assignment.deadline);
       const currentDate = new Date();
-      // 課題の締め切りが過ぎていないかチェックする
       if (currentDate <= deadline) {
-        setError("課題の締め切りがまだ過ぎていません。表示を変更できません。");
+        setError("The assignment deadline has not yet passed. You cannot change visibility.");
         setOpen(true);
-        setTimeout(() =>{
+        setTimeout(() => {
           setOpen(false);
-          setError("")
-        }, 5000)
-
+          setError("");
+        }, 5000);
         return;
       }
   
@@ -81,27 +79,23 @@ const AssignmentList = () => {
         return assignment;
       });
       setAssignmentList(updatedAssignments);
-      // 課題の表示を更新するためのPATCHリクエストを送信
-      const endpoint = `course/update_assignment_visibility/${assignmentId}/`;
+      const endpoint = `assignments/update-assignment-viibility/${assignmentId}/`;
       await instance.put(endpoint, { is_visible: newValue });
     } catch (error) {
-      setError("課題の表示を更新する際にエラーが発生しました。");
+      setError("An error occurred while updating assignment visibility.");
       setOpen(true);
-      setTimeout(() =>{
+      setTimeout(() => {
         setOpen(false);
-        setError("")
-      }, 5000)
+        setError("");
+      }, 5000);
     }
   };
-  
 
   const handleCloseSnackbar = () => {
     setError(null);
   };
 
-  if (isLoading) return <Snackbar open={true} message="データの取得中" />;
-
-
+  if (isLoading) return <Snackbar open={true} message="Fetching data..." />;
 
   return (
     <div>
@@ -119,7 +113,7 @@ const AssignmentList = () => {
               <TableCell><Typography  style={{ fontSize: '25px', fontWeight: 'bold' }}>{t("submitted")}</Typography></TableCell>
               <TableCell><Typography  style={{ fontSize: '25px', fontWeight: 'bold' }}>{t("start date")}</Typography></TableCell>
               <TableCell><Typography  style={{ fontSize: '25px', fontWeight: 'bold' }}>{t("deadline")}</Typography></TableCell>
-              <TableCell><Typography  style={{ fontSize: '25px', fontWeight: 'bold' }}>表示/非表示</Typography></TableCell>
+              <TableCell><Typography  style={{ fontSize: '25px', fontWeight: 'bold' }}>Visibility</Typography></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -127,22 +121,21 @@ const AssignmentList = () => {
               <TableRow key={assignment.id}>
                 <TableCell>
                   <Link to={`/assignment/${assignment.id}`} style={{ textDecoration: 'none', color: 'black' }}>
-                    <Typography variant="body1" style={{ fontSize: '25px' }}>{assignment.assignment_title}</Typography>
+                    <Typography variant="body1" style={{ fontSize: '25px' }}>{assignment.title}</Typography>
                   </Link>
                 </TableCell>
                 <TableCell className={assignment.is_active ? "active-assignment" : "inactive"}>
-                  <Typography variant="body1" style={{fontSize: '20px', color: assignment.is_active ? 'green' : 'red'  }}>{assignment.is_active ? "提出可能" : "提出不可"}</Typography>
+                  <Typography variant="body1" style={{ fontSize: '20px', color: assignment.is_active ? 'green' : 'red' }}>{assignment.is_active ? "Available" : "Not Available"}</Typography>
                 </TableCell>
                 <TableCell><Typography variant="body1" style={{ fontSize: '20px' }}>{assignment.submission_count} / {totalStudents}</Typography></TableCell>
-                <TableCell><Typography variant="body1" style={{ fontSize: '20px' }}>{formatDate(assignment.assignment_posted_date)}</Typography></TableCell>
+                <TableCell><Typography variant="body1" style={{ fontSize: '20px' }}>{formatDate(assignment.posted_date)}</Typography></TableCell>
                 <TableCell>
-                <Typography variant="body1" style={{ fontSize: '20px', color:  assignment.is_active ? 'green' : 'red' }}>{formatDate(assignment.assignment_deadline)}
-            </Typography>
-                  </TableCell>
+                  <Typography variant="body1" style={{ fontSize: '20px', color: new Date(assignment.deadline) > new Date() ? 'green' : 'red' }}>{formatDate(assignment.deadline)}</Typography>
+                </TableCell>
                 <TableCell>
                   <Switch 
-                    defaultChecked={assignment.is_visible}
-                    disabled={new Date(assignment.assignment_deadline) > new Date()}
+                    defaultChecked={assignment.is_published}
+                    disabled={new Date(assignment.deadline) > new Date()}
                     onChange={(event) => handleVisibilityChange(assignment.id, event.target.checked)} />
                 </TableCell>
               </TableRow>

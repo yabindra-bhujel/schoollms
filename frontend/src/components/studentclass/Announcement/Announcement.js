@@ -35,7 +35,8 @@ const Announcement = () =>{
     
 
       const getAnnouncementData = async() =>{
-        const endpoint = `course/get_announcement_by_subject_student/${subject_code}`;
+      const endpoint = `announcements/student/${subject_code}/`;
+
         try{
           const response = await instance.get(endpoint);
           setAnnouncements(response.data);

@@ -47,11 +47,13 @@ const Department = () => {
     setOpenDeleteDialog(false);
   };
 
+  const baseURL = 'admin/departments/'
+
 
 
   const getDepartmentList = async () => {
     try {
-      const endpoint = "/course/department_list/";
+      const endpoint = baseURL;
       const response = await instance.get(endpoint);
       setDepartmentList(response.data);
     } catch (error) {
@@ -68,10 +70,8 @@ const Department = () => {
   };
 
   const handleSaveClick = async (departmentId, updatedData) => {
-    const username = "admin";
-
     try {
-      const endpoint = `/course/update_department/${username}/${departmentId}/`;
+      const endpoint = `${baseURL}${departmentId}/`;
       await instance.put(endpoint, updatedData);
       setEditedRow(null);
       setOpenSnackbar(true);
@@ -84,13 +84,12 @@ const Department = () => {
 
 
   const handlePost = async () => {
-    const username = "admin";
 
     try {
-      const endpoint = `/course/add_department/${username}/`;
+      const endpoint = baseURL;
       await instance.post(endpoint, {
-        Department_name: departmentName,
-        Department_code: departmentCode,
+        department_name: departmentName,
+        department_code: departmentCode,
       });
       setDepartmentName("");
       setDepartmentCode("");
@@ -103,10 +102,9 @@ const Department = () => {
 
 
   const deleteDepartment = async (departmentId) => {
-    const username = "admin";
 
     try {
-      const endpoint = `/course/delete_department/${departmentId}/${username}/`;
+      const endpoint = `${baseURL}${departmentId}/`;
       await instance.delete(endpoint);
       getDepartmentList();
         setOpenDeleteDialog(false);
@@ -250,38 +248,38 @@ const Department = () => {
                     <TableCell>
                       {editedRow === department.id ? (
                         <TextField
-                          value={department.Department_name}
+                          value={department.department_name}
                           onChange={(e) =>
                             setDepartmentList((prevList) =>
                               prevList.map((d) =>
                                 d.id === department.id
-                                  ? { ...d, Department_name: e.target.value }
+                                  ? { ...d, department_name: e.target.value }
                                   : d
                               )
                             )
                           }
                         />
                       ) : (
-                        department.Department_name
+                        department.department_name
                       )}
                     </TableCell>
 
                     <TableCell>
                       {editedRow === department.id ? (
                         <TextField
-                          value={department.Department_code}
+                          value={department.department_code}
                           onChange={(e) =>
                             setDepartmentList((prevList) =>
                               prevList.map((d) =>
                                 d.id === department.id
-                                  ? { ...d, Department_code: e.target.value }
+                                  ? { ...d, department_code: e.target.value }
                                   : d
                               )
                             )
                           }
                         />
                       ) : (
-                        department.Department_code
+                        department.department_code
                       )}
                     </TableCell>
 
@@ -292,8 +290,8 @@ const Department = () => {
                           color="primary"
                           onClick={() =>
                             handleSaveClick(department.id, {
-                              Department_name: department.Department_name,
-                              Department_code: department.Department_code,
+                              department_name: department.department_name,
+                              department_code: department.department_code,
                             })
                           }
                         >

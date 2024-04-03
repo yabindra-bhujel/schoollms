@@ -19,6 +19,9 @@ const StudentTableComponent = () => {
   const weekdays = [];
   const [isLoading, setIsLoading] = useState(false);
 
+
+console.log("", subject)
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -31,10 +34,10 @@ const StudentTableComponent = () => {
 
   const getSubjectData = async () => {
     try {
-      const endpoint = `/student/${username}/`;
+      const endpoint = `students/student_class/`;
       setIsLoading(true);
       const response = await instance.get(endpoint);
-      setSubject(response.data.courses);
+      setSubject(response.data);
     } catch {
       setMessage("データを取得できませんでした。しばらくしてからもう一度お試しください。");
       setOpen(true);
@@ -99,14 +102,15 @@ const StudentTableComponent = () => {
                         <p>
                           <Link
                             to={{
-                              pathname: `/studentclassdetails/${encodeURIComponent(subject[index].id)}`,
+                              pathname: `/studentclassdetails/${encodeURIComponent(subject[index].subject_code)}`,
                               state: {
                                 subject_code: subject[index].subject_code,
                               },
                             }}
                           >
-                            {subject[index].name} <br />
-                            ({subject[index].class_room})
+                            {subject[index].subject_name} <br />
+                            ({subject[index].class_room}) <br />
+                            {subject[index].teacher_name}
                           </Link>
                         </p>
                       ) : null}

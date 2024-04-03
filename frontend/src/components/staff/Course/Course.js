@@ -37,7 +37,7 @@ const AdminCourse = () => {
 
 
     const handleDelete = async () => {
-        const response = await DeleteCourse("admin", deleteCourseId);
+        const response = await DeleteCourse(deleteCourseId);
         console.log(response);
         setDeleteDialog(false);
         setSnackbar(true);

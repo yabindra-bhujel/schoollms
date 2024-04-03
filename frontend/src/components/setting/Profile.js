@@ -12,7 +12,6 @@ const Profile = () => {
   const imageRef = useRef(null);
   const [profile, setProfile] = useState({});
   const [userData, setUserData] = useState({});
-  const username = getUserInfo().username;
   const isTeacher = getUserInfo().isTeacher;
   const [snackbaropen, setSnackbarOpen] = useState(false);
   const [message, setMessage] = useState("");

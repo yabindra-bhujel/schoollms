@@ -7,7 +7,7 @@ const TodayEventList = () => {
   const [events, setEvents] = useState([]);
 
   const getTodayEvent = async () => {
-    const endpoint = `/notification/getTodayEvent`;
+    const endpoint = `/calendar/get_todat_event`;
     try {
       const response = await instance.get(endpoint);
       if (response.status === 200) {

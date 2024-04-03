@@ -62,7 +62,7 @@ const AnnouncementDialog = ({
 
   const handleIsActiveChange = async (announcementId, newStatus) => {
 
-    const endpoint = `course/handle_active_change_announcement/${announcementId}/`;
+    const endpoint = `announcements/active/${announcementId}/`;
     try{
       const response = await instance.put(endpoint);
     }catch(error){
@@ -71,7 +71,7 @@ const AnnouncementDialog = ({
   };
 
   const handleUpdateAnnouncemnet = async() =>{
-    const endpoint = `course/update_announcement/${announcement.id}/`;
+    const endpoint = `announcements/${announcement.id}/`;
     try{
       const response = await instance.put(endpoint, {
         announcement_title: editableTitle,

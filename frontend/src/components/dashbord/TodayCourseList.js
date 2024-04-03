@@ -53,7 +53,7 @@ const TodayCourseList = () => {
 
 
   const getTodayCourse = async () => {
-    const endpoint = isTeacher ? `/teacher/get_teacher_today_class/` : `/student/get_student_today_class/`;
+    const endpoint = isTeacher ? `/teachers/teacher_today_class/` : `/student/get_student_today_class/`;
 
     try {
       const response = await instance.get(endpoint);

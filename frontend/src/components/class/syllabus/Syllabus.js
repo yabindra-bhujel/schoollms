@@ -73,11 +73,11 @@ const Syllabus = () => {
 
 
   const fetchSyllabus = async () => {
-    const endpoint = `/course/syllabus/${subject_code}/`;
+    const endpoint = `/syllabus/subject/${subject_code}/`;
     try {
       setLoading(true);
       const response = await instance.get(endpoint);
-      setSyllabus(response.data[0].syllabus_section);
+      setSyllabus(response.data[0].syllabus_items);
     } catch (error) {
       setError(error);
     } finally {
@@ -104,7 +104,7 @@ const Syllabus = () => {
     try {
 
       setLoading(true);
-        const endpoint = `/course/syllabus_update/${id}/`;
+        const endpoint = `/syllabus/update/${id}/`;
         const response = await instance.put(endpoint, editedSection);
         if(response.status === 200)
         {

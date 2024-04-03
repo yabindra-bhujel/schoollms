@@ -45,7 +45,7 @@ const CreatGroup = ({ closeMethod, allusers, socket, get_Group_data }) => {
         users: selectedUsers.map((user) => user.username),
         admin: username,
       };
-      const endpoint = 'realtimeapi/create_group/'
+      const endpoint = 'groups/create_group/'
       try{
         const res = await instance.post(endpoint, data);
         if (res.status === 201) {

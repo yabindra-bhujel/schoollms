@@ -284,7 +284,7 @@ const CalendarComponent = () => {
   const handleDelete = async (event) => {
     const eventID = event.id;
     const response = await deleteEvent(eventID);
-    if (response.status === 200) {
+    if (response.status === 204) {
       fatchData();
       setOpenDialog(false);
     }

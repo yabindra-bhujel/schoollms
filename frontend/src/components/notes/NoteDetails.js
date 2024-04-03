@@ -19,10 +19,6 @@ import jsPDF from 'jspdf';
 import { Snackbar } from '@mui/material';
 
 
-
-
-
-
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -35,12 +31,13 @@ const NoteDetails = ({
   notes,
   fetchData
 }) => {
-
+  
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const currentUser = getUserInfo().username;
+
   const isNoteOwner = () => {
     return  selectedNote && selectedNote.owner === currentUser;
   };

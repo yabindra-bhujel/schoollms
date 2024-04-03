@@ -1,10 +1,12 @@
 import instance from "../../../api/axios";
 
 
+const baseURL = 'admin/teachers/'
+
 
 const uploadTeahcerFile = async (file) => {
     try{
-        const endpoint = '/teacher/add/file/';
+        const endpoint = `${baseURL}add-teacher-from-file`;
         const response = await instance.post(endpoint, file);
         return response;
 
@@ -16,7 +18,7 @@ const uploadTeahcerFile = async (file) => {
 
 
 const addTeacher = async (teacherData) => {
-    const endpoint = '/teacher/add/';
+    const endpoint = `${baseURL}`;
     try {
       const response = await instance.post(endpoint, teacherData);
       return response;
@@ -28,7 +30,7 @@ const addTeacher = async (teacherData) => {
 
 const getTeacherList =async() =>{
     try{
-        const response = await instance.get(`/teacher/list/`);
+        const response = await instance.get(baseURL);
         return response.data;
     }catch(error){
         throw new Error(error);
@@ -39,7 +41,7 @@ const getTeacherList =async() =>{
 
 
 const deleteTeacher = async(teacherID) =>{
-    const endpoint = `teacher/delete/${teacherID}/`;
+    const endpoint = `${baseURL}${teacherID}/`;
     try{
         const response = await instance.delete(endpoint);
         return response.data;

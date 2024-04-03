@@ -12,7 +12,6 @@ const Chat = () => {
   const userId = getUserInfo().username;
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [userList, setUserList] = useState([]);
-  const [selectedUserMessages, setSelectedUserMessages] = useState([]);
   const [groupList, setGroupList] = useState([]);
   const [unreadMessages, setUnreadMessages] = useState(false);
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
@@ -35,18 +34,12 @@ const Chat = () => {
       };
     }
   
-  //   // If socket is not available, you can handle it here (optional)
     console.warn("Socket object not available");
   
   }, [userId, groupName, socket]);
-  
-
-  
-
 
   const handleChatSelect = (user, type = "user") => {
     setSelectedUser(user, type);
-    setSelectedUserMessages([]);
   };
   
   const handleGroupSelect = (group, type = "group") =>{
@@ -55,29 +48,27 @@ const Chat = () => {
 
   const getall = async () => {
     try {
-      const endpoint = `/realtimeapi/getalluser/`;
+      const endpoint = `socials/user_list/`;
       const response = await instance.get(endpoint);
       const userData = response.data.users;
 
-      // Filter out the currently logged-in user
       const filteredUserList = userData.filter(
         (user) => user.username !== userId
       );
 
       setUserList(filteredUserList);
     } catch (e) {
-      console.log("error");
     }
   };
 
   const get_Group_data = async () => {
     try {
-      const endpoint = `/realtimeapi/get_group_list/${userId}`;
+      const endpoint = `groups/group_list/`;
       const response = await instance.get(endpoint);
       const groupData = response.data.groups;
-      const groupName = groupData.map(group => group.name); // Extracting group names
+      const groupName = groupData.map(group => group.name); 
       setGroupList(groupData);
-      setGroupName(groupName); // Setting the groupName state
+      setGroupName(groupName); 
     } catch (e) {
       console.log("error");
     }
@@ -87,8 +78,6 @@ const Chat = () => {
 
   useEffect(() => {
     getall();
-    // Fetch unread messages and update the user list
-    // haveunreadData();
     get_Group_data();
   }, []);
 
@@ -118,7 +107,6 @@ const Chat = () => {
             socket={socket}
             setUnreadMessages={setUnreadMessages}
             setHasUnreadMessages={setHasUnreadMessages}
-            // haveunreadData = {haveunreadData}
             selectGroup = {selectGroup}
             onlineUsers = {onlineUsers}
           />

@@ -31,10 +31,9 @@ const User = () => {
   useEffect(() => {
     const fatchData = async () => {
       try {
-        const response = await getUserList("admin");
+        const response = await getUserList();
         setUserlist(response);
       } catch (error) {
-        console.error("Error fetching user list:", error);
       }
     };
 

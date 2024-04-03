@@ -21,13 +21,9 @@ const CourseContent = () => {
 
   const getFile = async () => {
     try {
-      const endpoint = `/course/${id}/`;
+      const endpoint = `subject_materiales/${id}/`;
       const response = await instance.get(endpoint);
-
-      if (response.data[0] && response.data[0].course_materiales) {
-        const files = response.data[0].course_materiales;
-        setFiles(files);
-      }
+      setFiles(response.data);
     } catch (error) {
       setError("An error occurred while fetching data.");
     } finally {
@@ -55,7 +51,7 @@ const CourseContent = () => {
         </div>
       ) : (
         <div>
-          {files.map((courseMaterial, index) => (
+           {files.length > 0 && files.map((courseMaterial, index) => (
 
             <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "8px", background: "rgb(223, 227, 230)", padding: "10px", borderRadius: "5px" }}>
               <IconButton
@@ -72,7 +68,6 @@ const CourseContent = () => {
               <Typography style={{ marginRight: "8px" }}>
                 {courseMaterial.pdf_file.split("/").pop().replace(/_/g, '')}
               </Typography>
-
 
             </div>
           ))}

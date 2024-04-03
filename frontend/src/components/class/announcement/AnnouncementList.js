@@ -22,7 +22,7 @@ const AnnouncementList = ({ announcements, setDeleteMessage, getAnnouncementData
   };
 
   const handleDelete = async (announcementId) => {
-    const endpoint = `course/delete_announcement/${announcementId}`;
+    const endpoint = `announcements/${announcementId}`;
     try {
       const response = await instance.delete(endpoint);
       if (response.status === 200) {

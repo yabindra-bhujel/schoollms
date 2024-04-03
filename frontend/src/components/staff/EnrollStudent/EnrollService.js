@@ -1,8 +1,9 @@
 import instance from "../../../api/axios";
 
-const getEnrollSubjetList = async (username) => {
+const baseURL = 'admin/subject_registration/'
+const getEnrollSubjetList = async () => {
     try {
-        const endpoint = `/course/get_subject_enroll/${username}/`;
+        const endpoint = baseURL;
         const response = await instance.get(endpoint);
         return response;
     } catch (error) {
@@ -11,9 +12,9 @@ const getEnrollSubjetList = async (username) => {
 }
 
 
-const addEnrollSubject = async (username, data) => {
+const addEnrollSubject = async (data) => {
     try {
-        const endpoint = `/course/create_enroll_subject/${username}/`;
+        const endpoint = baseURL;
         const response = await instance.post(endpoint, data);
         return response;
     } catch (error) {

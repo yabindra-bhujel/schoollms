@@ -24,8 +24,9 @@ const CourseDetails = () => {
 
     const fetchData = async () => {
         try {
-            const response = await instance.get(`/course/get_course_details/${id}`);
+            const response = await instance.get(`admin/subject/${id}/`);
             setCourseDetails(response.data);
+            console.log(response.data);
         } catch (error) {
             setSnackbar(true);
             setSnackbarMessage("Error fetching course details");

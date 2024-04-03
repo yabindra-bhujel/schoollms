@@ -16,7 +16,6 @@ function Login() {
   const handleLogin = async () => {
     if (username === "" || password === "") {
       setMessage("Please enter username and password");
-      // time out in 3 seconds
       setTimeout(() => {
         setMessage("");
       }, 3000);
@@ -30,7 +29,6 @@ function Login() {
        });
       const { access, refresh, username: loggedInUsername } = response.data;
 
-      // Store user data in localStorage only if OTP is not required
       const decodeData = jwtDecode(access);
 
         const userData = {
@@ -44,7 +42,6 @@ function Login() {
 
         localStorage.setItem("userData", JSON.stringify(userData));
 
-        // Always navigate to the root path
         if (decodeData.is_student || decodeData.is_teacher) {
           navigate("/");
         } else if (decodeData.is_staff || decodeData.is_superuser) {

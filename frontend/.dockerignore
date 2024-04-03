@@ -1,6 +1,3 @@
 node_modules
-Dockerfile
-.gitignore
-.dockerignore
 .git
 .env

@@ -114,7 +114,7 @@ const AdminTeacher = () =>{
         try {
           await deleteTeacher(teacherToDelete);
           setTeacherList((prevList) =>
-            prevList.filter((teacher) => teacher.TeacherID !== teacherToDelete)
+            prevList.filter((teacher) => teacher.teacher_id !== teacherToDelete)
           );
           setSnackbarMessage("Teacher successfully deleted.");
           setOpenSnackbar(true);
@@ -199,7 +199,7 @@ const AdminTeacher = () =>{
               </TableHead>
               <TableBody>
                 {teacherList.map((teacher) => (
-                  <TableRow key={teacher.TeacherID}>
+                  <TableRow key={teacher.teacher_id}>
                     <TableCell>
                      {/* image */}
                       <Avatar alt={teacher.first_name} src={teacher.image}
@@ -207,7 +207,7 @@ const AdminTeacher = () =>{
                        />
 
                     </TableCell>
-                    <TableCell>{teacher.TeacherID}</TableCell>
+                    <TableCell>{teacher.teacher_id}</TableCell>
                     <TableCell>
                       {teacher.first_name} {teacher.last_name}
                     </TableCell>
@@ -220,7 +220,7 @@ const AdminTeacher = () =>{
                     <TableCell>
                       <div className="action-btn">
                         <Button
-                          onClick={() => handleTeacherDelete(teacher.TeacherID)}
+                          onClick={() => handleTeacherDelete(teacher.teacher_id)}
                           variant="outlined"
                           color="secondary"
                         >

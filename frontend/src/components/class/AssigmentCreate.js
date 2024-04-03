@@ -55,13 +55,11 @@ const AssigmentCreate = (props) => {
 
   const getSubjectData = async () => {
     try {
-      const endpoint = `/course/${subject_code}/`;
+      const endpoint = `subject/teacher/${subject_code}/`;
       const response = await instance.get(endpoint);
-      if (response.data[0] && response.data[0].students) {
-        const student = response.data[0].students;
-        setStudentList(student);
-        const studentIds = student.map((student) => student.Student_id);
-        setStudentIds(studentIds);
+      if (response.data[0] && response.data[0].student) {
+        const student = response.data[0].student;
+        setStudentIds(student);
       } else {
         setMessage("データが見つかりませんでした。");
         setTimeout(() => {
@@ -119,7 +117,7 @@ const AssigmentCreate = (props) => {
 
   const sendData = async () => {
     try {
-      const endpoint = `/course/create_assigment/`;
+      const endpoint = `assignments/`;
       const response = await instance.post(endpoint, {
         ...formData,
         students: studentIds,

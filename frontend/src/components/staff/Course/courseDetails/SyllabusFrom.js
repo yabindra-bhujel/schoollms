@@ -45,7 +45,7 @@ const SyllabusForm = ({ courseId, fetchSyllabus }) => {
         section_title: section.title,
         section_description: section.description,
       }));
-      const response = await instance.post(`/course/create_syllabus/${courseId}/`, sectionsData);
+      const response = await instance.post(`syllabus/create/${courseId}/`, sectionsData);
       if (response.status === 201) {
         setSnackbarMessage("Syllabus sections added successfully");
         setOpenSnackbar(true);

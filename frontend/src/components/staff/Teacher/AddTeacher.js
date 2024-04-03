@@ -9,7 +9,7 @@ const AddTeacher = () => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
 
     const [teacherData, setTeacherData] = useState({
-        teacherID: '',
+        teacher_id: '',
         first_name: '',
         last_name: '',
         middle_name: '',
@@ -116,8 +116,8 @@ const AddTeacher = () => {
                  label="Teacher ID"
                  variant="outlined"
                  fullWidth
-                 name="teacherID"
-                 value={teacherData.teacherID}
+                 name="teacher_id"
+                 value={teacherData.teacher_id}
                  onChange={handleChange}
               />
             </Grid>

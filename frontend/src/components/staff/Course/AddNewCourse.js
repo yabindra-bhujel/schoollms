@@ -7,18 +7,16 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from "../navigation/NavigationLayout";
 
 
-import instance from "../../../api/axios";
-
 import { getTeacherList , getDepartmentList, adminCourseAdd} from "./CourseService";
 
 
 const AdminCourseAdd = () => {
     const [courseData, setCourseData] = useState({
-        course_id: '',
+        course_code: '',
         course_name: '',
         weekday: '',
         class_period: '',
-        course_department: '',
+        subject_faculty: '',
         teacher_name: '',
     });
     const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -40,14 +38,14 @@ const AdminCourseAdd = () => {
         const fetchTeacherList = async () => {
             const response = await getTeacherList();
             const full_name = response.map((teacher) => {  
-                return teacher.first_name + " " + teacher.last_name  + " " + teacher.TeacherID;
+                return teacher.first_name + " " + teacher.last_name  + " " + teacher.teacher_id;
             }
             );
             setTeacherList(full_name);
 
             const department_response = await getDepartmentList();
             const department_name = department_response.map((department) => {       
-                return department.Department_name;
+                return department.department_code + " " + department.department_name;
             }
             );
             setDepartmentList(department_name);
@@ -71,8 +69,8 @@ const AdminCourseAdd = () => {
         const newErrors = {};
 
         // Validation rules
-        if (!courseData.course_id.trim()) {
-            newErrors.course_id = 'Course Code is required';
+        if (!courseData.course_code.trim()) {
+            newErrors.course_code = 'Course Code is required';
             isValid = false;
 
         }
@@ -132,13 +130,13 @@ const AdminCourseAdd = () => {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             required
-                            id="course_id"
-                            name="course_id"
+                            id="course_code"
+                            name="course_code"
                             label="Course Code"
                             fullWidth
-                            error={!!errors.course_id}
-                            helperText={errors.course_id}
-                            value={courseData.course_id}
+                            error={!!errors.course_code}
+                            helperText={errors.course_code}
+                            value={courseData.course_code}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -201,9 +199,9 @@ const AdminCourseAdd = () => {
                             <Select
 
                                 labelId="course-department-label"
-                                id="course_department"
-                                name="course_department"
-                                value={courseData.course_department}
+                                id="subject_faculty"
+                                name="subject_faculty"
+                                value={courseData.subject_faculty}
                                 label="Course Department"
                                 onChange={handleChange}
                             >

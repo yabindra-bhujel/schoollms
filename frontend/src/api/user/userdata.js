@@ -16,7 +16,6 @@ const getUserInfo = () => {
 
     }
   } else {
-    // Handle the case when userData is null
     return {
       username: null,
       user_id: null,

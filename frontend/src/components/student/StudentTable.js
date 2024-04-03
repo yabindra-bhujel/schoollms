@@ -40,7 +40,7 @@ export default function DataTable({ studentList }) {
 
     const rows = studentList?.map((student, index) => ({
         id: index,
-        studentID: student.studentID,
+        studentID: student.student_id,
         first_name: student.first_name,
         last_name: student.last_name,
         email: student.email,

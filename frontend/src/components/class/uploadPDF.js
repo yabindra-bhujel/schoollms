@@ -31,7 +31,7 @@ const UploadPDF = ({ closePDFModel, fetchData }) => {
     formData.append("file", file);
     formData.append("subject_code", subject_code);
     try {
-      const res = await instance.post("/course/get_file/", formData, {
+      const res = await instance.post("subject_materiales/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

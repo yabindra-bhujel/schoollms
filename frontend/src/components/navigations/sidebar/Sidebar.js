@@ -8,40 +8,20 @@ import { BsCalendarFill } from "react-icons/bs";
 import { AiFillSetting } from "react-icons/ai";
 import { RiLogoutCircleFill, RiArrowLeftDoubleFill, RiArrowRightDoubleFill } from "react-icons/ri";
 import { MdCastForEducation } from "react-icons/md";
-import { AiFillFolderOpen } from "react-icons/ai";
 import jwtDecode from "jwt-decode";
 import instance from "../../../api/axios";
 import { BsWechat } from "react-icons/bs";
-import { useTranslation } from "react-i18next";
 import { SlNote } from "react-icons/sl";
-import { IconButton, Popover, Typography, Box } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import Badge from "@mui/material/Badge";
-import { useWebSocket } from "../../../WebSocketContext";
-import Notifications from "../header/Notification";
-import Snackbar from "@mui/material/Snackbar";
-import ProfileMenu from "../header/Profile";
-import getUserInfo from "../../../api/user/userdata";
 
 
 const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
   const userData = JSON.parse(localStorage.getItem("userData"));
   const accessToken = userData.access;
   const decoded = jwtDecode(accessToken);
-  const username = decoded.username;
-  const first_name = decoded.first_name;
-  const last_name = decoded.last_name;
-  const [universityName, setuniversityName] = useState("");
-  const [loginuserData, setLoginuserData] = useState("");
   const is_student = decoded.is_student;
   const is_teacher = decoded.is_teacher;
-  const [anchorEl, setAnchorEl] = useState(null);
   const currentLocation = useLocation();
-  const { socket } = useWebSocket();
   
-  const userId = getUserInfo().username;
-  const [groupName, setGroupName] = useState(false);
-
 
   const handleLogout = async () => {
     try {
@@ -55,24 +35,8 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
         }
       }
     } catch (error) {
-      console.log(error);
     }
   }
-
-  useEffect(() => {
-    getLoginUserData();
-  }, []);
-
-  const getLoginUserData = async () => {
-    try {
-      const endpoint = `/get_user_profile/`;
-      const response = await instance.get(endpoint);
-      setLoginuserData(response.data);
-    } catch (e) {
-      console.log("error", e);
-    }
-  };
-
 
   return (
     <div>

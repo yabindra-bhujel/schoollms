@@ -17,13 +17,12 @@ const Class = () => {
   }, []);
   const getSubjectData = async () => {
     try {
-      const endpoint = `/teacher/${username}/`;
+      const endpoint = `/teachers/teacher_class/`;
       const response = await instance.get(endpoint);
-
       if (response.status !== 200) {
         return;
       }
-      setSubject(response.data.subjects);
+      setSubject(response.data);
     } catch (error) {
     }
   };

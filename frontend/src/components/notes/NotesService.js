@@ -1,80 +1,69 @@
 import instance from "../../api/axios";
-import getUserInfo from "../../api/user/userdata";
 
-
-const username = getUserInfo().username;
-
+const baseURL = 'notes/';
 
 const getNotesbyID = async(noteID) =>{
-    const endpoint = `/notification/getNotesByID/${username}/${noteID}/`;
+    const endpoint = `${baseURL}${noteID}/`;
 
     try{
         const res = await instance.get(endpoint);
         const noteData = res.data;
         return noteData;
     }catch(error){
-        console.error("Error fetching notes data: ", error);
         throw error;
     }
 
 }
 
-
 const getNotes = async() =>{
-    const endpoint = `/notification/getNotes/`;
+    const endpoint = baseURL;
 
     try{
         const res = await instance.get(endpoint);
         const noteData = res.data;
         return noteData;
     }catch(error){
-        console.error("Error fetching notes data: ", error);
         throw error;
     }
 }
 
 const addNotes = async( data ) =>{
-    const endpoint = `/notification/addNotes/`;
+    const endpoint = baseURL;
     try{
         const res = await instance.post(endpoint, data);
         const noteData = res.data;
         return noteData;
     }catch(error){
-        console.error("Error fetching notes data: ", error);
         throw error;
     }
-    
-
 }
 
 
 const deleteNote = async (noteID) => {
-    const endpoint = `/notification/deleteNotes/${noteID}/`;
+    const endpoint = `${baseURL}${noteID}/`;
     try {
       const res = await instance.delete(endpoint);
       const noteData = res.data;
       return noteData;
     } catch (error) {
-      console.error("Error deleting note: ", error);
       throw error;
     }
   };
 
 
 const updatedNote = async (noteID, data) => {
-    const endpoint = `/notification/updateNotes/${noteID}/`;
+    const endpoint = `${baseURL}${noteID}/`;
     try {
         const res = await instance.put(endpoint, data);
         const noteData = res.data;
         return noteData;
     } catch (error) {
-        console.error("Error updating note: ", error);
         throw error;
     }
 }
 
 const updateNoteTitle = async (noteID, title) =>{
-    const endpoint = `/notification/updateNotesTitle/${noteID}/`;
+    const endpoint = `${baseURL}${noteID}/`;
     try {
         const res = await instance.put(endpoint, {title: title});
         const noteData = res.data;
@@ -86,30 +75,18 @@ const updateNoteTitle = async (noteID, title) =>{
 
 }
 
-const updateNoteColor = async (notes, color) =>{
-    const endpoint = `/notification/updateNotesColor/${notes}/`;
-    try {
-        const res = await instance.put(endpoint, {color: color});
-        const noteData = res.data;
-        return noteData;
-    } catch (error) {
-        console.error("Error updating note: ", error);
-        throw error;
-    }
-}
 
   
 const updateNoteCollaborator = async (noteId, data) => {
-    const endpoint = `notification/add_collaborator_to_note/${noteId}/`;
+    const endpoint = `${baseURL}share_note/${noteId}/`;
 
     try {
-        const response = await instance.post(endpoint, data);
+        const response = await instance.put(endpoint, data);
         return response;
     } catch (error) {
         throw error;
     }
 
 }
-  
 
-export  { getNotes, addNotes, deleteNote, updatedNote, getNotesbyID, updateNoteTitle, updateNoteColor ,updateNoteCollaborator};
+export  { getNotes, addNotes, deleteNote, updatedNote, getNotesbyID, updateNoteTitle ,updateNoteCollaborator};

@@ -4,7 +4,7 @@ import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
 import { BsSend, BsEmojiSmile } from "react-icons/bs";
 import { IoIosAdd } from "react-icons/io";
-import NoteSeleteChat from "./NoteSeleteChat";
+import NotSeleteChat from "./NotSeleteChat";
 import NoImage from "../images/group.png";
 import UserNoImage from "../images/usernoimage.jpeg";
 import { BiImageAdd } from "react-icons/bi";
@@ -52,7 +52,7 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers }) => {
     const formData = new FormData();
     formData.append("group_image", file);
     formData.append("group_id", selectedChat.id);
-    const endpoint = `/realtimeapi/add_group_image/`;
+    const endpoint = `groups/update_group_image/`;
     try {
       const res = await instance.put(endpoint, formData);
       if (res.status === 200) {
@@ -136,7 +136,7 @@ const id = open ? 'simple-popover' : undefined;
 
     const groupID = selectedChat ? selectedChat.id : ""; 
 
-    const endpoint = `/realtimeapi/get_group_message_by_groupName/${groupID}/`;
+    const endpoint = `groups/group_message/${groupID}/`;
 
     try {
       const res = await instance.get(endpoint);
@@ -169,7 +169,7 @@ const id = open ? 'simple-popover' : undefined;
 
   const fetchMessages = async () => {
     if (!isGroupChat) {
-      const endpoint = `/realtimeapi/get_all_messages/${receriver_userId}/${sender_userId}/`;
+      const endpoint = `/socials/message/${receriver_userId}/${sender_userId}/`;
       try {
         const res = await instance.get(endpoint);
         setMessageList((prevMessages) => [
@@ -189,7 +189,7 @@ const id = open ? 'simple-popover' : undefined;
   };
 
   const leaveGroup = async () => {
-    const endpoint = `/realtimeapi/leave_group/${selectedChat.id}/`;
+    const endpoint = `/groups/leave_group/${selectedChat.id}/`;
     try {
       const res = await instance.put(endpoint);
       if (res.status === 200) {
@@ -209,6 +209,30 @@ const id = open ? 'simple-popover' : undefined;
         setMessage("");
       }, 3000);
     }
+  }
+
+  const deleteGroup = async () => {
+    const endpoint = `/groups/delete_group/${selectedChat.id}/`;
+    try {
+      const res = await instance.delete(endpoint);
+      if (res.status === 204) {
+        setMessage("グループを削除しました");
+        setSnackbarOpen(true);
+        setTimeout(() => {
+          setSnackbarOpen(false);
+          setMessage("");
+          window.location.reload();
+        }, 3000);
+      }
+    } catch (err) {
+      setMessage("グループの削除に失敗しました");
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        setSnackbarOpen(false);
+        setMessage("");
+      }, 3000);
+    }
+  
   }
 
   useEffect(() => {
@@ -256,7 +280,7 @@ const id = open ? 'simple-popover' : undefined;
     return (
       <div className="not__seleted_chat">
         <div className="not_select">
-          <NoteSeleteChat />
+          <NotSeleteChat />
         </div>
       </div>
     );
@@ -280,6 +304,13 @@ const id = open ? 'simple-popover' : undefined;
   onClick={leaveGroup}
   variant="text">Leave Group</Button>
   </div>
+
+  <div style={{ padding: '20px' }}>
+  <Button 
+  onClick={deleteGroup}
+  variant="text">Delete Group</Button>
+  </div>
+
 </Popover>
       <Snackbar
         open={snackbaropen}
@@ -338,7 +369,7 @@ const id = open ? 'simple-popover' : undefined;
 
         <div className="messages__container">
           <div className="chat_body">
-            {groupMessage
+            {Array.isArray(groupMessage) && groupMessage
               .filter((message) => message.receiver_group === selectedChat.name)
               .map((message) => (
                 <div
@@ -356,7 +387,6 @@ const id = open ? 'simple-popover' : undefined;
             <div ref={groupmessageRef} />
           </div>
         </div>
-
         <div className="write_message">
           <button className="file_add_btn">
             <IoIosAdd className="file_add" />

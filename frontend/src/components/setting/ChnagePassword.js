@@ -123,9 +123,9 @@ const UserManagement = () => {
 
     e.preventDefault();
     const data = {
-      oldPassword: oldPassword,
-      newPassword: newPassword,
-      confirmPassword: confirmPassword,
+      old_password: oldPassword,
+      new_password: newPassword,
+      confirm_password: confirmPassword,
     };
 
     chnagePassword(data)

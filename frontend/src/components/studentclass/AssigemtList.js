@@ -8,8 +8,6 @@ import Snackbar from "@mui/material/Snackbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import getUserInfo from "../../api/user/userdata";
 
-
-
 const AssignmentList = () => {
   const { id } = useParams();
   const [assignmentList, setAssignmentList] = useState([]);
@@ -19,42 +17,34 @@ const AssignmentList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const username = getUserInfo().username;
 
+  console.log(assignmentList);
+
   useEffect(() => {
     getAssignmentList();
   }, []);
 
   const getAssignmentList = async () => {
     try {
-      const endpoint = `/course/${id}/${username}/`;
+      const endpoint = `assignments/student-assignment/${id}/`;
       setIsLoading(true);
       const response = await instance.get(endpoint);
-      if (response.data[0] && response.data[0].assignments) {
-        const assignments = response.data[0].assignments;
-        setAssignmentList(assignments);
-      } else {
-        setMessage("データを取得できませんでした。しばらくしてからもう一度お試しください。");
-        setOpen(true);
-        setTimeout(() => {
-          setOpen(false);
-          setMessage("");
-        }, 3000);
-      }
+      setAssignmentList(response.data);
     } catch (error) {
+      console.error("Error fetching assignment list:", error);
       setMessage("データを取得できませんでした。しばらくしてからもう一度お試しください。");
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
         setMessage("");
       }, 3000);
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
 
   const formatDate = (dateString) => {
     const inputDate = new Date(dateString);
-    const formattedDate = format(inputDate, 'yyyy-MM-dd HH:mm', { timeZone: 'Asia/Tokyo' });
-    return formattedDate;
+    return format(inputDate, 'yyyy-MM-dd HH:mm', { timeZone: 'Asia/Tokyo' });
   };
   
   if (isLoading) {
@@ -65,11 +55,9 @@ const AssignmentList = () => {
     );
   }
   
-
   return (
     <div>
       <Snackbar
-
         open={open}
         autoHideDuration={3000}
         message={message}
@@ -102,17 +90,10 @@ const AssignmentList = () => {
                 <TableRow key={assignment.id}>
                   <TableCell>
                     <Typography>
-                    <Link to={`/studentassignment/${assignment.id}/${id}`}>
-                        {assignment.assignment_title}
+                      <Link to={`/studentassignment/${assignment.id}/${id}`}>
+                        {assignment.title}
                       </Link>
                     </Typography>
-                    {/* <Typography>{assignment.is_active ? (
-                      <Link to={`/studentassignment/${assignment.id}/${id}`}>
-                        {assignment.assignment_title}
-                      </Link>
-                    ) : (
-                      <span>{assignment.assignment_title}</span>
-                    )}</Typography> */}
                   </TableCell>
                   <TableCell>
                     <Typography style={
@@ -122,10 +103,10 @@ const AssignmentList = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography>{formatDate(assignment.assignment_posted_date)}</Typography>
+                    <Typography>{formatDate(assignment.posted_date)}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography>{formatDate(assignment.assignment_deadline)}</Typography>
+                    <Typography>{formatDate(assignment.deadline)}</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography style={

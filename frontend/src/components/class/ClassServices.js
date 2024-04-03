@@ -20,7 +20,7 @@ const getFile = async (subject_code) => {
 
 const getCourseDetails = async (subject_code) => {
   try {
-      const endpoint = `/course/${subject_code}/`;
+      const endpoint = `subject/teacher/${subject_code}/`;
       const response = await instance.get(endpoint);
       return response;
   } catch (error){

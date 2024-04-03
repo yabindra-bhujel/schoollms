@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./app.css"
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from "./user/login";
@@ -27,7 +27,6 @@ import TakeExamPage from "./components/studentclass/Exam/TakeExam";
 import Exma from "./components/studentclass/Exam/Exam";
 import ArticlePage from "./components/learningSection/Article";
 import './i18n';
-import { useTranslation } from 'react-i18next';
 import { WebSocketProvider } from './WebSocketContext';
 import AdminTeacher from "./components/staff/Teacher/Teacher";
 import AdminStudent from "./components/staff/Student/Student";

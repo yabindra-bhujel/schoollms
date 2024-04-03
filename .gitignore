@@ -21,9 +21,7 @@ rad.json
 #Test results file
 TestResults.xml
 
-# pdf
-*.pdf
-# image
+venv/
 
 *.db
 
@@ -89,8 +87,4 @@ Icon
 # excle or word or ppt cvs
 *.xlsx
 *.xls
-*.docx
-*.doc
-*.pptx
-*.ppt
-*.csv
+

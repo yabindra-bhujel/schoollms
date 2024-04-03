@@ -78,8 +78,8 @@ const AssigmentDetalis = () => {
 
   const updateAssigemntData = async () => {
     try {
-      const endpoint = `/course/upadteAssigemnt/`;
-      const response = await instance.post(endpoint, assignment);
+      const endpoint = `/assignments/update-assignment/${assignmentID}/`;
+      const response = await instance.put(endpoint, assignment);
       if (response.status === 200) {
         getAssignmentData();
         setOpen(true);
@@ -111,9 +111,8 @@ const AssigmentDetalis = () => {
   };
 
   const handleEditorChange = (content, editor) => {
-    handleInputChange("assignment_description", content);
+    handleInputChange("description", content);
   };
-
 
   useEffect(() => {
     getAssignmentData();
@@ -121,7 +120,7 @@ const AssigmentDetalis = () => {
 
   const getAssignmentData = async () => {
     try {
-      const endpoint = `/course/assigment_detalis/${assignmentID}/`;
+      const endpoint = `assignments/teacher-assignment-detail/${assignmentID}/`;
       const response = await instance.get(endpoint);
       const student = response.data.students;
       setAssignment(response.data);
@@ -155,7 +154,7 @@ const AssigmentDetalis = () => {
               aria-controls="assignment-body-content"
               id="assignment-body-header"
             >
-              <Typography style={{fontWeight: "bold"}} variant="h5">{assignment.assignment_title}</Typography>
+              <Typography style={{fontWeight: "bold"}} variant="h5">{assignment.title}</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <div className="assigment-body">
@@ -163,9 +162,9 @@ const AssigmentDetalis = () => {
                   <label>{t("assignmentTitle")}</label>
                   <input
                     type="text"
-                    value={assignment.assignment_title}
+                    value={assignment.title}
                     onChange={(e) =>
-                      handleInputChange("assignment_title", e.target.value)
+                      handleInputChange("title", e.target.value)
                     }
                   />
 
@@ -175,9 +174,9 @@ const AssigmentDetalis = () => {
                       <input
                       disabled
                         type="text"
-                        value={assignment.assignment_type}
+                        value={assignment.assigment_type}
                         onChange={(e) =>
-                          handleInputChange("assignment_type", e.target.value)
+                          handleInputChange("assigment_type", e.target.value)
                         }
                       />
                     </div>
@@ -199,7 +198,7 @@ const AssigmentDetalis = () => {
                     <div className="editor">
                       <ReactQuill
                         theme="snow"
-                        value={assignment.assignment_description}
+                        value={assignment.description}
                         onChange={handleEditorChange}
                         modules={{
                           toolbar: toolbarOptions.toolbar,
@@ -212,7 +211,7 @@ const AssigmentDetalis = () => {
                       />
                     </div>
 
-                    {assignment.assignment_type === "Text" && (
+                    {assignment.assigment_type === "Text" && (
                     <div className="assignment-question">
                       <Typography>{t("assignmentQuestion")}</Typography>
                       {question.map((questionItem, index) => (
@@ -239,10 +238,10 @@ const AssigmentDetalis = () => {
 
           <div className="assigment-submit-table">
             <h2>{t("assigemnttabletitile")}</h2>
-            {assignment.assignment_type === "File" && (
+            {assignment.assigment_type === "File" && (
               <DataTable submissions={submissions} />
             )}
-            {assignment.assignment_type === "Text" && (
+            {assignment.assigment_type === "Text" && (
               <TextDataTable submissions={submissions} />
             )}
           </div>

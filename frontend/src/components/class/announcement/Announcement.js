@@ -104,7 +104,7 @@ const Announcement = () => {
   }, [])
 
   const getAnnouncementData = async () => {
-    const endpoint = `course/get_announcement_by_subject/${subject_code}`;
+    const endpoint = `announcements/subject/${subject_code}/`;
     try {
       const response = await instance.get(endpoint);
       setAnnouncements(response.data);
@@ -122,7 +122,8 @@ const Announcement = () => {
     for (let i = 0; i < file.length; i++) {
       announcementData.append("file", file[i]);
     }
-    const endpoint = `course/AddAnnouncement/`;
+    // announcement
+    const endpoint = `announcements/`;
     try {
       const response = await instance.post(endpoint, announcementData,
         {

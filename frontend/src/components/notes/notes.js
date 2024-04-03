@@ -28,7 +28,6 @@ const Notes = () => {
     }
 
     const newNote = {
-      user: username,
       title: "Enter your note title here...",
       content: "Enter your note here...",
     };

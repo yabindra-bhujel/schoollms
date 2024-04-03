@@ -22,10 +22,12 @@ const StudentClassDetails = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
 
+
   const handleButtonClick = (buttonType) =>{
     setSelectedButton(buttonType)
   }
  
+  console.log(subject)
 
   useEffect(() => {
     getCourseData();
@@ -33,7 +35,8 @@ const StudentClassDetails = () => {
 
   const getCourseData = async () => {
     try {
-      const endpoint = `/course/${id}/`;
+      const endpoint = `subject/student/${id}`;
+      console.log(endpoint);
       const response = await instance.get(endpoint);
       setSubject(response.data);
     } catch {
@@ -61,17 +64,17 @@ const StudentClassDetails = () => {
           </Link>
           </div>
           <div className="other-onfo">
-          {subject.length > 0 ? (
-            <>
-              <h3>{subject[0].subject_name}</h3>
-              <p>
-                {subject[0].weekday} {subject[0].start_time} -{" "}
-                {subject[0].end_time} {" "}  {subject[0].class_room}
-              </p>
-            </>
-          ) : (
-            <h3>......</h3>
-          )}
+            {subject.subject_name ? (
+              <>
+                <h3>{subject.subject_name}</h3>
+                <p>
+                  {subject.weekday} {subject.period_start_time} -{" "}
+                  {subject.period_end_time} {subject.class_room}
+                </p>
+              </>
+            ) : (
+              <h3>Loading...</h3>
+            )}
           </div>
         </div>
         <section>

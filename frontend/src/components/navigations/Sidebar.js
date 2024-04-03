@@ -60,7 +60,7 @@ const Sidebar = ({}) => {
 
   const get_Group_data = async () => {
     try {
-      const endpoint = `/realtimeapi/get_group_list/${userId}`;
+      const endpoint = `groups/group_list/`;
       const response = await instance.get(endpoint);
       const groupName = response.data.groups.map(group => group.name); // Extracting group names
       setGroupName(groupName); 
@@ -94,9 +94,6 @@ const Sidebar = ({}) => {
     }
   }, [socket]);
 
-  useEffect(() => {
-    getNotificationDataFromServer();
-  }, []);
 
   const totalunreadnotify = notify.filter((item) => item.is_read === false)
     .length;
@@ -105,15 +102,7 @@ const Sidebar = ({}) => {
     setSnackbarState({ ...snackbarState, isOpen: false });
   };
 
-  const getNotificationDataFromServer = async () => {
-    try {
-      const endpoint = `/notification/get_notification_by_user/${username}/`;
-      const response = await instance.get(endpoint);
-      setNotify(response.data);
-    } catch (e) {
-      console.log("error", e);
-    }
-  };
+
 
   const handleUpdate = async () => {
     try {
@@ -162,22 +151,6 @@ const Sidebar = ({}) => {
         console.log(error);
     }
 }
-
-  useEffect(() => {
-    getLoginUserData();
-  }, []);
-
-  const getLoginUserData = async () => {
-    try {
-      const endpoint = `get_user_profile/`;
-      const response = await instance.get(endpoint);
-      setLoginuserData(response.data);
-    } catch (e) {
-      console.log("error", e);
-    }
-  };
-
-
 
   return (
     <div>

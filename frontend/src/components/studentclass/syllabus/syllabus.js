@@ -48,11 +48,12 @@ const Syllabus = () => {
 
 
   const fetchSyllabus = async () => {
-    const endpoint = `/course/syllabus/${subject_code}/`;
+    const endpoint = `/syllabus/subject/${subject_code}/`;
+
     try {
       setLoading(true);
       const response = await instance.get(endpoint);
-      setSyllabus(response.data[0].syllabus_section);
+      setSyllabus(response.data[0].syllabus_items);
     } catch (error) {
       setError(error);
     } finally {

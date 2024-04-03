@@ -9,29 +9,21 @@ const AddStudent = () => {
     const [departmentNames, setDepartmentNames] = useState([]);
 
     const [studentData, setStudentData] = useState({
-        studentID: '',
+        student_id: '',
         first_name: '',
         last_name: '',
         middle_name: '',
         phone: '',
         date_of_birth: '',
         gender: '',
-        department: '1',
+        department: '',
       });
 
-
-
-
-
-
-
-    
       useEffect(() => {
         const fetchData = async () => {
           try {
             const response = await getDepartementList();
-            // Extract department names from the response
-            const names = response.map((department) => department.Department_name);
+            const names = response.map((department) => department.department_code);
             setDepartmentNames(names);
           } catch (error) {
             console.error('Error fetching department list:', error);
@@ -101,9 +93,16 @@ const AddStudent = () => {
         e.preventDefault();
         if (validateForm()) {
          const response = await addStudent(studentData);
-            console.log(response);
-            if (response.status === 200) {
+            if (response.status === 201) {
               alert('Student added successfully');
+              setStudentData({
+                student_id: '',
+                first_name: '',
+                last_name: '',
+                middle_name: '',
+                phone: '',
+                date_of_birth: '',
+            })
             } else {
               alert('An error occurred. Please try again.');
             }
@@ -137,8 +136,8 @@ const AddStudent = () => {
                  label="Student ID"
                  variant="outlined"
                  fullWidth
-                 name="studentID"
-                 value={studentData.studentID}
+                 name="student_id"
+                 value={studentData.student_id}
                  onChange={handleChange}
               />
             </Grid>

@@ -1,12 +1,16 @@
 FROM node:19.5.0-alpine
 
-WORKDIR /client
+WORKDIR /app/client
 
-COPY . .
-
+COPY  package.json .
 
 RUN npm install
 
+COPY . .
+
+EXPOSE 3000
+
+CMD [ "npm", "start" ]
 
 
 

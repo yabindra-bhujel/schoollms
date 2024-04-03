@@ -44,8 +44,6 @@ const AdminStudent = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
 
-
-
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file && file.type === "text/csv") {
@@ -92,7 +90,7 @@ const AdminStudent = () => {
     try {
       await deleteStudent(studentToDelete);
       setStudentList((prevList) =>
-        prevList.filter((student) => student.studentID !== studentToDelete)
+        prevList.filter((student) => student.student_id !== studentToDelete)
       );
       setSnackbarMessage("Student successfully deleted.");
       setOpenSnackbar(true);
@@ -200,7 +198,7 @@ const AdminStudent = () => {
                   {studentList
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((student) => (
-                      <TableRow key={student.studentID}>
+                      <TableRow key={student.student_id}>
                         <TableCell>
                           <Avatar
                             alt={student.first_name}
@@ -209,7 +207,7 @@ const AdminStudent = () => {
                           />
                           
                         </TableCell>
-                        <TableCell>{student.studentID}</TableCell>
+                        <TableCell>{student.student_id}</TableCell>
                         <TableCell>
                           {student.first_name} {student.last_name}
                         </TableCell>
@@ -222,7 +220,7 @@ const AdminStudent = () => {
                         <TableCell>
                           <div className="action-btn">
                             <Button
-                              onClick={() => handleStudentDelete(student.studentID)}
+                              onClick={() => handleStudentDelete(student.student_id)}
                               variant="outlined"
                               color="secondary"
                             >

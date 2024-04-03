@@ -1,9 +1,10 @@
 import instance from "../../api/axios";
 
 
+const baseURL = "calendar/";
 
 const addNewEvent = async (event) => {
-    const endpoint = `/notification/addevent/`;
+    const endpoint = baseURL;
     
     try {
         const response = await instance.post(endpoint, event);
@@ -15,7 +16,7 @@ const addNewEvent = async (event) => {
 }
 
 const deleteEvent = async (eventId) => {
-    const endpoint = `/notification/delete_event/${eventId}/`;
+    const endpoint = `${baseURL}${eventId}/`;
     try{
         const response = await instance.delete(endpoint);
         return response;
@@ -26,7 +27,7 @@ const deleteEvent = async (eventId) => {
 }
 
 const getEvents = async () => {
-    const endpoint = `/notification/calendar/`;
+    const endpoint = baseURL;
 
     try{
         const response = await instance.get(endpoint);
@@ -37,7 +38,7 @@ const getEvents = async () => {
 }
 
 const updateEvent = async (event) => {
-    const endpoint = `/notification/update_event_date/`;
+    const endpoint = `${baseURL}update_event_date/`;
     try{
         const response = await instance.put(endpoint, event);
         return response;
@@ -48,7 +49,7 @@ const updateEvent = async (event) => {
 }
 
 const makeClassCancellation = async (event) => {
-    const endpoint = `/notification/make_class_cancellation/`;
+    const endpoint = `${baseURL}make_class_cancellation/`;
     try{
         const response = await instance.put(endpoint, event);
         return response;

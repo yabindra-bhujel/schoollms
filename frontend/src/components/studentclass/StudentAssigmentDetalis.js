@@ -38,7 +38,7 @@ const StudentAssigmentDetalis = () => {
 
   const MakeTextSubmission = async () => {
     try {
-      const endpoint = `/course/text_assignment/`;
+      const endpoint = `/assignments/create-text-assignment/`;
       const data = {
         student: user,
         assignment_id: assignmentId,
@@ -72,7 +72,7 @@ const StudentAssigmentDetalis = () => {
       file.forEach((file) => {
         formData.append("file_submission", file);
       });
-      const endpoint = `/course/file_assigment/`;
+      const endpoint = `assignments/create-file-assignment/`;
       setIsLoading(true);
       const response = await instance.post(endpoint, formData, {
         headers: {
@@ -134,7 +134,7 @@ const StudentAssigmentDetalis = () => {
   }, []);
   const getAssignmentData = async () => {
     try {
-      const endpoint = `/course/student_assignment_details/${assignmentId}/`;
+      const endpoint = `assignments/student-assignment-detail/${assignmentId}/`;
       setIsLoading(true);
       const response = await instance.get(endpoint);
       console.log(response.data);
@@ -191,16 +191,16 @@ const StudentAssigmentDetalis = () => {
           <Link to={`/studentclassdetails/${courseId}`}>
             <MdArrowBack className="back" />
           </Link>
-          <p>{assignment.assignment_title}</p>
+          <p>{assignment.title}</p>
         </div>
         <div className="assigment-section-student">
           <div className="assigment-body-st">
 
             <div className="body-st">
-              <ReactQuill value={assignment.assignment_description} readOnly={true} />
+              <ReactQuill value={assignment.description} readOnly={true} />
             </div>
             <div className="assigment-input">
-              {assignment.assignment_type === "File" ? (
+              {assignment.assigment_type === "File" ? (
                 <>
                   <div className="file-attagement">
                     {!isDeadlinePassed && (

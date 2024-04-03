@@ -10,7 +10,7 @@ const UserInfoDialog = ({ loginuserData }) => {
         <Avatar 
         src={loginuserData.image}
          alt="User Avatar"
-            style={{ width: '50px', height: '50px', borderRadius: '50%' }} // Adjust size here
+            style={{ width: '50px', height: '50px', borderRadius: '50%' }} 
 
          />
         <div>

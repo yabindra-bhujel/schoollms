@@ -14,31 +14,14 @@ const Student = () => {
   }, []);
   const getStudentList = async () => {
     try {
-      const endpoint = `/teacher/${teacher_id}/`;
+      const endpoint = `teachers/stduent_list_byteacher/`;
       const response = await instance.get(endpoint);
-      if (response.data.subjects && response.data.subjects.length > 0) {
-        const studentData = [];
-        const uniqueStudents = {}; 
-
-        response.data.subjects.forEach((subject) => {
-          if (subject.students && subject.students.length > 0) {
-            subject.students.forEach((student) => {
-              const studentId = student.studentID;
-
-              if (!uniqueStudents[studentId]) {
-                uniqueStudents[studentId] = true;
-                studentData.push({
-                  ...student,
-                });
-              }
-            });
-          }
-        });
-        setStudentList(studentData);
-      }
+        setStudentList(response.data);
     } catch (error) {
     }
   };
+
+  console.log(studentList);
 
   return (
     <Layout>

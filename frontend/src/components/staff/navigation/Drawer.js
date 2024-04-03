@@ -320,7 +320,7 @@ const AdminSideBar = () =>{
                   >
                   <SiGoogleclassroom size={20} />
 
-                    <span>Course</span>
+                    <span>Subject</span>
                   </Link>
                 </li>
 

@@ -23,34 +23,26 @@ const ShareDialog = ({ open, handleClose, noteid, onUsersAdded, fetchData }) => 
 
   useEffect(() => {
     getAllUsers();
-    getLoginUserData();
   }, []);
 
-  const getLoginUserData = async () => {
-    try {
-      const endpoint = `/get_user_profile/`;
-      const response = await instance.get(endpoint);
-      setLoginuserData(response.data);
-    } catch (e) {
-      console.log("error", e);
-    }
-  };
-
   const getAllUsers = async () => {
-    const endpoint = `/realtimeapi/getalluser/${username}`;
+    const endpoint = `users/`;
     try {
       const res = await instance.get(endpoint);
-      const userData = res.data.users;
+      const userData = res.data;
       setUserList(userData);
+
+    const loggedInUserData = userData.find(user => user.username === username);
+    setLoginuserData(loggedInUserData);
+
     } catch (error) {
-      console.error("Error fetching user data: ", error);
     }
   };
 
   const handleShareClick = async () => {
     if (selectedUsers.length > 0) {
       const selectedUsernames = selectedUsers.map(user => user.username);
-      if(selectedUsernames.length === 0){
+      if (selectedUsernames.length === 0) {
         return;
       }
       try {
@@ -64,7 +56,7 @@ const ShareDialog = ({ open, handleClose, noteid, onUsersAdded, fetchData }) => 
         console.error("Error fetching notes data: ", error);
         throw error;
       }
-     
+
     }
   };
 
@@ -83,7 +75,7 @@ const ShareDialog = ({ open, handleClose, noteid, onUsersAdded, fetchData }) => 
         <UserInfoDialog loginuserData={loginuserData} />
         <Autocomplete
           id="user-search"
-          options={userList.filter(user => !selectedUsers.some(selectedUser => selectedUser.username === user.username))}
+          options={userList ? userList.filter(user => !selectedUsers.some(selectedUser => selectedUser.username === user.username)) : []}
           style={{ marginTop: 20 }}
           value={null}
           onChange={(event, newValue) => {
@@ -107,6 +99,7 @@ const ShareDialog = ({ open, handleClose, noteid, onUsersAdded, fetchData }) => 
           )}
           fullWidth
         />
+
 
         {selectedUsers.map((user, index) => (
           <div key={user.username} style={{ display: 'flex', alignItems: 'center', marginTop: 10 }}>

@@ -6,8 +6,6 @@ import { updateSubmission } from './AssigemntService';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 
-
-
 export default function DataTable({ submissions }) {
   const { t } = useTranslation();
   const [editingRows, setEditingRows] = useState({});
