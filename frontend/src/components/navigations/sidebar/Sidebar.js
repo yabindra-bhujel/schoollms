@@ -14,6 +14,7 @@ import { BsWechat } from "react-icons/bs";
 import { SlNote } from "react-icons/sl";
 import { useWebSocket } from "../../../WebSocketContext";
 import getUserInfo from "../../../api/user/userdata";
+import { useTranslation } from "react-i18next";
 
 
 const Sidebar = ({ toggleSidebar, sidebarWidth}) => {

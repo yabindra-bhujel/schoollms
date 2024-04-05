@@ -289,7 +289,6 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
   if (isGroupChat) {
     return (
       <>
-<<<<<<< HEAD
       <Popover
   id={id}
   open={open}
@@ -313,38 +312,14 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
   </div>
 
 </Popover>
-      <Snackbar
-        open={snackbaropen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-        message={message}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-=======
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-        >
-          <div style={{ padding: '20px' }}>
-            <Button
-              onClick={leaveGroup}
-              variant="text">Leave Group</Button>
-          </div>
-        </Popover>
+
         <Snackbar
           open={snackbaropen}
           autoHideDuration={6000}
           onClose={() => setSnackbarOpen(false)}
           message={message}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
->>>>>>> f29aaecb (set new layout for chat and some places else)
-
-
+Sidebar
         />
         <div className="do_chat_header">
           <div className="do__chat__left">
