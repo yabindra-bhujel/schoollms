@@ -3,11 +3,17 @@ import { Snackbar, TextField, Button, Grid, Paper, Typography, IconButton } from
 import { FaUserEdit } from "react-icons/fa";
 import "./style/profile.css";
 import { updateUserInfo } from "./SettingService";
+import { useTranslation } from "react-i18next";
+
 
 const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [snackbaropen, setSnackbarOpen] = useState(false);
     const [message, setMessage] = useState("");
+    const { t } = useTranslation();
+    // notice msg
+    const updateOk = t("messages.setInfoOk");
+    const errorMsg = t("messages.setInfoErr");
 
     const handleClose = () => {
         setSnackbarOpen(false);
@@ -32,15 +38,25 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
         };
         updateUserInfo(data)
             .then((response) => {
-                setMessage("ユーザー情報を更新しました");
+                setMessage(updateOk);
                 setSnackbarOpen(true);
                 setIsEditMode(false);
             })
             .catch((error) => {
-                setMessage("ユーザー情報の更新中に問題が発生しました。後でもう一度お試しください。または、サービスプロバイダに連絡してください。");
+                setMessage(errorMsg);
                 setSnackbarOpen(true);
             });
     };
+    const userName = t("settings.userName");
+    const firstName = t("settings.firstName");
+    const lastName = t("settings.lastName");
+    const email = t("settings.email");
+    const phone = t("settings.phone");
+    const address = t("settings.address");
+    const district = t("settings.district");
+    const prefect = t("settings.prefect");
+    const postCode = t("settings.postCode");
+    const country = t("settings.country");
 
     return (
         <>
@@ -54,7 +70,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
             <div className='form-control'>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Typography variant="h6">一般 情報
+                        <Typography variant="h6">{t("settings.normalInfo")}
                             <IconButton aria-label="edit" color="primary" onClick={toggleEditMode}>
                                 <FaUserEdit />
                             </IconButton>
@@ -63,7 +79,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
-                            label="ユーザー名"
+                            label={userName}
                             variant="outlined"
                             value={userData?.user?.username || ''}
                             disabled
@@ -72,7 +88,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
-                            label="メール"
+                            label={email}
                             variant="outlined"
                             value={userData?.user?.email || ''}
                             disabled={!isEditMode}
@@ -82,7 +98,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
-                            label="名"
+                            label={firstName}
                             variant="outlined"
                             value={userData?.user?.first_name || ''}
                             disabled={!isEditMode}
@@ -92,7 +108,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
-                            label="姓"
+                            label={lastName}
                             variant="outlined"
                             value={userData?.user?.last_name || ''}
                             disabled={!isEditMode}
@@ -100,14 +116,14 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography variant="h6">住所の詳細</Typography>
+                        <Typography variant="h6">{t("settings.detailAdd")}</Typography>
                     </Grid>
                     {isTeacher ? (
                         <>
                             <Grid item xs={6}>
                                 <TextField
                                     fullWidth
-                                    label="電話"
+                                    label={phone}
                                     variant="outlined"
                                     value={userData?.teacher_data?.[0]?.phone || ''}
                                     disabled
@@ -116,7 +132,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                             <Grid item xs={6}>
                                 <TextField
                                     fullWidth
-                                    label="住所"
+                                    label={address}
                                     variant="outlined"
                                     value={userData?.teacher_data?.[0]?.address || ''}
                                     disabled
@@ -128,7 +144,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                             <Grid item xs={6}>
                                 <TextField
                                     fullWidth
-                                    label="市区町村"
+                                    label={district}
                                     variant="outlined"
                                     value={userData?.student_data?.[0]?.city || ''}
                                     disabled
@@ -137,7 +153,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                             <Grid item xs={6}>
                                 <TextField
                                     fullWidth
-                                    label="都道府県"
+                                    label={prefect}
                                     variant="outlined"
                                     value={userData?.student_data?.[0]?.state || ''}
                                     disabled
@@ -146,7 +162,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                             <Grid item xs={6}>
                                 <TextField
                                     fullWidth
-                                    label="郵便番号"
+                                    label={postCode}
                                     variant="outlined"
                                     value={userData?.student_data?.[0]?.zip_code || ''}
                                     disabled
@@ -155,7 +171,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                             <Grid item xs={6}>
                                 <TextField
                                     fullWidth
-                                    label="国"
+                                    label={country}
                                     variant="outlined"
                                     value={userData?.student_data?.[0]?.country || ''}
                                     disabled
@@ -166,7 +182,7 @@ const UserInfoForm = ({ userData, isTeacher, setUserData }) => {
                     {isEditMode && (
                         <Grid item xs={12}>
                             <Button color="secondary" onClick={handleFormSubmit}>
-                                更新
+                                {t("settings.update")}
                             </Button>
                         </Grid>
                     )}

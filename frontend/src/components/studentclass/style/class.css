@@ -4,16 +4,18 @@
 }
 
 .student-header {
-  height: 80px;
-  background: rgb(63, 94, 251);
-  color: white;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  border-bottom: 2px solid black;
 }
 .student-header h1 {
-  align-items: center;
-  justify-content: center;
+  margin: 0 auto;
   font-size: 20px;
+  width: 500px;
   font-weight: bold;
   text-align: center;
+  border-bottom: 3px solid #ccc;
 }
 
 .student-container-class {

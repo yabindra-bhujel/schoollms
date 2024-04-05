@@ -1,5 +1,8 @@
 {
   "translation": {
+
+    "English": "English",
+    "notices": "Notifications",
     "event": "Event",
     "today event": "Today's Events",
     "dont miss": "Don't miss scheduled events",
@@ -8,7 +11,7 @@
     "week": "Week",
     "day": "Day",
     "event list": "Event List",
-    
+
     "Monday" : "Monday",
     "Tuesday" : "Tuesday",
     "Wednesday":  "Wednesday",
@@ -88,7 +91,7 @@
 
     "classSchedule": "CLASS SCHEDULE",
     "time": "Time",
-    "weekDay": [
+    "weekDays": [
       "Monday",
       "Tuesday",
       "Wednesday",
@@ -180,6 +183,15 @@
   "submissionFile": "Submission File"
 },
 
+"studentInfo": {
+  "idNumber": "ID Number",
+  "studentName": "Student Name",
+  "mail": "Email",
+  "gender": "Gender",
+  "phone": "Phone",
+  "department": "Department"
+},
+
 "studentAssigemnt":{
   "fileerror":"You can only upload files up to 10 MB",
   "submit": "Submit",
@@ -214,7 +226,14 @@
   "unexpectedError": "An unexpected error occurred.",
   "noResponse": "No response from the server.",
   "errorSendingRequest": "Error in sending request.",
-  "send": "Send"
+  "send": "Send",
+  "setInfoOk": "User Information has been updated.",
+  "setInfoErr": "There is a problem accured. Retry in  some time.",
+  "err": "There are some errors accured!!",
+  "imgUpdated": "Image  Updated Successfully!",
+  "imgUpdateErr":  "Some Error Occurred While Updating Image."
+  
+
 },
 
 "exma":{
@@ -250,13 +269,65 @@
   "fileUploadError": "You can not upload this type of file.",
   "cancelButton": "Cancel",
   "uploadButton": "Upload"
+},
+
+"sidebar": {
+  "dashboard":"Dashboard",
+  "courses":"Courses",
+  "groups":"Groups",
+  "students":"Student",
+  "files":"File",
+  "calendar":"Calendar",
+  "settings":"Settings",
+  "logout":"Logout",
+  "assigment": "Assigment",
+  "class": "Class",
+  "note": "Notes",
+  "chat": "Chat",
+  "learnmore": "Learn More"
+},
+"header": {
+
+  "profile": "Profile",
+  "settings":"Settings",
+  "logout":  "Log out",
+  "noNotice": "There is no  notice for you.",
+  "welcome": "Welcome"
+
 }
+,
+"settings": {
 
+  "title": "Settings",
+  "attention": "Manage your settings and preferences",
+  "setProfile":  "Set Profile Information",
+  "securities":  "Security Settings and mores",
+  "individual": "Individual Information",
+  "imgInfo": "PNG、JPG、JPEG are supported.（size <= 10MB ）",
+  "userName": "User name: ",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "email": "Email Address",
+  "normalInfo": "Normal Information",
+  "detailAdd": "Details Address",
+  "phone":  "Phone Number",
+  "address": "Address",
+  "district":  "City/District",
+  "prefect" : "Prefecture",
+  "postCode":  "Postal Code",
+  "country": "Country",
+  "update": "Update"
+},
 
-
-
-
-
+"weekdays": {
+  "mon": "Monday",
+  "tue": "Tuesday",
+  "wed": "Wednesday",
+  "thu": "Thursday",
+  "fri": "Friday",
+  "sat": "Saturday",
+  "sun": "Sunday"
+}
 
   }
 }
