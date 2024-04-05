@@ -17,7 +17,6 @@ echo "Processes on ports 3000 and 8000 stopped"
 echo "Starting local development environment"
 
 cd frontend
-npm install
 
 npm start &
 
@@ -25,17 +24,8 @@ echo "Local development environment started"
 
 cd ../api
 
-if [ -d "venv" ]; then
-    echo "Activating existing virtual environment"
-    source venv/bin/activate
-else
-    echo "Creating virtual environment"
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-fi
+source venv/bin/activate
 
-echo "Starting Django server"
 python3 manage.py runserver
 
 
