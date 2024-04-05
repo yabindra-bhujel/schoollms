@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'teachers',
     'courses',
     'courses.subjects',
+    'courses.attendance',
     'common',
     'common.calendar',
     'common.notes',

@@ -3,6 +3,7 @@ from django.urls import path, include
 
 from .views import *
 from .subjects.views import *
+from .attendance.views import *
 
 
 router = routers.DefaultRouter()
@@ -17,6 +18,7 @@ router.register(r'subject_materiales', CourseMaterialesViewSet, basename='Course
 router.register(r'announcements', AnnouncementViewSet, basename='Announcement')
 router.register(r'syllabus', SyllabusViewSet, basename='Syllabus')
 router.register(r'submissions', SubmissionViewSet, basename='Submission')
+router.register(r'attendance', AttendanceViewSet, basename='Attendance')
 
 urlpatterns = [
     path('', include(router.urls)),

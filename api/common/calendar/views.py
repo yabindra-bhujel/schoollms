@@ -60,12 +60,25 @@ class CalendarEventViewSet(viewsets.ViewSet):
     @extend_schema(responses={200: CalendarEventSerializer})
     @action(detail=False, methods=['put'], url_path='make_class_cancellation', url_name='make_class_cancellation')
     def make_class_cancellation(self, request, pk=None):
-        queryset = CalendarEvent.objects.all()
-        event = get_object_or_404(queryset, pk=pk)
-        service = CalendarService(event)
-        event = service.cancel_class()
-        serializer = CalendarEventSerializer(event)
-        return Response(serializer.data)
+        try:
+            event = request.data
+            event_id = event['id']
+            event = CalendarEvent.objects.get(id=event_id)
+            today = datetime.now().date()
+            if event.start_date < today:
+                return Response({'error': '講義日が過ぎているため 休講できません。'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if event.is_class_cancellation:
+                event.is_class_cancellation = False
+                event.save()
+            else:
+                event.is_class_cancellation = True
+                event.save()
+            return Response('Class cancellation updated successfully', status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
        
     
     @extend_schema(responses={204: None})

@@ -68,7 +68,7 @@ const Attendace = () => {
 
   const createAttendance = async () => {
     try {
-      const endpoint = `/course/create_attendance/`;
+      const endpoint = `/attendance/create_attendance/`;
       const response = await instance.post(endpoint, {
         teacher_id: username,
         course_code: subject_code,
@@ -83,7 +83,7 @@ const Attendace = () => {
 
   const getAttendance = async () => {
     try {
-      const endpoint = `/course/get_attendance_by_subject/${subject_code}/`;
+      const endpoint = `attendance/get_attendance_by_subject/${subject_code}/`;
 
       const response = await instance.get(endpoint);
       const student_list = response.data.student_list;

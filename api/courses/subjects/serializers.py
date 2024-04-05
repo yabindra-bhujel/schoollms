@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 
 
+
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
@@ -66,3 +67,4 @@ class FileSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileSubmission
         fields = ( 'id', 'student', 'submission_datetime', 'is_submited', 'assignment_submission_file', 'is_graded', 'grade' )
+
