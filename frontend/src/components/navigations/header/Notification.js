@@ -2,8 +2,11 @@ import React from 'react';
 import moment from 'moment';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 const Notifications = ({ notifications }) => {
+  const { t } = useTranslation();
+
   return (
     <div style={{ width: '300px' }}>
       {notifications.length > 0 ? (
@@ -23,7 +26,7 @@ const Notifications = ({ notifications }) => {
         ))
       ) : (
         <Typography variant="body2" color="textSecondary">
-          You don't have any notifications.
+          {t("header.noNotice")}
         </Typography>
       )}
     </div>

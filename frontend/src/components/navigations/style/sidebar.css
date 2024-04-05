@@ -8,6 +8,7 @@ nav {
   display: flex;
   justify-content: space-between;
   position: relative;
+  transition: width 0.3s ease; /* Add smooth transition */
 }
 nav .user_info_side {
   margin-left: 100px;
@@ -61,16 +62,14 @@ nav .profile {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   position: relative;
 }
 nav .profile img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 
 @media screen and (max-width: 1000px) {
@@ -88,6 +87,7 @@ nav .profile img {
   z-index: 99;
   overflow-y: auto;
   height: 100vh;
+  transition: width 0.3s ease; /* Add smooth transition */
 }
 .sidebar ul {
   list-style-type: none;
@@ -124,6 +124,9 @@ nav .profile img {
     display: none;
   }
 }
+.sidebar ul li a:last-child {
+  margin-bottom: 5px;
+}
 .sidebar ul li .active {
   background-color: #2a71b9;
   color: white;
@@ -140,4 +143,7 @@ nav .profile img {
 .sidebar ul li .toggleBtn {
   font-size: 30px;
   padding: 0 20px;
-}/*# sourceMappingURL=sidebar.css.map */
+}
+.sidebar .logout {
+  bottom: 5px;
+}

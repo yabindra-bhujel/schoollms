@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Menu, MenuItem, IconButton, Avatar, ListItemIcon } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Replace with appropriate icons
-import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { useTranslation } from 'react-i18next';
+import instance from '../../../api/axios';
+
+
 
 function ProfileMenu({ loginUserData }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -11,9 +14,29 @@ function ProfileMenu({ loginUserData }) {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleSetting = () => {
+    window.location.href = "/setting"
+  }
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleLogout = async () => {
+    try {
+      const endpoint = "/logout/";
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (userData && userData.refresh) {
+        const response = await instance.post(endpoint, { "refresh": userData.refresh });
+        if (response.status === 200) {
+          localStorage.removeItem("userData");
+          window.location.href = "/login";
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const { t } = useTranslation();
 
   return (
     <div>
@@ -32,23 +55,18 @@ function ProfileMenu({ loginUserData }) {
           },
         }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleSetting}>
           <ListItemIcon>
             <AccountCircleIcon />
           </ListItemIcon>
-          Profile
+          {t("header.profile")}
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <SettingsIcon />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
+
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <ExitToAppIcon />
           </ListItemIcon>
-          Logout
+          {t("header.logout")}
         </MenuItem>
       </Menu>
     </div>

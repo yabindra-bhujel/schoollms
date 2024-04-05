@@ -16,7 +16,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Button from '@mui/material/Button';
 
 
-const ChatDetails = ({ selectedChat, socket, onlineUsers }) => {
+const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
   const [newmessage, setNewmessage] = useState("");
   const [groupnewmessage, setGroupnewmessage] = useState("");
   const [messageList, setMessageList] = useState([]);
@@ -34,9 +34,9 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers }) => {
   const [message, setMessage] = useState("");
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const isOnline = selectedChat 
-  ? onlineUsers.some(user => user.userId === selectedChat.username) 
-  : false;
+  const isOnline = selectedChat
+    ? onlineUsers.some(user => user.userId === selectedChat.username)
+    : false;
 
   const handleGroupImageChange = (e) => {
     const file = e.target.files[0];
@@ -56,13 +56,13 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers }) => {
     try {
       const res = await instance.put(endpoint, formData);
       if (res.status === 200) {
-      setSnackbarOpen(true);
-      setMessage("画像をアップロードしました");
-      setGroupIconImage(null);
-      setTimeout(() => {
-        setSnackbarOpen(false);
-        window.location.reload();
-      }, 3000);
+        setSnackbarOpen(true);
+        setMessage("画像をアップロードしました");
+        setGroupIconImage(null);
+        setTimeout(() => {
+          setSnackbarOpen(false);
+          window.location.reload();
+        }, 3000);
       }
     } catch (err) {
       setSnackbarOpen(true);
@@ -74,16 +74,16 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers }) => {
     }
   }
 
-const handleClicks = (event) => {
-  setAnchorEl(event.currentTarget);
-};
+  const handleClicks = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-const handleClose = () => {
-  setAnchorEl(null);
-};
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-const open = Boolean(anchorEl);
-const id = open ? 'simple-popover' : undefined;
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   const handleFileButtonClick = () => {
     imageRef.current.click();
@@ -134,13 +134,13 @@ const id = open ? 'simple-popover' : undefined;
       return;
     }
 
-    const groupID = selectedChat ? selectedChat.id : ""; 
+    const groupID = selectedChat ? selectedChat.id : "";
 
     const endpoint = `groups/group_message/${groupID}/`;
 
     try {
       const res = await instance.get(endpoint);
-      const messages = res.data; 
+      const messages = res.data;
       setGroupMessage(messages);
     } catch (err) {
     }
@@ -165,7 +165,7 @@ const id = open ? 'simple-popover' : undefined;
   }
   const sender_userId = getUserInfo().username;
 
-  const handleClick = () => {};
+  const handleClick = () => { };
 
   const fetchMessages = async () => {
     if (!isGroupChat) {
@@ -289,6 +289,7 @@ const id = open ? 'simple-popover' : undefined;
   if (isGroupChat) {
     return (
       <>
+<<<<<<< HEAD
       <Popover
   id={id}
   open={open}
@@ -318,51 +319,75 @@ const id = open ? 'simple-popover' : undefined;
         onClose={() => setSnackbarOpen(false)}
         message={message}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+=======
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+        >
+          <div style={{ padding: '20px' }}>
+            <Button
+              onClick={leaveGroup}
+              variant="text">Leave Group</Button>
+          </div>
+        </Popover>
+        <Snackbar
+          open={snackbaropen}
+          autoHideDuration={6000}
+          onClose={() => setSnackbarOpen(false)}
+          message={message}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+>>>>>>> f29aaecb (set new layout for chat and some places else)
 
 
-      />
+        />
         <div className="do_chat_header">
           <div className="do__chat__left">
             <div className="profile__pic">
-            <button
-              onClick={() => groupImage.current && groupImage.current.click()}
-            >
-              <label htmlFor="profile-image">
-                <input
-                  ref={groupImage}
-                  onChange={handleGroupImageChange}
-                  type="file"
-                  id="profile-image"
-                  style={{ display: "none" }}
-                  accept="image/*"
-                />
-              </label>
-              {selectedChat.image ? (
-                 <img
-                 alt="プロフィール画像"
-                 src={groupIconImage || selectedChat.image}
-               />
-              ) : (
-                <img
-                alt="プロフィール画像"
-                src={groupIconImage || NoImage}
-              />
-              )}
-             
-            </button>
+              <button
+                onClick={() => groupImage.current && groupImage.current.click()}
+              >
+                <label htmlFor="profile-image">
+                  <input
+                    ref={groupImage}
+                    onChange={handleGroupImageChange}
+                    type="file"
+                    id="profile-image"
+                    style={{ display: "none" }}
+                    accept="image/*"
+                  />
+                </label>
+                {selectedChat.image ? (
+                  <img
+                    alt="プロフィール画像"
+                    src={groupIconImage || selectedChat.image}
+                  />
+                ) : (
+                  <img
+                    alt="プロフィール画像"
+                    src={groupIconImage || NoImage}
+                  />
+                )}
+
+              </button>
             </div>
 
             <div className="chat_details">
               <h4>{selectedChat.name}</h4>
               <strong>Admin: {selectedChat.admin}</strong> <br />
-              
+
             </div>
           </div>
 
           <div className="do__chat__right">
-          <IconButton onClick={handleClicks}>
-  <MoreHorizIcon />
-</IconButton>
+            <IconButton onClick={handleClicks}>
+              <MoreHorizIcon />
+            </IconButton>
 
           </div>
         </div>

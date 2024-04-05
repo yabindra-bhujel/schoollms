@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import "./style/table.css";
+import { useTranslation } from 'react-i18next';
+
 
 export default function DataTable({ studentList }) {
     const todayDate =  new Date().toLocaleString('ja-JP', {
@@ -13,17 +15,18 @@ export default function DataTable({ studentList }) {
             <GridToolbarExport csvOptions={{ fileName: `${todayDate}` }} />
         </div>
     );
+    const { t } = useTranslation();
     const columns = [
-        { field: 'studentID', headerName: '学生ID', headerClassName:"student-col", width: 170 },
-        { field: 'fullName', headerName: '学生名', width: 200, sortable: false, disableColumnMenu: true, headerClassName: "student-col",
+        { field: 'studentID', headerName: t('studentInfo.idNumber'), headerClassName:"student-col", width: 170 },
+        { field: 'fullName', headerName: t('studentInfo.studentName'), width: 200, sortable: false, disableColumnMenu: true, headerClassName: "student-col",
             valueGetter: (params) => `${params.row.first_name || ''} ${params.row.last_name || ''}`,
         },
-        { field: 'email', headerName: 'メール', width: 300, disableColumnMenu: true, sortable: false, headerClassName: "student-col" },
-        { field: 'gender', headerName: '性別', width: 150, disableColumnMenu: true, sortable: false, headerClassName: "student-col" },
-        { field: 'phone', headerName: '電話', width: 180, disableColumnMenu: true, sortable: false, headerClassName: "student-col" },
+        { field: 'email', headerName: t('studentInfo.mail'), width: 300, disableColumnMenu: true, sortable: false, headerClassName: "student-col" },
+        { field: 'gender', headerName: t('studentInfo.gender'), width: 150, disableColumnMenu: true, sortable: false, headerClassName: "student-col" },
+        { field: 'phone', headerName: t('studentInfo.phone'), width: 180, disableColumnMenu: true, sortable: false, headerClassName: "student-col" },
         {
             field: 'departmentName',
-            headerName: '学部',
+            headerName: t('studentInfo.department'),
             width: 160,
             sortable: false,
             disableColumnMenu: true,

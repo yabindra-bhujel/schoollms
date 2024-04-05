@@ -12,6 +12,8 @@ import jwtDecode from "jwt-decode";
 import instance from "../../../api/axios";
 import { BsWechat } from "react-icons/bs";
 import { SlNote } from "react-icons/sl";
+import { useWebSocket } from "../../../WebSocketContext";
+import getUserInfo from "../../../api/user/userdata";
 
 
 const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
@@ -38,6 +40,10 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
     }
   }
 
+  const {t} = useTranslation();
+
+
+
   return (
     <div>
         {/* side-bar */}
@@ -58,7 +64,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                     <span className="icon">
                       <MdDashboard />
                     </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Dashboard</span>
+                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.dashboard')}</span>
                   </div>
                 </NavLink>
               </li>
@@ -78,7 +84,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                         <span className="icon">
                           <PiStudentBold />
                         </span>
-                        <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Student</span>
+                        <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.students')}</span>
                       </div>
                     </NavLink>
                   </li>
@@ -100,7 +106,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                         <span>
                           <SiGoogleclassroom />
                         </span>
-                        <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Class</span>
+                        <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.class')}</span>
                       </div>
                     </NavLink>
                   </li>
@@ -129,7 +135,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                         <span>
                           <PiStudentBold />
                         </span>
-                        <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Class</span>
+                        <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.class')}</span>
                       </div>
                     </NavLink>
                   </li>
@@ -146,7 +152,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                     <span>
                       <BsCalendarFill />
                     </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Calender</span>
+                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.calendar')}</span>
                   </div>
                 </NavLink>
               </li>
@@ -165,7 +171,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                     <span>
                       <SlNote />
                     </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Notes</span>
+                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.note')}</span>
                   </div>
                 </NavLink>
               </li>
@@ -183,7 +189,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                     <span>
                       <BsWechat />
                     </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Chat</span></div>
+                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.chat')}</span></div>
                 </NavLink>
               </li>
               <li>
@@ -201,7 +207,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                     <span>
                       <MdCastForEducation />
                     </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Learn More..</span></div>
+                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.learnmore')}</span></div>
                 </NavLink>
               </li>
 
@@ -215,7 +221,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                     <span>
                       <AiFillSetting />
                     </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Setting</span>
+                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.settings')}</span>
                   </div>
                 </NavLink>
               </li>
@@ -226,7 +232,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
                     <span>
                       <RiLogoutCircleFill />
                     </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>Logout</span>
+                    <span className="text logout" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.logout')}</span>
                   </div>
                 </a>
               </li>

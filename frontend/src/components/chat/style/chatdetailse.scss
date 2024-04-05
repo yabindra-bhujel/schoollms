@@ -4,18 +4,14 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
     height: 820px;
+    padding: 10px;
 
     .not_select{
         font-size: 30px;
         font-weight: bold;
         color: gray;
-    
     }
-
-
-  
 }
 
 
@@ -29,9 +25,6 @@
 .do__chat__left{
     display: flex;
     align-items: center;
-
-
-
 
     .profile__pic{
         width: 60px;
@@ -130,11 +123,9 @@
 
 .messages__container{
     height: calc(100vh - 290px);
+    width: 100%;
     overflow-y: scroll;
-    overflow-x: hidden;
-
-
-
+    overflow-x: scroll;
 }
 
 

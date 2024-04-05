@@ -95,7 +95,6 @@
       display: flex;
       justify-content: space-between;
       box-shadow: 0 2px 2px 0 rgba(156, 127, 127, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.19); 
-
     }
 
   }
@@ -105,7 +104,7 @@
       margin-bottom: 100px;
       display: flex;
       flex-direction: column;
-      justify-content: end;
+      justify-content: flex-end;
 
 
       button{
