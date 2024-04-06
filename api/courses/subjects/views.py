@@ -21,6 +21,9 @@ from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from dateutil import parser
 from django.utils.timezone import make_aware
+import os
+from django.conf import settings
+from utils.pdf_generator import PDFGenerator
 
 
 class AdminSubjectViewSet(viewsets.ViewSet):
@@ -207,6 +210,10 @@ class AssigmentViewSet(viewsets.ViewSet):
 
             return Response(response_data, status=status.HTTP_200_OK)
  
+    def __ensureDirectoryExists(self, path):
+        if not os.path.exists(path):
+            os.makedirs(path)
+            
     @extend_schema(responses={200: AssignmentSerializer})
     @action(detail=False, methods=['post'], url_path='create-text-assignment', url_name='create-text-assignment')
     def create_text_assignment(self, request):
@@ -236,8 +243,33 @@ class AssigmentViewSet(viewsets.ViewSet):
                 textsubmission.answers.add(text_answer)
             textsubmission.save()
 
-            # TODO: change to pdf for teacher
+            filename = f"{student.student_id}.pdf"
+            assignment_title = assignment.title
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            full_name = f"{student.first_name} {student.last_name}"
+            question_answers = [
+                {"question": answer.question.question, "answer": answer.answer}
+                for answer in textsubmission.answers.all()
+            ]
 
+            media_dir = f"text_assignments/{assignment_title}/"
+            media_base_dir = settings.MEDIA_ROOT
+            self.__ensureDirectoryExists(os.path.join(media_base_dir, media_dir))
+            pdf_file_path = os.path.join(media_base_dir, media_dir, filename)
+
+            pdf = PDFGenerator(filename=pdf_file_path, title=assignment_title, student_name = full_name, date=current_date, student_id=student.student_id)
+            pdf.pdf_header()
+            for question_answer in question_answers:
+                pdf.add_text(question_answer["question"])
+                pdf.add_text(question_answer["answer"])
+            pdf.save()
+
+            relative_pdf_path = os.path.join(media_dir, filename)
+            textsubmission.student_answer_file = relative_pdf_path
+            textsubmission.save()
+
+            assignment.submission_count = TextSubmission.objects.filter(assignment=assignment, is_submitted=True, student=student).count()
+            assignment.save()
             return Response(status=status.HTTP_200_OK)
 
     @extend_schema(responses={200: AssignmentSerializer})
@@ -252,8 +284,12 @@ class AssigmentViewSet(viewsets.ViewSet):
             student = get_object_or_404(Student, student_id=student_id)
         except ObjectDoesNotExist as e:
             return Response({"message": "Assignment not found"}, status=404)
-        submission = None
 
+        media_dir = f"file_assignments/{assignment.title}/"
+        media_base_dir = settings.MEDIA_ROOT
+        self.__ensureDirectoryExists(os.path.join(media_base_dir, media_dir))
+
+        submission = None
         existing_submission = FileSubmission.objects.filter(assignment=assignment, student=student).first()
         if existing_submission:
             submission = existing_submission
@@ -266,8 +302,11 @@ class AssigmentViewSet(viewsets.ViewSet):
 
         if submission:
             for file in answer_files:
-                assignment_file = AssignmentFile(file=file)
-                assignment_file.save()
+                file_path = os.path.join(media_base_dir, media_dir, file.name)
+                with open(file_path, 'wb') as destination:
+                    for chunk in file.chunks():
+                        destination.write(chunk)
+                assignment_file = AssignmentFile.objects.create(file=file_path)
                 submission.assignment_submission_file.add(assignment_file)
         else:
             return Response({"message": "Submission not found"}, status=404)
@@ -275,6 +314,7 @@ class AssigmentViewSet(viewsets.ViewSet):
         assignment.submission_count = FileSubmission.objects.filter(assignment=assignment, is_submited=True).count()
         assignment.save()
         return Response(status=status.HTTP_200_OK)
+
 
     @extend_schema(responses={200: AssignmentSerializer})
     @action(detail=False, methods=['get'], url_path='teacher-assignment-detail/(?P<pk>[^/.]+)', url_name='teacher-assignment-detail')

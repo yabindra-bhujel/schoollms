@@ -146,7 +146,7 @@ def get_assignment_file_path(instance):
 
 
 class AssignmentFile(models.Model):
-    file = models.FileField(upload_to="assignments/", verbose_name='File')
+    file = models.FileField(verbose_name='File', max_length=255)
 
     def __str__(self):
         return self.file.name
@@ -189,7 +189,7 @@ class TextSubmission(models.Model):
     submission_time = models.DateTimeField(auto_now_add=True, verbose_name='Submission Time')
     is_submitted = models.BooleanField(default=False, verbose_name='Is Submitted')
     answers = models.ManyToManyField(TextQuestionAnswer, verbose_name='Answers')
-    student_answer_file = models.FileField(upload_to='student_answer_files', null=True, blank=True, verbose_name='Student Answer File')
+    student_answer_file = models.FileField(null=True, blank=True, verbose_name='Student Answer File')
     is_graded = models.BooleanField(default=False, verbose_name='Is Graded')
     grade = models.PositiveIntegerField(default=0, verbose_name='Grade')
 
