@@ -1,0 +1,21 @@
+.admin-teacher-header {
+	display: flex;
+	padding: 30px;
+}
+
+.admin-student-table {
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	width: 100%;
+}
+
+.admin-student-table thead {
+	position: sticky;
+	top: 0;
+	background-color: white;
+	z-index: 1;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+}

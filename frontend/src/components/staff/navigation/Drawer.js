@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./style/sidebar.css";
 import { GiTeacher } from "react-icons/gi";
@@ -9,357 +9,231 @@ import { IoMdLogOut } from "react-icons/io";
 import { FaBookOpen } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import { RiCalendarTodoLine } from "react-icons/ri";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Snackbar } from "@mui/material";
 import instance from "../../../api/axios";
 import getUserInfo from "../../../api/user/userdata";
-import TextField from '@mui/material/TextField';
+import TextField from "@mui/material/TextField";
 
-const AdminSideBar = () =>{
-    const location = useLocation();
-    const [passwordChange, setPasswordChange] = useState(false);
-    const [password, setPassword] = useState({
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-    });
-    const [errors, setErrors] = useState({});
-    const [snackbar, setSnackbar] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const username = getUserInfo().username;
+const AdminSideBar = () => {
+	const location = useLocation();
+	const [passwordChange, setPasswordChange] = useState(false);
+	const [password, setPassword] = useState({
+		oldPassword: "",
+		newPassword: "",
+		confirmPassword: "",
+	});
+	const [errors, setErrors] = useState({});
+	const [snackbar, setSnackbar] = useState(false);
+	const [snackbarMessage, setSnackbarMessage] = useState("");
+	const username = getUserInfo().username;
 
+	const handlePasswordChange = () => {
+		setPasswordChange(true);
+	};
 
+	const handlePasswordChangeClose = () => {
+		setPasswordChange(false);
+	};
 
-    const handlePasswordChange = () => {
-        setPasswordChange(true);
-    }
+	const ChangePassword = async (data) => {
+		try {
+			const endpoint = "change_password";
+			const response = await instance.post(endpoint, data);
+			return response;
+		} catch (error) {
+			throw error;
+		}
+	};
 
-    const handlePasswordChangeClose = () => {
+	const handlePasswordChangeSubmit = async () => {
+		setErrors({});
+		if (password.oldPassword === "") {
+			setErrors({ oldPassword: "Old Password is required" });
+			return;
+		}
 
-        setPasswordChange(false);
-    }
+		if (password.newPassword === "") {
+			setErrors({ newPassword: "New Password is required" });
+			return;
+		}
 
+		if (password.confirmPassword === "") {
+			setErrors({ confirmPassword: "Confirm Password is required" });
+			return;
+		}
 
-    const ChangePassword = async (data) => {
-        try{
-          const endpoint = "change_password";
-          const response = await instance.post(endpoint, data);
-          return response;
+		if (password.newPassword !== password.confirmPassword) {
+			setErrors({ confirmPassword: "Passwords do not match" });
+			return;
+		}
 
+		try {
+			const response = await ChangePassword(password);
+			if (response.status === 200) {
+				setSnackbar(true);
+				setSnackbarMessage("Password Changed Successfully");
+				setPasswordChange(false);
+				setTimeout(() => {
+					handleLogout();
+				}, 30000);
+			}
+		} catch (error) {
+			setSnackbar(true);
+			if (error.response) {
+				const errorMessage = error.response.data.error || "There was an error processing your request.";
+				setSnackbarMessage(errorMessage);
+			} else {
+				setSnackbarMessage("An unexpected error occurred. Please try again later.");
+			}
+			setPasswordChange(false);
+		}
+	};
 
-        }catch(error){
-           throw error;
-        }
-    }
+	const handlePasswordChangeCancel = () => {
+		setPasswordChange(false);
+	};
 
-    const handlePasswordChangeSubmit = async () => {
-      setErrors({});
-      if (password.oldPassword === "") {
-          setErrors({ oldPassword: "Old Password is required" });
-          return;
-      }
-  
-      if (password.newPassword === "") {
-          setErrors({ newPassword: "New Password is required" });
-          return;
-      }
-  
-      if (password.confirmPassword === "") {
-          setErrors({ confirmPassword: "Confirm Password is required" });
-          return;
-      }
-  
-      if (password.newPassword !== password.confirmPassword) {
-          setErrors({ confirmPassword: "Passwords do not match" });
-          return;
-      }
-  
-      try {
-          const response = await ChangePassword(password);
-          if (response.status === 200) {
-              setSnackbar(true);
-              setSnackbarMessage("Password Changed Successfully");
-              setPasswordChange(false);
-              setTimeout(() => {
-                  handleLogout();
-              }, 30000);
-          }
-      } catch (error) {
-          setSnackbar(true);
-          if (error.response) {
-              const errorMessage = error.response.data.error || "There was an error processing your request.";
-              setSnackbarMessage(errorMessage);
-          } else {
-              setSnackbarMessage("An unexpected error occurred. Please try again later.");
-          }
-          setPasswordChange(false);
-      }
-  }
-  
-  
+	const handleChange = (event) => {
+		setPassword({
+			...password,
+			[event.target.name]: event.target.value,
+		});
+	};
 
-    const handlePasswordChangeCancel = () => {
-        setPasswordChange(false);
-    }
+	const handleLogout = async () => {
+		try {
+			const endpoint = "/logout/";
+			const userData = JSON.parse(localStorage.getItem("userData"));
+			if (userData && userData.refresh) {
+				const response = await instance.post(endpoint, { refresh: userData.refresh });
+				if (response.status === 200) {
+					localStorage.removeItem("userData");
+					window.location.href = "/login";
+				}
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
+	return (
+		<div>
+			<Snackbar open={snackbar} autoHideDuration={6000} onClose={() => setSnackbar(false)} message={snackbarMessage} />
 
-    const handleChange = (event) => {
-        setPassword({
-            ...password,
-            [event.target.name]: event.target.value
-        });
-    }
+			<Dialog open={passwordChange} onClose={handlePasswordChangeClose} fullWidth>
+				<DialogTitle>Change Password</DialogTitle>
 
-    const handleLogout = async () => {
-      try {
-          const endpoint = "/logout/";
-          const userData = JSON.parse(localStorage.getItem("userData"));
-          if (userData && userData.refresh) {
-              const response = await instance.post(endpoint, { "refresh": userData.refresh });
-              if (response.status === 200) {
-                  localStorage.removeItem("userData");
-                  window.location.href = "/login";
-              }
-          }
-      } catch (error) {
-          console.log(error);
-      }
-  }
+				<DialogContent>
+					<div className='password-change-form'>
+						<TextField label='Old Password' type='password' name='oldPassword' value={password.oldPassword} onChange={handleChange} variant='outlined' fullWidth margin='normal' error={!!errors.oldPassword} helperText={errors.oldPassword} />
 
+						<TextField label='New Password' type='password' name='newPassword' value={password.newPassword} onChange={handleChange} variant='outlined' fullWidth margin='normal' error={!!errors.newPassword} helperText={errors.newPassword} />
 
-  
+						<TextField
+							label='Confirm Password'
+							type='password'
+							name='confirmPassword'
+							value={password.confirmPassword}
+							onChange={handleChange}
+							variant='outlined'
+							fullWidth
+							margin='normal'
+							error={!!errors.confirmPassword}
+							helperText={errors.confirmPassword}
+						/>
+					</div>
+				</DialogContent>
 
-  
+				<DialogActions>
+					<Button variant='contained' color='primary' onClick={handlePasswordChangeSubmit}>
+						Submit
+					</Button>
+					<Button variant='outlined' color='secondary' onClick={handlePasswordChangeCancel}>
+						Cancel
+					</Button>
+				</DialogActions>
+			</Dialog>
 
+			<div className='admin-nav-bar'>
+				<h1>CampusFlow Administration</h1>
 
-    
+				<div className='nav-bar-menu'>
+					<div className='welcome'>
+						<p>Welcome {username}</p>
+					</div>
 
-    return(
-        <div>
+					<div className='chnage-password'>
+						<p onClick={handlePasswordChange}>Change Password</p>
+					</div>
 
-            <Snackbar
-                open={snackbar}
-                autoHideDuration={6000}
-                onClose={() => setSnackbar(false)}
-                message={snackbarMessage}
-            />
+					<div className='logout'>
+						<IoMdLogOut onClick={handleLogout} size={30} />
+					</div>
+				</div>
+			</div>
+			<div className='admin-sidebar'>
+				<div className='menu-item'>
+					<ul>
+						<li>
+							<Link to='/admin/student' className={location.pathname === "/admin/student" || location.pathname === "/admin/student/add" || location.pathname === "/admin/student/edit" ? "active" : ""}>
+								<PiStudentFill size={20} />
+								<span>Student</span>
+							</Link>
+						</li>
 
-            
-            <Dialog
-                open={passwordChange}
-                onClose={handlePasswordChangeClose}
-                fullWidth
-            >
+						<li>
+							<Link to='/admin/teacher' className={location.pathname === "/admin/teacher" || location.pathname === "/admin/teacher/add" || location.pathname === "/admin/teacher/edit" ? "active" : ""}>
+								<GiTeacher size={20} />
+								<span>Teacher</span>
+							</Link>
+						</li>
 
-                <DialogTitle>
-                    Change Password
-                </DialogTitle>
+						<li>
+							<Link to='/admin/user' className={location.pathname === "/admin/user" || location.pathname === "/admin/user/add" || location.pathname === "/admin/user/edit" ? "active" : ""}>
+								<FaRegUserCircle size={20} />
+								<span>User</span>
+							</Link>
+						</li>
 
-                <DialogContent>
-    <div className="password-change-form">
-        <TextField
-            label="Old Password"
-            type="password"
-            name="oldPassword"
-            value={password.oldPassword}
-            onChange={handleChange}
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            error={!!errors.oldPassword}
-            helperText={errors.oldPassword}
-        />
+						<li>
+							<Link to='/admin/department' className={location.pathname === "/admin/department" || location.pathname === "/admin/department/add" || location.pathname === "/admin/department/edit" ? "active" : ""}>
+								<FaBookOpen size={20} />
+								<span>Department</span>
+							</Link>
+						</li>
 
-        <TextField
-            label="New Password"
-            type="password"
-            name="newPassword"
-            value={password.newPassword}
-            onChange={handleChange}
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            error={!!errors.newPassword}
-            helperText={errors.newPassword}
-        />
+						<li>
+							<Link
+								to='/admin/course'
+								className={location.pathname === "/admin/course" || location.pathname === "/admin/course/add" || location.pathname.startsWith("/admin/course/") || location.pathname === "/admin/course/edit" ? "active" : ""}
+							>
+								<SiGoogleclassroom size={20} />
 
-        <TextField
-            label="Confirm Password"
-            type="password"
-            name="confirmPassword"
-            value={password.confirmPassword}
-            onChange={handleChange}
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword}
-        />
-    </div>
-</DialogContent>
+								<span>Subject</span>
+							</Link>
+						</li>
 
+						<li>
+							<Link to='/admin/enroll' className={location.pathname === "/admin/enroll" || location.pathname === "/admin/enroll/add" || location.pathname === "/admin/enroll/edit" ? "active" : ""}>
+								<RiCalendarTodoLine size={20} />
 
+								<span>Enroll Student</span>
+							</Link>
+						</li>
 
-                <DialogActions>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handlePasswordChangeSubmit}
-                    >
-                        Submit
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        color="secondary"
+						<hr />
 
-                        onClick={handlePasswordChangeCancel}
-                    >
-
-                        Cancel
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-
-
-
-          <div className="admin-nav-bar">
-            <h1>
-            CampusFlow  Administration
-            </h1>
-
-            <div className="nav-bar-menu">
-              <div className="welcome">
-                <p>Welcome {username}</p>
-              </div>
-
-              <div className="chnage-password">
-                <p
-                  onClick={handlePasswordChange}
-                >Change Password</p>
-              </div>
-
-              <div className="logout">
-
-                <IoMdLogOut
-                  onClick={handleLogout}
-                  size={30}/>
-              </div>
-
-
-
-            </div>
-          </div>
-          <div className="admin-sidebar">
-            <div className="menu-item">
-              <ul>
-                <li>
-                  <Link to="/admin/student"
-                    className={
-                      location.pathname === "/admin/student" ||
-                      location.pathname === "/admin/student/add" ||
-                      location.pathname === "/admin/student/edit"? "active" : ""
-                    }
-                  >
-                  <PiStudentFill size={20} />
-                    <span>Student</span>
-                  </Link>
-                </li>
-
-                <li>
-                  <Link to="/admin/teacher"
-                    className={
-                      location.pathname === "/admin/teacher" ||
-                      location.pathname === "/admin/teacher/add" ||
-                      location.pathname === "/admin/teacher/edit"? "active" : ""
-                    }
-                  >
-                    <GiTeacher size={20} />
-                    <span>Teacher</span>
-
-                  </Link>
-                </li>
-
-
-                <li>
-                  <Link to="/admin/user"
-                    className={
-                      location.pathname === "/admin/user" ||
-                      location.pathname === "/admin/user/add" ||
-                      location.pathname === "/admin/user/edit"? "active" : ""
-                    }
-                  >
-                  <FaRegUserCircle size={20} />
-                    <span>User</span>
-                  </Link>
-                </li>
-
-                <li>
-                  <Link to="/admin/department"
-
-                    className={
-                      location.pathname === "/admin/department" ||
-                      location.pathname === "/admin/department/add" ||
-                      location.pathname === "/admin/department/edit"? "active" : ""
-                    }
-                  >
-                    <FaBookOpen size={20} />
-                    <span>Department</span>
-
-                  </Link>
-                </li>
-
-
-                <li>
-                  <Link to="/admin/course"
-                    className={
-                      location.pathname === "/admin/course" ||
-                      location.pathname === "/admin/course/add" ||
-                      location.pathname.startsWith("/admin/course/") ||
-                      location.pathname === "/admin/course/edit"? "active" : ""
-                    }
-                  >
-                  <SiGoogleclassroom size={20} />
-
-                    <span>Subject</span>
-                  </Link>
-                </li>
-
-                <li>
-                  <Link to="/admin/enroll"
-                    className={
-                      location.pathname === "/admin/enroll" ||
-                      location.pathname === "/admin/enroll/add" ||
-                      location.pathname === "/admin/enroll/edit"? "active" : ""
-                    }
-                  >
-                  <RiCalendarTodoLine size={20} />
-
-                    <span>
-                      Enroll Student
-                    </span>
-                  </Link>
-                </li>
-
-
-
-                <hr/>
-
-
-                <li>
-                 
-                  <Link  onClick={handleLogout}>
-                  <RiLogoutCircleLine size={20} />
-                    <span>Logout</span>
-                  </Link>
-                </li>
-
-
-              </ul>
-            </div>
-          </div>
-            
-        </div>
-    )
-}
+						<li>
+							<Link onClick={handleLogout}>
+								<RiLogoutCircleLine size={20} />
+								<span>Logout</span>
+							</Link>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	);
+};
 
 export default AdminSideBar;

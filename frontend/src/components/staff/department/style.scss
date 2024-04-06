@@ -1,24 +1,27 @@
-.admin-department-header{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
-    border-bottom: 1px solid #ccc;
-    background-color: #fff;
-    height: 70px;
+.admin-department-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px;
+	border-bottom: 1px solid #ccc;
+	background-color: #fff;
+	height: 70px;
 
-    .tablehead{
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border: 1px solid #ccc;
-        padding: 5px;
-        border-radius: 5px;
-        font-weight: bold;
+	.tablehead {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		border: 1px solid #ccc;
+		padding: 5px;
+		border-radius: 5px;
+		font-weight: bold;
 
-        input{
-            border: none;
-            outline: none;
-        }
-    }
+		input {
+			border: none;
+			outline: none;
+		}
+	}
+}
+.admin-student-table thead th {
+	font-weight: bold;
 }
