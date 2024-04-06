@@ -26,7 +26,7 @@ const AttendanceInput = () => {
             "student_id": studentID
         };
 
-        const endpoint = '/course/mark_attendance/';
+        const endpoint = '/attendance/mark_attendance/';
         try {
             const response = await instance.post(endpoint, data);
             if (response.status === 200) {

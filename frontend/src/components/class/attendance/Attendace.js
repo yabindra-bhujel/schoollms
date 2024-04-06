@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../layout/Layout";
 import "./style/attendace.css";
 import instance from "../../../api/axios";
@@ -11,19 +11,20 @@ import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
+import { Switch } from '@mui/material';
+
 
 const Attendace = () => {
   const username = getUserInfo().username;
   const params = useParams();
   const subject_code = params.courseID;
   const [conform, setConform] = useState(false);
-  const [newattendance, setNewattendance] = useState();
   const { t } = useTranslation();
   const [tableData, setTableData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [createAttendanceMessage, setCreateAttendanceMessage] = useState("");
-  const [openCode, setOpenCode] = useState(false);
   const [studentIds, setStudentIds] = React.useState({});
+  const [attendanceCode, setAttendanceCode] = useState([]);
 
   const addNewColumn = () => {
     const newColumnName = format(new Date(), "yyyy-MM-dd");
@@ -54,12 +55,6 @@ const Attendace = () => {
     setConform(false);
   };
 
-  const handleOpenCodeDialog = () => {
-    setOpenCode(true);
-  };
-  const handleCloseCodeDialog = () => {
-    setOpenCode(false);
-  };
 
   const todayDate = format(new Date(), "yyyy-MM-dd");
   const columnExistsInTableData = tableData.some(
@@ -73,11 +68,11 @@ const Attendace = () => {
         teacher_id: username,
         course_code: subject_code,
       });
-      setNewattendance(response.data.attendance);
-      handleCloseDialog();
-      handleOpenCodeDialog();
+      if(response.status === 201){
+        setAttendanceCode(response.data.attendance_code);
+        getAttendance();
+      }
     } catch {
-      console.log("error");
     }
   };
 
@@ -88,6 +83,7 @@ const Attendace = () => {
       const response = await instance.get(endpoint);
       const student_list = response.data.student_list;
       const attendance_list = response.data.attendance;
+      setAttendanceCode(response.data.current_attendance);
 
       setColumns([]);
       setStudentIds({});
@@ -102,12 +98,12 @@ const Attendace = () => {
 
   const makeAttendance = async () => {
     try {
-      const endpoint = `/course/create_attdenace_and_add_student/`;
+      const endpoint = `attendance/add_attendance_by_teacher/`;
       const response = await instance.post(endpoint, {
         course_id: subject_code,
         studentIds: studentIds,
       });
-      if (response.status === 200) {
+      if (response.status === 201) {
         setCreateAttendanceMessage("出席が更新されました。");
         setTimeout(() => {
           setCreateAttendanceMessage("");
@@ -133,26 +129,18 @@ const Attendace = () => {
     }
   };
 
-  function formatCode(code) {
-    return code.replace(/(\d{3})(\d{3})/, "$1  $2");
+
+
+  const handleChangeActive = async () => {
+    try{
+      const endpoint = `attendance/update_attendance_active/${attendanceCode.id}/`;
+      const response = await instance.put(endpoint);  
+      if(response.status === 200){
+        getAttendance();
+      }
+    }catch(e){
+    }
   }
-  const formattedCode = newattendance
-    ? formatCode(newattendance.attendance_code)
-    : "";
-  const [currentDateTime, setCurrentDateTime] = useState(new Date());
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentDateTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const formattedDate = currentDateTime.toLocaleDateString();
-  const formattedTime = currentDateTime.toLocaleTimeString();
-  const dayOfWeek = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(currentDateTime);
-
 
   return (
     <Layout>
@@ -171,29 +159,6 @@ const Attendace = () => {
           </Button>
           <Button onClick={createAttendance} color="primary">
             {t("teacherAttdance.generate")}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={openCode}
-        onClose={handleCloseCodeDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        fullWidth={true}
-        maxWidth="sm"
-      >
-        <DialogTitle id="alert-dialog-title">出席番号</DialogTitle>
-        <DialogContent>
-          <div className="attdence-code-content">
-            <div className="code">
-              <h4>{formattedCode}</h4>
-            </div>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCodeDialog} color="primary" autoFocus>
-            閉じる
           </Button>
         </DialogActions>
       </Dialog>
@@ -220,13 +185,16 @@ const Attendace = () => {
               {Array.from(new Set(tableData.map(item => item.course))).map((course, index) => (
                 <p key={index}>{course}</p>
               ))}
+
+            {attendanceCode && attendanceCode.is_active && (
+              <strong>{attendanceCode.attendance_code}</strong>
+            )}
             </div>
 
-            <div className="time">
-              <p>{formattedDate}</p>
-              <p>{formattedTime}</p>
-              <p>{dayOfWeek}</p>
-            </div>
+              <Switch 
+                checked={attendanceCode[0]?.is_active}
+                onChange={handleChangeActive}
+              />
           </div>
         </div>
 

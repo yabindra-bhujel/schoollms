@@ -2,6 +2,8 @@ from django.contrib import admin
 
 from .subjects.models import *
 
+from .attendance.models import *
+
 # Register your models here.
 
 from .models import *
@@ -23,3 +25,6 @@ admin.site.register(Announcement)
 
 admin.site.register(Syllabus)
 admin.site.register(SyllabusItem)
+
+admin.site.register(Attendance)
+admin.site.register(StudentAttended)

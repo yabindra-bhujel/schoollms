@@ -8,6 +8,7 @@ class StudentAttended(models.Model):
     is_present = models.BooleanField(default=False)
     attendance_code = models.CharField(max_length=10, null=True, blank=True)
     attendance = models.ForeignKey('Attendance', on_delete=models.CASCADE, null=True, blank=True)
+    attendance_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.student.first_name} {self.student.last_name} {self.is_present}"
@@ -19,6 +20,7 @@ class Attendance(models.Model):
     attendance_code = models.CharField(max_length=10, unique=True, null=True, blank=True)
     students_attended = models.ManyToManyField(StudentAttended, related_name='attendances')
     is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         if not self.attendance_code:
