@@ -16,7 +16,7 @@
             DEVELOPMENT_MODE: "False"
           defaults:
             run:
-              working-directory: backend
+              working-directory: api
 
           services:
             postgres:
@@ -51,45 +51,3 @@
               
           - name: Run tests
             run: pytest
-      
-        deploy:
-          name: Deploy to Google Cloud
-          runs-on: ubuntu-latest
-          defaults:
-            run:
-              working-directory: backend
-          steps:
-          - name: Checkout code
-            uses: actions/checkout@v2
-
-          - name: Set up Python
-            uses: actions/setup-python@v2
-            with:
-              python-version: 3.11
-          
-          - name: Install dependencies
-            run: |
-              python -m pip install --upgrade pip
-              pip install -r requirements.txt
-
-          - name: Connect to google cloud
-            uses: google-github-actions/auth@v0
-            with:
-              project_id: 	windy-pier-380508
-              service_account_key: ${{ secrets.GCP_SA_KEY }}
-              export_default_credentials: true
-
-          - name: Gather static files
-            run: python manage.py collectstatic --noinput
-
-          - name: run migrations
-            run: python manage.py migrate --noinput
-
-          - name: Deploy to App Engine
-            id: deploy
-            uses: google-github-actions/deploy-appengine@v0
-            with:
-              deployable: app.yaml
-              version: v1
-              project_id: windy-pier-380508
-              credentials: ${{ secrets.GCP_SA_KEY }}
