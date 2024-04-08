@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from courses.subjects.models import Subject, SubjectRegistration
-from teachers.services.read_csv import ReadCSV
-from teachers.services.creaet_teacher import TeacherCreator
+from .services.read_csv import ReadCSV
+from .services.creaet_teacher import TeacherCreator
 from .models import *
 from rest_framework.response import Response
 from rest_framework import status
@@ -36,7 +36,6 @@ class AdminTeacherViewSet(viewsets.ViewSet):
     
     @extend_schema(responses={201: TeacherSerializer})
     def create(self, request):
-        print(request.data)
         teacher = TeacherCreator(request.data).create_teacher()
         if 'error' in teacher:
             return Response(teacher, status=status.HTTP_400_BAD_REQUEST)

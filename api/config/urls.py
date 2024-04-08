@@ -15,7 +15,7 @@ router.register(r'settings', ApplicationSettingsViewSet, basename='ApplicationSe
 router.register(r'password', PasswordResetViewzSet, basename='PasswordResetViewzSet')
 router.register(r'admin/students', AdminStudentViewSet, basename='Student')
 router.register(r'students', StudentViewSet, basename='Student')
-router.register(r'admin/teachers', AdminTeacherViewSet, basename='Teacher')
+router.register(r'admin/teachers', AdminTeacherViewSet, basename='admin-teachers')
 router.register(r'teachers', TeacherViewSet, basename='Teacher')
 
 urlpatterns = [
