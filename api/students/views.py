@@ -1,5 +1,5 @@
+from datetime import datetime
 from django.shortcuts import get_object_or_404
-
 from .services.student_class import StduentClassService
 from .services.student_detail import StudentDetailService
 from .services.read_csv import ReadCSV
@@ -15,6 +15,7 @@ from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema
 from .serializers import StudentSerializer
 from .services.add_student import StudentCreator
+from courses.subjects .models import Subject, SubjectRegistration
 
 class AdminStudentViewSet(viewsets.ViewSet):
     serializer_class = StudentSerializer
@@ -82,12 +83,33 @@ class StudentViewSet(viewsets.ViewSet):
     @extend_schema(responses={200: StudentSerializer}, description='Get Student today class')
     @action(detail=False, methods=['get'], url_path='today_class', url_name='today-_lass')
     def get_today_class(self, request):
-        queryset = Student.objects.all()
-        student = get_object_or_404(queryset)
-        serializer = StudentSerializer(student)
-        return Response(serializer.data)
+        try:
+            if request.user.is_student:
+                student = request.user.student
+        except Student.DoesNotExist:
+            return Response({"error": "Student not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        current_day = datetime.now().strftime('%A') 
+
+        student_classes_today = SubjectRegistration.objects.filter(student=student, subject__weekday=current_day)
+        
+        subjects_data = []
+        for enrollment in student_classes_today:
+            subject_data = {
+                "subject_code": enrollment.subject.subject_code,
+                "subject_name": enrollment.subject.subject_name,
+                "subject_description": enrollment.subject.subject_description,
+                "weekday": enrollment.subject.weekday,
+                "period_start_time": enrollment.subject.period_start_time,
+                "period_end_time": enrollment.subject.period_end_time,
+                "class_room": enrollment.subject.class_room,
+                "class_period": enrollment.subject.class_period,
+            }
+            subjects_data.append(subject_data)
+        
+        return Response(subjects_data, status=status.HTTP_200_OK)
     
-    
+
     @extend_schema(responses={200}, description='Get Student class')
     @action(detail=False, methods=['get'], url_path='student_class', url_name='student_class')
     def student_class(self, request):

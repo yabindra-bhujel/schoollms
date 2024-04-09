@@ -72,14 +72,13 @@ const handleLogout = async () => {
 
 const checkTwoFactorAuth = async () => {
     try {
-        const endpoint = `havetwoFactorAuth`;
+        const endpoint = `settings/have_notification/`;
         const response = await instance.get(endpoint);
         return response;
     } catch (error) {
         throw error;
     }
 }
-
 
 const updateTwoFactorAuth = async (data) => {
     try {
@@ -94,11 +93,10 @@ const updateTwoFactorAuth = async (data) => {
 
 const checkEmailNotification = async () => {
     try {
-        const endpoint = "haveEmailNotification";
+        const endpoint = "settings/have_email_notification/";
         const response = await instance.get(endpoint);
         return response;
     } catch (error) {
-        throw error;
     }
 }
 

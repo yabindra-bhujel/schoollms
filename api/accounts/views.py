@@ -232,7 +232,10 @@ class ApplicationSettingsViewSet(viewsets.ViewSet):
         try:
             return ApplicationSettings.objects.get(user=user)
         except UserProfile.DoesNotExist:
-            raise Http404("User Profile does not exist")
+            new_application_settings = ApplicationSettings.objects.create(user=user)
+            new_application_settings.save()
+            return new_application_settings
+        
         
     @extend_schema(responses=ApplicationSettingsSerializer, description='アプリケーションの設定を取得します。現在ログイン中のユーザーのアプリケーション設定を取得します。')
     @action(detail=False, methods=['put'], url_path='me', url_name='me')
