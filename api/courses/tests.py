@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase, APIClient
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from.models import Department
-from teachers.models import Teacher
+
 from .subjects.models import Subject
 
 User = get_user_model()
@@ -27,7 +27,6 @@ class TestAdminAPICourse(APITestCase):
                 class_period = '1',
                 subject_faculty=self.test_department,
             )
-
 
         def test_department(self):
             url = '/api/admin/departments/'
@@ -62,6 +61,65 @@ class TestAdminAPICourse(APITestCase):
             self.assertEqual(response.data['department_name'], 'New Department')
             self.assertEqual(response.data['department_code'], '5678')
             self.assertEqual(response.data['id'], id)
+        
+        def test_announcement(self):
+            url = '/api/announcements/'
+
+            data = {
+                'subject_code': self.test_subject.subject_code,
+                'title': 'Test Announcement',
+                'content': 'This is a test announcement',
+                'file': 'test.txt'
+            }
+        
+            response = self.client.post(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response.data['announcement_title'], 'Test Announcement')
+            self.assertEqual(response.data['announcement_description'], 'This is a test announcement')
+
+            url = f'/api/announcements/subject/{self.test_subject.subject_code}/'
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            actual_data = response.data
+            id = actual_data[0]['id']
+            self.assertEqual(actual_data[0]['announcement_title'], 'Test Announcement')
+            self.assertEqual(actual_data[0]['announcement_description'], 'This is a test announcement')
+
+            update_data = {
+                'announcement_title': 'New Announcement',
+                'announcement_description': 'This is a',
+            }
+
+            url = f'/api/announcements/{id}/'
+            response = self.client.put(url, update_data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data['announcement_title'], 'New Announcement')
+            self.assertEqual(response.data['announcement_description'], 'This is a')
+
+            response = self.client.delete(url)
+            self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        def test_syllabus(self):
+
+            url = f'/api/syllabus/create/{self.test_subject.subject_code}/'
+
+
+
+            data = [
+            {'section_title': '1', 'section_description': '111qwewdasdasdas'},
+            {'section_title': 'werwes', 'section_description': 'dasdasdsadas'},
+            {'section_title': 'werwes', 'section_description': 'dasdasdsadas'}
+
+
+              ]
+            
+            response = self.client.post(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+            url = f'/api/syllabus/subject/{self.test_subject.subject_code}/'
+
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         def test_subject(self):
 
