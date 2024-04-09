@@ -1,21 +1,11 @@
 import json
 import time
 from flask import Flask, jsonify, request
-from flask_socketio import SocketIO, join_room, leave_room,Namespace
+from flask_socketio import SocketIO, join_room, leave_room
 import requests
 import threading
 import logging
 from logging.handlers import RotatingFileHandler
-
-
-
-
-
-# *****************************************
-# *server setting        *
-# *****************************************
-
-
 
 
 userlist = []
@@ -44,10 +34,6 @@ app.logger.addHandler(handler)
 def default_error_handler(e):
     app.logger.error('An error occurred:', exc_info=e)
 
-
-
-
-
 @socketio.on('connect')
 def connect():
     socket_id = request.sid
@@ -55,13 +41,9 @@ def connect():
     emit_all_users()
 
 
-
 # *****************************************
     # handle user connection and group connection
 # *****************************************
-    
-
-
 
 
 @socketio.on('addNewuser')
@@ -77,11 +59,8 @@ def handle_new_user(data):
         user_data = {'userId': user_id, 'socketId': socket_id}
         userlist.append(user_data)
 
-
     # After updating userlist, emit it to all clients
     emit_all_users()
-
-
 
 @socketio.on('join-group')
 def on_join_group(data):
@@ -93,12 +72,9 @@ def on_join_group(data):
     try:
         for group_name in group_name_data:
             join_room(group_name)
-            print(f"{user_id} joined group {group_name}")
-
 
     except Exception as e:
         app.logger.error('Error handling send message: %s', str(e))
-
 
 
 @socketio.on('leave-group')
@@ -109,14 +85,9 @@ def on_leave_group(data):
     # Processing the group name data
     for group_name in group_name_data:
         leave_room(group_name)
-        print(f"{user_id} left group {group_name}")
         
 
-
-
-
 def emit_all_users():
-    print("userlist",userlist)
 
     try:
         socketio.emit('all-user', userlist)
@@ -124,13 +95,10 @@ def emit_all_users():
          app.logger.error('Error emitting all users: %s', str(e))
 
 
-
-
 # *****************************************
     # handle message and group message
 # *****************************************
          
-
 
 @socketio.on('send-message')
 def handle_send_message(data):
@@ -141,6 +109,7 @@ def handle_send_message(data):
 
     # Find the recipient's socket ID from the user list
     target_user = next((user for user in userlist if user['userId'] == receiver), None)
+
 
     if target_user:
             # Emit the message to the recipient's socket ID
@@ -162,9 +131,6 @@ def handle_send_message(data):
         }) 
 
 
-
-
-
 group_message_data = []
 
 @socketio.on('send-group-message')
@@ -176,9 +142,6 @@ def handle_send_group_message(data):
     receriver_groupID = data['receriver_groupID']
 
 
-
-
-
     # Emit the message to the recipient's socket ID
     try:
         socketio.emit('receive-group-message', {
@@ -188,10 +151,7 @@ def handle_send_group_message(data):
             'timestamp': timestamp,
         }, room=receiver_group)
     except Exception as e:
-        print(e)
         app.logger.error('Error handling send message: %s', str(e))
-
-
 
     with lock:
         group_message_data.append({
@@ -200,9 +160,6 @@ def handle_send_group_message(data):
             'message': message,
             'sender': sender,
         })
-
-
-
 
 
 #*****************************************
@@ -221,24 +178,21 @@ def disconnect():
     # After updating userlist, emit it to all clients
     emit_all_users()
     app.logger.info('Client disconnected with Socket ID: %s', socket_id)
-    print(userlist)
     
-
 
 # *****************************************
     # handle save message
 # *****************************************
     
-
-
 def save_messages_periodically(url):
-    while True:
-        time.sleep(5)  # wait for 5 seconds
-        with lock:
-            if messages_to_send:
-                send_to_django(messages=messages_to_send.copy(),url=url)  # send a copy of the messages
-                messages_to_send.clear()  # clear the list after sending
-
+    def periodic_task():
+        while True:
+            time.sleep(5) 
+            with lock:
+                if messages_to_send:
+                    send_to_django(messages=messages_to_send.copy(), url=url)
+                    messages_to_send.clear()  
+    return periodic_task
 
 
 def save_messages_periodically_group(url):
@@ -250,9 +204,6 @@ def save_messages_periodically_group(url):
                 group_message_data.clear()  # clear the list after sending
 
 
-
-
-
 def send_to_django(messages, url ):
     headers = {'content-type': 'application/json'}
     for message in messages:
@@ -262,16 +213,9 @@ def send_to_django(messages, url ):
         else:
             app.logger.error('Error saving message: %s', str(response.content))
 
-        
-
-
 # *****************************************
  # receive notification from django and send to client
 # *****************************************
-            
-
-
-
 
 @app.route('/notification', methods=['POST'])
 def receive_notification():
@@ -288,8 +232,6 @@ def receive_notification():
             notification_id = user_notification.get('notification_id')
             is_read = user_notification.get('is_read')
 
-            print(f"Sending notification to {username} with ID {notification_id}")
-
             # Find the target user in your user list
             target_user = next((user for user in userlist if user['userId'] == username), None)
             if target_user:
@@ -305,9 +247,7 @@ def receive_notification():
                 try:
                     # Emitting the structured notification
                     socketio.emit('receive-notification', formatted_notification, room=target_user['socketId'])
-                    print(f"Notified {username} on socket {target_user['socketId']}")
                 except Exception as e:
-                    print(e)
                     app.logger.error('Error in notification to %s: %s', username, str(e))
 
         return jsonify({'status': 'success'}), 200
@@ -316,17 +256,13 @@ def receive_notification():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
-
-
-
-
 # *****************************************
     # run server
 # *****************************************
 
 if __name__ == '__main__':
-    thread = threading.Thread(target=save_messages_periodically, args=("http://127.0.0.1:8000/realtimeapi/",))
-    thread_group = threading.Thread(target=save_messages_periodically_group, args=("http://127.0.0.1:8000/realtimeapi/group_message/",))
+    thread = threading.Thread(target=save_messages_periodically('http://127.0.0.1:8000/api/socials/save_message/'))
+    thread_group = threading.Thread(target=save_messages_periodically_group, args=('http://127.0.0.1:8000/api/groups/save_group_message/',))
     thread.daemon = True  
     thread_group.daemon = True
 

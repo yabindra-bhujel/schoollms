@@ -15,8 +15,21 @@ import json
 from ..serializers import GroupMessageSerializer
 
 class PrivateMessagesViewSet(viewsets.ViewSet):
+
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        action_permission_map = {
+            'save_message': [],
+        }
+    
+        if self.action in action_permission_map:
+            permission_classes = []
+        else:
+            permission_classes = [IsAuthenticated]
+        
+        return [permission() for permission in permission_classes]
+
 
     @extend_schema(responses={200: Message})
     @action(detail=False, methods=['get'], url_path='user_list', url_name='list')
@@ -79,7 +92,20 @@ class PrivateMessagesViewSet(viewsets.ViewSet):
 class GroupMessagesViewSet(viewsets.ViewSet):
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+
+
+    def get_permissions(self):
+        action_permission_map = {
+            'save_group_message': [],
+        }
+    
+        if self.action in action_permission_map:
+            permission_classes = []
+        else:
+            permission_classes = [IsAuthenticated]
+        
+        return [permission() for permission in permission_classes]
+
 
     @extend_schema(responses={201, Group})
     @action(detail=False, methods=['post'], url_path='create_group', url_name='create_group')

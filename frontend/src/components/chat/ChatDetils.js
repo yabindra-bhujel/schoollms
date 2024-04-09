@@ -141,6 +141,7 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
     try {
       const res = await instance.get(endpoint);
       const messages = res.data;
+      console.log(messages);
       setGroupMessage(messages);
     } catch (err) {
     }

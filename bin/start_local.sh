@@ -29,3 +29,12 @@ source venv/bin/activate
 python3 manage.py runserver
 
 
+echo "Run socket server"
+
+cd ../websocket
+
+source venv/bin/activate
+
+gunicorn -b 0.0.0.0:3001 server:app
+
+

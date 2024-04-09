@@ -37,10 +37,7 @@ const ChatList = ({
   const closeCreateGroupModal = () => {
     setOpenCreateGroup(false);
   };
-
-  console.log("userList", userList);
-
-
+  
 
   return (
     <>

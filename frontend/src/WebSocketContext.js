@@ -16,7 +16,7 @@ export const WebSocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Initialize WebSocket connection
-    const newSocket = io("http://127.0.0.1:3001", { transports: ["websocket"] });
+    const newSocket = io("http://0.0.0.0:3001", { transports: ["websocket"] });
     setSocket(newSocket);
     
 
