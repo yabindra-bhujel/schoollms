@@ -78,7 +78,9 @@ const Department = () => {
         setSnackbarMessage("Department successfully updated.");
       getDepartmentList();
     } catch (error) {
-      console.log(error);
+      setEditedRow(null);
+      setOpenSnackbar(true);
+      setSnackbarMessage("Department name or code already exists.");
     }
   };
 
@@ -96,7 +98,9 @@ const Department = () => {
       getDepartmentList();
       setOpenDialog(false);
     } catch (error) {
-      console.log(error);
+      setSnackbarMessage("Department name or code already exists.");
+      setOpenSnackbar(true);
+      setOpenDialog(false);
     }
   }
 
@@ -112,7 +116,6 @@ const Department = () => {
         setOpenSnackbar(true);
 
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -307,8 +310,6 @@ const Department = () => {
                         >
                           Edit
                         </Button>
-
-
                         <Button
                           variant="outlined"
                         color="secondary"
@@ -316,14 +317,7 @@ const Department = () => {
                         >
                           Delete
                         </Button>
-
                         </>
-
-
-                        
-
-
-
                       )}
                     </TableCell>
                   </TableRow>

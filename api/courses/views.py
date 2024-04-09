@@ -31,6 +31,14 @@ class DepartmentViewsSet(viewsets.ViewSet):
     
     @extend_schema(responses={201: DepartmentSerializer})
     def create(self, request):
+        department_code = request.data.get('department_code')
+        department_name = request.data.get('department_name')
+        
+        if Department.objects.filter(department_code=department_code).exists():
+            return Response({'error': 'Department code already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        if Department.objects.filter(department_name=department_name).exists():
+            return Response({'error': 'Department name already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = DepartmentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -41,6 +49,14 @@ class DepartmentViewsSet(viewsets.ViewSet):
     def update(self, request, pk=None):
         queryset = Department.objects.all()
         department = get_object_or_404(queryset, pk=pk)
+        department_name = request.data.get('department_name')
+        department_code = request.data.get('department_code')
+
+        if Department.objects.filter(department_name=department_name).exists():
+            return Response({'error': 'Department name already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        if Department.objects.filter(department_code=department_code).exists():
+            return Response({'error': 'Department code already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = DepartmentSerializer(department, data=request.data)
         if serializer.is_valid():
             serializer.save()
