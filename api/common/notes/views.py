@@ -20,6 +20,9 @@ class NotesViewSet(viewsets.ViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def delete_cache(self, request, check_key):
+        cache.delete(check_key)
+
     @extend_schema(responses={200: NotesSerializer})
     def list(self, request):
         cache_key = f"notes_{request.user.id}"
@@ -48,6 +51,10 @@ class NotesViewSet(viewsets.ViewSet):
         user_instance = User.objects.get(username=user)
         new_note = NotesService.new_note(user_instance, request.data)
         serializer = NotesSerializer(new_note)
+
+        if serializer.is_valid():
+            self.delete_cache(request, f"notes_{request.user.id}")
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 
@@ -57,6 +64,10 @@ class NotesViewSet(viewsets.ViewSet):
         note = get_object_or_404(queryset, pk=pk)
         updated_note = NotesService.update_note(note, request.data)
         serializer = NotesSerializer(updated_note)
+
+        if serializer.is_valid():
+            self.delete_cache(request, f"notes_{request.user.id}")
+
         return Response(serializer.data)
     
     @extend_schema(responses={204: None})
@@ -64,6 +75,9 @@ class NotesViewSet(viewsets.ViewSet):
         queryset = Notes.objects.all()
         note = get_object_or_404(queryset, pk=pk)
         note.delete()
+
+        self.delete_cache(request, f"notes_{request.user.id}")
+
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     @extend_schema(responses={200: NotesSerializer})
@@ -73,5 +87,8 @@ class NotesViewSet(viewsets.ViewSet):
         admin = User.objects.get(username=user)
         note = NotesService.share_note_with_user(admin, pk, request.data)
         serializer = NotesSerializer(note)
+        if serializer.is_valid():
+            self.delete_cache(request, f"notes_{request.user.id}")
+            
         return Response(serializer.data)
     
