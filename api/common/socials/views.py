@@ -100,7 +100,6 @@ class GroupMessagesViewSet(viewsets.ViewSet):
 
     authentication_classes = [JWTAuthentication]
 
-
     def get_permissions(self):
         action_permission_map = {
             'save_group_message': [],
@@ -120,6 +119,27 @@ class GroupMessagesViewSet(viewsets.ViewSet):
         data = json.loads(request.body)
         group_name = data.get('group_name')
         users = data.get('users')
+
+        # check group name is unique
+        group = Group.objects.filter(name=group_name).first()
+        if group:
+            return Response({"message":"Group name already exists"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # check if group name is empty or not
+        if not group_name:
+            return Response({"message":"Group name is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # check group name length
+        if len(group_name) > 255:
+            return Response({"message":"Group name is too long"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if len(group_name) < 3:
+            return Response({"message":"Group name is too short"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if len(users) < 2:
+            return Response({"message":"Group members should be more than 2"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
         admin_user = request.user.username
         admin_user = get_object_or_404(User, username=admin_user)
 
