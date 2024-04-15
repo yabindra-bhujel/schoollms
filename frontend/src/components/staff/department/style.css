@@ -1,22 +1,25 @@
 .admin-department-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px;
-  border-bottom: 1px solid #ccc;
-  background-color: #fff;
-  height: 70px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 30px;
+	border-bottom: 1px solid #ccc;
+	background-color: #fff;
 }
 .admin-department-header .tablehead {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid #ccc;
-  padding: 5px;
-  border-radius: 5px;
-  font-weight: bold;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	border: 1px solid #ccc;
+	padding: 5px;
+	border-radius: 5px;
+	font-weight: bold;
 }
 .admin-department-header .tablehead input {
-  border: none;
-  outline: none;
+	border: none;
+	outline: none;
+}
+
+.admin-student-table thead th {
+	font-weight: bold;
 }

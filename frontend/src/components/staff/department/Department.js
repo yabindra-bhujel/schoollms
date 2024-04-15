@@ -1,73 +1,94 @@
 import React, { useEffect, useState } from "react";
 import AdminLayout from "../navigation/NavigationLayout";
 import instance from "../../../api/axios";
-import {
-  InputAdornment,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Checkbox,
-  Button,
-  Snackbar
-} from "@mui/material";
-import { Dialog, DialogTitle, DialogContent, DialogActions ,  Grid,} from "@mui/material";
+import { InputAdornment, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Checkbox, Button, Snackbar } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Grid } from "@mui/material";
 import "./style.css";
 
 const Department = () => {
-  const [departmentList, setDepartmentList] = useState([]);
-  const [editedRow, setEditedRow] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false); 
-  const [departmentName, setDepartmentName] = useState("");
-    const [departmentCode, setDepartmentCode] = useState("");
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-    const [departmentToDelete, setDepartmentToDelete] = useState(null);
+	const [departmentList, setDepartmentList] = useState([]);
+	const [editedRow, setEditedRow] = useState(null);
+	const [openDialog, setOpenDialog] = useState(false);
+	const [departmentName, setDepartmentName] = useState("");
+	const [departmentCode, setDepartmentCode] = useState("");
+	const [openSnackbar, setOpenSnackbar] = useState(false);
+	const [snackbarMessage, setSnackbarMessage] = useState("");
+	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+	const [departmentToDelete, setDepartmentToDelete] = useState(null);
 
-  const handleDialogOpen = () => {
-    setOpenDialog(true);
-  };
+	const handleDialogOpen = () => {
+		setOpenDialog(true);
+	};
 
-  const handleDialogClose = () => {
-    setOpenDialog(false);
-  };
+	const handleDialogClose = () => {
+		setOpenDialog(false);
+	};
+
+	const handleDeleteDialogOpen = (id) => {
+		setOpenDeleteDialog(true);
+		setDepartmentToDelete(id);
+	};
+
+	const handleDeleteClose = () => {
+		setOpenDeleteDialog(false);
+	};
+
+	const baseURL = "admin/departments/";
+
+	const getDepartmentList = async () => {
+		try {
+			const endpoint = baseURL;
+			const response = await instance.get(endpoint);
+			setDepartmentList(response.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		getDepartmentList();
+	}, []);
+
+	const handleEditClick = (departmentId) => {
+		setEditedRow(departmentId);
+	};
 
 
-  const handleDeleteDialogOpen = (id) => {
-    setOpenDeleteDialog(true);
-    setDepartmentToDelete(id);
+	const handlePost = async () => {
+		try {
+			const endpoint = baseURL;
+			await instance.post(endpoint, {
+				department_name: departmentName,
+				department_code: departmentCode,
+			});
+			setDepartmentName("");
+			setDepartmentCode("");
+			getDepartmentList();
+			setOpenDialog(false);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-  };
+	const deleteDepartment = async (departmentId) => {
+		try {
+			const endpoint = `${baseURL}${departmentId}/`;
+			await instance.delete(endpoint);
+			getDepartmentList();
+			setOpenDeleteDialog(false);
+			setSnackbarMessage("Department successfully deleted.");
+			setOpenSnackbar(true);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-  const handleDeleteClose = () => {
-    setOpenDeleteDialog(false);
-  };
-
-  const baseURL = 'admin/departments/'
-
-
-
-  const getDepartmentList = async () => {
-    try {
-      const endpoint = baseURL;
-      const response = await instance.get(endpoint);
-      setDepartmentList(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getDepartmentList();
-  }, []);
-
-  const handleEditClick = (departmentId) => {
-    setEditedRow(departmentId);
-  };
+	const handleCloseSnackbar = (event, reason) => {
+		if (reason === "clickaway") {
+			return;
+		}
+		setOpenSnackbar(false);
+	};
 
   const handleSaveClick = async (departmentId, updatedData) => {
     try {
@@ -83,52 +104,9 @@ const Department = () => {
       setSnackbarMessage("Department name or code already exists.");
     }
   };
+	return (
+	
 
-
-  const handlePost = async () => {
-
-    try {
-      const endpoint = baseURL;
-      await instance.post(endpoint, {
-        department_name: departmentName,
-        department_code: departmentCode,
-      });
-      setDepartmentName("");
-      setDepartmentCode("");
-      getDepartmentList();
-      setOpenDialog(false);
-    } catch (error) {
-      setSnackbarMessage("Department name or code already exists.");
-      setOpenSnackbar(true);
-      setOpenDialog(false);
-    }
-  }
-
-
-  const deleteDepartment = async (departmentId) => {
-
-    try {
-      const endpoint = `${baseURL}${departmentId}/`;
-      await instance.delete(endpoint);
-      getDepartmentList();
-        setOpenDeleteDialog(false);
-        setSnackbarMessage("Department successfully deleted.");
-        setOpenSnackbar(true);
-
-    } catch (error) {
-    }
-  }
-
-    const handleCloseSnackbar = (event, reason) => {
-        if (reason === 'clickaway') {
-        return;
-        }
-        setOpenSnackbar(false);
-    }
-
-
-
-  return (
     <AdminLayout>
         <Snackbar
         open={openSnackbar}
