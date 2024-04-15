@@ -12,7 +12,7 @@ from ..models import CalendarEvent
 from ..serializers import CalendarEventSerializer
 from .service import *
 from django.db.models import Q
-
+from django.core.cache import cache
 
 class CalendarEventViewSet(viewsets.ViewSet):
     serializer_class = CalendarEventSerializer
@@ -21,9 +21,16 @@ class CalendarEventViewSet(viewsets.ViewSet):
 
     @extend_schema(responses={200: CalendarEventSerializer})
     def list(self, request):
-        new_event = CalendarService.get_calendar_events(request.user)
-        serializer = CalendarEventSerializer(new_event, many=True)
-        return Response(serializer.data)
+        cache_key = f"calendar_events_{request.user.id}"
+        cached_events = cache.get(cache_key)
+
+        if cached_events is None:
+            new_event = CalendarService.get_calendar_events(request.user)
+            serializer = CalendarEventSerializer(new_event, many=True)
+            cached_events = serializer.data
+            cache.set(cache_key, cached_events, timeout=60 * 60)
+
+        return Response(cached_events)
     
     @extend_schema(responses={200: CalendarEventSerializer})
     def retrieve(self, request, pk=None):
@@ -37,6 +44,14 @@ class CalendarEventViewSet(viewsets.ViewSet):
         user = User.objects.get(username=request.user)
         new_event = CalendarService.create_event(user, request.data)
         serializer = CalendarEventSerializer(new_event)
+
+        cache_key = f"calendar_events_{request.user.id}"
+        cached_events = cache.get(cache_key)
+
+        if cached_events is not None:
+            cached_events.append(serializer.data)
+            cache.set(cache_key, cached_events, timeout=60 * 60)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     @extend_schema(responses={200: CalendarEventSerializer})
@@ -46,6 +61,16 @@ class CalendarEventViewSet(viewsets.ViewSet):
         serializer = CalendarEventSerializer(event, data=request.data)
         if serializer.is_valid():
             serializer.save()
+
+            cache_key = f"calendar_events_{request.user.id}"
+            cached_events = cache.get(cache_key)
+
+            if cached_events is not None:
+                for index, event in enumerate(cached_events):
+                    if event['id'] == pk:
+                        cached_events[index] = serializer.data
+                        cache.set(cache_key, cached_events, timeout=60 * 60)
+
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -54,6 +79,17 @@ class CalendarEventViewSet(viewsets.ViewSet):
     def update_event_date(self, request, pk=None):
         event = CalendarService.update_event_date(request.data)
         serializer = CalendarEventSerializer(event)
+
+        cache_key = f"calendar_events_{request.user.id}"
+        cached_events = cache.get(cache_key)
+
+        if cached_events is not None:
+            for index, event in enumerate(cached_events):
+                if event['id'] == serializer.data['id']:
+                    cached_events[index] = serializer.data
+                    cache.set(cache_key, cached_events, timeout=60 * 60)
+
+
         return Response(serializer.data)
     
     
@@ -71,28 +107,57 @@ class CalendarEventViewSet(viewsets.ViewSet):
             if event.is_class_cancellation:
                 event.is_class_cancellation = False
                 event.save()
+
+                cache_key = f"calendar_events_{request.user.id}"
+                cached_events = cache.get(cache_key)
+
+                if cached_events is not None:
+                    for index, event in enumerate(cached_events):
+                        if event['id'] == event_id:
+                            event['is_class_cancellation'] = False
+                            cached_events[index] = event
+                            cache.set(cache_key, cached_events, timeout=60 * 60)
             else:
                 event.is_class_cancellation = True
                 event.save()
+
+                cache_key = f"calendar_events_{request.user.id}"
+                cached_events = cache.get(cache_key)
+
+                if cached_events is not None:
+                    for index, event in enumerate(cached_events):
+                        if event['id'] == event_id:
+                            event['is_class_cancellation'] = True
+                            cached_events[index] = event
+                            cache.set(cache_key, cached_events, timeout=60 * 60)
+
             return Response('Class cancellation updated successfully', status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
-       
     
     @extend_schema(responses={204: None})
     def destroy(self, request, pk=None):
         queryset = CalendarEvent.objects.all()
         event = get_object_or_404(queryset, pk=pk)
         event.delete()
+
+        cache_key = f"calendar_events_{request.user.id}"
+        cache.delete(cache_key)
+        
+
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     @extend_schema(responses={200: CalendarEventSerializer})
     @action(detail=False, methods=['get'], url_path='get_todat_event', url_name='get_todat_event')
     def get_today_event(self, request):
-        today = datetime.now().date()
-        calendar_events = CalendarEvent.objects.filter(user=request.user,start_date=today).exclude(Q(color='red') | Q(color='green'))
-        serializer = CalendarEventSerializer(calendar_events, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        cache_key = f"today_events_{request.user.id}"
+        cached_events = cache.get(cache_key)
+
+        if cached_events is None:
+            today = datetime.now().date()
+            calendar_events = CalendarEvent.objects.filter(user=request.user,start_date=today)
+            serializer = CalendarEventSerializer(calendar_events, many=True)
+            cached_events = serializer.data
+            cache.set(cache_key, cached_events, timeout=60 * 60)
+        return Response(cached_events, status=status.HTTP_200_OK)
         

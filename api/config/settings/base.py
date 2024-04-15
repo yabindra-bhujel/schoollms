@@ -18,6 +18,8 @@ if os.path.isfile(dotenv_file):
 
 SECRET_KEY = os.environ['SECRET_KEY'] 
 
+INTERNAL_IPS = ['127.0.0.1']
+
 
 CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
 SESSION_SAVE_EVERY_REQUEST = True
@@ -34,6 +36,7 @@ INSTALLED_APPS = (
     'drf_spectacular',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'debug_toolbar',
     'corsheaders',
     'accounts',
     'students',
@@ -65,6 +68,10 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
     ),
 
+}
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK" : lambda request: True,
 }
 
 
@@ -106,6 +113,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 
@@ -153,6 +161,14 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-suffix',
+    }
+}
 
 
 LANGUAGE_CODE = 'en-us'

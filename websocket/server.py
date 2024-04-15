@@ -110,7 +110,6 @@ def handle_send_message(data):
     # Find the recipient's socket ID from the user list
     target_user = next((user for user in userlist if user['userId'] == receiver), None)
 
-
     if target_user:
             # Emit the message to the recipient's socket ID
             socketio.emit('receive-message', {

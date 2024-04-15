@@ -12,6 +12,8 @@ from ..serializers import NotesSerializer
 from django.db.models import Q
 from ..models import Notes
 from .services import *
+from django.core.cache import cache
+
 
 class NotesViewSet(viewsets.ViewSet):
     serializer_class = NotesSerializer
@@ -20,11 +22,18 @@ class NotesViewSet(viewsets.ViewSet):
 
     @extend_schema(responses={200: NotesSerializer})
     def list(self, request):
-        user = User.objects.get(username=request.user)
-        queryset = Notes.objects.filter(Q(user=user) | Q(shared_with=user))
-        queryset = queryset.distinct()
-        serializer = NotesSerializer(queryset, many=True)
-        return Response(serializer.data)
+        cache_key = f"notes_{request.user.id}"
+        cached_notes = cache.get(cache_key)
+
+        if cached_notes is None:
+            queryset = Notes.objects.filter(Q(user=request.user) | Q(shared_with=request.user))
+            queryset = queryset.distinct().select_related('user')
+            serializer = NotesSerializer(queryset, many=True)
+            cached_notes = serializer.data
+            cache.set(cache_key, cached_notes, timeout=60 * 60)
+
+        return Response(cached_notes)
+    
     
     @extend_schema(responses={200: NotesSerializer})
     def retrieve(self, request, pk=None):

@@ -25,6 +25,10 @@ venv/
 *.pyc
 static/
 
+.db
+*.sqlite3
+*.log
+
 *.db
 
 # evn

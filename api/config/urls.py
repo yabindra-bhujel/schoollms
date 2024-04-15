@@ -7,6 +7,7 @@ from rest_framework import routers
 from accounts.views import *
 from students.views import *
 from teachers.views import *
+import debug_toolbar
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='User')
@@ -33,3 +34,6 @@ urlpatterns = [
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]

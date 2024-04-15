@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# set -e
+
 echo "Stopping processes on ports 3000 and 8000"
 
 kill_processes_on_port() {
@@ -29,12 +32,8 @@ source venv/bin/activate
 python3 manage.py runserver
 
 
-echo "Run socket server"
 
-cd ../websocket
 
-source venv/bin/activate
 
-gunicorn -b 0.0.0.0:3001 server:app
 
 
