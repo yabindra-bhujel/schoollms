@@ -15,7 +15,10 @@ from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema
 from .serializers import StudentSerializer
 from .services.add_student import StudentCreator
-from courses.subjects .models import Subject, SubjectRegistration
+from courses.subjects .models import Subject, SubjectRegistration, Announcement, Assignment
+from courses.subjects.serializers import AnnouncementSerializer, AssignmentSerializer
+from django.utils import timezone
+
 
 class AdminStudentViewSet(viewsets.ViewSet):
     serializer_class = StudentSerializer
@@ -116,5 +119,44 @@ class StudentViewSet(viewsets.ViewSet):
         student_class_data = StduentClassService().get_student_class_data(request.user.username)
         return Response(student_class_data)
     
-    
+    @extend_schema(responses={200: AnnouncementSerializer}, description='Get Student Announcement')
+    @action(detail=False, methods=['get'], url_path='announcement', url_name='announcement')
+    def announcement(self, request):
+        try:
+            student = Student.objects.get(user=request.user)
+            subject_enroll = SubjectRegistration.objects.filter(student=student)
+            announcement = Announcement.objects.filter(subject__in=subject_enroll.values_list('subject', flat=True))
+            serializer = AnnouncementSerializer(announcement, many=True, context={'request': request})
+            return Response(serializer.data, status=200)
+       
+        except Exception as e:
+            return Response({"message": "An error occurred"}, status=500)
 
+
+    @extend_schema(responses={200})
+    @action(detail=False, methods=['get'], url_path='upcoming_assignment_deadlines', url_name='upcoming_assignment_deadlines')
+    def upcoming_assignment_deadlines(self, request):
+        try:
+            student = Student.objects.get(user=request.user)
+            
+            subject_enrollments = SubjectRegistration.objects.filter(student=student)
+            assignments = Assignment.objects.filter(course__in=subject_enrollments.values_list('subject', flat=True))
+
+            # Filter assignments that have a deadline greater than the current date and are active
+            upcoming_assignments = assignments.filter(deadline__gt=timezone.now(), is_active=True)
+
+            assignments_data = []
+
+            for assignment in upcoming_assignments:
+                assignment_data = {
+                    "id": assignment.assignment_id,
+                    "title": assignment.title,
+                    "deadline": assignment.deadline,
+                    "subject": assignment.course.subject_name,
+                }
+                assignments_data.append(assignment_data)
+
+
+            return Response(assignments_data, status=200)
+        except Exception as e:
+            return Response({"message": "An error occurred"}, status=500)

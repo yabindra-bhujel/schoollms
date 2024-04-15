@@ -15,6 +15,8 @@ from drf_spectacular.utils import extend_schema
 from .serializers import *
 from .services.teacher_class import TeacherClassService
 from datetime import datetime
+from courses.subjects.models import Assignment
+from django.utils import timezone
 
 class AdminTeacherViewSet(viewsets.ViewSet):
     serializer_class = TeacherSerializer
@@ -133,3 +135,28 @@ class TeacherViewSet(viewsets.ViewSet):
                     'date_of_birth': student.date_of_birth,
                 })
         return Response(student_list, status=status.HTTP_200_OK)
+    
+    @extend_schema(responses={200})
+    @action(detail=False, methods=['get'], url_path='teacher/upcoming_assignment_deadlines', url_name='teacher_upcoming_assignment_deadlines')
+    def upcoming_assignment_deadlines(self, request):
+        try:
+            teacher = Teacher.objects.get(user=request.user)
+            
+            subject_enrollments = SubjectRegistration.objects.filter(teacher=teacher)
+            assignments = Assignment.objects.filter(course__in=subject_enrollments.values_list('subject', flat=True))
+
+            upcoming_assignments = assignments.filter(deadline__gt=timezone.now(), is_active=True)
+
+            assignments_data= []
+
+            for assignment in upcoming_assignments:
+                assignments_data.append({
+                    "id": assignment.assignment_id,
+                    "title": assignment.title,
+                    "deadline": assignment.deadline,
+                    "subject": assignment.course.subject_name,
+                })
+
+            return Response(assignments_data, status=200)
+        except Exception as e:
+            return Response({"message": "An error occurred"}, status=500)

@@ -11,6 +11,7 @@ import TodayEventList from "./TodayEventList";
 import HeatmapChart from "./heatmapChart";
 import AnnouncementList from "./Announcement/AnnouncementList";
 import getUserInfo from "../../api/user/userdata";
+import UpcomingAssigmentDeadlines from "./UpcomingAssigmentDeadlines";
 
 const Dashboard = () => {
     const loginedinUserdata = JSON.parse(localStorage.getItem("userData"));
@@ -60,7 +61,7 @@ const Dashboard = () => {
                         <BasicDateCalendar />
                         </div>
                     </div>
-                    {/* <div className="dashbord-section-two">
+                    <div className="dashbord-section-two">
                         <div className="dashbord-announcement">
                             {isTeacher ?(
                                 <h2>
@@ -75,9 +76,9 @@ const Dashboard = () => {
                            
                         </div>
                         <div className="chart-item">
-                            <h2>Chart 4</h2>
+                            <UpcomingAssigmentDeadlines/>
                         </div>
-                    </div> */}
+                    </div>
                 </div>
                 <div className="right-item">
                     <div className="subject-list">

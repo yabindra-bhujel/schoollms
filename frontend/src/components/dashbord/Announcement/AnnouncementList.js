@@ -37,11 +37,10 @@ const AnnouncementList = () =>{
 
     useEffect(() => {
         if (isStudent) {
-            instance.get("/course/get_announcement_by_student/").then((response) => {
+            instance.get("students/announcement/").then((response) => {
                 setAnnouncements(response.data);
             });
             }
-        
       }
     , []);
 
