@@ -63,9 +63,9 @@
   margin-top: 20px;
   display: flex;
   gap: 10px;
+  height: 330px;
 }
 .container .left-item .dashbord-section-two .dashbord-announcement {
-  height: auto;
   width: 60%;
   background-color: white;
   border-radius: 5px;
@@ -78,8 +78,6 @@
   padding: 5px;
 }
 .container .left-item .dashbord-section-two .chart-item {
-  height: auto;
-  min-height: 300px;
   width: 32%;
   background-color: white;
   border-radius: 5px;

@@ -407,7 +407,6 @@ class AssigmentViewSet(viewsets.ViewSet):
 
             return Response(response_data)
         except Exception as e:
-            print(e)
             return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @extend_schema(responses={200: AssignmentSerializer})
@@ -605,5 +604,4 @@ class SubmissionViewSet(viewsets.ViewSet):
             submission.save()
             return Response({"message": "Submission updated successfully"}, status=200)
         except Exception as e:
-            print(e)
             return Response({"message": "An error occurred"}, status=500)

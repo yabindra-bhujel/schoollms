@@ -71,7 +71,6 @@ class AttendanceViewSet(viewsets.ViewSet):
             
             return Response({"message": "Attendance object created", "attendance": response_data}, status=201)
         except Exception as e:
-            print(e)
             logger.error("An error occurred")
             return Response({"message": "An error occurred"}, status=500)
 
@@ -140,7 +139,6 @@ class AttendanceViewSet(viewsets.ViewSet):
                 return Response({"message": "OK", "student_list": student_list}, status=200)
 
         except Exception as e:
-            print(e)
             logger.error("An error occurred: %s. Subject code: %s", ) 
             return Response({"message": "An error occurred"}, status=500)
 
@@ -278,7 +276,6 @@ class AttendanceViewSet(viewsets.ViewSet):
 
             return Response({"message": "Ok", "attendance": response_data}, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
             return Response({"message": f"An error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

@@ -4,7 +4,6 @@ import { Link, useParams } from "react-router-dom";
 import Layout from "../layout/Layout";
 import { MdArrowBack } from "react-icons/md";
 import instance from "../../api/axios";
-import { CiSaveDown2 } from "react-icons/ci";
 import { BiSolidSend } from "react-icons/bi";
 import { FiPlusCircle } from "react-icons/fi";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
@@ -100,7 +99,7 @@ const StudentAssigmentDetalis = () => {
     }
   };
 
- 
+
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
   };
@@ -164,13 +163,6 @@ const StudentAssigmentDetalis = () => {
     return answers.every(answer => answer !== null && answer !== "");
   };
 
-  if (isLoading) {
-    return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
-        <CircularProgress />
-      </div>
-    );
-  }
   const currentDate = new Date();
   const deadline = new Date(assignment.assignment_deadline);
 
@@ -186,129 +178,146 @@ const StudentAssigmentDetalis = () => {
         onClose={() => setOpen(false)}
       />
 
-      <div className="assigemt-details-student">
-        <div className="class-header-student">
-          <Link to={`/studentclassdetails/${courseId}`}>
-            <MdArrowBack className="back" />
-          </Link>
-          <p>{assignment.title}</p>
+      {isLoading ? (
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <CircularProgress />
         </div>
-        <div className="assigment-section-student">
-          <div className="assigment-body-st">
+      ) : (
+        <>
 
-            <div className="body-st">
-              <ReactQuill value={assignment.description} readOnly={true} />
+          <div className="assigemt-details-student">
+            <div className="class-header-student">
+              <Link to={`/studentclassdetails/${courseId}`}>
+                <MdArrowBack className="back" />
+              </Link>
+              <p>{assignment.title}</p>
             </div>
-            <div className="assigment-input">
-              {assignment.assigment_type === "File" ? (
-                <>
-                  <div className="file-attagement">
-                    {!isDeadlinePassed && (
-                      <>
-                        <button className="button" onClick={handleFileButtonClick}>
-                          <FiPlusCircle className="add-btn" />
-                          <span>{t("studentAssigemnt.drag")}</span>
-                          <span>{t("studentAssigemnt.maxFile")}</span>
-                        </button>
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          style={{ display: "none" }}
-                          onChange={handleFileChange}
-                          multiple
-                        />
-                      </>
-                    )}
+            <div className="assigment-section-student">
+              <div className="assigment-body-st">
 
-                    <div className="file-items">
-                      {file.length > 0 && (
-                        <ul className="file-list">
-                          {file.map((file, index) => (
-                            <li key={index}>
-                              <div className="fielname-size">
-                                <AiFillFilePdf className="file-icon" />
-                                <p>
-                                  {" "}
-                                  {file.name} <br />
-                                  <span>
-                                    {file && file.size
-                                      ? (file.size / (1024 * 1024)).toFixed(2)
-                                      : 0}{" "}
-                                    MB
-                                  </span>
-                                </p>
-                              </div>
+                <div className="body-st">
+                  <ReactQuill
+                    modules={{
+                      toolbar: [
+                      ],
 
-                              <button>
-                                <IoMdRemoveCircleOutline
-                                  onClick={() => handleFileDelete(index)}
-                                  className="btn-icon"
-                                />
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                      <p className="fileerror">{fileUploadMessage}</p>
-                    </div>
-                  </div>
-                  <div className="file-bottom-button">
-                    {!isDeadlinePassed && (
+                    }}
+                    value={assignment.description} readOnly={true}
+                  />
+                </div>
+                <div className="assigment-input">
+                  {assignment.assigment_type === "File" ? (
+                    <>
+                      <div className="file-attagement">
+                        {!isDeadlinePassed && (
+                          <>
+                            <button className="button" onClick={handleFileButtonClick}>
+                              <FiPlusCircle className="add-btn" />
+                              <span>{t("studentAssigemnt.drag")}</span>
+                              <span>{t("studentAssigemnt.maxFile")}</span>
+                            </button>
+                            <input
+                              type="file"
+                              ref={fileInputRef}
+                              style={{ display: "none" }}
+                              onChange={handleFileChange}
+                              multiple
+                            />
+                          </>
+                        )}
 
-                      <button
-                        className={`submit-file ${isInputEmpty() ? "disabled-button" : ""
-                          }`}
-                        disabled={isInputEmpty()}
-                        onClick={MakeFileSubmission}
-                      >
-                        <span>提出</span>
-                      </button>
-                    )}
+                        <div className="file-items">
+                          {file.length > 0 && (
+                            <ul className="file-list">
+                              {file.map((file, index) => (
+                                <li key={index}>
+                                  <div className="fielname-size">
+                                    <AiFillFilePdf className="file-icon" />
+                                    <p>
+                                      {" "}
+                                      {file.name} <br />
+                                      <span>
+                                        {file && file.size
+                                          ? (file.size / (1024 * 1024)).toFixed(2)
+                                          : 0}{" "}
+                                        MB
+                                      </span>
+                                    </p>
+                                  </div>
 
-
-                  </div>
-                </>
-              ) : (
-                <>
-                  {questions.map((question, index) => (
-                    <div key={question.id}>
-                      <p className="question-title">
-                        {index + 1}.{" "}
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: question.question,
-                          }}
-                        />
-                      </p>
-                      <div className="answer-input">
-                        <AnswerFrom
-                          value={answers[index]}
-                          onChange={(value) => handleAnswerChange(index, value)}
-                          isDeadlinePassed={isDeadlinePassed}
-                        />
+                                  <button>
+                                    <IoMdRemoveCircleOutline
+                                      onClick={() => handleFileDelete(index)}
+                                      className="btn-icon"
+                                    />
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                          <p className="fileerror">{fileUploadMessage}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                  <div className="bottom-button">
-                      {!isDeadlinePassed  && (
-                        <>
+                      <div className="file-bottom-button">
+                        {!isDeadlinePassed && (
+
                           <button
-                            className="submit-button "
-                            onClick={MakeTextSubmission}
-                            disabled={!haveValidAnswer()}
+                            className={`submit-file ${isInputEmpty() ? "disabled-button" : ""
+                              }`}
+                            disabled={isInputEmpty()}
+                            onClick={MakeFileSubmission}
                           >
-                            <span>{t("studentAssigemnt.submit")}</span>
-                            <BiSolidSend className="submit-icon" />
+                            <span>提出</span>
                           </button>
-                        </>
-                      )}
-                    </div>
-                   </>
-              )}
+                        )}
+
+
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {questions.map((question, index) => (
+                        <div key={question.id}>
+                          <p className="question-title">
+                            {index + 1}.{" "}
+                            <span
+                              dangerouslySetInnerHTML={{
+                                __html: question.question,
+                              }}
+                            />
+                          </p>
+                          <div className="answer-input">
+                            <AnswerFrom
+                              value={answers[index]}
+                              onChange={(value) => handleAnswerChange(index, value)}
+                              isDeadlinePassed={isDeadlinePassed}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                      <div className="bottom-button">
+                        {!isDeadlinePassed && (
+                          <>
+                            <button
+                              className="submit-button "
+                              onClick={MakeTextSubmission}
+                              disabled={!haveValidAnswer()}
+                            >
+                              <span>{t("studentAssigemnt.submit")}</span>
+                              <BiSolidSend className="submit-icon" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+
+        </>
+      )}
     </Layout>
   );
 };

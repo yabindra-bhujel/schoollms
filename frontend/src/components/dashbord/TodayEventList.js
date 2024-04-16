@@ -17,7 +17,6 @@ const TodayEventList = () => {
     }
   };
 
-  console.log(events);
 
   useEffect(() => {
     getTodayEvent();

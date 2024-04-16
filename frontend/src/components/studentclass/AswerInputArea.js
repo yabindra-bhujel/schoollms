@@ -11,7 +11,6 @@ const AnswerFrom = ({ value, onChange, isDeadlinePassed }) => {
         [{ align: [] }],
       ],
     };
-  
     return (
       <div>
         <div>

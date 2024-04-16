@@ -78,10 +78,10 @@
       margin-top: 20px;
         display: flex;
         gap: 10px;
+        height: 330px;
 
 
         .dashbord-announcement{
-          height: auto;
           width: 60%;
           background-color: white;
           border-radius: 5px;
@@ -95,8 +95,6 @@
           }
       }
       .chart-item{
-          height: auto;
-          min-height: 300px;
           width: 32%;
           background-color: white;
           border-radius: 5px;

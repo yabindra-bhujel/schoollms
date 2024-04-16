@@ -38,7 +38,6 @@ class AdminTeacherViewSet(viewsets.ViewSet):
     
     @extend_schema(responses={201: TeacherSerializer})
     def create(self, request):
-        print(request.data)
         teacher = TeacherCreator(request.data).create_teacher()
         if 'error' in teacher:
             return Response(teacher, status=status.HTTP_400_BAD_REQUEST)
@@ -151,7 +150,7 @@ class TeacherViewSet(viewsets.ViewSet):
 
             for assignment in upcoming_assignments:
                 assignments_data.append({
-                    "id": assignment.assignment_id,
+                    "id": assignment.id,
                     "title": assignment.title,
                     "deadline": assignment.deadline,
                     "subject": assignment.course.subject_name,

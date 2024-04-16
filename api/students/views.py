@@ -149,10 +149,11 @@ class StudentViewSet(viewsets.ViewSet):
 
             for assignment in upcoming_assignments:
                 assignment_data = {
-                    "id": assignment.assignment_id,
+                    "id": assignment.id,
                     "title": assignment.title,
                     "deadline": assignment.deadline,
                     "subject": assignment.course.subject_name,
+                    "subject_code": assignment.course.subject_code,
                 }
                 assignments_data.append(assignment_data)
 

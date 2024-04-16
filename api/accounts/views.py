@@ -277,7 +277,6 @@ class PasswordResetViewzSet(viewsets.ViewSet):
             user.set_password(serializer.data.get('new_password'))
             user.save()
             return Response('Password changed successfully.', status=status.HTTP_200_OK)
-        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
