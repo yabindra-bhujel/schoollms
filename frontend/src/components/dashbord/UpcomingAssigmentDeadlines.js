@@ -10,6 +10,7 @@ import instance from "../../api/axios";
 import getUserInfo from "../../api/user/userdata";
 import { format } from 'date-fns-tz';
 import { Link } from "react-router-dom";
+import { Avatar } from "@mui/material";
 
 const Container = styled.div`
   margin: 5px;
@@ -33,7 +34,6 @@ const UpcomingAssigmentDeadlines = () => {
             setAssignments(response.data);
 
         } catch (error) {
-            console.error(error);
         }
     }
 
@@ -58,7 +58,10 @@ const UpcomingAssigmentDeadlines = () => {
                                 style={{ textDecoration: "none", color: "black" }}>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                     <ListItemIcon>
-                                        <CalendarMonthIcon style={{ color: "#3f51b5" }} />
+                                    <Avatar style={{ backgroundColor: "purple" }}>
+                                        <CalendarMonthIcon style={{ color: "#FFD700" }} />
+                                    </Avatar>
+
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={

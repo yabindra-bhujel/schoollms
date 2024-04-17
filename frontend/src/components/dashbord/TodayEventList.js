@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { List, ListItem, ListItemText, Divider, Typography, Box, Avatar, Paper } from "@mui/material";
+import { Typography, ListItemIcon, List, ListItem, ListItemText, Divider, Box, Avatar } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import instance from "../../api/axios";
+import styled from "styled-components";
+
+const Container = styled.div`
+  margin: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+`;
 
 const TodayEventList = () => {
   const [events, setEvents] = useState([]);
@@ -17,33 +24,29 @@ const TodayEventList = () => {
     }
   };
 
-
   useEffect(() => {
     getTodayEvent();
   }, []);
 
   return (
-    <Box>
-        <strong>Today's Event</strong>
-      {events.length > 0 ? (
-        <Paper elevation={2} sx={{ borderRadius: "5px", padding: "5px" }}>
-          <List>
-            {events.map((event, index) => (
-              <React.Fragment key={index}>
-                <ListItem
-                  alignItems="center"
-                  sx={{
-                    backgroundColor: event.color || "transparent",
-                    borderRadius: "5px",
-                    marginBottom: "5px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <Avatar sx={{ width: 32, height: 32, marginRight: 2 }}>
-                    <EventIcon fontSize="small" />
-                  </Avatar>
+    <Container>
+      <Typography variant="p" gutterBottom style={{ color: "#333", fontWeight: "bold" }}>
+        Today's Event
+      </Typography>
+
+      {events.length === 0 ? (
+        <Typography variant="h5" style={{ color: "#666" }}>No events scheduled for today.</Typography>
+      ) : (
+        <List>
+          {events.map((event, index) => (
+            <React.Fragment key={index}>
+              <ListItem style={{ backgroundColor: "#f0f0f0", marginBottom: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <ListItemIcon>
+                    <Avatar sx={{ width: 32, height: 32, marginRight: 2, backgroundColor: "rgb(232, 142, 202)" }}>
+                      <EventIcon fontSize="small" style={{ color: "green" }} />
+                    </Avatar>
+                  </ListItemIcon>
                   <ListItemText
                     primary={
                       <Typography variant="body1" fontWeight="bold" noWrap>
@@ -52,20 +55,17 @@ const TodayEventList = () => {
                     }
                     secondary={
                       <Typography variant="body2">
-                        {`${event.start_date} ${event.time}`}
+                        {`${event.start_date}`}
                       </Typography>
                     }
                   />
-                </ListItem>
-                {index < events.length - 1 && <Divider variant="inset" component="li" />}
-              </React.Fragment>
-            ))}
-          </List>
-        </Paper>
-      ) : (
-        <Typography>No events scheduled for today.</Typography>
+                </div>
+              </ListItem>
+            </React.Fragment>
+          ))}
+        </List>
       )}
-    </Box>
+    </Container>
   );
 };
 

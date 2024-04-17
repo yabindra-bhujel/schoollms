@@ -19,6 +19,13 @@ const AnnouncementListWrapper = styled.div`
   width: 100%;
 `;
 
+const AnnouncementListItem = styled(ListItem)`
+  &:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+`;
+
 const AnnouncementList = () => {
   const [announcements, setAnnouncements] = useState([]);
   const isStudent = getUserInfo().isStudent;
@@ -37,6 +44,10 @@ const AnnouncementList = () => {
     return doc.body.textContent || "";
   }
 
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
+
   return (
     <AnnouncementListWrapper>
       <AnnouncementWrapper>
@@ -48,14 +59,15 @@ const AnnouncementList = () => {
       <List>
         {announcements.length > 0 ? (
           announcements.map((announcement) => (
-            <ListItem key={announcement.id}>
+            <AnnouncementListItem key={announcement.id}>
               <ListItemIcon>
                 <ViewListIcon style={{ color: "#3f51b5" }} />
               </ListItemIcon>
               <ListItemText
                 primary={
                   <Typography variant="subtitle1" style={{ fontWeight: "bold", color: "#333" }}>
-                    {`${extractTextFromHtml(announcement.announcement_title).substring(0, 20)}...`}
+                    {`${extractTextFromHtml(announcement.announcement_title).substring(0, 20).toUpperCase()}...`}
+
                   </Typography>
                 }
                 secondary={
@@ -64,7 +76,7 @@ const AnnouncementList = () => {
                   </Typography>
                 }
               />
-            </ListItem>
+            </AnnouncementListItem>
           ))
         ) : (
           <ListItem>

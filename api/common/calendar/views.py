@@ -152,14 +152,8 @@ class CalendarEventViewSet(viewsets.ViewSet):
     def get_today_event(self, request):
         today = datetime.now().date()
 
-        cache_key = f"today_events_{request.user.id}"
-        cached_events = cache.get(cache_key)
+        calendar_events = CalendarEvent.objects.filter(user=request.user,start_date=today).exclude(Q(color='red') | Q(color='green'))
+        serializer = CalendarEventSerializer(calendar_events, many=True)
 
-        if cached_events is None:
-            calendar_events = CalendarEvent.objects.filter(user=request.user,start_date=today).exclude(Q(color='red') | Q(color='green'))
-            serializer = CalendarEventSerializer(calendar_events, many=True)
-            cached_events = serializer.data
-            cache.set(cache_key, cached_events, timeout=60 * 60)
-
-        return Response(cached_events, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
