@@ -1,7 +1,6 @@
 from rest_framework import routers
 from django.urls import path, include
 
-from .views import *
 from .calendar.views import *
 from .notes.views import *
 from .notifications.views import *

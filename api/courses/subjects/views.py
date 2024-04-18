@@ -536,7 +536,12 @@ class SyllabusViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['post'], url_path='create/(?P<subject_code>[^/.]+)', url_name='create_syllabus')
     def create_syllabus(self, request, subject_code=None):
         subject = get_object_or_404(Subject, subject_code=subject_code)
-        syllabus = Syllabus.objects.get(course=subject)
+
+        try:
+            syllabus = Syllabus.objects.get(course=subject)
+        except Syllabus.DoesNotExist:
+            syllabus = Syllabus.objects.create(course=subject)
+            syllabus.save()
         data = request.data
 
         if isinstance(data, list):

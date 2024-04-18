@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from utils.user_create import UserCreator
 from ..models import Teacher
 from ..serializers import TeacherSerializer
+import json
 
 class TeacherCreator:
     def __init__(self, data: dict):
@@ -17,7 +18,7 @@ class TeacherCreator:
                 self.__user = UserCreator(is_student=False, is_teacher=True, username=self.__teacher_id, data=self.__data).create_user()
                 self.__create_teacher()
 
-                return TeacherSerializer(self.__teacher).data
+                return json.dumps(TeacherSerializer(self.__teacher).data)
                 
         except ValidationError as e:
             return {'error': str(e)}

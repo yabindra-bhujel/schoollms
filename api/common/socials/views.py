@@ -253,7 +253,7 @@ class GroupMessagesViewSet(viewsets.ViewSet):
             group = Group.objects.get(id=group_id)
             requesting_user = request.user
             group.members.remove(requesting_user)
-            return Response({"message":"You have left the group"}, status=status.HTTP_200_OK)
+            return Response({"message":"Left group successfully"}, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
             return Response({"message":"Group not found"}, status=status.HTTP_404_NOT_FOUND)
         
