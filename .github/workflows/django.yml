@@ -24,7 +24,7 @@
               env:
                 POSTGRES_USER: root
                 POSTGRES_PASSWORD: root
-                POSTGRES_DB: lmsdatabase
+                POSTGRES_DB: db
                 name: lmsdatabase
               ports:
                 - 5432:5432
