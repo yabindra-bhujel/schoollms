@@ -9,7 +9,7 @@ DATABASES = {
         'NAME': 'lmsdatabase',   
         'USER': 'root',         
         'PASSWORD': 'root',      
-        'HOST': 'lmsdatabase',     
+        'HOST': 'db',     
         'PORT': '5432',         
     }
 }

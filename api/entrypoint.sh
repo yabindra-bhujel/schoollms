@@ -1,11 +1,8 @@
 #!/bin/bash
 
-if [ -d "static" ]; then
-    echo "Static files already exist. Skipping collectstatic..."
-else
-    echo "Collecting static files..."
-    python manage.py collectstatic --no-input --clear
-fi
+set -e
+
+python manage.py collectstatic --no-input --clear
 
 if [ "$DATABASE" = "postgres" ]; then
     echo "Waiting for postgres..."
@@ -16,5 +13,11 @@ if [ "$DATABASE" = "postgres" ]; then
 
     echo "PostgreSQL started"
 fi
+
+
+# migrate databse
+python3 manage.py makemigrations
+
+python3 manage.py migrate --noinput
 
 exec "$@"
