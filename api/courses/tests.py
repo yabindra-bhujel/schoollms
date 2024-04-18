@@ -32,27 +32,36 @@ class TestAdminAPICourse(APITestCase):
             url = '/api/admin/departments/'
 
             data = {
-                'department_name': 'Test Department',
-                'department_code': '1234'
+                'department_name': 'Test Department 222',
+                'department_code': '123422'
             }
 
             response = self.client.post(url, data, format='json')
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-            self.assertEqual(response.data['department_name'], 'Test Department')
-            self.assertEqual(response.data['department_code'], '1234')
+            self.assertEqual(response.data['department_name'], 'Test Department 222')
+            self.assertEqual(response.data['department_code'], '123422')
+
+            data = {
+                'department_name': 'Test Department 222',
+                'department_code': '123422'
+            }
+
+            response = self.client.post(url, data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             actual_data = response.data
-            id = actual_data[0]['id']
-            self.assertEqual(actual_data[0]['department_name'], 'Test Department')
-            self.assertEqual(actual_data[0]['department_code'], '1234')
+            id = actual_data[1]['id']
+            self.assertEqual(actual_data[1]['department_name'], 'Test Department 222')
+            self.assertEqual(actual_data[1]['department_code'], '123422')
 
             url = f'/api/admin/departments/{id}/'
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(response.data['department_name'], 'Test Department')
-            self.assertEqual(response.data['department_code'], '1234')
+            self.assertEqual(response.data['department_name'], 'Test Department 222')
+            self.assertEqual(response.data['department_code'], '123422')
             self.assertEqual(response.data['id'], id)
 
 
@@ -61,6 +70,8 @@ class TestAdminAPICourse(APITestCase):
             self.assertEqual(response.data['department_name'], 'New Department')
             self.assertEqual(response.data['department_code'], '5678')
             self.assertEqual(response.data['id'], id)
+
+        
         
         def test_announcement(self):
             url = '/api/announcements/'

@@ -52,9 +52,8 @@ class NotesViewSet(viewsets.ViewSet):
         new_note = NotesService.new_note(user_instance, request.data)
         serializer = NotesSerializer(new_note)
 
-        if serializer.is_valid():
-            self.delete_cache(request, f"notes_{request.user.id}")
-
+        self.delete_cache(request, f"notes_{request.user.id}")
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 
@@ -65,8 +64,7 @@ class NotesViewSet(viewsets.ViewSet):
         updated_note = NotesService.update_note(note, request.data)
         serializer = NotesSerializer(updated_note)
 
-        if serializer.is_valid():
-            self.delete_cache(request, f"notes_{request.user.id}")
+        self.delete_cache(request, f"notes_{request.user.id}")
 
         return Response(serializer.data)
     
@@ -87,8 +85,8 @@ class NotesViewSet(viewsets.ViewSet):
         admin = User.objects.get(username=user)
         note = NotesService.share_note_with_user(admin, pk, request.data)
         serializer = NotesSerializer(note)
-        if serializer.is_valid():
-            self.delete_cache(request, f"notes_{request.user.id}")
-            
+
+        self.delete_cache(request, f"notes_{request.user.id}")
+
         return Response(serializer.data)
     
