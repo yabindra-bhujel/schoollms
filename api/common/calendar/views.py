@@ -19,6 +19,13 @@ class CalendarEventViewSet(viewsets.ViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def delete_cache(self, request, check_key):
+        cache.delete(check_key)
+        
+
+
+
+
     @extend_schema(responses={200: CalendarEventSerializer})
     def list(self, request):
         cache_key = f"calendar_events_{request.user.id}"
@@ -45,12 +52,8 @@ class CalendarEventViewSet(viewsets.ViewSet):
         new_event = CalendarService.create_event(user, request.data)
         serializer = CalendarEventSerializer(new_event)
 
-        cache_key = f"calendar_events_{request.user.id}"
-        cached_events = cache.get(cache_key)
-
-        if cached_events is not None:
-            cached_events.append(serializer.data)
-            cache.set(cache_key, cached_events, timeout=60 * 60)
+        # delete cache after creating new event
+        self.delete_cache(request, f"calendar_events_{request.user.id}")
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
@@ -62,14 +65,8 @@ class CalendarEventViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             serializer.save()
 
-            cache_key = f"calendar_events_{request.user.id}"
-            cached_events = cache.get(cache_key)
-
-            if cached_events is not None:
-                for index, event in enumerate(cached_events):
-                    if event['id'] == pk:
-                        cached_events[index] = serializer.data
-                        cache.set(cache_key, cached_events, timeout=60 * 60)
+            # delete cache after updating event
+            self.delete_cache(request, f"calendar_events_{request.user.id}")
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -80,15 +77,8 @@ class CalendarEventViewSet(viewsets.ViewSet):
         event = CalendarService.update_event_date(request.data)
         serializer = CalendarEventSerializer(event)
 
-        cache_key = f"calendar_events_{request.user.id}"
-        cached_events = cache.get(cache_key)
-
-        if cached_events is not None:
-            for index, event in enumerate(cached_events):
-                if event['id'] == serializer.data['id']:
-                    cached_events[index] = serializer.data
-                    cache.set(cache_key, cached_events, timeout=60 * 60)
-
+        # delete cache after updating event
+        self.delete_cache(request, f"calendar_events_{request.user.id}")
 
         return Response(serializer.data)
     
@@ -108,28 +98,16 @@ class CalendarEventViewSet(viewsets.ViewSet):
                 event.is_class_cancellation = False
                 event.save()
 
-                cache_key = f"calendar_events_{request.user.id}"
-                cached_events = cache.get(cache_key)
+                # delete cache after updating event
+                self.delete_cache(request, f"calendar_events_{request.user.id}")
 
-                if cached_events is not None:
-                    for index, event in enumerate(cached_events):
-                        if event['id'] == event_id:
-                            event['is_class_cancellation'] = False
-                            cached_events[index] = event
-                            cache.set(cache_key, cached_events, timeout=60 * 60)
+      
             else:
                 event.is_class_cancellation = True
                 event.save()
 
-                cache_key = f"calendar_events_{request.user.id}"
-                cached_events = cache.get(cache_key)
-
-                if cached_events is not None:
-                    for index, event in enumerate(cached_events):
-                        if event['id'] == event_id:
-                            event['is_class_cancellation'] = True
-                            cached_events[index] = event
-                            cache.set(cache_key, cached_events, timeout=60 * 60)
+                # delete cache after updating event
+                self.delete_cache(request, f"calendar_events_{request.user.id}")
 
             return Response('Class cancellation updated successfully', status=status.HTTP_200_OK)
         except Exception as e:
@@ -141,8 +119,8 @@ class CalendarEventViewSet(viewsets.ViewSet):
         event = get_object_or_404(queryset, pk=pk)
         event.delete()
 
-        cache_key = f"calendar_events_{request.user.id}"
-        cache.delete(cache_key)
+        # delete cache after deleting event
+        self.delete_cache(request, f"calendar_events_{request.user.id}")
         
 
         return Response(status=status.HTTP_204_NO_CONTENT)
