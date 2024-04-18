@@ -7,9 +7,8 @@ services:
       dockerfile: Dockerfile
       target: api
     ports:
-      - "8001:8001"
-    # command: gunicorn university.wsgi:application --bind 0.0.0.0:8001
-    command: python manage.py runserver 0.0.0.0:8001
+      - "8000:8000"
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./api:/app/api
     depends_on:
@@ -26,7 +25,7 @@ services:
     depends_on:
       - db
       - redis
-    command: celery -A university worker --loglevel=info
+    command: celery -A config worker --loglevel=info
   celery-beat:
     build:
       context: ./api
@@ -38,7 +37,7 @@ services:
       - db
       - redis
       - celery
-    command: celery -A university beat --loglevel=info
+    command: celery -A config beat --loglevel=info
     
   db:
     image: postgres:16

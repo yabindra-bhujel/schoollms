@@ -38,6 +38,7 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
     ? onlineUsers.some(user => user.userId === selectedChat.username)
     : false;
 
+
   const handleGroupImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image")) {
@@ -119,6 +120,7 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
     socket.emit("send-group-message", messageData);
 
     setGroupnewmessage("");
+    setGroupMessage((prevMessages) => [...prevMessages, messageData]);
   };
 
   useEffect(() => {
@@ -140,8 +142,7 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
 
     try {
       const res = await instance.get(endpoint);
-      const messages = res.data;
-      console.log(messages);
+      const messages = res.data.messages;
       setGroupMessage(messages);
     } catch (err) {
     }
@@ -374,7 +375,7 @@ Sidebar
               .filter((message) => message.receiver_group === selectedChat.name)
               .map((message) => (
                 <div
-                  key={message.timestamp}
+                  key={message.id}
                   className={
                     message.sender_userId === getUserInfo().username
                       ? "message_sender"

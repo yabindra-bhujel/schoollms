@@ -1,0 +1,11 @@
+runtime: python110
+entrypoint: gunicorn -b :$PORT  --chdir api/  config.wsgi:application
+
+handlers:
+  - url: /static
+    static_dir: api/static
+  - url: /media
+    static_dir: api/media
+  - url: /.*
+    secure: always
+    script: auto
