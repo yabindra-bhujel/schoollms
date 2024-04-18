@@ -94,3 +94,5 @@ Icon
 *.xlsx
 *.xls
 
+
+celerybeat-schedule.* 
