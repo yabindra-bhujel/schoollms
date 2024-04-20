@@ -30,3 +30,4 @@ celerybeat-schedule *
 *.log
 
 .pytest_cache/
+celerybeat-schedule
