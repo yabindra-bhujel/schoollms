@@ -8,9 +8,19 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
 """
 
 import os
+import sys
+import dotenv
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+dotenv_file = os.path.join(".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
+
+isDev = os.environ.get('DEVELOPMENT_MODE') == 'True'
+if isDev:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
+else:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
 
 application = get_wsgi_application()

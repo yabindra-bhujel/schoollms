@@ -42,7 +42,7 @@ class NotificationViewSet(viewsets.ViewSet):
         cached_notifications = cache.get(cache_key)
 
         if cached_notifications is None:
-            queryset = Notification.objects.filter(user=request.user).order_by('-notification__timestamp')
+            queryset = Notification.objects.filter(user=request.user).order_by('-timestamp')
             serializer = NotificationSerializer(queryset, many=True)
             cached_notifications = serializer.data
             cache.set(cache_key, cached_notifications, timeout=60 * 60)

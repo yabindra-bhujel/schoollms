@@ -36,13 +36,12 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.profiling.ProfilingPanel',
 ]
 
-
 if DEBUG:
-
     MIDDLEWARE += (
         'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
     INSTALLED_APPS += (
+        'drf_spectacular',
         'debug_toolbar',
     )
     INTERNAL_IPS = ('127.0.0.1',)
@@ -52,4 +51,19 @@ if DEBUG:
     
 DEBUG_TOOLBAR_CONFIG = {
    "SHOW_TOOLBAR_CALLBACK" : lambda request: True,
+}
+
+REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'LMS Shikoku University',
+    'DESCRIPTION': 'API for LMS Shikoku University',
+    'VERSION': '1.0.0',
+    'SECURITY': [
+        {
+            'Authorization': [],
+        },
+        
+
+    ],
 }

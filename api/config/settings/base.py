@@ -32,7 +32,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'drf_spectacular',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
@@ -227,21 +226,6 @@ TEST_RUNNER = 'pytest_django.test.runner.TestRunner'
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
  
-
-REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'}
-
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'LMS Shikoku University',
-    'DESCRIPTION': 'API for LMS Shikoku University',
-    'VERSION': '1.0.0',
-    'SECURITY': [
-        {
-            'Authorization': [],
-        },
-        
-
-    ],
-}
 
 # LOGGING = {
 #     'version': 1,

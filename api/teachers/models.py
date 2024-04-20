@@ -5,16 +5,12 @@ from django.conf import settings
 User = get_user_model()
 
 class Teacher(models.Model):
-    GENDER = {
-         ('Male', 'Male'),
-        ('Female', 'Female'),
-    }
 
     user = models.OneToOneField(User, on_delete = models.CASCADE, null=True, blank=True)
     teacher_id = models.CharField(max_length=255, unique=True, null=False, blank=False, primary_key=True)
     first_name = models.CharField(max_length=255, null= False, blank=False, default="")
     last_name = models.CharField(max_length=255, null= False, blank=False,default="")
-    gender = models.CharField(max_length=20, choices= GENDER, null=False, blank=False, default="Male")
+    gender = models.CharField(max_length=20, null=False, blank=False)
     email = models.EmailField(max_length=50,  null=True, blank=True)
     phone = models.CharField(max_length=20, unique=True)
     address = models.CharField(max_length=255, null=False, blank=False)

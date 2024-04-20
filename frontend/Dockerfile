@@ -1,16 +1,25 @@
-FROM node:19.5.0-alpine
+FROM node:alpine as build
+
+ENV GENERATE_SOURCEMAP=false
 
 WORKDIR /app/client
 
-COPY  package.json .
+
+COPY package*.json ./
 
 RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+RUN npm run build
 
-CMD [ "npm", "start" ]
+FROM nginx:alpine
+
+RUN rm -rf /usr/share/nginx/html/*
 
 
+COPY --from=build /app/client/build /usr/share/nginx/html
 
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
