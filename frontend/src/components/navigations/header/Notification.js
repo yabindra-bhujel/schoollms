@@ -13,13 +13,13 @@ const Notifications = ({ notifications }) => {
         notifications.map((item, index) => (
           <div key={index}>
             <Typography variant="subtitle1" color="primary" style={{ fontWeight: 'bold' }}>
-              {item.notification.title} {item.is_read ? '' : '*'}
+              {item.title} {item.is_read ? '' : '*'}
             </Typography>
             <Typography variant="body2" color="textSecondary" style={{ marginBottom: 8 }}>
-              {item.notification.content}
+              {item.content}
             </Typography>
             <Typography variant="caption" color="textSecondary">
-              {moment(item.notification.timestamp).fromNow()}
+              {moment(item.timestamp).fromNow()}
             </Typography>
             <Divider variant="middle" style={{ margin: '8px 0' }} />
           </div>

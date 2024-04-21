@@ -13,6 +13,29 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  useEffect(() => {
+    // Focus on the username input field when the component mounts
+    document.getElementById('usernameInput').focus();
+  }, []); 
+
+
+  // after add usernmae enter key press then focus password input
+  const handleUsernameKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      const passwordInput = document.getElementById('passwordInput');
+      if (passwordInput) {
+        passwordInput.focus();
+      }
+    }
+  };
+  
+  // after add password enter key press then call handleLogin function
+  const handlePasswordKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleLogin();
+    }
+  };
+
   const handleLogin = async () => {
     if (username === "" || password === "") {
       setMessage("Please enter username and password");
@@ -79,16 +102,20 @@ function Login() {
             )}
 
             <input
+              id="usernameInput"
               type="text"
               placeholder="User ID"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              onKeyPress={handleUsernameKeyPress}
             />
             <input
+              id="passwordInput"
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={handlePasswordKeyPress}
             />
 
               <div className="forgot-password-login">

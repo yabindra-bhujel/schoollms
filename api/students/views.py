@@ -21,6 +21,7 @@ from django.utils import timezone
 
 
 class AdminStudentViewSet(viewsets.ViewSet):
+    
     serializer_class = StudentSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdminUser]
@@ -160,4 +161,5 @@ class StudentViewSet(viewsets.ViewSet):
 
             return Response(assignments_data, status=200)
         except Exception as e:
+            print(e)
             return Response({"message": "An error occurred"}, status=500)

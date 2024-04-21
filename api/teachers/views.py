@@ -87,8 +87,9 @@ class TeacherViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'], url_path='teacher_today_class', url_name='today_class')
     def get_today_class(self, request):
         user = request.user
+
         if hasattr (user, 'is_teacher') and user.is_teacher:
-            teacher = user.teacher
+            teacher = user.is_teacher
          
         current_day = datetime.now().strftime('%A')
         teacher_classes_today = SubjectRegistration.objects.filter(teacher=teacher, subject__weekday=current_day)
@@ -158,4 +159,5 @@ class TeacherViewSet(viewsets.ViewSet):
 
             return Response(assignments_data, status=200)
         except Exception as e:
+            print(e)
             return Response({"message": "An error occurred"}, status=500)

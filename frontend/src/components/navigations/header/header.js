@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {useLocation } from "react-router-dom";
 import "../style/sidebar.css";
 import jwtDecode from "jwt-decode";
 import instance from "../../../api/axios";
@@ -15,11 +14,9 @@ import getUserInfo from "../../../api/user/userdata";
 
 
 function Header() {
-  
   const userData = JSON.parse(localStorage.getItem("userData"));
   const accessToken = userData.access;
   const decoded = jwtDecode(accessToken);
-  const username = decoded.username;
   const first_name = decoded.first_name;
   const last_name = decoded.last_name;
   const fullname = first_name + " " + last_name;
@@ -37,6 +34,7 @@ function Header() {
     horizontal: "center",
     message: "",
   });
+
   const { vertical, horizontal, isOpen, message } = snackbarState;
   const userId = getUserInfo().username;
   const [groupName, setGroupName] = useState(false);
@@ -47,8 +45,7 @@ const [sidebarWidth, setSidebarWidth] = useState(() => {
   try {
     return storedWidth !== null ? JSON.parse(storedWidth) : true;
   } catch (error) {
-    console.error('Error parsing storedWidth:', error);
-    return true; // Use a default value or handle the error accordingly
+    return true; 
   }
 });
 

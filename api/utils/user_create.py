@@ -7,12 +7,13 @@ from django.db import transaction
 User = get_user_model()
 
 class UserCreator:
-    def __init__(self, is_student: bool, is_teacher: bool, username: str, data: dict):
+    def __init__(self, is_student: bool, is_teacher: bool, username: str, data: dict, password: str):
         self._data = data
         self._user = None
         self._is_student = is_student
         self._is_teacher = is_teacher
         self._username = username
+        self._password = password
 
     def create_user(self):
         """
@@ -50,7 +51,7 @@ class UserCreator:
             is_student=self._is_student,
             is_teacher=self._is_teacher
         )
-        self._user.set_password(self._data.get('password'))
+        self._user.set_password(self._password)
         self._user.save()
 
     def _create_user_profile(self):

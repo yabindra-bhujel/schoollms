@@ -38,19 +38,15 @@ class NotificationViewSet(viewsets.ViewSet):
     @extend_schema(responses={200: NotificationSerializer})
     @action(detail=False, methods=['get'], url_path='notification_by_user', url_name='notification_by_user')
     def notification_by_user(self, request):
-        cache_key = f"notifications_{request.user.id}"
-        cached_notifications = cache.get(cache_key)
+        queryset = Notification.objects.filter(user=request.user).order_by('-timestamp')
+        serializer = NotificationSerializer(queryset, many=True)
 
-        if cached_notifications is None:
-            queryset = Notification.objects.filter(user=request.user).order_by('-timestamp')
-            serializer = NotificationSerializer(queryset, many=True)
-            cached_notifications = serializer.data
-            cache.set(cache_key, cached_notifications, timeout=60 * 60)
-        return Response(cached_notifications)
+        return Response(serializer.data)
 
     @extend_schema(responses={200: NotificationSerializer})
     @action(detail=False, methods=['put'], url_path='read', url_name='read')
     def notification_read(self, request):
+        
         user = get_object_or_404(User, username=request.user)
         notifications = UserNotification.objects.filter(user=user)
         for notification in notifications:
