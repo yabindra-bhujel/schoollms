@@ -64,14 +64,19 @@ def handle_new_user(data):
 
 @socketio.on('join-group')
 def on_join_group(data):
+    print(data)
+    
     socket_id = request.sid
     user_id = data.get('userId')
     group_name_data = data.get('groupName')
 
-    # Processing the group name data
+    # Processing the group joining
     try:
         for group_name in group_name_data:
-            join_room(group_name)
+            join = join_room(room=group_name, sid=socket_id)
+            print(join)
+            if join:
+                print('User %s joined group %s', user_id, group_name)
 
     except Exception as e:
         app.logger.error('Error handling send message: %s', str(e))
@@ -149,6 +154,9 @@ def handle_send_group_message(data):
             'message': message,
             'timestamp': timestamp,
         }, room=receiver_group)
+
+        print('message sent')
+
     except Exception as e:
         app.logger.error('Error handling send message: %s', str(e))
 
@@ -208,9 +216,11 @@ def send_to_django(messages, url ):
     for message in messages:
         response = requests.post(url, data=json.dumps(message), headers=headers)
         if response.status_code == 201:
-            app.logger.info('Message saved successfully: %s', str(message))
+            pass
+            # app.logger.info('Message saved successfully: %s', str(message))
         else:
-            app.logger.error('Error saving message: %s', str(response.content))
+            pass
+            # app.logger.error('Error saving message: %s', str(response.content))
 
 # *****************************************
  # receive notification from django and send to client

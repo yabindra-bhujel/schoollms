@@ -126,6 +126,7 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
   useEffect(() => {
     if (socket) {
       socket.on("receive-group-message", (messageData) => {
+        console.log(messageData);
         setGroupMessage((prevMessages) => [...prevMessages, messageData]);
       });
     }
@@ -143,7 +144,7 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
     try {
       const res = await instance.get(endpoint);
       const messages = res.data.messages;
-      setGroupMessage(messages);
+      setGroupMessage((prevMessages) => [...prevMessages, ...messages])
     } catch (err) {
     }
   };

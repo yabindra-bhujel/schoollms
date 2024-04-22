@@ -37,7 +37,10 @@ function Header() {
 
   const { vertical, horizontal, isOpen, message } = snackbarState;
   const userId = getUserInfo().username;
-  const [groupName, setGroupName] = useState(false);
+  const [groupName, setGroupName] = useState([]);
+
+  console.log(groupName);
+
 
   // set sidebar width (70px or 200)
 const [sidebarWidth, setSidebarWidth] = useState(() => {
@@ -57,6 +60,21 @@ const toggleSidebar = () => {
   });
 };
 
+useEffect(() =>{
+  groupData();
+
+
+}, [])
+
+const groupData = async () => {
+  const endpoint = 'groups/group_list/';
+  try{
+    const response = await instance.get(endpoint);
+      setGroupName(response.data.groups.map(group => group.name));
+  }catch(e){
+  }
+}
+
 
 
   useEffect(() => {
@@ -65,9 +83,9 @@ const toggleSidebar = () => {
         socket.emit("addNewuser", { userId });
 
 
-        if (groupName.length > 0) {
+        // if (groupName.length > 0) {
           socket.emit("join-group", { groupName, userId });
-        }
+        // }
       });
 
       socket.on("receive-notification", (data) => {
@@ -82,7 +100,7 @@ const toggleSidebar = () => {
       });
 
     }
-  }, [socket, sidebarWidth]);
+  }, [socket]);
 
   useEffect(() => {
     getNotification();
@@ -101,7 +119,6 @@ const toggleSidebar = () => {
       const response = await instance.get(endpoint);
       setNotify(response.data);
     } catch (e) {
-      console.log("error", e);
     }
   };
 
@@ -113,7 +130,6 @@ const toggleSidebar = () => {
         getNotification();
       }
     } catch (e) {
-      console.log("error", e);
     }
   };
 
