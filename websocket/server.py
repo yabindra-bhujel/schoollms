@@ -1,7 +1,7 @@
 import json
 import time
 from flask import Flask, jsonify, request
-from flask_socketio import SocketIO, join_room, leave_room
+from flask_socketio import SocketIO, join_room, leave_room, rooms
 import requests
 import threading
 import logging
@@ -59,24 +59,16 @@ def handle_new_user(data):
         user_data = {'userId': user_id, 'socketId': socket_id}
         userlist.append(user_data)
 
-    # After updating userlist, emit it to all clients
     emit_all_users()
 
 @socketio.on('join-group')
 def on_join_group(data):
-    print(data)
-    
     socket_id = request.sid
     user_id = data.get('userId')
     group_name_data = data.get('groupName')
 
-    # Processing the group joining
     try:
-        for group_name in group_name_data:
-            join = join_room(room=group_name, sid=socket_id)
-            print(join)
-            if join:
-                print('User %s joined group %s', user_id, group_name)
+        join_room(group_name_data, sid=socket_id)
 
     except Exception as e:
         app.logger.error('Error handling send message: %s', str(e))
@@ -155,7 +147,6 @@ def handle_send_group_message(data):
             'timestamp': timestamp,
         }, room=receiver_group)
 
-        print('message sent')
 
     except Exception as e:
         app.logger.error('Error handling send message: %s', str(e))

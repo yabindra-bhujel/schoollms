@@ -16,7 +16,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Button from '@mui/material/Button';
 
 
-const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
+const ChatDetails = ({ selectedChat, socket, onlineUsers }) => {
   const [newmessage, setNewmessage] = useState("");
   const [groupnewmessage, setGroupnewmessage] = useState("");
   const [messageList, setMessageList] = useState([]);
@@ -75,6 +75,7 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
     }
   }
 
+
   const handleClicks = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -126,7 +127,10 @@ const ChatDetails = ({ selectedChat, socket, onlineUsers, sidebarWidth }) => {
   useEffect(() => {
     if (socket) {
       socket.on("receive-group-message", (messageData) => {
-        console.log(messageData);
+        // if sender is self not add messgae
+        if (messageData.sender_userId === getUserInfo().username) {
+          return;
+        }
         setGroupMessage((prevMessages) => [...prevMessages, messageData]);
       });
     }

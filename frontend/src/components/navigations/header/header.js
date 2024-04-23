@@ -75,32 +75,30 @@ const groupData = async () => {
   }
 }
 
+useEffect(() => {
+  if (socket) {
+    socket.on("connect", () => {
+      socket.emit("addNewuser", { userId });
+    });
 
+    socket.emit("addNewuser", { userId });
 
-  useEffect(() => {
-    if (socket) {
-      socket.on("connect", () => {
-        socket.emit("addNewuser", { userId });
+    groupName.forEach(group => {
+      socket.emit("join-group", { groupName: group, userId });
+    });
 
-
-        // if (groupName.length > 0) {
-          socket.emit("join-group", { groupName, userId });
-        // }
+    socket.on("receive-notification", (data) => {
+      setSnackbarState({
+        isOpen: true,
+        vertical: "bottom",
+        horizontal: "right",
+        message: data.title || "You have a new notification!",
       });
 
-      socket.on("receive-notification", (data) => {
-        setSnackbarState({
-          isOpen: true,
-          vertical: "bottom",
-          horizontal: "right",
-          message: data.title || "You have a new notification!",
-        });
-
-        setNotify((prev) => [data, ...prev]);
-      });
-
-    }
-  }, [socket]);
+      setNotify((prev) => [data, ...prev]);
+    });
+  }
+}, [socket, groupName, userId]);
 
   useEffect(() => {
     getNotification();
