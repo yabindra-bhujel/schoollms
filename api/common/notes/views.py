@@ -13,6 +13,7 @@ from django.db.models import Q
 from ..models import Notes
 from .services import *
 from django.core.cache import cache
+import time
 
 
 class NotesViewSet(viewsets.ViewSet):
@@ -29,10 +30,13 @@ class NotesViewSet(viewsets.ViewSet):
         cached_notes = cache.get(cache_key)
 
         if cached_notes is None:
+            start = time.time()
             queryset = Notes.objects.filter(Q(user=request.user) | Q(shared_with=request.user))
-            queryset = queryset.distinct().select_related('user')
+            queryset = queryset.distinct().prefetch_related('user')
             serializer = NotesSerializer(queryset, many=True)
             cached_notes = serializer.data
+            end = time.time()
+            print(f"Time taken to fetch notes: {end - start}")
             cache.set(cache_key, cached_notes, timeout=60 * 60)
 
         return Response(cached_notes)

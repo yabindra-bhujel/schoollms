@@ -8,13 +8,14 @@ services:
       target: api
     ports:
       - "8000:8000"
-    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - ./api:/app/api
+      - static_volume:/api/static
+      - media_volume:/api/media
     depends_on:
       - db
       - redis
       - celery
+
   celery:
     build:
       context: ./api
@@ -26,6 +27,7 @@ services:
       - db
       - redis
     command: celery -A config worker --loglevel=info
+
   celery-beat:
     build:
       context: ./api
@@ -54,18 +56,22 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-
-  client:
+    
+  nginx:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    restart: always
     ports:
-      - "3000:3000"
+      - "80:80"
     volumes:
-      - ./frontend:/app/client
+      - static_volume:/api/static
+      - media_volume:/api/media
     depends_on:
       - api
       
 volumes:
   postgres_data:
   redis_data:
+  static_volume:
+  media_volume:

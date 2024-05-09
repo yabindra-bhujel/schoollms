@@ -37,7 +37,7 @@ const AdminSideBar = () => {
 
 	const ChangePassword = async (data) => {
 		try {
-			const endpoint = "change_password";
+			const endpoint = `password/chnage_password/`;
 			const response = await instance.post(endpoint, data);
 			return response;
 		} catch (error) {
@@ -67,8 +67,14 @@ const AdminSideBar = () => {
 			return;
 		}
 
+		const data = {
+			old_password: password.oldPassword,
+			new_password: password.newPassword,
+			confirm_password: password.confirmPassword,
+		  };
+
 		try {
-			const response = await ChangePassword(password);
+			const response = await ChangePassword(data);
 			if (response.status === 200) {
 				setSnackbar(true);
 				setSnackbarMessage("Password Changed Successfully");

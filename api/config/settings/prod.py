@@ -19,4 +19,6 @@ ALLOWED_HOSTS = [
     'localhost',
     'myapp.com',
     '0.0.0.0'
+    'api'
+
 ]

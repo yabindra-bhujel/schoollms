@@ -7,7 +7,71 @@ services:
       dockerfile: Dockerfile
       target: api
     ports:
-      - "8001:8001"
-    command: python manage.py runserver 0.0.0.0:8001
+      - "8000:8000"
+    volumes:
+      - static_volume:/api/static
+      - media_volume:/api/media
+    depends_on:
+      - db
+      - redis
+      - celery
+
+  celery:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      target: api
     volumes:
       - ./api:/app/api
+    depends_on:
+      - db
+      - redis
+    command: celery -A config worker --loglevel=info
+
+  celery-beat:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      target: api
+    volumes:
+      - ./api:/app/api
+    depends_on:
+      - db
+      - redis
+      - celery
+    command: celery -A config beat --loglevel=info
+    
+  db:
+    image: postgres:16
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=lmsdatabase
+  
+  redis:
+    image: redis:3.0-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    
+  nginx:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/api/static
+      - media_volume:/api/media
+    depends_on:
+      - api
+      
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:

@@ -85,11 +85,11 @@ const UserManagement = () => {
 
 
 
-  // const validatePassword = (password) => {
-  //   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  //   return regex.test(password);
-  // };
+    return regex.test(password);
+  };
 
 
   const handleFormSubmit = (e) => {
@@ -115,10 +115,10 @@ const UserManagement = () => {
       return;
     }
 
-    // if (!validatePassword(newPassword)) {
-    //   setErrors({ newPassword: "Password must meet the specified criteria." });
-    //   return;
-    // }
+    if (!validatePassword(newPassword)) {
+      setErrors({ newPassword: "Password must meet the specified criteria." });
+      return;
+    }
 
 
     e.preventDefault();

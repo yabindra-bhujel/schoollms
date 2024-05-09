@@ -22,10 +22,6 @@ class CalendarEventViewSet(viewsets.ViewSet):
     def delete_cache(self, request, check_key):
         cache.delete(check_key)
         
-
-
-
-
     @extend_schema(responses={200: CalendarEventSerializer})
     def list(self, request):
         cache_key = f"calendar_events_{request.user.id}"

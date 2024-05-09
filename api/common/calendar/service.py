@@ -4,7 +4,7 @@ from students.models import Student
 from teachers.models import Teacher
 from courses.subjects.models import SubjectRegistration, Subject
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class CalendarService:
 
@@ -36,6 +36,7 @@ class CalendarService:
 
         return event
     
+
     @staticmethod
     def get_calendar_events(user):
         calendar_events = CalendarEvent.objects.none() 
@@ -46,7 +47,7 @@ class CalendarService:
             subject_ids = enrolled_subjects.values_list('subject_id', flat=True)
             subjects = Subject.objects.filter(id__in=subject_ids)
             for subject in subjects:
-                calendar_events |= CalendarEvent.objects.filter(subject=subject)
+                calendar_events |= CalendarEvent.objects.filter().prefetch_related('subject').filter(subject=subject)
         
         if user.is_teacher:
             teacher = Teacher.objects.get(user=user)
@@ -54,9 +55,9 @@ class CalendarService:
             subject_ids = enrolled_subjects.values_list('subject_id', flat=True)
             subjects = Subject.objects.filter(id__in=subject_ids)
             for subject in subjects:
-                calendar_events |= CalendarEvent.objects.filter(subject=subject)
+                calendar_events |= CalendarEvent.objects.filter().prefetch_related('subject').filter(subject=subject)
         
-        calendar_events |= CalendarEvent.objects.filter(user=user)
+        calendar_events |= CalendarEvent.objects.filter().prefetch_related('user').filter(user=user)
         
         return calendar_events
 

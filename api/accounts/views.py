@@ -252,13 +252,13 @@ class ApplicationSettingsViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'], url_path='have_email_notification', url_name='have_email_notification')
     def check_have_email_notification(self, request):
         application_settings = self.get_object(request)
-        return application_settings.isEmailNotification
+        return Response(application_settings.isEmailNotification, status=status.HTTP_200_OK)
     
     @extend_schema(responses=ApplicationSettingsSerializer, description='check have two factor auth.')
     @action(detail=False, methods=['get'], url_path='have_notification', url_name='have_notification')
     def two_factore_auth(self, request):
         application_settings = self.get_object(request)
-        return application_settings.isTwoFactorAuthEnabled
+        return Response(application_settings.isTwoFactorAuthEnabled, status=status.HTTP_200_OK)
 
 class PasswordResetViewzSet(viewsets.ViewSet):
     serializer_class = PasswordChangeSerializer
