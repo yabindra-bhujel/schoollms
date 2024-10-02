@@ -37,6 +37,12 @@ static/
 .env
 .env.*
 
+.log
+*.log
+*.log.*
+*.log-*
+
+
 # vscode
 .vscode/*
 venv/
