@@ -1,0 +1,46 @@
+#!/bin/bash -eu
+
+FLG_DATABASE=
+CONTAINER_NAME="database"
+DATABASE_NAME="school_db"
+NETWORK_NAME="school_app"
+
+
+while getopts dn OPT
+do
+  case $OPT in
+    "d" ) FLG_DATABASE="TRUE" ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
+
+# 環境設定ファイルのコピー
+cp services/api/env.template services/api/.env
+
+
+# Create Docker network if it doesn't exist
+echo "Creating Docker network '$NETWORK_NAME' if not exists..."
+docker network ls | grep -wq $NETWORK_NAME || docker network create $NETWORK_NAME
+
+DOCKER_FILE="docker-compose.yml"
+DATABASE_DOCKER_FILE="docker-compose.db.yml"
+
+DOCKER_FILES=
+
+if [ "$FLG_DATABASE" = "TRUE" ]; then
+    DOCKER_FILES="-f $DOCKER_FILE -f $DATABASE_DOCKER_FILE"
+else
+    DOCKER_FILES="-f $DOCKER_FILE"
+fi
+
+docker-compose $DOCKER_FILES up -d
+
+
+docker-compose exec api bin/deploy
+
+
+
+
+

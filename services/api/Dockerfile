@@ -1,26 +1,36 @@
-# Use the Python 3.11.0 base image
+# Dockerfile
+
 FROM python:3.11.0 as api
 
+# 環境変数の設定
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /app/api
+# 作業ディレクトリの設定
+WORKDIR /srv/app
 
-# Install system dependencies
+# システム依存関係をインストール
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        sudo \
+    && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Create and switch to a new user
-# RUN adduser --disabled-password --no-create-home django-api \
-#     && chown -R django-api /app
+# 依存関係ファイルをコピー
+COPY pyproject.toml /srv/app/
 
-# USER django-api
+# Poetryのインストール
+RUN curl -sSL https://install.python-poetry.org | python3 - \
+    && ln -s /root/.local/bin/poetry /usr/local/bin/poetry  # シンボリックリンクを作成
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Poetryの設定と依存関係のインストール
+RUN poetry install --no-dev \
+    && poetry run gunicorn --version  # gunicornのバージョンを確認
 
-COPY . .
+# アプリケーションコードをコピー
+COPY . /srv/app
 
-ENTRYPOINT ["/app/api/entrypoint.sh"]
+# ポートの設定
+ENV PORT 8000
+EXPOSE 8000
+
+# アプリケーションの起動
+CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]

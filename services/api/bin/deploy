@@ -1,0 +1,14 @@
+#!/bin/bash -eu
+
+# Set up Poetry environment
+echo "Setting up the virtual environment with Poetry..."
+poetry env use python3
+poetry install --no-interaction --no-ansi
+
+# Apply database migrations
+echo "Running database migrations..."
+poetry run python manage.py migrate
+
+# Collect static files
+echo "Collecting static files..."
+poetry run python manage.py collectstatic --noinput

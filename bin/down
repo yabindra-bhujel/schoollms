@@ -1,0 +1,25 @@
+#!/bin/bash -eu
+
+FLG_DATABASE=
+CONTAINER_NAME="database"
+NETWORK_NAME="school_app"
+
+while getopts dn OPT; do
+  case $OPT in
+    "d" ) FLG_DATABASE="TRUE" ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
+# Stop and remove Docker containers
+echo "Stopping and removing Docker containers..."
+docker-compose down
+
+# Remove Docker network if it was created by this script
+if [ "$FLG_DATABASE" = "TRUE" ]; then
+    echo "Removing Docker network '$NETWORK_NAME'..."
+    docker network rm $NETWORK_NAME || echo "Network '$NETWORK_NAME' does not exist or is in use."
+fi
+
+echo "Done."

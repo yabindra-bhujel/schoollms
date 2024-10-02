@@ -26,7 +26,7 @@ urlpatterns = [
 
     path('api/', include(router.urls)),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/schema/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
+    path('', SpectacularSwaggerView.as_view(url_name='schema')),
 
     path('api/login/', UserTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/logout/', BlacklistRefreshView.as_view(), name="logout"),
