@@ -12,3 +12,5 @@ poetry run python manage.py migrate
 # Collect static files
 echo "Collecting static files..."
 poetry run python manage.py collectstatic --noinput
+
+echo "Done."

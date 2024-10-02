@@ -1,4 +1,17 @@
+version: '3.8'
+
 services:
+  # Redisキャッシュサービス
+  redis:
+    image: redis:latest  # 最新のマルチアーキテクチャ対応イメージを使用
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - celery_network
+
+  # Celeryワーカーサービス
   celery:
     build:
       context: ./services/api
@@ -8,8 +21,13 @@ services:
       - ./services/api:/app/api
     depends_on:
       - redis
-    command: celery -A config worker --loglevel=info
+    command: poetry run celery -A config.celery worker --loglevel=info  # 'poetry run'を追加
+    env_file:
+      - services/api/.env
+    networks:
+      - celery_network
 
+  # Celery Beatスケジューラサービス
   celery-beat:
     build:
       context: ./services/api
@@ -20,14 +38,14 @@ services:
     depends_on:
       - redis
       - celery
-    command: celery -A config beat --loglevel=info
-
-  redis:
-    image: redis:3.0-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+    command: poetry run celery -A config.celery beat --loglevel=info  # 'poetry run'を追加
+    env_file:
+      - services/api/.env
+    networks:
+      - celery_network
 
 volumes:
   redis_data:
+
+networks:
+  celery_network:

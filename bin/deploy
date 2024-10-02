@@ -26,13 +26,14 @@ docker network ls | grep -wq $NETWORK_NAME || docker network create $NETWORK_NAM
 
 DOCKER_FILE="docker-compose.yml"
 DATABASE_DOCKER_FILE="docker-compose.db.yml"
+CELERY_REDIS="docker-compose.celery-redis.yml"
 
 DOCKER_FILES=
 
 if [ "$FLG_DATABASE" = "TRUE" ]; then
-    DOCKER_FILES="-f $DOCKER_FILE -f $DATABASE_DOCKER_FILE"
+    DOCKER_FILES="-f $DOCKER_FILE -f $DATABASE_DOCKER_FILE -f $CELERY_REDIS"
 else
-    DOCKER_FILES="-f $DOCKER_FILE"
+    DOCKER_FILES="-f $DOCKER_FILE -f $CELERY_REDIS"
 fi
 
 docker-compose $DOCKER_FILES up -d

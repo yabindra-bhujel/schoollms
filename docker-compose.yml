@@ -21,7 +21,6 @@ services:
       EMAIL_IMAP_PASSWORD: ${EMAIL_IMAP_PASSWORD}
       DEVELOPMENT_MODE: ${DEVELOPMENT_MODE}
 
-
     networks:
       - school_app
 
