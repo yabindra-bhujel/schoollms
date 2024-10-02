@@ -22,6 +22,8 @@ rad.json
 TestResults.xml
 
 venv/
+venv/
+__pycache__/
 *.pyc
 static/
 
@@ -37,6 +39,7 @@ static/
 
 # vscode
 .vscode/*
+venv/
 
 # node
 node_modules/

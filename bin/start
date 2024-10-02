@@ -1,0 +1,72 @@
+#!/bin/bash -eu
+
+FLG_DATABASE=
+while getopts dn OPT
+do
+  case $OPT in
+    "d" ) FLG_DATABASE="TRUE" ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
+# Configuration variables
+CONTAINER_NAME="database"
+DATABASE_NAME="school_db"
+NETWORK_NAME="school_app"
+
+cd "$(dirname ${0})/.."
+. bin/load_env
+
+# 環境変数を読み込んで.envファイルを生成
+eval "echo \"$(cat services/api/env.template)\"" > services/api/.env
+
+
+# Create Docker network if it doesn't exist
+echo "Creating Docker network '$NETWORK_NAME' if not exists..."
+docker network ls | grep -wq $NETWORK_NAME || docker network create $NETWORK_NAME
+
+# Start or create the database container
+if docker ps -a --format '{{.Names}}' | grep -wq $CONTAINER_NAME; then
+    echo "Container '$CONTAINER_NAME' already exists. Starting the container..."
+    docker start $CONTAINER_NAME || true
+else
+    echo "Starting PostgreSQL database container..."
+    docker-compose -f docker-compose.db.yml up -d
+fi
+
+# Create the database if it doesn't exist
+echo "Creating the database '$DATABASE_NAME'..."
+docker exec $CONTAINER_NAME psql -U postgres -lqt | cut -d \| -f 1 | grep -qw $DATABASE_NAME
+if [ $? -eq 1 ]; then
+    docker exec $CONTAINER_NAME psql -U postgres -c "CREATE DATABASE $DATABASE_NAME;"
+    echo "Database '$DATABASE_NAME' created!"
+fi
+
+cd services/api
+
+# Set up Poetry environment
+echo "Setting up the virtual environment with Poetry..."
+poetry env use python3
+poetry install --no-interaction --no-ansi
+
+# Apply database migrations
+echo "Running database migrations..."
+poetry run python manage.py migrate
+
+# Collect static files
+echo "Collecting static files..."
+poetry run python manage.py collectstatic --noinput
+
+# Start the Django development server
+echo "Starting the Django development server..."
+poetry run python manage.py runserver 0.0.0.0:8000 &
+
+
+cd ../client
+
+npm install
+
+npm start
+
+exit $?

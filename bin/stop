@@ -1,0 +1,30 @@
+#!/bin/bash -eu
+
+echo "Stopping the Django development server..."
+DJANGO_PID=$(ps aux | grep "manage.py runserver 0.0.0.0:8000" | grep -v grep | awk '{print $2}')
+if [ -n "$DJANGO_PID" ]; then
+    kill -9 $DJANGO_PID
+    echo "Django server stopped."
+else
+    echo "Django server is not running."
+fi
+
+echo "Stopping the frontend server..."
+FRONTEND_PID=$(ps aux | grep "npm start" | grep -v grep | awk '{print $2}')
+if [ -n "$FRONTEND_PID" ]; then
+    kill -9 $FRONTEND_PID
+    echo "Frontend server stopped."
+else
+    echo "Frontend server is not running."
+fi
+
+CONTAINER_NAME="database"
+echo "Stopping the database container..."
+if docker ps --format '{{.Names}}' | grep -wq $CONTAINER_NAME; then
+    docker stop $CONTAINER_NAME
+    echo "Database container stopped."
+else
+    echo "Database container is not running."
+fi
+
+echo "All services stopped."

@@ -1,0 +1,22 @@
+services:
+  database:
+    container_name: database
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: school_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+
+    ports:
+    - target: 5432
+      published: 5432
+
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - school_app
+volumes:
+  db_data:
+
+networks:
+  school_app:
