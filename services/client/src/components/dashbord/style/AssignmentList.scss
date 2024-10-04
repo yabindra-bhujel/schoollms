@@ -1,0 +1,61 @@
+$primary-color: rgb(67, 6, 179);
+$secondary-color: #e0f7f4;
+$border-color: #e0e0e0;
+$highlight-color: rgb(67, 6, 179);
+
+.assignments-container {
+    width: 100%;
+    max-height: 98%;
+    overflow-y: auto;
+    position: relative;
+    
+  
+    h2 {
+        color: $primary-color;
+        text-align: left;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .assignments-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+
+        th {
+            text-align: left;
+            padding: 12px;
+            color: #555;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 12px;
+            border-top: 1px solid $border-color;
+        }
+
+        .highlight-row {
+            background-color: $secondary-color;
+        }
+
+        .view-btn {
+            background-color: $primary-color;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: $highlight-color;
+            }
+        }
+
+        .checkmark {
+            font-size: 20px;
+            color: $primary-color;
+            text-align: center;
+        }
+    }
+}

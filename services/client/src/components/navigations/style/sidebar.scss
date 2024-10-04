@@ -1,6 +1,6 @@
-$menu-background-light: rgb(229, 225, 225);
-$menu-text-light: black;
-$main-background-color: #2a71b9;
+$menu-background-light: rgb(75, 2, 102);
+$menu-text-light: white;
+$main-background-color: #4c8ed0;
 $side-width: 200px;
 $inline-flx: inline-flex;
 $head-h: 200px;
@@ -8,7 +8,7 @@ $head-h: 200px;
 
 nav {
   background-color: $main-background-color;
-  height: 70px;
+  height: 65px;
   width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: white;
@@ -155,6 +155,7 @@ nav {
       .active {
         background-color: $main-background-color;
         color: white;
+        height: 40px;
       }
       .menu-items {
         display: $inline-flx;
@@ -169,6 +170,7 @@ nav {
       .toggleBtn {
         font-size: 30px;
         padding: 0 20px;
+        color: $menu-text-light;
       }
     }
   }
