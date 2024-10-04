@@ -1,0 +1,13 @@
+#!/bin/bash -eu
+
+cd services/api
+
+poetry env use python3
+poetry install --no-interaction --no-ansi
+
+echo "Creating superuser..."
+
+echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'admin')" | python manage.py shell
+
+
+echo "Superuser created!"
