@@ -18,6 +18,7 @@ class CalendarEventViewSet(viewsets.ViewSet):
     serializer_class = CalendarEventSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    lookup_fields = 'pk'
 
     def delete_cache(self, request, check_key):
         cache.delete(check_key)
@@ -126,7 +127,7 @@ class CalendarEventViewSet(viewsets.ViewSet):
     def get_today_event(self, request):
         today = datetime.now().date()
 
-        calendar_events = CalendarEvent.objects.filter(user=request.user,start_date=today).exclude(Q(color='red') | Q(color='green'))
+        calendar_events = CalendarEvent.objects.filter(user=request.user,start_date=today)
         serializer = CalendarEventSerializer(calendar_events, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
