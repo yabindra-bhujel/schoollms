@@ -1,77 +1,33 @@
-version: '3.8'
-
 services:
   api:
     build:
-      context: ./api
+      context: ./services/api
       dockerfile: Dockerfile
       target: api
     ports:
       - "8000:8000"
     volumes:
+      - ./services/api:/srv/app
       - static_volume:/api/static
       - media_volume:/api/media
-    depends_on:
-      - db
-      - redis
-      - celery
-
-  celery:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-      target: api
-    volumes:
-      - ./api:/app/api
-    depends_on:
-      - db
-      - redis
-    command: celery -A config worker --loglevel=info
-
-  celery-beat:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-      target: api
-    volumes:
-      - ./api:/app/api
-    depends_on:
-      - db
-      - redis
-      - celery
-    command: celery -A config beat --loglevel=info
-    
-  db:
-    image: postgres:16
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=lmsdatabase
-  
-  redis:
-    image: redis:3.0-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    
-  nginx:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - "80:80"
-    volumes:
-      - static_volume:/api/static
-      - media_volume:/api/media
-    depends_on:
-      - api
-      
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: root
+      DB_NAME: school_db
+      SECRET_KEY: ${SECRET_KEY}
+      EMAIL_IMAP_USERNAME: ${EMAIL_IMAP_USERNAME}
+      EMAIL_IMAP_PASSWORD: ${EMAIL_IMAP_PASSWORD}
+      DEVELOPMENT_MODE: ${DEVELOPMENT_MODE}
+
+    networks:
+      - school_app
+
 volumes:
-  postgres_data:
-  redis_data:
-  static_volume:
-  media_volume:
+  static_volume: {} 
+  media_volume: {}
+
+networks:
+  school_app:
+    driver: bridge

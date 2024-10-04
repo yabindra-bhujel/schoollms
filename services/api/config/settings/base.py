@@ -10,7 +10,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 FONT_PATH = os.path.join(BASE_DIR, 'font/NotoSansJP-Regular.ttf')
 
-
 dotenv_file = os.path.join(BASE_DIR, "../.env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
@@ -21,6 +20,7 @@ DB_PORT = os.environ["DB_PORT"]
 DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
 DB_NAME = os.environ["DB_NAME"]
+
 
 DATABASES = {
     "default": {
@@ -237,6 +237,7 @@ TEST_RUNNER = 'pytest_django.test.runner.TestRunner'
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 
 # LOGGING = {
