@@ -65,6 +65,7 @@ class UserTokenObtainPairView(TokenObtainPairView):
 class UserViewSet(viewsets.ViewSet):
     serializer_class = UserSerializer
     authentication_classes = [JWTAuthentication] 
+    lookup_field = "id"
 
     def get_permissions(self):
         action_permission_map = {

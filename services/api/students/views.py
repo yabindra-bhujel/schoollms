@@ -26,7 +26,7 @@ class AdminStudentViewSet(viewsets.ViewSet):
     serializer_class = StudentSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdminUser]
-    lookup_field = "id"
+    lookup_field = "student_id"
 
     def list(self, request):
         queryset = Student.objects.all()
@@ -34,22 +34,21 @@ class AdminStudentViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     @extend_schema(
-            parameters=[
-                OpenApiParameter(
-                    name="id",
-                    type=OpenApiTypes.INT,
-                    location=OpenApiParameter.PATH,
-                    description="ID of the student"
-                )
-            ],
-            responses={200: StudentSerializer}
+        parameters=[
+            OpenApiParameter(
+                name="student_id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="ID of the student",
+            )
+        ],
+        responses={200: StudentSerializer},
     )
-    def retrieve(self, request, id: [Optional[int]] = None):
+    def retrieve(self, request, student_id: [Optional[str]] = None):
         queryset = Student.objects.all()
-        student = get_object_or_404(queryset, id=id)
+        student = get_object_or_404(queryset, student_id=student_id)
         serializer = StudentSerializer(student)
         return Response(serializer.data)
-
 
     @extend_schema(responses={201: StudentSerializer})
     def create(self, request):
@@ -76,17 +75,17 @@ class AdminStudentViewSet(viewsets.ViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name="id",
+                name="student_id",
                 type=OpenApiTypes.INT,
                 location=OpenApiParameter.PATH,
-                description="ID of the student"
+                description="ID of the student",
             )
         ],
-        responses={200: StudentSerializer}
+        responses={200: StudentSerializer},
     )
-    def update(self, request, id: Optional[int] = None):
+    def update(self, request, student_id: Optional[int] = None):
         queryset = Student.objects.all()
-        student = get_object_or_404(queryset, id=id)
+        student = get_object_or_404(queryset, student_id=student_id)
         serializer = StudentSerializer(student, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -96,16 +95,16 @@ class AdminStudentViewSet(viewsets.ViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name="id",
+                name="student_id",
                 type=OpenApiTypes.INT,
                 location=OpenApiParameter.PATH,
-                description="ID of the student"
+                description="ID of the student",
             )
         ],
     )
-    def destroy(self, request, id: int=None):
+    def destroy(self, request, student_id: int=None):
         queryset = Student.objects.all()
-        student = get_object_or_404(queryset, id=id)
+        student = get_object_or_404(queryset, student_id=student_id)
         student.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
