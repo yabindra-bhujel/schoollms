@@ -201,6 +201,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
     serializer_class = SubjectSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    lookup_field = "id"
 
     @extend_schema(
         parameters=[
