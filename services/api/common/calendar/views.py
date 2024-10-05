@@ -13,6 +13,7 @@ from ..serializers import CalendarEventSerializer
 from .service import *
 from django.core.cache import cache
 from datetime import datetime
+from django.db.models import Q
 
 User = get_user_model()
 
