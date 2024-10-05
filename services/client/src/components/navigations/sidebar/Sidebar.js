@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import "../style/sidebar.css";
 import { MdDashboard } from "react-icons/md";
@@ -12,8 +12,6 @@ import jwtDecode from "jwt-decode";
 import instance from "../../../api/axios";
 import { BsWechat } from "react-icons/bs";
 import { SlNote } from "react-icons/sl";
-import { useWebSocket } from "../../../WebSocketContext";
-import getUserInfo from "../../../api/user/userdata";
 import { useTranslation } from "react-i18next";
 
 
@@ -40,10 +38,7 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
     } catch (error) {
     }
   }
-
   const {t} = useTranslation();
-
-
 
   return (
     <div>

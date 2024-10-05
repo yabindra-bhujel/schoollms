@@ -22,14 +22,9 @@ class AuthTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
 
-        response = self.client.post('/api/logout/')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         response = self.client.post('/api/login/', {'username': 'normal', 'password': 'wrong'})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        response = self.client.post('/api/logout/')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = self.client.post('/api/login/', {'username': 'student', 'password': 'pass'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)

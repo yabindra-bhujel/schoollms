@@ -2,17 +2,20 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-User = get_user_model()
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.openapi import OpenApiTypes
 from ..models import CalendarEvent
 from ..serializers import CalendarEventSerializer
 from .service import *
-from django.db.models import Q
 from django.core.cache import cache
+from datetime import datetime
+
+User = get_user_model()
+
 
 class CalendarEventViewSet(viewsets.ViewSet):
     serializer_class = CalendarEventSerializer
@@ -21,7 +24,7 @@ class CalendarEventViewSet(viewsets.ViewSet):
 
     def delete_cache(self, request, check_key):
         cache.delete(check_key)
-        
+
     @extend_schema(responses={200: CalendarEventSerializer})
     def list(self, request):
         cache_key = f"calendar_events_{request.user.id}"
@@ -34,14 +37,24 @@ class CalendarEventViewSet(viewsets.ViewSet):
             cache.set(cache_key, cached_events, timeout=60 * 60)
 
         return Response(cached_events)
-    
-    @extend_schema(responses={200: CalendarEventSerializer})
-    def retrieve(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the event",
+            )
+        ],
+        responses={200: CalendarEventSerializer},
+    )
+    def retrieve(self, request, id: int):
         queryset = CalendarEvent.objects.all()
-        event = get_object_or_404(queryset, pk=pk)
+        event = get_object_or_404(queryset, id=id)
         serializer = CalendarEventSerializer(event)
         return Response(serializer.data)
-    
+
     @extend_schema(responses={201: CalendarEventSerializer})
     def create(self, request):
         user = User.objects.get(username=request.user)
@@ -52,11 +65,21 @@ class CalendarEventViewSet(viewsets.ViewSet):
         self.delete_cache(request, f"calendar_events_{request.user.id}")
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    @extend_schema(responses={200: CalendarEventSerializer})
-    def update(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the event",
+            )
+        ],
+        responses={200: CalendarEventSerializer},
+    )
+    def update(self, request, id: int):
         queryset = CalendarEvent.objects.all()
-        event = get_object_or_404(queryset, pk=pk)
+        event = get_object_or_404(queryset, id=id)
         serializer = CalendarEventSerializer(event, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -66,10 +89,25 @@ class CalendarEventViewSet(viewsets.ViewSet):
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    @extend_schema(responses={200: CalendarEventSerializer})
-    @action(detail=False, methods=['put'], url_path='update_event_date', url_name='update_event_date')
-    def update_event_date(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the event",
+            )
+        ],
+        responses={200: CalendarEventSerializer},
+    )
+    @action(
+        detail=False,
+        methods=["put"],
+        url_path="update_event_date",
+        url_name="update_event_date",
+    )
+    def update_event_date(self, request, id: int = None):
         event = CalendarService.update_event_date(request.data)
         serializer = CalendarEventSerializer(event)
 
@@ -77,52 +115,83 @@ class CalendarEventViewSet(viewsets.ViewSet):
         self.delete_cache(request, f"calendar_events_{request.user.id}")
 
         return Response(serializer.data)
-    
-    
-    @extend_schema(responses={200: CalendarEventSerializer})
-    @action(detail=False, methods=['put'], url_path='make_class_cancellation', url_name='make_class_cancellation')
-    def make_class_cancellation(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the event",
+            )
+        ],
+        responses={200: CalendarEventSerializer},
+    )
+    @action(
+        detail=False,
+        methods=["put"],
+        url_path="make_class_cancellation",
+        url_name="make_class_cancellation",
+    )
+    def make_class_cancellation(self, request, id: int):
         try:
             event = request.data
-            event_id = event['id']
+            event_id = event["id"]
             event = CalendarEvent.objects.get(id=event_id)
             today = datetime.now().date()
             if event.start_date < today:
-                return Response({'error': '講義日が過ぎているため 休講できません。'}, status=status.HTTP_400_BAD_REQUEST)
-            
+                return Response(
+                    {"error": "講義日が過ぎているため 休講できません。"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             if event.is_class_cancellation:
                 event.is_class_cancellation = False
                 event.save()
-
-                # delete cache after updating event
-                self.delete_cache(request, f"calendar_events_{request.user.id}")
-
-      
             else:
                 event.is_class_cancellation = True
                 event.save()
 
-                # delete cache after updating event
-                self.delete_cache(request, f"calendar_events_{request.user.id}")
+            # delete cache after updating event
+            self.delete_cache(request, f"calendar_events_{request.user.id}")
 
-            return Response('Class cancellation updated successfully', status=status.HTTP_200_OK)
+            return Response(
+                "Class cancellation updated successfully", status=status.HTTP_200_OK
+            )
         except Exception as e:
-            return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    @extend_schema(responses={204: None})
-    def destroy(self, request, pk=None):
+            return Response(
+                {"error": "An error occurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the event",
+            )
+        ],
+        responses={204: None},
+    )
+    def destroy(self, request, id: int):
         queryset = CalendarEvent.objects.all()
-        event = get_object_or_404(queryset, pk=pk)
+        event = get_object_or_404(queryset, id=id)
         event.delete()
 
         # delete cache after deleting event
         self.delete_cache(request, f"calendar_events_{request.user.id}")
-        
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     @extend_schema(responses={200: CalendarEventSerializer})
-    @action(detail=False, methods=['get'], url_path='get_todat_event', url_name='get_todat_event')
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="get_today_event",
+        url_name="get_today_event",
+    )
     def get_today_event(self, request):
         today = datetime.now().date()
 
@@ -130,4 +199,3 @@ class CalendarEventViewSet(viewsets.ViewSet):
         serializer = CalendarEventSerializer(calendar_events, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-        

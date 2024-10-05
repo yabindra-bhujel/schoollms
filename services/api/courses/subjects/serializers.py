@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import *
-
+from drf_spectacular.utils import extend_schema_field
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -16,12 +16,15 @@ class SubjectRegistrationSerializer(serializers.ModelSerializer):
         model = SubjectRegistration
         fields = ['student', 'subject', 'registration_date', 'teacher', 'students'] 
 
+    @extend_schema_field(serializers.DictField())
     def get_subject(self, obj):
         return SubjectSerializer(obj.subject).data
-    
+
+    @extend_schema_field(serializers.ListField(child=serializers.DictField()))
     def get_students(self, obj):
         return [{'student_id': student.student_id, 'name': student.first_name} for student in obj.student.all()]
-    
+
+    @extend_schema_field(serializers.DictField()) 
     def get_teacher(self, obj):
         return {'teacher_id': obj.teacher.id, 'name': obj.teacher.first_name}
 
@@ -30,7 +33,6 @@ class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
         fields = '__all__'
-
 
 
 class CourseMaterialesSerializer(serializers.ModelSerializer):
@@ -55,7 +57,7 @@ class SyllabusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Syllabus
         fields = '__all__'
-        
+
 class AssignmentFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AssignmentFile
@@ -67,4 +69,3 @@ class FileSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileSubmission
         fields = ( 'id', 'student', 'submission_datetime', 'is_submited', 'assignment_submission_file', 'is_graded', 'grade' )
-

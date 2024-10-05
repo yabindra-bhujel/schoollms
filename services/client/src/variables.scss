@@ -1,0 +1,33 @@
+
+// Colors
+$color-white: #ffffff;
+$color-black: #000000;
+$color-primary: #000000;
+$color-secondary: #f5f5f5;
+$color-hover: darken($color-primary, 10%);
+$color-active: $color-primary;
+$color-text: #333333;
+
+// Font Sizes
+$font-size-small: 14px;
+$font-size-medium: 18px;
+$font-size-large: 24px;
+
+// Breakpoints
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+$breakpoint-large-desktop: 1500px;
+
+// Mixins
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == mobile {
+    @media (max-width: $breakpoint-mobile) { @content; }
+  } @else if $breakpoint == tablet {
+    @media (max-width: $breakpoint-tablet) { @content; }
+  } @else if $breakpoint == desktop {
+    @media (min-width: $breakpoint-desktop) { @content; }
+  } @else if $breakpoint == large-desktop {
+    @media (min-width: $breakpoint-large-desktop) { @content; }
+  }
+}

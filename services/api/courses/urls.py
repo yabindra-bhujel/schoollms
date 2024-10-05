@@ -10,7 +10,7 @@ router = routers.DefaultRouter()
 
 router.register(r'admin/subject', AdminSubjectViewSet, basename='AdminSubject')
 router.register(r'admin/subject_registration', SubjectRegistrationViewSet, basename='Subject')
-router.register(r'admin/departments', DepartmentViewsSet, basename='Department')
+router.register(r"admin/departments", DepartmentViewSet, basename="Department")
 router.register(r'subject/student', StudentSubjectViewSet, basename='StduentSubject')
 router.register(r'subject/teacher', TeacherSubjectViewSet, basename='TeacherSubject')
 router.register(r'assignments', AssigmentViewSet, basename='Assignment')

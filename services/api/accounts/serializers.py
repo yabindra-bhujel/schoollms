@@ -1,26 +1,39 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import UserProfile, ApplicationSettings
+from drf_spectacular.utils import extend_schema_field
+from typing import Optional
 
 User = get_user_model()
 
 
+class BlacklistTokenSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField()
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
     class Meta:
         model = UserProfile
         fields = ['image_url']
+
+    @extend_schema_field(serializers.ImageField())
+    def get_image_url(self, instance: UserProfile) -> Optional[str]:
+        return instance.image.url if instance.image else None
+
 
 class UserSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'image_url']
+        fields = ["username", "email", "first_name", "last_name", "image_url"]
 
-    def get_image_url(self, instance):
+    @extend_schema_field(serializers.ImageField())
+    def get_image_url(self, instance: User) -> Optional[str]:
         try:
             user_profile = instance.userprofile_set.get()
-            return user_profile.image_url
+            return user_profile.image.url if user_profile.image else None
         except UserProfile.DoesNotExist:
             return None
 
