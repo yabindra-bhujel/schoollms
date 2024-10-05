@@ -1,85 +1,137 @@
+@import "../../../variables.scss";
+
 .class-details-container {
-    background-color: white;
-    height: calc(100vh - 72px);
+    background-color: $color-white;
+    min-height: calc(100vh - 72px);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
+
 .student-class-header {
     height: 80px;
-    background-color: white;
+    background-color: $color-white;
     display: flex;
+    align-items: center;
     gap: 10px;
-    border-bottom: solid black 2px;
+    border-bottom: 2px solid $color-black;
+    padding: 0 20px; // Added padding for better spacing
 
     .student-back {
-        background-color: white;
-        border: solid black 1px;
+        background-color: $color-white;
+        border: 1px solid $color-black;
         margin-top: 10px;
         margin-left: 20px;
-        font-size: 30px;
+        font-size: $font-size-large;
         padding: 5px;
         font-weight: bold;
-        color: black;
+        color: $color-black;
         border-radius: 50%;
+        transition: background-color 0.3s, color 0.3s;
 
         &:hover {
-            background-color: black;
-            color: white;
+            background-color: $color-primary;
+            color: $color-white;
+        }
+
+        @include respond-to(mobile) {
+            font-size: 24px;
+            padding: 6px;
+            margin-left: 10px;
+            margin-top: 5px;
         }
     }
-    h3 {
-        margin-left: 20px;
-        margin-top: 10px;
-        text-transform: capitalize;
-    }
-    p {
-        font-weight: bold;
-        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-        margin-left: 20px;
+
+    .class-info {
+        h3 {
+            margin-left: 20px;
+            margin-top: 10px;
+            text-transform: capitalize;
+            font-size: $font-size-large;
+            color: $color-text;
+
+            @include respond-to(mobile) {
+                font-size: $font-size-medium;
+                margin-left: 10px;
+                margin-top: 5px;
+            }
+        }
+
+        p {
+            font-weight: bold;
+            font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+            margin-left: 20px;
+            font-size: $font-size-medium;
+            color: $color-text;
+
+            @include respond-to(mobile) {
+                font-size: $font-size-small;
+                margin-left: 10px;
+            }
+        }
     }
 }
 
-section {
-    padding: 10px;
+.section-buttons {
+    padding: 10px 20px;
+
     .all-buttons {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
         align-items: center;
         gap: 10px;
-        align-items: center;
-        margin: auto;
+        margin: 0 auto;
+
         button {
             min-width: 160px;
-            border: solid 1px black;
+            border: 1px solid $color-black;
             margin: 10px;
-            padding: 10px;
+            padding: 10px 15px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
-            font-size: 18px;
-            transition: all 0.3s ease;
+            font-size: $font-size-medium;
+            background-color: $color-white;
+            color: $color-black;
+            transition: background-color 0.3s, color 0.3s;
 
             &:hover {
-                background-color: black;
-                color: white;
+                background-color: $color-hover;
+                color: $color-white;
             }
 
-            &.active{
-                background-color: black;
-                color: white;
+            &.active {
+                background-color: $color-active;
+                color: $color-white;
             }
 
-            @media screen and (min-width: 1500px) {
+            &:disabled {
+                background-color: $color-secondary;
+                color: lighten($color-text, 30%);
+                cursor: not-allowed;
+                border-color: lighten($color-black, 30%);
+            }
+
+            @include respond-to(large-desktop) {
                 min-width: 200px;
-
             }
-            
+
+            @include respond-to(mobile) {
+                min-width: 120px;
+                padding: 8px 12px;
+                font-size: 16px;
+            }
         }
     }
 }
 
 .student-main-section {
+    flex: 1;
     display: flex;
-    justify-content: center;
+    flex-direction: column; // Stack content vertically for better responsiveness
     align-items: center;
+    padding: 20px;
     gap: 10px;
     scroll-behavior: smooth;
     overflow-y: auto;
@@ -88,35 +140,55 @@ section {
         width: 100%;
         min-height: 100px;
         max-height: 330px;
-        padding-left: 20px;
-        padding-right: 20px;
-        margin: 10px;
+        padding: 20px;
+        margin: 10px 0;
         border-radius: 10px;
-        margin-bottom: 100px;
+        background-color: $color-secondary;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        transition: max-height 0.3s;
 
-        @media screen and (min-width: 1500px) {
+        @include respond-to(large-desktop) {
             max-height: 540px;
         }
 
+        @include respond-to(mobile) {
+            padding: 15px;
+        }
     }
 
-    .main-element-attendance{
+    .main-element-attendance {
         display: flex;
+        flex-wrap: wrap; // Allow stacking on smaller screens
         justify-content: space-evenly;
         width: 100%;
-        height: 600px;
+        height: auto; // Adjust height based on content
         gap: 20px;
 
+        .attendance-table,
+        .attendance-input {
+            flex: 1 1 40%;
+            min-width: 280px;
+            background-color: $color-white;
+            padding: 15px;
+            border: 1px solid lighten($color-black, 50%);
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            transition: width 0.3s;
 
-        .attendace-table{
-            width: 40%;
-
+            @include respond-to(mobile) {
+                flex: 1 1 100%;
+                width: 100%;
+            }
         }
 
-        .attendace-input{
-            width: 40%;
-            height: 100%;
+        .attendance-table {
+            // Specific styles for attendance table if needed
+        }
 
+        .attendance-input {
+            height: 100%;
+            // Additional specific styles if needed
         }
     }
 }

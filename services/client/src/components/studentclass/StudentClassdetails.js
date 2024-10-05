@@ -77,7 +77,7 @@ const StudentClassDetails = () => {
             )}
           </div>
         </div>
-        <section>
+        <section className="section-buttons">
         <div className="all-buttons">
     <button
       onClick={() => handleButtonClick('assignment')}
