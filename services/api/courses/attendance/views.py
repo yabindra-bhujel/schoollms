@@ -9,7 +9,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 User = get_user_model()
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 import logging
@@ -18,7 +17,8 @@ from students.models import Student
 from courses.serializers import AttendanceSerializer
 from ..subjects.models import Subject, SubjectRegistration
 from courses.subjects.serializers import SubjectRegistrationSerializer, SubjectSerializer
-
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.openapi import OpenApiTypes
 
 logger = logging.getLogger(__name__)
 
@@ -74,10 +74,19 @@ class AttendanceViewSet(viewsets.ViewSet):
             logger.error("An error occurred")
             return Response({"message": "An error occurred"}, status=500)
 
-
-    @extend_schema(responses={200: AttendanceSerializer})
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="subject_code",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Subject code",
+            )
+        ],
+        responses={200: dict}
+    )
     @action(detail=False, methods=['get'], url_path='get_attendance_by_subject/(?P<subject_code>[^/.]+)', url_name='get_attendance_by_subject')
-    def get_attendance_by_subject(self, request, subject_code=None):
+    def get_attendance_by_subject(self, request, subject_code: str=None):
         try:
             subject = get_object_or_404(Subject, subject_code=subject_code)
 
@@ -237,9 +246,19 @@ class AttendanceViewSet(viewsets.ViewSet):
             logger.error("An error occurred") 
             return Response({"message": f"An error occurred{e}",}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-    @extend_schema(responses={200: AttendanceSerializer})
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="subject_code",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Subject code",
+            )
+        ],
+        responses={200: dict}
+    )
     @action(detail=False, methods=['get'], url_path='get_attendance_by_student/(?P<subject_code>[^/.]+)', url_name='get_attendance_by_student')
-    def get_attendance_by_student_subject(self, request, subject_code=None):
+    def get_attendance_by_student_subject(self, request, subject_code: str=None):
         try:
             try:
                 username = request.user.username
@@ -279,12 +298,23 @@ class AttendanceViewSet(viewsets.ViewSet):
             return Response({"message": f"An error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-    @extend_schema(responses={200: AttendanceSerializer}, description="Update attendance active status if it is active chnage to inactive if it is inactive change to active need to id of attendance in url")
-    @action(detail=False, methods=['put'], url_path='update_attendance_active/(?P<pk>[^/.]+)', url_name='update_attendance_active')
-    def update_attendance_active(self, request, pk=None):
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Subject code",
+            )
+        ],
+        responses={200: dict}
+    )
+    # @extend_schema(responses={200: AttendanceSerializer}, description="Update attendance active status if it is active chnage to inactive if it is inactive change to active need to id of attendance in url")
+    @action(detail=False, methods=['put'], url_path='update_attendance_active/(?P<id>[^/.]+)', url_name='update_attendance_active')
+    def update_attendance_active(self, request, id: str=None):
         try:
             try:
-                attendance = Attendance.objects.get(pk=pk)
+                attendance = Attendance.objects.get(id=id)
             except ObjectDoesNotExist as e:
                 logger.error("Attendance not found")
                 return Response({"message": "Attendance not found"}, status=status.HTTP_404_NOT_FOUND)

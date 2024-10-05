@@ -14,7 +14,7 @@ const Schedules = () => {
     const [events, setEvents] = useState([]);
 
     const getTodayEvent = async () => {
-        const endpoint = `/calendar/get_todat_event`;
+        const endpoint = `/calendar/get_today_event`;
         try {
             const response = await instance.get(endpoint);
             if (response.status === 200) {

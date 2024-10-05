@@ -20,14 +20,18 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import send_mail
 from django.conf import settings
 from.serializers import *
-from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import action
 from teachers.models import Teacher
 from students.models import Student
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.openapi import OpenApiTypes
+from .serializers import BlacklistTokenSerializer
 
 User = get_user_model()
 
 class BlacklistRefreshView(APIView):
+    serializer_class = BlacklistTokenSerializer
+
     def post(self, request):
         try:
             refresh_token = request.data["refresh_token"]
@@ -52,7 +56,7 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_staff'] = user.is_staff
 
         return token
-    
+
 class UserTokenObtainPairView(TokenObtainPairView):
 
     serializer_class = UserTokenObtainPairSerializer
@@ -68,35 +72,42 @@ class UserViewSet(viewsets.ViewSet):
             'user_profile': [IsAuthenticated],
             'user_profile_details': [IsAuthenticated],
         }
-    
+
         if self.action in action_permission_map:
             permission_classes = action_permission_map[self.action]
         else:
             permission_classes = [IsAuthenticated, IsAdminUser]
-        
+
         return [permission() for permission in permission_classes]
 
-    @extend_schema(responses=UserSerializer, description='ユーザーのリストを取得します。一般のユーザ用です。')
     def list(self, request):
         queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
-    
-    @extend_schema(responses=AdminUserSerializer, description='ユーザーのリストを取得します。管理者用です。')
+
     @action(detail=False, methods=['get'], url_path='admin', url_name='admin')
     def admin(self, request):
         queryset = User.objects.all()
         serializer = AdminUserSerializer(queryset, many=True)
         return Response(serializer.data)
-    
-    @extend_schema(responses=UserSerializer, description='ユーザーの詳細情報を取得します。管理者用です。')
-    def retrieve(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the user",
+            )
+        ],
+        responses={200: UserSerializer},
+    )
+    def retrieve(self, request, id: int = None):
         queryset = User.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
+        user = get_object_or_404(queryset, id=id)
         serializer = UserSerializer(user)
         return Response(serializer.data)
-    
-    @extend_schema(responses=UserSerializer, description='新しいユーザーを作成します。管理者用です。')
+
     def create(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -107,25 +118,43 @@ class UserViewSet(viewsets.ViewSet):
             application_settings.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    @extend_schema(responses=UserSerializer ,description='ユーザー情報を更新します。管理者用です。')
-    def update(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the user",
+            )
+        ],
+        responses={200: UserSerializer},
+    )
+    def update(self, request, id: int= None):
         queryset = User.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
+        user = get_object_or_404(queryset, id=id)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    @extend_schema(responses=UserSerializer, description='ユーザー情報を削除します。管理者用です。')
-    def destroy(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the user",
+            )
+        ],
+    )
+    def destroy(self, request, id: int = None):
         queryset = User.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
+        user = get_object_or_404(queryset, id=id)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-    @extend_schema(responses=dict, description='user details。 with profile')
+
     @action(detail=False, methods=['get'], url_path='profile', url_name='profile')
     def user_profile(self, request):
         username = request.user
@@ -133,7 +162,7 @@ class UserViewSet(viewsets.ViewSet):
             user_profile = UserProfile.objects.get(user=username)
         except UserProfile.DoesNotExist:
             return Response('User profile does not exist', status=status.HTTP_404_NOT_FOUND)
-        
+
         user_data = {
             'username': username.username,
             'email': username.email,
@@ -144,8 +173,7 @@ class UserViewSet(viewsets.ViewSet):
             user_data['image'] = request.build_absolute_uri(user_profile.image.url)
 
         return Response(user_data, status=status.HTTP_200_OK)
-    
-    @extend_schema(responses=dict, description='user details。 with profile')
+
     @action(detail=False, methods=['get'], url_path='profile_details', url_name='profile_details')
     def user_profile_details(self, request):
         is_student = request.user.is_student
@@ -174,7 +202,7 @@ class UserViewSet(viewsets.ViewSet):
                     "city": student.city,
                     "zip_code": student.zip_code
                 })
-            
+
         final_data = {
             "user": {
                 "username": request.user.username,
@@ -193,8 +221,8 @@ class UserProfileViewSet(viewsets.ViewSet):
     serializer_class = UserProfileSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    lookup_field = "id"
 
-    @extend_schema(responses=UserProfileSerializer, description='ユーザープロフィールを取得します。現在ログイン中のユーザーのプロフィールを取得します。')
     @action(detail=False, methods=['put'], url_path='me', url_name='me')
     def update_profile_picture(self, request):
         user_profile = UserProfile.objects.get(user=request.user)
@@ -203,9 +231,7 @@ class UserProfileViewSet(viewsets.ViewSet):
             user_profile.image = image_file
             user_profile.save()
             return Response('Profile picture updated successfully', status=status.HTTP_200_OK)
-        
-    
-    @extend_schema(responses=UserProfile, description='update user profile')
+
     @action(detail=False, methods=['put'], url_path='update_user_profile_info', url_name='update_user_profile')
     def update_user_profile_info(self, request):
         first_name = request.data['first_name']
@@ -218,8 +244,6 @@ class UserProfileViewSet(viewsets.ViewSet):
         user.save()
         userserializer = UserSerializer(user)
         return Response(userserializer.data, status=status.HTTP_200_OK)
-    
-
 
 
 class ApplicationSettingsViewSet(viewsets.ViewSet):
@@ -237,7 +261,6 @@ class ApplicationSettingsViewSet(viewsets.ViewSet):
             return new_application_settings
         
         
-    @extend_schema(responses=ApplicationSettingsSerializer, description='アプリケーションの設定を取得します。現在ログイン中のユーザーのアプリケーション設定を取得します。')
     @action(detail=False, methods=['put'], url_path='me', url_name='me')
     def update_application_settings(self, request):
         application_settings = self.get_object(request)
@@ -248,13 +271,11 @@ class ApplicationSettingsViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-    @extend_schema(responses=ApplicationSettingsSerializer, description='check have email notification。')
     @action(detail=False, methods=['get'], url_path='have_email_notification', url_name='have_email_notification')
     def check_have_email_notification(self, request):
         application_settings = self.get_object(request)
         return Response(application_settings.isEmailNotification, status=status.HTTP_200_OK)
     
-    @extend_schema(responses=ApplicationSettingsSerializer, description='check have two factor auth.')
     @action(detail=False, methods=['get'], url_path='have_notification', url_name='have_notification')
     def two_factore_auth(self, request):
         application_settings = self.get_object(request)
@@ -266,7 +287,6 @@ class PasswordResetViewzSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
 
-    @extend_schema(responses=PasswordChangeSerializer, description='現在のパスワードを確認し、新しいパスワードを設定します。 アプリ内でのパスワード変更に使用されますでもログインが必要です。')
     @action(detail=False, methods=['post'])
     def chnage_password(self, request):
         serializer = PasswordChangeSerializer(data=request.data)
@@ -280,7 +300,6 @@ class PasswordResetViewzSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-    @extend_schema(responses='Email sent', description='パスワードリセットリンクをユーザーのメールアドレスに送信します。')
     @action(detail=False, methods=['post'], url_path='reset', url_name='reset')
     def reset_password(self, request):
         email = request.data.get('email')
@@ -323,9 +342,24 @@ class PasswordResetViewzSet(viewsets.ViewSet):
         {app_name} Team"""
     
 
-    @extend_schema(responses='Password reset link is valid.', description='最後のパスワードリセットリンクが有効かどうかを確認します。有効であれば新しいパスワードを設定します。')
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="uidb64",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="User ID",
+            ),
+            OpenApiParameter(
+                name="token",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Token",
+            )
+        ],
+    )
     @action(detail=False, methods=['post'], url_path='conform_reset_password/<uidb64>/<token>', url_name='conform_reset_password')
-    def conform_reset_password(self, request, uidb64, token):
+    def conform_reset_password(self, request, uidb64: str, token: str):
         try:
             uid = force_text(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)

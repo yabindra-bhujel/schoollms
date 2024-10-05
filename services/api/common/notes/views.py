@@ -7,19 +7,21 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 User = get_user_model()
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema
 from ..serializers import NotesSerializer
 from django.db.models import Q
 from ..models import Notes
 from .services import *
 from django.core.cache import cache
 import time
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.openapi import OpenApiTypes
 
 
 class NotesViewSet(viewsets.ViewSet):
     serializer_class = NotesSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    lookup_field = "id"
 
     def delete_cache(self, request, check_key):
         cache.delete(check_key)
@@ -40,15 +42,24 @@ class NotesViewSet(viewsets.ViewSet):
             cache.set(cache_key, cached_notes, timeout=60 * 60)
 
         return Response(cached_notes)
-    
-    
-    @extend_schema(responses={200: NotesSerializer})
-    def retrieve(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the note",
+            )
+        ],
+        responses={200: NotesSerializer},
+    )
+    def retrieve(self, request, id:int=None):
         queryset = Notes.objects.all()
-        note = get_object_or_404(queryset, pk=pk)
+        note = get_object_or_404(queryset, id=id)
         serializer = NotesSerializer(note)
         return Response(serializer.data)
-    
+
     @extend_schema(responses={201: NotesSerializer})
     def create(self, request):
         user = request.user
@@ -57,40 +68,73 @@ class NotesViewSet(viewsets.ViewSet):
         serializer = NotesSerializer(new_note)
 
         self.delete_cache(request, f"notes_{request.user.id}")
-        
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
 
-    @extend_schema(responses={200: NotesSerializer})
-    def update(self, request, pk=None):
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the note",
+            )
+        ],
+        responses={200: NotesSerializer},
+    )
+    def update(self, request, id:str=None):
         queryset = Notes.objects.all()
-        note = get_object_or_404(queryset, pk=pk)
+        note = get_object_or_404(queryset, id=id)
         updated_note = NotesService.update_note(note, request.data)
         serializer = NotesSerializer(updated_note)
 
         self.delete_cache(request, f"notes_{request.user.id}")
 
         return Response(serializer.data)
-    
-    @extend_schema(responses={204: None})
-    def destroy(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the note",
+            )
+        ],
+        responses={204: None},
+    )
+    def destroy(self, request, id: int=None):
         queryset = Notes.objects.all()
-        note = get_object_or_404(queryset, pk=pk)
+        note = get_object_or_404(queryset, id=id)
         note.delete()
 
         self.delete_cache(request, f"notes_{request.user.id}")
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-    @extend_schema(responses={200: NotesSerializer})
-    @action(detail=False, methods=['put'], url_path='share_note/(?P<pk>\d+)', url_name='share_note')
-    def share_note(self, request, pk=None):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the note",
+            )
+        ],
+        responses={200: NotesSerializer},
+    )
+    @action(
+        detail=False,
+        methods=["put"],
+        url_path="share_note/(?P<id>\d+)",
+        url_name="share_note",
+    )
+    def share_note(self, request, id: int=None):
         user = request.user
         admin = User.objects.get(username=user)
-        note = NotesService.share_note_with_user(admin, pk, request.data)
+        note = NotesService.share_note_with_user(admin, id, request.data)
         serializer = NotesSerializer(note)
 
         self.delete_cache(request, f"notes_{request.user.id}")
 
         return Response(serializer.data)
-    

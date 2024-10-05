@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
-from .socials.models import GroupMessage
+from .socials.models import *
+
 
 class CalendarEventSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,7 +16,7 @@ class NotesSerializer(serializers.ModelSerializer):
         model = Notes
         fields = '__all__'
 
-    def get_owner(self, obj):
+    def get_owner(self, obj)->str:
         return obj.user.username
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -34,4 +35,5 @@ class GroupMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupMessage
         fields = '__all__'
+
 
