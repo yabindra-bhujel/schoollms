@@ -1,18 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './style/AssignmentList.css';
 import { FaCheckCircle } from 'react-icons/fa';
+import instance from '../../api/axios';
+import getUserInfo from '../../api/user/userdata';
+import { format } from 'date-fns-tz';
+import { Link } from 'react-router-dom';
 
-const assignments = [
-  { subject: 'Maths', tasks: 2, deadline: '24 Oct', isCompleted: false },
-  { subject: 'History', tasks: 1, deadline: '28 Oct', isCompleted: false },
-  { subject: 'Science', tasks: 3, deadline: '28 Oct', isCompleted: false },
-  { subject: 'Geography', tasks: 1, deadline: '30 Oct', isCompleted: false },
-  { subject: 'English', tasks: 0, deadline: '---', isCompleted: true },
-  { subject: 'Sanskrit', tasks: 0, deadline: '---', isCompleted: true },
-  { subject: 'Hindi', tasks: 0, deadline: '---', isCompleted: true },
-];
 
 const AssignmentsTable = () => {
+  const isTeacher = getUserInfo().isTeacher;
+  const [assignments, setAssignments] = useState([]);
+
+  const getUpcomingAssignmentsDeadlines = async () => {
+    try {
+      const endpoint = isTeacher ? `teachers/teacher/upcoming_assignment_deadlines/` : `students/upcoming_or_recent_assignment_deadlines/`;
+      const response = await instance.get(endpoint);
+      setAssignments(response.data);
+
+    } catch (error) {
+    }
+  }
+
+  useEffect(() => {
+    getUpcomingAssignmentsDeadlines();
+  }, []);
+
+  const formatDate = (dateString) => {
+    const inputDate = new Date(dateString);
+    return format(inputDate, 'yyyy-MM-dd HH:mm', { timeZone: 'Asia/Tokyo' });
+};
+
+function truncateText(text, length) {
+  return text.length > length ? `${text.slice(0, length)}..` : text;
+}
+
+// TODO: if not_submitted is true then make read color in row 
+// TODO: chnage teacher view url current url is mistke
+
   return (
     <div className="assignments-container">
       <h2>Assignments</h2>
@@ -20,7 +44,7 @@ const AssignmentsTable = () => {
         <thead>
           <tr>
             <th>Subject Name</th>
-            <th>Pending</th>
+            <th>Title</th>
             <th>Earliest Deadline</th>
             <th></th>
           </tr>
@@ -32,15 +56,21 @@ const AssignmentsTable = () => {
               className={index % 2 === 1 ? 'highlight-row' : ''}
             >
               <td>{assignment.subject}</td>
-              <td>{assignment.tasks} Task{assignment.tasks !== 1 ? 's' : ''}</td>
-              <td>{assignment.deadline}</td>
+              <td>{truncateText(assignment.title, 10)}</td>
+              <td>{formatDate(assignment.deadline)}</td>
               <td>
-                {assignment.isCompleted ? (
+                {assignment.is_complete ? (
                   <div className="checkmark">
                     <FaCheckCircle />
                   </div>
                 ) : (
-                  <button className="view-btn">View</button>
+                  <Link
+                  to={`/${isTeacher ? 'teacher' : 'studentassignment'}/${assignment.id}/${assignment.subject_code}`}
+                  className="assignment-link"
+                >
+                  View
+                </Link>
+
                 )}
               </td>
             </tr>

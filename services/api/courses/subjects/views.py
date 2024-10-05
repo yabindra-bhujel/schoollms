@@ -299,7 +299,7 @@ class AssigmentViewSet(viewsets.ViewSet):
     @action(
         detail=False,
         methods=["get"],
-        url_path="student-assignment-detail/<int:id>",
+        url_path="student-assignment-detail/(?P<id>[^/.]+)",
         url_name="assignment_detail",
     )
     def student_assignment_detail(self, request, id: int):

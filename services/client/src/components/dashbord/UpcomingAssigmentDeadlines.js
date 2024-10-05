@@ -30,7 +30,6 @@ const UpcomingAssigmentDeadlines = () => {
         try {
             const endpoint = isTeacher ? `teachers/teacher/upcoming_assignment_deadlines/` : `students/upcoming_assignment_deadlines/`;
             const response = await instance.get(endpoint);
-            console.log(response.data);
             setAssignments(response.data);
 
         } catch (error) {

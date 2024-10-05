@@ -26,12 +26,12 @@ $highlight-color: rgb(67, 6, 179);
             text-align: left;
             padding: 12px;
             color: #555;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         td {
-            padding: 12px;
+            padding: 15px;
             border-top: 1px solid $border-color;
         }
 
@@ -39,13 +39,15 @@ $highlight-color: rgb(67, 6, 179);
             background-color: $secondary-color;
         }
 
-        .view-btn {
+        .assignment-link {
             background-color: $primary-color;
             color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
+            text-decoration: none;
+            
 
             &:hover {
                 background-color: $highlight-color;
