@@ -20,6 +20,7 @@ from django.utils import timezone
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
 
+@extend_schema(tags=["Admin Teacher"])
 class AdminTeacherViewSet(viewsets.ViewSet):
     serializer_class = TeacherSerializer
     authentication_classes = [JWTAuthentication]
@@ -109,6 +110,7 @@ class AdminTeacherViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(tags=["Teacher"])
 class TeacherViewSet(viewsets.ViewSet):
 
     serializer_class = TeacherSerializer

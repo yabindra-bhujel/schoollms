@@ -17,6 +17,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
 
 
+@extend_schema(tags=["Notes"])
 class NotesViewSet(viewsets.ViewSet):
     serializer_class = NotesSerializer
     authentication_classes = [JWTAuthentication]

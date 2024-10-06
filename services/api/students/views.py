@@ -22,6 +22,7 @@ from drf_spectacular.openapi import OpenApiTypes
 from typing import Optional
 
 
+@extend_schema(tags=["Admin Student"])
 class AdminStudentViewSet(viewsets.ViewSet):
 
     serializer_class = StudentSerializer
@@ -109,6 +110,8 @@ class AdminStudentViewSet(viewsets.ViewSet):
         student.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+@extend_schema(tags=["Student"])
 class StudentViewSet(viewsets.ViewSet):
     serializer_class = StudentSerializer
     authentication_classes = [JWTAuthentication]

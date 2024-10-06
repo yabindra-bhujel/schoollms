@@ -34,9 +34,6 @@ function truncateText(text, length) {
   return text.length > length ? `${text.slice(0, length)}..` : text;
 }
 
-// TODO: if not_submitted is true then make read color in row 
-// TODO: chnage teacher view url current url is mistke
-
   return (
     <div className="assignments-container">
       <h2>Assignments</h2>
@@ -65,7 +62,7 @@ function truncateText(text, length) {
                   </div>
                 ) : (
                   <Link
-                  to={`/${isTeacher ? 'teacher' : 'studentassignment'}/${assignment.id}/${assignment.subject_code}`}
+                  to={`/${isTeacher ? `assignment/${assignment.id}` : `studentassignment/${assignment.id}/${assignment.subject_code}`} `}
                   className="assignment-link"
                 >
                   View

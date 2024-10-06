@@ -14,6 +14,7 @@ from ..models import Notification, UserNotification
 from django.core.cache import cache
 
 
+@extend_schema(tags=["Notification"])
 class NotificationViewSet(viewsets.ViewSet):
     serializer_class = NotificationSerializer
     authentication_classes = [JWTAuthentication]

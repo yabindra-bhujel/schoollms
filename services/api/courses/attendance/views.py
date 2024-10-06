@@ -20,8 +20,9 @@ from courses.subjects.serializers import SubjectRegistrationSerializer, SubjectS
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
 
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
+@extend_schema(tags=["Attendance"])
 class AttendanceViewSet(viewsets.ViewSet):
     serializer_class = AttendanceSerializer
     authentication_classes = [JWTAuthentication]

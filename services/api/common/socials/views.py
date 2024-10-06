@@ -17,6 +17,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
 from .serializers import *
 
+
+@extend_schema(tags=["Private Messages"])
 class PrivateMessagesViewSet(viewsets.ViewSet):
     serializer_class = MessageSerializer
     authentication_classes = [JWTAuthentication]
@@ -112,6 +114,7 @@ class PrivateMessagesViewSet(viewsets.ViewSet):
         return Response({"message":"Message sent successfully"}, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(tags=["Group Messages"])
 class GroupMessagesViewSet(viewsets.ViewSet):
     serializer_class = GroupMessageSerializer
     authentication_classes = [JWTAuthentication]

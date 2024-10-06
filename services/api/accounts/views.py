@@ -29,6 +29,7 @@ from .serializers import BlacklistTokenSerializer
 
 User = get_user_model()
 
+@extend_schema(tags=["Auth"])
 class BlacklistRefreshView(APIView):
     serializer_class = BlacklistTokenSerializer
 
@@ -41,8 +42,9 @@ class BlacklistRefreshView(APIView):
         except Exception as e:
             return Response(status=status.HTTP_200_OK )
 
+
 class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
-    
+
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -57,11 +59,13 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return token
 
+
 class UserTokenObtainPairView(TokenObtainPairView):
 
     serializer_class = UserTokenObtainPairSerializer
 
 
+@extend_schema(tags=["User"])
 class UserViewSet(viewsets.ViewSet):
     serializer_class = UserSerializer
     authentication_classes = [JWTAuthentication] 
@@ -218,6 +222,7 @@ class UserViewSet(viewsets.ViewSet):
         return Response(final_data, status=status.HTTP_200_OK)
 
 
+@extend_schema(tags=["User Profile"])
 class UserProfileViewSet(viewsets.ViewSet):
     serializer_class = UserProfileSerializer
     authentication_classes = [JWTAuthentication]
@@ -246,7 +251,7 @@ class UserProfileViewSet(viewsets.ViewSet):
         userserializer = UserSerializer(user)
         return Response(userserializer.data, status=status.HTTP_200_OK)
 
-
+@extend_schema(tags=["Application Settings"])
 class ApplicationSettingsViewSet(viewsets.ViewSet):
     serializer_class = ApplicationSettingsSerializer
     authentication_classes = [JWTAuthentication]
@@ -260,8 +265,7 @@ class ApplicationSettingsViewSet(viewsets.ViewSet):
             new_application_settings = ApplicationSettings.objects.create(user=user)
             new_application_settings.save()
             return new_application_settings
-        
-        
+
     @action(detail=False, methods=['put'], url_path='me', url_name='me')
     def update_application_settings(self, request):
         application_settings = self.get_object(request)
@@ -270,18 +274,19 @@ class ApplicationSettingsViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
     @action(detail=False, methods=['get'], url_path='have_email_notification', url_name='have_email_notification')
     def check_have_email_notification(self, request):
         application_settings = self.get_object(request)
         return Response(application_settings.isEmailNotification, status=status.HTTP_200_OK)
-    
+
     @action(detail=False, methods=['get'], url_path='have_notification', url_name='have_notification')
     def two_factore_auth(self, request):
         application_settings = self.get_object(request)
         return Response(application_settings.isTwoFactorAuthEnabled, status=status.HTTP_200_OK)
 
+
+@extend_schema(tags=["Password Reset"])
 class PasswordResetViewzSet(viewsets.ViewSet):
     serializer_class = PasswordChangeSerializer
     authentication_classes = [JWTAuthentication]
