@@ -1,0 +1,80 @@
+$primary-color: #007bff;
+$secondary-color: #f8f9fa;
+$border-color: #dee2e6;
+$text-color: #343a40;
+
+.table-container {
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 98%;
+}
+
+.table-wrapper {
+    width: 100%;
+    height: calc(100vh - 200px);
+    overflow-y: auto;
+    overflow-x: auto;
+    position: relative;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: transparent;
+    margin-right: 10px;
+
+    th,
+    td {
+        padding: 15px;
+        text-align: center;
+        font-size: 16px;
+        white-space: nowrap;
+        transition: background-color 0.2s;
+    }
+
+    th {
+        background-color: rgb(41, 100, 117);
+        color: white;
+        font-weight: bold;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    tr {
+        border-bottom: 1px solid $border-color;
+
+        &:nth-child(odd) {
+            background-color: lighten($secondary-color, 5%);
+        }
+
+        &:nth-child(even) {
+            background-color: lighten($secondary-color, 15%);
+        }
+
+        &:hover {
+            background-color: rgba(130, 44, 228, 0.2);
+        }
+    }
+}
+
+.sticky-left-table-head {
+    position: relative;
+    left: 0;
+    background-color: rgb(130, 44, 228);
+    z-index: 2;
+}
+
+.sticky-left {
+    left: 0;
+    z-index: 2;
+}
+
+.attended {
+    color: blue;
+}
+
+.absent {
+    color: red;
+}
