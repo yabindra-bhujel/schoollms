@@ -22,15 +22,22 @@ from drf_spectacular.openapi import OpenApiTypes
 from .services import AttendanceService
 from typing import Dict, Any
 from rest_framework.request import Request
+from rest_framework.pagination import PageNumberPagination
+from .serializers import AttendanceSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 
 logger = logging.getLogger(__name__)
+
 @extend_schema(tags=["Attendance"])
 class AttendanceViewSet(viewsets.ViewSet):
     serializer_class = AttendanceSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     attendance_service = AttendanceService()
+    pagination_class = PageNumberPagination
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
 
     @extend_schema(responses={201: AttendanceSerializer})
     @action(detail=False, methods=['post'], url_path='create_attendance', url_name='create_attendance')
@@ -86,23 +93,28 @@ class AttendanceViewSet(viewsets.ViewSet):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
                 description="Subject code",
-            )
+            ),
         ],
         responses={200: dict}
     )
     @action(detail=False, methods=['get'], url_path='get_attendance_by_subject/(?P<subject_code>[^/.]+)', url_name='get_attendance_by_subject')
     def get_attendance_by_subject(self, request, subject_code: str=None):
         try:
-            subject = get_object_or_404(Subject, subject_code=subject_code)
-            
-            attendance_data, student_list, current_attendance_data = self.attendance_service.get_attendance_by_subject(subject)
+            query_params: Dict = request.query_params
+            date = query_params.get('date')
+            filter_query = {}
 
-            if attendance_data:
-                return Response({"message": "OK", "attendance": attendance_data, "current_attendance": current_attendance_data}, status=200)
-            else:
-                return Response({"message": "OK", "student_list": student_list}, status=200)
+            if date:
+                filter_query['date'] = date
+
+            subject = get_object_or_404(Subject, subject_code=subject_code)
+
+            attendance_data = self.attendance_service.get_attendance_by_subject(subject, filter_query)
+
+            return Response(attendance_data, status=200)
 
         except Exception as e:
+            print("Error: ", e)
             logger.error("An error occurred: %s. Subject code: %s", ) 
             return Response({"message": "An error occurred"}, status=500)
 
@@ -113,26 +125,25 @@ class AttendanceViewSet(viewsets.ViewSet):
         url_path='add_attendance_by_teacher',
         url_name='add_attendance_by_teacher')
     def add_attendance_by_teacher(self, request: Request) -> Response:
-            data: Any  = request.data
+        data: Any  = request.data
 
-            if isinstance(data, list) and len(data) > 0:
-                first_item = data[0]
-                subject_code: str = first_item.get('subject_code')
-                student_list: list = first_item.get('students')
+        if isinstance(data, list) and len(data) > 0:
+            first_item = data[0]
+            subject_code: str = first_item.get('subject_code')
+            student_list: list = first_item.get('students')
 
-                if not subject_code or not student_list:
-                    return Response({"message": "Invalid request"}, status=400)
+            if not subject_code or not student_list:
+                return Response({"message": "Invalid request"}, status=400)
 
-            student_list_with_attendances: dict = {}
-            for student in student_list:
-                student_list_with_attendances[student.get("student_id")] = student.get("attendance_status")
+        student_list_with_attendances: dict = {}
+        for student in student_list:
+            student_list_with_attendances[student.get("student_id")] = student.get("attendance_status")
 
-            try:
-                self.attendance_service.add_student_attendance(subject_code, student_list_with_attendances)
-                return Response({"message": "Attendance added successfully"}, status=201)
-            except Exception as e:
-                return Response({"message": str(e)}, status=500)
-
+        try:
+            self.attendance_service.add_student_attendance(subject_code, student_list_with_attendances)
+            return Response({"message": "Attendance added successfully"}, status=201)
+        except Exception as e:
+            return Response({"message": str(e)}, status=500)
 
     @extend_schema(responses={200: AttendanceSerializer})
     @action(detail=False, methods=['post'], url_path='mark_attendance', url_name='mark_attendance')

@@ -3,10 +3,86 @@ $secondary-color: #f8f9fa;
 $border-color: #dee2e6;
 $text-color: #343a40;
 
+.table-filter {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 5px;
+    width: 98%;
+
+    .filter-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        
+        .filter-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid black;
+            font-size: 16px;
+            min-width: 200px;
+            width: auto;
+            transition: border-color 0.3s; 
+            
+            &:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+        }
+    }
+
+    .attdance-pagenation{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+
+        button{
+            padding: 8px 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            color: black;
+            background-color: white;
+
+            .prev {
+                &:hover {
+                    background-color: #007bff;
+                    color: white;
+                }
+            }
+            .next{
+                &:hover {
+                    background-color: #007bff;
+                    color: white;
+                }
+            }
+        }
+
+        span{
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+    }
+}
+
+
 .table-container {
     align-items: center;
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 98%;
 }
 
@@ -16,6 +92,7 @@ $text-color: #343a40;
     overflow-y: auto;
     overflow-x: auto;
     position: relative;
+  
 }
 
 .attendance-table {
@@ -23,6 +100,7 @@ $text-color: #343a40;
     border-collapse: collapse;
     background-color: transparent;
     margin-right: 10px;
+    
 
     th,
     td {

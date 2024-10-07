@@ -13,21 +13,22 @@ const Attendace = () => {
   const params = useParams();
   const subject_code = params.courseID;
   const { t } = useTranslation();
-  const [tableData, setTableData] = useState([]);
+  const [attendanceData, setAttendanceData] = useState([]);
   const [activeMenu, setActiveMenu] = useState("overview-table");
   const [todatAttendanceIsAlreadyCreated, setTodatAttendanceIsAlreadyCreated] = useState(false);
+  const [query, setQuery] = useState({
+    studentId: "",
+    date: "",
+  });
 
   const getAttendance = async () => {
     try {
-      const endpoint = `attendance/get_attendance_by_subject/${subject_code}/`;
+      const query_params = new URLSearchParams();
+      query_params.append("date", query.date);
+      const endpoint = `attendance/get_attendance_by_subject/${subject_code}/?${query_params.toString()}`;
       const response = await instance.get(endpoint);
-      const { student_list, attendance, current_attendance } = response.data;
-
-      if (student_list) {
-        setTableData(student_list);
-      } else if (attendance) {
-        setTableData(attendance);
-      }
+      const attendance = response.data || [];
+      setAttendanceData(attendance);
 
       const todayDate = format(new Date(), "yyyy-MM-dd");
       const todayAttendanceExists = attendance && attendance.some(row => row.date === todayDate);
@@ -39,7 +40,7 @@ const Attendace = () => {
 
   useEffect(() => {
     getAttendance();
-  }, []);
+  }, [query]);
 
 
   return (
@@ -47,7 +48,7 @@ const Attendace = () => {
       <div className="attendace">
         <div className="attendace__header">
           <AttendaceHeader  
-            tableData={tableData} 
+            tableData={attendanceData} 
             setActiveMenu={setActiveMenu}
           />
         </div>
@@ -57,7 +58,9 @@ const Attendace = () => {
           <div className="attendace_main_container">
               {activeMenu === "overview-table" && (
                 <AttendaceTable 
-                  attendanceList={tableData}
+                  attendanceList={attendanceData}
+                  setQuery={setQuery}
+                  query={query}
                 />
               )}
               {activeMenu === "create-attendance" && (

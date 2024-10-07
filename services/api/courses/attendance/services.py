@@ -62,25 +62,20 @@ class AttendanceService:
             logger.error(f"Unexpected error in add_student_attendance: {str(e)}")
             raise
 
-    def get_attendance_by_subject(self, subject: Subject) -> dict:
+    def get_attendance_by_subject(self, subject: Subject, filters: dict) -> dict:
         """
         Get the attendance for a given subject.
         """
 
-        student_list = self._get_student_list(subject)
+        attendance_query = Attendance.objects.filter(course=subject)
 
-        attendance = Attendance.objects.filter(course=subject)
-        attendance_data = []
-        current_attendance = []
-        current_attendance = Attendance.objects.filter(course=subject, attendance_code__isnull=False).order_by('-created_at').first()
-        if current_attendance:
-            current_attendance_data = {
-                "id": current_attendance.id,
-                "attendance_code": current_attendance.attendance_code,
-                "is_active": current_attendance.is_active,
-                }
-        
-        for att in attendance:
+        if filters:
+            if 'date' in filters:
+                attendance_query = attendance_query.filter(date=filters['date'])
+            
+        attendance_data: list = []
+    
+        for att in attendance_query:
             course_name = att.course.subject_name
 
             students_attended = []
@@ -101,8 +96,8 @@ class AttendanceService:
                 "subject_enroll": att.subject_enroll.id,
                 "students_attended": students_attended
             })
-        
-        return attendance_data, student_list, current_attendance_data
+
+        return attendance_data
 
     def get_student_attendance_by_subject(self, subject: Subject) -> dict:
         """
@@ -134,7 +129,7 @@ class AttendanceService:
         """
         Get the list of students enrolled in a given subject.
         """
-        
+
         enroll_students = SubjectRegistration.objects.filter(subject=subject)
         serializer = SubjectRegistrationSerializer(enroll_students, many=True)
 
@@ -154,4 +149,3 @@ class AttendanceService:
         } for student in students]
 
         return student_list
-    
