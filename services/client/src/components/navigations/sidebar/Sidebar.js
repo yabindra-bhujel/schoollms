@@ -190,25 +190,6 @@ const Sidebar = ({ toggleSidebar, sidebarWidth}) => {
               </li>
               <li>
                 <NavLink
-                  to="/learningsection"
-                  className={
-                    currentLocation.pathname.startsWith("/codeediter") ||
-                      currentLocation.pathname.startsWith("/video/") ||
-                      currentLocation.pathname.startsWith("/article/") ||
-                      currentLocation.pathname === "/learningsection"
-                      ? "active"
-                      : ""
-                  }
-                ><div className="menu-items">
-                    <span>
-                      <MdCastForEducation />
-                    </span>
-                    <span className="text" style={{ display: sidebarWidth ? "block" : "none" }}>{t('sidebar.learnmore')}</span></div>
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink
                   to="/setting"
                   className={
                     currentLocation.pathname === "/setting" ? "active" : ""

@@ -9,13 +9,10 @@ import Dashboard from "./components/dashbord/Dashbord"
 import Student from "./components/student/Student";
 import Class from "./components/class/class";
 import Survey from "./components/class/survey/survey";
-import ExamDetails from "./components/class/Exam/ExamDetails";
 import Setting from "./components/setting/setting";
 import CalendarComponent from "./components/calender/Calender";
 import ClassDetails from "./components/class/Classdetails";
 import AssigmentDetalis from "./components/class/AssigmentDetalis";
-import VideoDetails from "./components/learningSection/VideoDetails";
-import VideoList from "./components/learningSection/VideoList";
 import AboutProblems from "./components/codeediter/AboutProblems"
 import Chat from "./components/chat/Chat";
 import Attendace from "./components/class/attendance/Attendace";
@@ -25,7 +22,6 @@ import StudentClassDetails from "./components/studentclass/StudentClassdetails";
 import StudentAssigmentDetalis from "./components/studentclass/StudentAssigmentDetalis";
 import TakeExamPage from "./components/studentclass/Exam/TakeExam";
 import Exma from "./components/studentclass/Exam/Exam";
-import ArticlePage from "./components/learningSection/Article";
 import './i18n';
 import { WebSocketProvider } from './WebSocketContext';
 import AdminTeacher from "./components/staff/Teacher/Teacher";
@@ -53,7 +49,6 @@ function App() {
           <Route path="/class/:subject_code" element={<ProtectedRoute allowedRoles={['teacher']}><ClassDetails /></ProtectedRoute>} />
           <Route path="/assignment/:assignmentID" element={<ProtectedRoute allowedRoles={['teacher']}><AssigmentDetalis /></ProtectedRoute>} />
           <Route path="/attendance/:courseID" element={<ProtectedRoute allowedRoles={['teacher']}><Attendace /></ProtectedRoute>} />
-          <Route path="/exam/:examID" element={<ProtectedRoute allowedRoles={['teacher']}><ExamDetails /></ProtectedRoute>} />
           <Route path="/survey" element={<ProtectedRoute allowedRoles={['teacher']}><Survey /></ProtectedRoute>} />
           <Route path="/studentclass" element={<ProtectedRoute allowedRoles={['student']}><StudentTableComponent /></ProtectedRoute>} />
           <Route path="/studentclassdetails/:id" element={<ProtectedRoute allowedRoles={['student']}><StudentClassDetails /></ProtectedRoute>} />
@@ -63,9 +58,6 @@ function App() {
           <Route path="/" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><Dashboard /></ProtectedRoute>} />
           <Route path="/calender" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><CalendarComponent /></ProtectedRoute>} />
           <Route path="/notes" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><Notes /></ProtectedRoute>} />
-          <Route path="/learningsection" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><VideoList /></ProtectedRoute>} />
-          <Route path="/video/:id" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><VideoDetails /></ProtectedRoute>} />
-          <Route path="/article/:id" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><ArticlePage /></ProtectedRoute>} />
           <Route path="/setting" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><Setting /></ProtectedRoute>} />
           <Route path="/codeediter" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><AboutProblems /></ProtectedRoute>} />
           <Route path="/chat" element={<ProtectedRoute allowedRoles={['student', 'teacher']}><Chat /></ProtectedRoute>} />
