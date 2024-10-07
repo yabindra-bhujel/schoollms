@@ -5,17 +5,14 @@ import "./style/classdetals.css";
 import { MdArrowBack } from "react-icons/md";
 import CourseContant from "./CourseContant";
 import AssignmentList from "./AssigemtList";
-import { PiExamThin } from "react-icons/pi";
 import { FaListCheck } from "react-icons/fa6";
 import { FcSurvey } from "react-icons/fc";
-import ExamList from "./Exam/ExamList";
 import { useTranslation } from "react-i18next";
 import { BiSolidCloudUpload } from "react-icons/bi";
 import { IoCreateOutline } from "react-icons/io5";
 import Announcement from "./announcement/Announcement";
 import AssigmentCreate from "./AssigmentCreate";
 import UploadPDF from "./uploadPDF";
-import CreateExam from "./Exam/CreateExam";
 import { getFile, getCourseDetails } from "./ClassServices";
 import Syllabus from "./syllabus/Syllabus";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
@@ -102,7 +99,7 @@ const ClassDetails = () => {
 
   return (
     <Layout>
-      
+
       <Snackbar
         open={open}
         autoHideDuration={6000}
@@ -128,36 +125,22 @@ const ClassDetails = () => {
               </>
             ) : (
               <>
-              <Snackbar
-                open={open}
-                autoHideDuration={6000}
-                onClose={() => setOpen(false)}
-                message="データの取得中"
-              />
+                <Snackbar
+                  open={open}
+                  autoHideDuration={6000}
+                  onClose={() => setOpen(false)}
+                  message="データの取得中"
+                />
               </>
             )}
           </div>
         </div>
-
-        <Dialog 
-          open={isExamModelOpen}
-         onClose={closeExamModel}
-          fullWidth
-          maxWidth="md"
-
-         >
-          <DialogTitle>Create Exam Modal</DialogTitle>
-          <DialogContent>
-            <CreateExam closeExamModel={closeExamModel} />
-          </DialogContent>
-        </Dialog>
-
         <Dialog
-          open={isAssigmentModalOpen} 
+          open={isAssigmentModalOpen}
           onClose={closeAssigmentModal}
           fullWidth
           maxWidth="md"
-          >
+        >
           <DialogTitle>
             <h3>{t("create assignment")}</h3>
           </DialogTitle>
@@ -166,26 +149,15 @@ const ClassDetails = () => {
           </DialogContent>
         </Dialog>
 
-        <Dialog 
+        <Dialog
           open={isPDFModelOpen}
-        onClose={closePDFModel}>
+          onClose={closePDFModel}>
           <DialogContent>
             <UploadPDF closePDFModel={closePDFModel} fetchData={fetchData} />
           </DialogContent>
         </Dialog>
 
         <div className="card-item">
-          <div  className="card" disabled>
-            <div className="icon">
-              <PiExamThin />
-            </div>
-            <div   className="card-body">
-              <button disabled>
-                <h4>{t("exam")}</h4>
-                <p>{t("create new exam")}</p>
-              </button>
-            </div>
-          </div>
 
           <div className="card-attdance">
             <Link className={"link-styles"} to={`/attendance/${subject_code}`}>
@@ -229,13 +201,13 @@ const ClassDetails = () => {
             <div className="icon">
               <FcSurvey />
             </div>
-            <div   className="card-body">
+            <div className="card-body">
               <button disabled>
                 <h4>アンケート</h4>
                 <p>授業に関するアンケート</p>
               </button>
             </div>
-            </div>
+          </div>
 
         </div>
 
@@ -245,13 +217,6 @@ const ClassDetails = () => {
             onClick={() => handleButtonClick("assignment")}
           >
             {t("assignment")}
-          </button>
-          <button
-            className={`test-btn ${selectedButton === "test" ? "menu-active" : ""}`}
-            onClick={() => handleButtonClick("test")}
-            disabled
-          >
-            {t("exam")}
           </button>
 
           <button className="survey-btn" disabled>{t("survey")}</button>
@@ -280,11 +245,6 @@ const ClassDetails = () => {
           {selectedButton === "assignment" && (
             <div className="main-element">
               <AssignmentList />
-            </div>
-          )}
-          {selectedButton === "test" && (
-            <div className="main-element">
-              <ExamList />
             </div>
           )}
           {selectedButton === "course_contant" && (
