@@ -9,7 +9,6 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
-User = get_user_model()
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from .services.subject_service import SubjectService
@@ -25,6 +24,10 @@ from utils.pdf_generator import PDFGenerator
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
 from typing import Optional
+import logging
+
+logger = logging.getLogger(__name__) # course.subject.views
+User = get_user_model()
 
 
 class AdminSubjectViewSet(viewsets.ViewSet):
@@ -408,6 +411,7 @@ class AssigmentViewSet(viewsets.ViewSet):
             assignment = get_object_or_404(Assignment, id=assignment_id)
             student = get_object_or_404(Student, student_id=student_id)
         except ObjectDoesNotExist as e:
+            logger.error(e)
             return Response({"message": "Assignment not found"}, status=404)
 
         media_dir = f"file_assignments/{assignment.title}/"
@@ -457,6 +461,7 @@ class AssigmentViewSet(viewsets.ViewSet):
             try:
                 assignment = Assignment.objects.get(id=id)
             except Assignment.DoesNotExist:
+                logger.error("Assignment not found")
                 return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
 
             serializer = AssignmentSerializer(assignment)
@@ -539,6 +544,7 @@ class AssigmentViewSet(viewsets.ViewSet):
 
             return Response(response_data)
         except Exception as e:
+            logger.error(e)
             return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @extend_schema(
@@ -590,6 +596,7 @@ class AssigmentViewSet(viewsets.ViewSet):
         try:
             assignment = Assignment.objects.get(id=assignment_id)
         except Assignment.DoesNotExist:
+            logger.error("Assignment not found")
             return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
 
         assignment.title = assignment_title
@@ -881,4 +888,5 @@ class SubmissionViewSet(viewsets.ViewSet):
             submission.save()
             return Response({"message": "Submission updated successfully"}, status=200)
         except Exception as e:
+            logger.error(e)
             return Response({"message": "An error occurred"}, status=500)

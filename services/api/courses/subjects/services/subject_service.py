@@ -2,6 +2,9 @@ import re
 from courses.models import Department
 from ..serializers import SubjectSerializer
 from teachers.models import Teacher
+import logging
+
+logger = logging.getLogger(__name__)
 
 class SubjectService:
     def __init__(self, data):
@@ -12,6 +15,7 @@ class SubjectService:
         teacher_id = self.__extract_teacher_id(self.__data.get('teacher_name'))
 
         if not department_code or not teacher_id:
+            logger.error('Invalid input data for creating subject')
             return {'error': 'Invalid input data'}
 
         start_time, end_time = self.__calculate_time(self.__data.get('class_period'))
@@ -19,11 +23,13 @@ class SubjectService:
         try:
             department = Department.objects.get(department_code=department_code)
         except Department.DoesNotExist:
+            logger.error(f"Department '{department_code}' does not exist.")
             return {'error': f"Department '{department_code}' does not exist."}
         
         try:
             teacher = Teacher.objects.get(teacher_id=teacher_id)
         except Teacher.DoesNotExist:
+            logger.error(f"Teacher '{teacher_id}' does not exist.")
             return {'error': f"Teacher '{teacher_id}' does not exist."}
 
         subject_data = {

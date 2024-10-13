@@ -12,14 +12,26 @@ done
 
 shift $((OPTIND - 1))
 
-# Stop and remove Docker containers
-echo "Stopping and removing Docker containers..."
-docker-compose down
+# schoollms-celery-beat schoollms-celery  database schoollms-redis-1
+# stop all containers
 
-# Remove Docker network if it was created by this script
+DOCKER_FILE="docker-compose.yml"
+DATABASE_DOCKER_FILE="docker-compose.db.yml"
+CELERY_REDIS="docker-compose.celery-redis.yml"
+
+DOCKER_FILES=
+
 if [ "$FLG_DATABASE" = "TRUE" ]; then
-    echo "Removing Docker network '$NETWORK_NAME'..."
-    docker network rm $NETWORK_NAME || echo "Network '$NETWORK_NAME' does not exist or is in use."
+    DOCKER_FILES="-f $DOCKER_FILE -f $DATABASE_DOCKER_FILE -f $CELERY_REDIS"
+else
+    DOCKER_FILES="-f $DOCKER_FILE -f $CELERY_REDIS"
 fi
+
+
+echo "Stopping all containers..."
+
+
+docker-compose $DOCKER_FILES down
+
 
 echo "Done."

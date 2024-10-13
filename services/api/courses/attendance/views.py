@@ -6,7 +6,6 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-User = get_user_model()
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from django.db import transaction
@@ -20,7 +19,9 @@ from courses.subjects.serializers import SubjectRegistrationSerializer, SubjectS
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) # course.attendance.views
+User = get_user_model()
+
 
 class AttendanceViewSet(viewsets.ViewSet):
     serializer_class = AttendanceSerializer
@@ -46,7 +47,7 @@ class AttendanceViewSet(viewsets.ViewSet):
                 attendance = Attendance.objects.create(course=subject, subject_enroll=subject_enroll_instance)
                 attendance.save()
             except Exception as e:
-                logger.error("An error occurred")
+                logger.error(e)
                 return Response({"message": "An error occurred"}, status=500)
             
             attendance_serializer = AttendanceSerializer(attendance)
@@ -71,7 +72,7 @@ class AttendanceViewSet(viewsets.ViewSet):
             
             return Response({"message": "Attendance object created", "attendance": response_data}, status=201)
         except Exception as e:
-            logger.error("An error occurred")
+            logger.error(e)
             return Response({"message": "An error occurred"}, status=500)
 
     @extend_schema(
@@ -148,7 +149,7 @@ class AttendanceViewSet(viewsets.ViewSet):
                 return Response({"message": "OK", "student_list": student_list}, status=200)
 
         except Exception as e:
-            logger.error("An error occurred: %s. Subject code: %s", ) 
+            logger.error(e) 
             return Response({"message": "An error occurred"}, status=500)
 
 
@@ -186,7 +187,7 @@ class AttendanceViewSet(viewsets.ViewSet):
 
                         attendance.save()
                 except Exception as e:
-                    logger.error("An error occurred")
+                    logger.error(e)
                     return Response({"message": "An error occurred"}, status=500)
             except ObjectDoesNotExist as e:
                 logger.error("Course not found")
@@ -195,7 +196,7 @@ class AttendanceViewSet(viewsets.ViewSet):
             attendance_serializer = AttendanceSerializer(attendance)
             return Response({"message": "Attendance object created", "attendance": attendance_serializer.data}, status=201)
         except Exception as e:
-            logger.error("An error occurred")
+            logger.error(e)
             return Response({"message": "An error occurred"}, status=500)
 
 
@@ -243,7 +244,7 @@ class AttendanceViewSet(viewsets.ViewSet):
                     return Response({"message": "Attendance not found"}, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            logger.error("An error occurred") 
+            logger.error(e) 
             return Response({"message": f"An error occurred{e}",}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     @extend_schema(
@@ -295,6 +296,7 @@ class AttendanceViewSet(viewsets.ViewSet):
 
             return Response({"message": "Ok", "attendance": response_data}, status=status.HTTP_200_OK)
         except Exception as e:
+            logger.error(e)
             return Response({"message": f"An error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -309,7 +311,6 @@ class AttendanceViewSet(viewsets.ViewSet):
         ],
         responses={200: dict}
     )
-    # @extend_schema(responses={200: AttendanceSerializer}, description="Update attendance active status if it is active chnage to inactive if it is inactive change to active need to id of attendance in url")
     @action(detail=False, methods=['put'], url_path='update_attendance_active/(?P<id>[^/.]+)', url_name='update_attendance_active')
     def update_attendance_active(self, request, id: str=None):
         try:
@@ -327,4 +328,5 @@ class AttendanceViewSet(viewsets.ViewSet):
             attendance.save()
             return Response({"message": "Attendance updated successfully"}, status=status.HTTP_200_OK)
         except Exception as e:
+            logger.error(e)
             return Response({"message": f"An error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

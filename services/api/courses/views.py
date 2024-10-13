@@ -12,7 +12,9 @@ from .serializers import DepartmentSerializer
 from typing import Optional, Any
 from rest_framework.request import Request
 from rest_framework.decorators import action
+import logging
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 

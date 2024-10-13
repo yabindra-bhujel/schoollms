@@ -4,7 +4,6 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
-User = get_user_model()
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from django.db.models import Q
@@ -16,6 +15,11 @@ from django.core.cache import cache
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
 from .serializers import *
+import logging
+
+logger = logging.getLogger(__name__) # common.socials.views
+User = get_user_model()
+
 
 class PrivateMessagesViewSet(viewsets.ViewSet):
     serializer_class = MessageSerializer
@@ -219,6 +223,7 @@ class GroupMessagesViewSet(viewsets.ViewSet):
             group = Group.objects.get(id=group_id, name=group_name)
             sender = User.objects.get(username=sender_userId)
         except Group.DoesNotExist:
+            logger.error(f"Group not found with id: {group_id}")
             return Response({"message":"Group not found"}, status=status.HTTP_404_NOT_FOUND)
 
         group_message = GroupMessage.objects.create(sender=sender, group=group, message=message)
@@ -255,6 +260,7 @@ class GroupMessagesViewSet(viewsets.ViewSet):
 
             return Response({"messages":group_message_serializer.data}, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
+            logger.error(f"Group not found with id: {group_id}")
             return Response({"message":"Group not found"}, status=status.HTTP_404_NOT_FOUND)
 
     @extend_schema(responses={200: dict})
@@ -267,6 +273,7 @@ class GroupMessagesViewSet(viewsets.ViewSet):
             group.save()
             return Response({"message":"Group image updated successfully"}, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
+            logger.error(f"Group not found with id: {group_id}")
             return Response({"message":"Group not found"}, status=status.HTTP_404_NOT_FOUND)
 
     @extend_schema(
@@ -293,6 +300,7 @@ class GroupMessagesViewSet(viewsets.ViewSet):
             group.members.remove(requesting_user)
             return Response({"message":"Left group successfully"}, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
+            logger.error(f"Group not found with id: {group_id}")
             return Response({"message":"Group not found"}, status=status.HTTP_404_NOT_FOUND)
 
     @extend_schema(
@@ -317,4 +325,5 @@ class GroupMessagesViewSet(viewsets.ViewSet):
             group.delete()
             return Response({"message":"Group deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
         except Group.DoesNotExist:
+            logger.error(f"Group not found with id: {group_id}")
             return Response({"message":"Group not found"}, status=status.HTTP_404_NOT_FOUND)

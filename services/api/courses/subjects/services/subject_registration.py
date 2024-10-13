@@ -5,7 +5,9 @@ from ..models import Subject, SubjectRegistration
 from students.models import Student
 from teachers.models import Teacher
 from django.db import transaction
+import logging
 
+logger = logging.getLogger(__name__)
 
 class SubjectRegisterService:
     def __init__(self, request_data):
@@ -25,10 +27,12 @@ class SubjectRegisterService:
                     student = Student.objects.get(student_id=student_id)
                     students.append(student)
                 if not students:
+                    logger.error("Student does not exist")
                     raise ObjectDoesNotExist("Student does not exist")
 
                 teacher = Teacher.objects.get(teacher_id=teacher_id)
                 if not teacher:
+                    logger.error("Teacher does not exist")
                     raise ObjectDoesNotExist("Teacher does not exist")
                 
                 subject = Subject.objects.get(subject_name=self.__course_data)
@@ -47,6 +51,7 @@ class SubjectRegisterService:
             return subject_registration
         
         except ObjectDoesNotExist as e:
+            logger.error(f"Error registering subject: {e}")
             return {'error': str(e)}
 
     def __extract_student_id(self):

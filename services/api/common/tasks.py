@@ -28,6 +28,8 @@ def generate_events():
                         subject=subject
                     )
                     event.save()
+                
+    logger.info('Events generated successfully')
                  
         
 
