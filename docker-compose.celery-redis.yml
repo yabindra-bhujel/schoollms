@@ -7,7 +7,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - celery_network
+      - school_app
 
   celery:
     build:
@@ -22,7 +22,7 @@ services:
     env_file:
       - services/api/.env
     networks:
-      - celery_network
+      - school_app
 
   celery-beat:
     build:
@@ -38,10 +38,10 @@ services:
     env_file:
       - services/api/.env
     networks:
-      - celery_network
+      - school_app
 
 volumes:
   redis_data:
 
 networks:
-  celery_network:
+  school_app:

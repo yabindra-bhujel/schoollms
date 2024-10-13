@@ -6,28 +6,30 @@ from .models import CalendarEvent
 
 logger = logging.getLogger(__name__)
 
-# @shared_task
-# def generate_events():
-#     subject_codes = []
-#     subjects = Subject.objects.all()
-#     for subject in subjects:
-#         subject_codes.append(subject.subject_code)
+@shared_task
+def generate_events():
+    subject_codes = []
+    subjects = Subject.objects.all()
+    for subject in subjects:
+        subject_codes.append(subject.subject_code)
 
-#     for subject in subjects:
-#             dates = generate_matching_dates(subject.weekday)
-#             for d in dates:
-#                 have_event = CalendarEvent.objects.filter(subject=subject, start_date=d).exists()
-#                 if not have_event:
-#                     event = CalendarEvent.objects.create(
-#                         title=subject.subject_name,
-#                         start_date=d,
-#                         end_date=d,
-#                         start_time=subject.period_start_time,
-#                         end_time=subject.period_end_time,
-#                         color='red',
-#                         subject=subject
-#                     )
-#                     event.save()
+    for subject in subjects:
+            dates = generate_matching_dates(subject.weekday)
+            for d in dates:
+                have_event = CalendarEvent.objects.filter(subject=subject, start_date=d).exists()
+                if not have_event:
+                    event = CalendarEvent.objects.create(
+                        title=subject.subject_name,
+                        start_date=d,
+                        end_date=d,
+                        start_time=subject.period_start_time,
+                        end_time=subject.period_end_time,
+                        color='red',
+                        subject=subject
+                    )
+                    event.save()
+                
+    logger.info('Events generated successfully')
                  
         
 
