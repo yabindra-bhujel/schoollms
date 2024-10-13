@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
+@extend_schema(tags=["Department"])
 class DepartmentViewSet(viewsets.ModelViewSet):
     """
     A ViewSet for viewing and editing Department instances.

@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__) # common.notification.views
 User = get_user_model()
 
 
+@extend_schema(tags=["Notification"])
 class NotificationViewSet(viewsets.ViewSet):
     serializer_class = NotificationSerializer
     authentication_classes = [JWTAuthentication]

@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__) # course.subject.views
 User = get_user_model()
 
 
+@extend_schema(tags=["Admin Subject"])
 class AdminSubjectViewSet(viewsets.ViewSet):
     serializer_class = SubjectSerializer
     authentication_classes = [JWTAuthentication]
@@ -108,6 +109,7 @@ class AdminSubjectViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(tags=["Subject Registration"])
 class SubjectRegistrationViewSet(viewsets.ViewSet):
     serializer_class = SubjectRegistrationSerializer
     authentication_classes = [JWTAuthentication]
@@ -179,6 +181,7 @@ class SubjectRegistrationViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(tags=["Student Subject"])
 class StudentSubjectViewSet(viewsets.ViewSet):
     serializer_class = SubjectSerializer
     authentication_classes = [JWTAuthentication]
@@ -200,6 +203,8 @@ class StudentSubjectViewSet(viewsets.ViewSet):
         stduent_subject = StduentSubjectService(id, request.user.username).get_student_subject()
         return Response(stduent_subject)
 
+
+@extend_schema(tags=["Teacher Subject"])
 class TeacherSubjectViewSet(viewsets.ViewSet):
     serializer_class = SubjectSerializer
     authentication_classes = [JWTAuthentication]
@@ -224,6 +229,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
         return Response(teacher_subject)
 
 
+@extend_schema(tags=["Assigment"])
 class AssigmentViewSet(viewsets.ViewSet):
     serializer_class = AssignmentSerializer
     authentication_classes = [JWTAuthentication]
@@ -302,7 +308,7 @@ class AssigmentViewSet(viewsets.ViewSet):
     @action(
         detail=False,
         methods=["get"],
-        url_path="student-assignment-detail/<int:id>",
+        url_path="student-assignment-detail/(?P<id>[^/.]+)",
         url_name="assignment_detail",
     )
     def student_assignment_detail(self, request, id: int):
@@ -605,6 +611,7 @@ class AssigmentViewSet(viewsets.ViewSet):
         return Response(AssignmentSerializer(assignment).data, status=status.HTTP_200_OK)
 
 
+@extend_schema(tags=["ourseMateriales"])
 class CourseMaterialesViewSet(viewsets.ViewSet):
     serializer_class = CourseMaterialesSerializer
     authentication_classes = [JWTAuthentication]
@@ -661,6 +668,7 @@ class CourseMaterialesViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(tags=["Announcement"])
 class AnnouncementViewSet(viewsets.ViewSet):
     serializer_class = AnnouncementSerializer
     authentication_classes = [JWTAuthentication]
@@ -765,6 +773,7 @@ class AnnouncementViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)  
 
 
+@extend_schema(tags=["Syllabus"])
 class SyllabusViewSet(viewsets.ViewSet):
     serializer_class = SyllabusSerializer
     authentication_classes = [JWTAuthentication]
@@ -857,6 +866,7 @@ class SyllabusViewSet(viewsets.ViewSet):
         return Response(SyllabusItemSerializer(syllabus_item).data)
 
 
+@extend_schema(tags=["Submission"])
 class SubmissionViewSet(viewsets.ViewSet):
     serializer_class = FileSubmissionSerializer
     authentication_classes = [JWTAuthentication]

@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__) # common.notes.views
 User = get_user_model()
 
 
+@extend_schema(tags=["Notes"])
 class NotesViewSet(viewsets.ViewSet):
     serializer_class = NotesSerializer
     authentication_classes = [JWTAuthentication]

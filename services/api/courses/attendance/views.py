@@ -22,7 +22,8 @@ from drf_spectacular.openapi import OpenApiTypes
 logger = logging.getLogger(__name__) # course.attendance.views
 User = get_user_model()
 
-
+logger = logging.getLogger(__name__)
+@extend_schema(tags=["Attendance"])
 class AttendanceViewSet(viewsets.ViewSet):
     serializer_class = AttendanceSerializer
     authentication_classes = [JWTAuthentication]

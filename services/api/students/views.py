@@ -15,12 +15,14 @@ from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from .serializers import StudentSerializer
 from .services.add_student import StudentCreator
-from courses.subjects .models import Subject, SubjectRegistration, Announcement, Assignment
+from courses.subjects .models import *
 from courses.subjects.serializers import AnnouncementSerializer, AssignmentSerializer
 from django.utils import timezone
 from drf_spectacular.openapi import OpenApiTypes
 from typing import Optional
 
+
+@extend_schema(tags=["Admin Student"])
 class AdminStudentViewSet(viewsets.ViewSet):
 
     serializer_class = StudentSerializer
@@ -108,6 +110,8 @@ class AdminStudentViewSet(viewsets.ViewSet):
         student.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+@extend_schema(tags=["Student"])
 class StudentViewSet(viewsets.ViewSet):
     serializer_class = StudentSerializer
     authentication_classes = [JWTAuthentication]
@@ -165,26 +169,44 @@ class StudentViewSet(viewsets.ViewSet):
         responses={200: AssignmentSerializer(many=True)},
         description='Get upcoming assignment deadlines'
     )
-    @action(detail=False, methods=['get'], url_path='upcoming_assignment_deadlines', url_name='upcoming_assignment_deadlines')
-    def upcoming_assignment_deadlines(self, request):
+    @action(detail=False, methods=['get'], url_path='upcoming_or_recent_assignment_deadlines', url_name='upcoming_assignment_deadlines')
+    def upcoming_or_recent_assignment_deadlines(self, reques):
         try:
             student = Student.objects.get(user=request.user)
 
             subject_enrollments = SubjectRegistration.objects.filter(student=student)
-            assignments = Assignment.objects.filter(course__in=subject_enrollments.values_list('subject', flat=True))
-
-            # Filter assignments that have a deadline greater than the current date and are active
-            upcoming_assignments = assignments.filter(deadline__gt=timezone.now(), is_active=True)
+            assignments = Assignment.objects.filter(course__in=subject_enrollments.values_list('subject', flat=True)).order_by('-deadline')[:10]
 
             assignments_data = []
 
-            for assignment in upcoming_assignments:
+            for assignment in assignments:
+                is_complete: bool = False
+                not_submitted: bool = False
+
+                if assignment.assigment_type == Assignment.AssignmentType.TEXT:
+                    is_complete = TextSubmission.objects.filter(student=student, assignment=assignment).exists()
+
+                    # filter by student and only filter if deadline is passed
+                    if assignment.deadline < timezone.now() and not is_complete:
+                        not_submitted = True
+                   
+
+                if assignment.assigment_type == Assignment.AssignmentType.FILE:
+                    is_complete = FileSubmission.objects.filter(
+                        student=student, assignment=assignment
+                    ).exists()
+
+                    if assignment.deadline < timezone.now() and not is_complete:
+                        not_submitted = True
+
                 assignment_data = {
                     "id": assignment.id,
                     "title": assignment.title,
                     "deadline": assignment.deadline,
                     "subject": assignment.course.subject_name,
                     "subject_code": assignment.course.subject_code,
+                    "is_complete": is_complete,
+                    "not_submitted": not_submitted,
                 }
                 assignments_data.append(assignment_data)
 
