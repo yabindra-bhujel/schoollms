@@ -3,8 +3,10 @@ from students.models import Student
 from common.models import Notification
 from django.contrib.auth import get_user_model
 from django.db import transaction
+import logging
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 class AnnouncementService:
     def __init__(self, request):
@@ -30,12 +32,14 @@ class AnnouncementService:
             return announcement
 
         except Exception as e:
+            logger.error(f"Error creating announcement: {e}")
             raise Exception(f"Error creating announcement: {e}")
 
     def __get_subject(self, subject_code):
         try:
             return Subject.objects.get(subject_code=subject_code)
         except Subject.DoesNotExist:
+            logger.error("Subject does not exist")
             raise Exception("Subject does not exist")
 
     def __get_enrolled_students(self, subject):
@@ -48,6 +52,7 @@ class AnnouncementService:
             announcement = Announcement.objects.create(subject=subject, announcement_title=title, announcement_description=content)
             return announcement
         except Exception as e:
+            logger.error(f"Error creating announcement object: {e}")
             raise Exception(f"Error creating announcement object: {e}")
 
     def __attach_files_to_announcement(self, announcement, files):
@@ -72,5 +77,6 @@ class AnnouncementService:
                     notification.user.add(user)
             notification.save()
         except Exception as e:
+            logger.error(f"Error creating notification: {e}")
             raise Exception(f"Error creating notification: {e}")
 

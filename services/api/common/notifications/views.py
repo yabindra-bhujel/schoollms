@@ -4,7 +4,6 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
-User = get_user_model()
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema
@@ -12,6 +11,10 @@ from ..serializers import NotificationSerializer
 from django.db.models import Q
 from ..models import Notification, UserNotification
 from django.core.cache import cache
+import logging
+
+logger = logging.getLogger(__name__) # common.notification.views
+User = get_user_model()
 
 
 class NotificationViewSet(viewsets.ViewSet):

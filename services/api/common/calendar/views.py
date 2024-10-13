@@ -14,8 +14,10 @@ from .service import *
 from django.core.cache import cache
 from datetime import datetime
 from django.db.models import Q
+import logging
 
 User = get_user_model()
+logger = logging.getLogger(__name__) # common.calendar.views
 
 
 class CalendarEventViewSet(viewsets.ViewSet):
@@ -28,16 +30,23 @@ class CalendarEventViewSet(viewsets.ViewSet):
 
     @extend_schema(responses={200: CalendarEventSerializer})
     def list(self, request):
-        cache_key = f"calendar_events_{request.user.id}"
-        cached_events = cache.get(cache_key)
+        try:
+            cache_key = f"calendar_events_{request.user.id}"
+            cached_events = cache.get(cache_key)
 
-        if cached_events is None:
-            new_event = CalendarService.get_calendar_events(request.user)
-            serializer = CalendarEventSerializer(new_event, many=True)
-            cached_events = serializer.data
-            cache.set(cache_key, cached_events, timeout=60 * 60)
-
-        return Response(cached_events)
+            if cached_events is None:
+                new_event = CalendarService.get_calendar_events(request.user)
+                serializer = CalendarEventSerializer(new_event, many=True)
+                cached_events = serializer.data
+                cache.set(cache_key, cached_events, timeout=60 * 60)
+            
+            return Response(cached_events)
+        except Exception as e:
+            logger.error(e)
+            return Response(
+                {"error": "An error occurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     @extend_schema(
         parameters=[
@@ -160,6 +169,7 @@ class CalendarEventViewSet(viewsets.ViewSet):
                 "Class cancellation updated successfully", status=status.HTTP_200_OK
             )
         except Exception as e:
+            logger.error(e)
             return Response(
                 {"error": "An error occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

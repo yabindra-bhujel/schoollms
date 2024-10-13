@@ -25,6 +25,13 @@ RUN curl -sSL https://install.python-poetry.org | python3 - \
 RUN poetry install --no-dev \
     && poetry run gunicorn --version  # gunicornのバージョンを確認
 
+
+
+COPY ./bin /srv/app/bin
+
+RUN chmod 755 /srv/app/bin/*
+
+
 # アプリケーションコードをコピー
 COPY . /srv/app
 

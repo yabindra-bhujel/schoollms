@@ -5,8 +5,10 @@ from students.models import Student
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+import logging
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 class CreateAssignment:
     def __init__(self, data):
@@ -51,4 +53,5 @@ class CreateAssignment:
                 
             return {'message': 'Assignment created successfully',}
         except ObjectDoesNotExist:
+            logger.error('One or more objects does not exist')
             return {'error': 'One or more objects does not exist'}
