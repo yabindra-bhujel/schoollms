@@ -26,22 +26,20 @@ eval "echo \"$(cat services/api/env.template)\"" > services/api/.env
 echo "Creating Docker network '$NETWORK_NAME' if not exists..."
 docker network ls | grep -wq $NETWORK_NAME || docker network create $NETWORK_NAME
 
-# Start or create the database container
-if docker ps -a --format '{{.Names}}' | grep -wq $CONTAINER_NAME; then
-    echo "Container '$CONTAINER_NAME' already exists. Starting the container..."
-    docker start $CONTAINER_NAME || true
-else
-    echo "Starting PostgreSQL database container..."
+if [ -n "$FLG_DATABASE" ]; then
+    # Start the database container
+    echo "Starting the database container..."
     docker-compose -f docker-compose.db.yml up -d
+
+    # Create the database if it doesn't exist
+    echo "Creating the database '$DATABASE_NAME'..."
+    docker exec $CONTAINER_NAME psql -U postgres -lqt | cut -d \| -f 1 | grep -qw $DATABASE_NAME
+    if [ $? -eq 1 ]; then
+        docker exec $CONTAINER_NAME psql -U postgres -c "CREATE DATABASE $DATABASE_NAME;"
+        echo "Database '$DATABASE_NAME' created!"
+    fi
 fi
 
-# Create the database if it doesn't exist
-echo "Creating the database '$DATABASE_NAME'..."
-docker exec $CONTAINER_NAME psql -U postgres -lqt | cut -d \| -f 1 | grep -qw $DATABASE_NAME
-if [ $? -eq 1 ]; then
-    docker exec $CONTAINER_NAME psql -U postgres -c "CREATE DATABASE $DATABASE_NAME;"
-    echo "Database '$DATABASE_NAME' created!"
-fi
 
 cd services/api
 

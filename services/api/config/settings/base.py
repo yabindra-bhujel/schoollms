@@ -39,6 +39,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 INSTALLED_APPS = (
+    'daphne',
     "django.contrib.admin",
     "django.contrib.contenttypes",
     "django.contrib.auth",
@@ -49,6 +50,9 @@ INSTALLED_APPS = (
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
+    # "channels",
+
+    # apps
     "accounts",
     "students",
     "teachers",
@@ -144,7 +148,9 @@ TEMPLATES = [
 ]
 
 TEMPLATE_CONTEXT_PROCESSORS = ('django.core.context_processors.request',)
+
 WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = 'config.asgi.application'
 
 CHANNEL_LAYERS = {
     "default": {
