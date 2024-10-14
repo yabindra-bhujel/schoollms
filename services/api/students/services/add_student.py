@@ -50,12 +50,8 @@ class StudentCreator:
             first_name=self.__data.get('first_name'),
             last_name=self.__data.get('last_name'),
             email=email,
-            phone=self.__data.get('phone'),
             gender=self.__data.get('gender'),
             date_of_birth=self.__data.get('date_of_birth'),
-            city=self.__data.get('city'),
-            state=self.__data.get('state'),
-            country=self.__data.get('country'),
             image=self.__data.get('image'),
             department=self.__department_object,
 
