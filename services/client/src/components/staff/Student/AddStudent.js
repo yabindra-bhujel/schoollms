@@ -12,8 +12,6 @@ const AddStudent = () => {
         student_id: '',
         first_name: '',
         last_name: '',
-        middle_name: '',
-        phone: '',
         date_of_birth: '',
         gender: '',
         department: '',
@@ -52,11 +50,7 @@ const AddStudent = () => {
           isValid = false;
         }
     
-    
-        if (!studentData.phone.trim()) {
-          newErrors.phone = 'Phone Number is required';
-          isValid = false;
-        }
+
     
         if (!studentData.date_of_birth.trim()) {
           newErrors.date_of_birth = 'Date of Birth is required';
@@ -99,8 +93,6 @@ const AddStudent = () => {
                 student_id: '',
                 first_name: '',
                 last_name: '',
-                middle_name: '',
-                phone: '',
                 date_of_birth: '',
             })
             } else {
@@ -165,31 +157,6 @@ const AddStudent = () => {
                 onChange={handleChange}
                 error={!!errors.last_name}
                 helperText={errors.last_name}
-              />
-            </Grid>
-
-
-            <Grid item xs={6}>
-              <TextField
-                label="Middle Name"
-                variant="outlined"
-                fullWidth
-                name="middlename"
-                value={studentData.middle_name}
-                onChange={handleChange}
-              />
-            </Grid>
-
-            <Grid item xs={6}>
-              <TextField
-                label="Phone Number"
-                variant="outlined"
-                fullWidth
-                name="phone"
-                value={studentData.phone}
-                onChange={handleChange}
-                error={!!errors.phone}
-                helperText={errors.phone}
               />
             </Grid>
             <Grid item xs={6}>

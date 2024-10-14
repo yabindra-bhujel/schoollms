@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminLayout from "../navigation/NavigationLayout";
-import { FormHelperText, TextField, Button, Container, Grid } from '@mui/material';
+import { TextField, Button, Container, Grid } from '@mui/material';
 import {Input, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { addTeacher } from './TeacherService';
 import { useNavigate } from 'react-router-dom';
@@ -12,15 +12,10 @@ const AddTeacher = () => {
         teacher_id: '',
         first_name: '',
         last_name: '',
-        middle_name: '',
-        phone: '',
         date_of_birth: '',
         gender: '',
-        address : '',
         image: '',
       });
-
-
 
 
       const [errors, setErrors] = useState({});
@@ -38,12 +33,6 @@ const AddTeacher = () => {
     
         if (!teacherData.last_name.trim()) {
           newErrors.last_name = 'Last Name is required';
-          isValid = false;
-        }
-    
-    
-        if (!teacherData.phone.trim()) {
-          newErrors.phone = 'Phone Number is required';
           isValid = false;
         }
     
@@ -148,30 +137,6 @@ const AddTeacher = () => {
               />
             </Grid>
 
-
-            <Grid item xs={6}>
-              <TextField
-                label="Middle Name"
-                variant="outlined"
-                fullWidth
-                name="middlename"
-                value={teacherData.middle_name}
-                onChange={handleChange}
-              />
-            </Grid>
-
-            <Grid item xs={6}>
-              <TextField
-                label="Phone Number"
-                variant="outlined"
-                fullWidth
-                name="phone"
-                value={teacherData.phone}
-                onChange={handleChange}
-                error={!!errors.phone}
-                helperText={errors.phone}
-              />
-            </Grid>
             <Grid item xs={6}>
               <TextField
                 label="Date of Birth"
@@ -226,25 +191,6 @@ const AddTeacher = () => {
             <img src={imagePreviewUrl} alt="Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
           </Grid>
         )}
-
-
-
-
-
-
-
-
-            <Grid item xs={12}>
-              <TextField
-                label="Address"
-                variant="outlined"
-                fullWidth
-                name="address"
-                value={teacherData.address}
-                onChange={handleChange}
-              />
-
-            </Grid>
             <Grid item xs={12}>
               <Button type="submit" variant="contained" color="primary">
                 Add Teacher

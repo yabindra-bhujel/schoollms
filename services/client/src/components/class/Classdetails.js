@@ -17,8 +17,6 @@ import { getFile, getCourseDetails } from "./ClassServices";
 import Syllabus from "./syllabus/Syllabus";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
-import { set } from "date-fns";
-
 
 
 const ClassDetails = () => {
