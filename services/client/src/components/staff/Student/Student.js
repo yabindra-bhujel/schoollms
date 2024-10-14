@@ -1,17 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
-import { InputAdornment, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Checkbox, Button, Paper } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Checkbox, Button, Paper } from "@mui/material";
 import AdminLayout from "../navigation/NavigationLayout";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar } from "@mui/material";
 import TablePagination from "@mui/material/TablePagination";
-import Alert from "@mui/material/Alert";
 import { StudentList, deleteStudent, addStudentFile } from "./StudentService";
 import { Link } from "react-router-dom";
 import "./style/student.css";
 import Avatar from "@mui/material/Avatar";
 
 const AdminStudent = () => {
-	const [searchText, setSearchText] = useState("");
 	const [studentList, setStudentList] = useState([]);
 	const [openDialog, setOpenDialog] = useState(false);
 	const [studentToDelete, setStudentToDelete] = useState(null);
@@ -91,9 +88,6 @@ const AdminStudent = () => {
 		setStudentToDelete(null);
 	};
 
-	const handleChange = (e) => {
-		setSearchText(e.target.value);
-	};
 
 	const fetchData = async () => {
 		try {
@@ -149,11 +143,10 @@ const AdminStudent = () => {
 							<Table>
 								<TableHead className='admin-student-table-header'>
 									<TableRow>
-										<TableCell>Profile</TableCell>
+										<TableCell></TableCell>
 										<TableCell>Student ID</TableCell>
 										<TableCell>Student Name</TableCell>
 										<TableCell>Email</TableCell>
-										<TableCell>Phone Number</TableCell>
 										<TableCell>Date of Birth</TableCell>
 										<TableCell>Department</TableCell>
 										<TableCell>Action</TableCell>
@@ -173,7 +166,6 @@ const AdminStudent = () => {
 											<TableCell>
 												<p>{student.email}</p>
 											</TableCell>
-											<TableCell>{student.phone}</TableCell>
 											<TableCell>{student.date_of_birth}</TableCell>
 											<TableCell>{student.department}</TableCell>
 											<TableCell>

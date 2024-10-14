@@ -160,16 +160,15 @@ const AdminSideBar = () => {
 			</Dialog>
 
 			<div className='admin-nav-bar'>
-				<div className='logo'>
 				<h1>尾崎ゼミー 卒研</h1>
-				<div className='welcome'>
-						<p>Welcome {username}</p>
-					</div>
+				
 
-				</div>
 				
 
 				<div className='nav-bar-menu'>
+				<div className='welcome'>
+						<p>Welcome {username}</p>
+					</div>
 					<div className='chnage-password'>
 						<p onClick={handlePasswordChange}>Change Password</p>
 					</div>
