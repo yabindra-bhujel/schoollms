@@ -7,11 +7,9 @@ import Modal from "react-modal";
 import CreatGroup from "./CreatGroup";
 import Badge from '@mui/material/Badge';
 
-
 Modal.setAppElement("#root");
 
 const ChatList = ({
-  socket,
   onlineUsers,
   userList,
   onChatSelect,
@@ -37,6 +35,9 @@ const ChatList = ({
   const closeCreateGroupModal = () => {
     setOpenCreateGroup(false);
   };
+
+  console.log(userList);
+  console.log(onlineUsers);
   
 
   return (
@@ -51,7 +52,7 @@ const ChatList = ({
           <CreatGroup
             closeMethod={closeCreateGroupModal}
             allusers={userList}
-            socket={socket}
+            // socket={socket}
             get_Group_data={get_Group_data}
           />
         </div>
@@ -121,7 +122,8 @@ const ChatList = ({
 
         <div className="user-section">
           {filteredUsers.map((user, index) => {
-            const isOnline = onlineUsers.some(onlineUser => onlineUser.userId === user.username);
+            const isOnline = onlineUsers.includes(user.username);
+
             const unreadmessage =
               Array.isArray(unread) &&
               unread.some((unread) => unread.sender === user.username);

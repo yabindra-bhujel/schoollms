@@ -1,39 +1,43 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import getUserInfo from './api/user/userdata';
 
-const WebSocketContext = createContext(null);
+const WebSocketContext = createContext();
 
 export const useWebSocket = () => {
-  const context = useContext(WebSocketContext);
-  if (!context) {
-    throw new Error('useWebSocket must be used within a WebSocketProvider');
-  }
-  return context;
+  return useContext(WebSocketContext);
 };
 
 export const WebSocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
+  const [connectedUserList, setConnectedUserList] = useState([]);
 
   useEffect(() => {
-    // Initialize WebSocket connection
-    const newSocket = io("http://0.0.0.0:3001", { transports: ["websocket"] });
-    setSocket(newSocket);
-    
+    const userId = getUserInfo().username;
+    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${userId}/`);
+    setSocket(ws);
 
-    // Cleanup on unmount
+    ws.onopen = () => {
+      console.log("Connected to WebSocket");
+    };
+
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      switch (data.type) {
+        case "broadcast_connected_users":
+          setConnectedUserList(data.notification.connected_users);
+          break;
+        default:
+          break;
+      }
+    };
+
     return () => {
-      newSocket.disconnect();
-
-      // disconnect
+      ws.close();
     };
   }, []);
 
-  const contextValue = {
-    socket: socket,
-  };
-
   return (
-    <WebSocketContext.Provider value={contextValue}>
+    <WebSocketContext.Provider value={{ socket, connectedUserList }}>
       {children}
     </WebSocketContext.Provider>
   );

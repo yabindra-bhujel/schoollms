@@ -64,6 +64,7 @@ INSTALLED_APPS = (
     "common.notes",
     "common.notifications",
     "common.socials",
+    "common.websocket_app",
 )
 
 REST_FRAMEWORK = {
@@ -152,9 +153,13 @@ TEMPLATE_CONTEXT_PROCESSORS = ('django.core.context_processors.request',)
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
+
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
     },
 }
 

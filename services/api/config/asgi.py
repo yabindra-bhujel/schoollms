@@ -11,7 +11,10 @@ import os
 import dotenv
 
 from django.core.asgi import get_asgi_application
-from channels.routing import ProtocolTypeRouter
+from channels.routing import ProtocolTypeRouter, URLRouter
+
+from common.socials.routing import websocket_urlpatterns
+from common.websocket_app.routing import websocket_urlpatterns as base_connection_urlpatterns
 
 dotenv_file = os.path.join(".env")
 if os.path.isfile(dotenv_file):
@@ -27,4 +30,8 @@ else:
 
 application = ProtocolTypeRouter({
     'http': get_asgi_application(),
+    'websocket': URLRouter([
+        *websocket_urlpatterns,
+        *base_connection_urlpatterns
+    ]),
 })

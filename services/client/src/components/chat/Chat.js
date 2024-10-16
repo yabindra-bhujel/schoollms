@@ -18,25 +18,7 @@ const Chat = ({sidebarWidth}) => {
   const [unread, setUnread] = useState(false)
   const [selectGroup, setSelectGroup] = useState(null)
   const [groupName, setGroupName] = useState([])
-  const { socket } = useWebSocket();
-
-
-  useEffect(() => {
-    if (socket) {
-      
-  
-      socket.on("all-user", (onlineUsers) => {
-        setOnlineUsers(onlineUsers);
-      });
-  
-      return () => {
-        
-      };
-    }
-  
-    console.warn("Socket object not available");
-  
-  }, [userId, groupName, socket]);
+  const { connectedUserList } = useWebSocket()
 
   const handleChatSelect = (user, type = "user") => {
     setSelectedUser(user, type);
@@ -77,6 +59,13 @@ const Chat = ({sidebarWidth}) => {
 
 
   useEffect(() => {
+    if(connectedUserList){
+      setOnlineUsers(connectedUserList);
+    }
+  })
+
+
+  useEffect(() => {
     getall();
     get_Group_data();
   }, []);
@@ -89,7 +78,7 @@ const Chat = ({sidebarWidth}) => {
           }}>
           <ChatList
             unreadMessages={unreadMessages}
-            socket={socket}
+            // socket={socket}
             onlineUsers={onlineUsers}
             userList={userList}
             onChatSelect={handleChatSelect}
@@ -106,7 +95,6 @@ const Chat = ({sidebarWidth}) => {
           }}>
           <ChatDetils
             selectedChat={selectedUser}
-            socket={socket}
             setUnreadMessages={setUnreadMessages}
             setHasUnreadMessages={setHasUnreadMessages}
             selectGroup = {selectGroup}
