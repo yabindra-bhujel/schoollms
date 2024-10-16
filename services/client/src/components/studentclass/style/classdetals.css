@@ -1,1 +1,181 @@
-.class-details-container{background-color:#fff;min-height:calc(100vh - 72px);display:flex;flex-direction:column;overflow-y:auto}.student-class-header{height:80px;background-color:#fff;display:flex;align-items:center;gap:10px;border-bottom:2px solid #000;padding:0 20px}.student-class-header .student-back{background-color:#fff;border:1px solid #000;margin-top:10px;margin-left:20px;font-size:24px;padding:5px;font-weight:bold;color:#000;border-radius:50%;transition:background-color .3s,color .3s}.student-class-header .student-back:hover{background-color:#000;color:#fff}@media(max-width: 480px){.student-class-header .student-back{font-size:24px;padding:6px;margin-left:10px;margin-top:5px}}.student-class-header .class-info h3{margin-left:20px;margin-top:10px;text-transform:capitalize;font-size:24px;color:#333}@media(max-width: 480px){.student-class-header .class-info h3{font-size:18px;margin-left:10px;margin-top:5px}}.student-class-header .class-info p{font-weight:bold;font-family:"Gill Sans","Gill Sans MT",Calibri,"Trebuchet MS",sans-serif;margin-left:20px;font-size:18px;color:#333}@media(max-width: 480px){.student-class-header .class-info p{font-size:14px;margin-left:10px}}.section-buttons{padding:10px 20px}.section-buttons .all-buttons{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin:0 auto}.section-buttons .all-buttons button{min-width:160px;border:1px solid #000;margin:10px;padding:10px 15px;border-radius:8px;cursor:pointer;font-weight:500;font-size:18px;background-color:#fff;color:#000;transition:background-color .3s,color .3s}.section-buttons .all-buttons button:hover{background-color:#000;color:#fff}.section-buttons .all-buttons button.active{background-color:#000;color:#fff}.section-buttons .all-buttons button:disabled{background-color:#f5f5f5;color:gray;cursor:not-allowed;border-color:#4d4d4d}@media(min-width: 1500px){.section-buttons .all-buttons button{min-width:200px}}@media(max-width: 480px){.section-buttons .all-buttons button{min-width:120px;padding:8px 12px;font-size:16px}}.student-main-section{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px;gap:10px;scroll-behavior:smooth;overflow-y:auto}.student-main-section .main-element{width:100%;min-height:100px;max-height:330px;padding:20px;margin:10px 0;border-radius:10px;background-color:#f5f5f5;box-shadow:0 2px 8px rgba(0,0,0,.1);overflow-y:auto;transition:max-height .3s}@media(min-width: 1500px){.student-main-section .main-element{max-height:540px}}@media(max-width: 480px){.student-main-section .main-element{padding:15px}}.student-main-section .main-element-attendance{display:flex;flex-wrap:wrap;justify-content:space-evenly;width:100%;height:auto;gap:20px}.student-main-section .main-element-attendance .attendance-table,.student-main-section .main-element-attendance .attendance-input{flex:1 1 40%;min-width:280px;background-color:#fff;padding:15px;border:1px solid gray;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:width .3s}@media(max-width: 480px){.student-main-section .main-element-attendance .attendance-table,.student-main-section .main-element-attendance .attendance-input{flex:1 1 100%;width:100%}}.student-main-section .main-element-attendance .attendance-input{height:100%}
+.class-details-container {
+  background-color: #ffffff;
+  min-height: calc(100vh - 72px);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.student-class-header {
+  height: 80px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #000000;
+  padding: 0 20px;
+}
+.student-class-header .student-back {
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  margin-top: 10px;
+  margin-left: 20px;
+  font-size: 24px;
+  padding: 5px;
+  font-weight: bold;
+  color: #000000;
+  border-radius: 50%;
+  transition: background-color 0.3s, color 0.3s;
+}
+.student-class-header .student-back:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+@media (max-width: 480px) {
+  .student-class-header .student-back {
+    font-size: 24px;
+    padding: 6px;
+    margin-left: 10px;
+    margin-top: 5px;
+  }
+}
+.student-class-header .class-info h3 {
+  margin-left: 20px;
+  margin-top: 10px;
+  text-transform: capitalize;
+  font-size: 24px;
+  color: #333333;
+}
+@media (max-width: 480px) {
+  .student-class-header .class-info h3 {
+    font-size: 18px;
+    margin-left: 10px;
+    margin-top: 5px;
+  }
+}
+.student-class-header .class-info p {
+  font-weight: bold;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  margin-left: 20px;
+  font-size: 18px;
+  color: #333333;
+}
+@media (max-width: 480px) {
+  .student-class-header .class-info p {
+    font-size: 14px;
+    margin-left: 10px;
+  }
+}
+
+.section-buttons {
+  padding: 10px 20px;
+}
+.section-buttons .all-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto;
+}
+.section-buttons .all-buttons button {
+  min-width: 160px;
+  border: 1px solid #000000;
+  margin: 10px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 18px;
+  background-color: #ffffff;
+  color: #000000;
+  transition: background-color 0.3s, color 0.3s;
+}
+.section-buttons .all-buttons button:hover {
+  background-color: black;
+  color: #ffffff;
+}
+.section-buttons .all-buttons button.active {
+  background-color: #000000;
+  color: #ffffff;
+}
+.section-buttons .all-buttons button:disabled {
+  background-color: #f5f5f5;
+  color: gray;
+  cursor: not-allowed;
+  border-color: #4d4d4d;
+}
+@media (min-width: 1500px) {
+  .section-buttons .all-buttons button {
+    min-width: 200px;
+  }
+}
+@media (max-width: 480px) {
+  .section-buttons .all-buttons button {
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 16px;
+  }
+}
+
+.student-main-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 10px;
+  scroll-behavior: smooth;
+  overflow-y: auto;
+}
+.student-main-section .main-element {
+  width: 100%;
+  min-height: 100px;
+  max-height: 330px;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  transition: max-height 0.3s;
+}
+@media (min-width: 1500px) {
+  .student-main-section .main-element {
+    max-height: 540px;
+  }
+}
+@media (max-width: 480px) {
+  .student-main-section .main-element {
+    padding: 15px;
+  }
+}
+.student-main-section .main-element-attendance {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  width: 100%;
+  height: auto;
+  gap: 20px;
+}
+.student-main-section .main-element-attendance .attendance-table,
+.student-main-section .main-element-attendance .attendance-input {
+  flex: 1 1 40%;
+  min-width: 280px;
+  background-color: #ffffff;
+  padding: 15px;
+  border: 1px solid gray;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: width 0.3s;
+}
+@media (max-width: 480px) {
+  .student-main-section .main-element-attendance .attendance-table,
+  .student-main-section .main-element-attendance .attendance-input {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
+.student-main-section .main-element-attendance .attendance-input {
+  height: 100%;
+}/*# sourceMappingURL=classdetals.css.map */

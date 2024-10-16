@@ -1,66 +1,64 @@
 .announcement_container {
-    border-radius: 8px;
-    width: 100%;
-    max-height: 98%;
-    overflow-y: auto;
-    position: relative;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 100%;
+  max-height: 100%;
+  overflow: scroll;
+  position: relative;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .title {
-    padding: 10px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #6a0dad;
-    margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #6a0dad;
+  margin: 10px 10px 10px 20px;
 }
-
-.list {
+  .list {
     list-style: none;
     padding: 0;
 
     .item {
-        background-color: #ffffff;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        padding: 15px;
-        transition: background-color 0.3s, transform 0.3s;
-        cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      background-color: #ffffff;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      padding: 15px;
+      transition: background-color 0.3s, transform 0.3s;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
-        &:hover {
-            background-color: #d1c4e9;
-            transform: translateY(-2px);
-        }
+      &:hover {
+        background-color: #d1c4e9;
+        transform: translateY(-2px);
+      }
 
-        .itemContent {
-            display: flex;
-            align-items: center;
-        }
+      .itemContent {
+        display: flex;
+        align-items: center;
+      }
 
-        .textContent {
-            flex-grow: 1;
-            margin-left: 10px;
-        }
+      .textContent {
+        flex-grow: 1;
+        margin-left: 10px;
+      }
 
-        .titleText {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333333;
-            margin: 0;
-        }
+      .titleText {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333333;
+        margin: 0;
+      }
 
-        .announcement-icon {
-            color: #6a0dad;
-            font-size: 24px;
-        }
+      .announcement-icon {
+        color: #6a0dad;
+        font-size: 24px;
+      }
 
-        .announcement__time {
-            font-size: 12px;
-            color: #8b8787;
-            margin-top: 5px;
-            font-weight: 600;
-        }
+      .announcement__time {
+        font-size: 12px;
+        color: #8b8787;
+        margin-top: 5px;
+        font-weight: 600;
+      }
     }
-}
+  }

@@ -103,8 +103,8 @@
   padding: 2px;
 }
 .chat__list__body .chat_list_items .default-profile-icon {
-  height: 50px;
-  width: 50px;
+  height: 30px;
+  width: 30px;
   border-radius: 50%;
   background-color: rgb(209, 194, 194);
 }

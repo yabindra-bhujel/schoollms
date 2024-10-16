@@ -63,11 +63,7 @@
         align-items: center;
         border: solid blue 1px;
     // background-color: rgb(189, 182, 182);
-    
-
     }
-
-
 }
 
 .user_list_group_list_toggle{
@@ -114,7 +110,7 @@
 
     .chat_list_items{
         height: 62px;
-    padding: 0 20px;
+        padding: 0 20px;
         display: flex;
         gap: 10px;
         align-items: center;
@@ -129,12 +125,11 @@
             height: 55px;
             width: 55px;
             border-radius: 50%;
-            // object-fit: cover;
             padding: 2px;
           }
           .default-profile-icon{
-            height: 50px;
-            width: 50px;
+            height: 30px;
+            width: 30px;
             border-radius: 50%;
             background-color: rgb(209, 194, 194);
           }
@@ -158,11 +153,9 @@
           }
 
           .role-indicator {
-            // position: absolute;
             top: 0;
             right: 0;
             background-color: #fff; /* Set the background color */
-            // padding: 2px 5px; /* Adjust padding as needed */
             font-size: 12px; /* Adjust font size as needed */
             font-weight: bold;
             color: black; /* Set the text color */

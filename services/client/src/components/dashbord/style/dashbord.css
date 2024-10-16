@@ -1,12 +1,10 @@
 .container {
   display: flex;
-  height: calc(100vh - 65px);
-  overflow: hidden;
+  height: calc(100vh - 60px);
   background-color: rgb(213, 231, 240);
 }
 .container .left {
-  flex: 0 0 35%;
-  padding: 20px 0 20px 20px;
+  padding: 15px 0 10px 10px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -20,7 +18,6 @@
   display: flex;
   height: 50%;
   width: 100%;
-  gap: 20px;
   background-color: white;
   border-radius: 10px;
 }
@@ -50,7 +47,7 @@
 }
 .container .center {
   flex: 0 0 35%;
-  padding: 20px 0 20px 20px;
+  padding: 10px 0 10px 10px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -58,7 +55,7 @@
   justify-content: center;
   font-size: 18px;
   color: #333;
-  gap: 20px;
+  gap: 10px;
 }
 .container .center .center_header {
   display: flex;
@@ -74,7 +71,9 @@
   height: 100%;
 }
 .container .center .center_header .center_header_right_section {
+  overflow: auto;
   flex-grow: 1;
+  width: 100%;
 }
 .container .center .center__buttom {
   height: 50%;
@@ -99,14 +98,18 @@
   color: #333;
   margin: 20px;
 }
-@media (max-width: 768px) {
+
+@media (max-width: 992px) {
   .container {
     flex-direction: column;
+    scrollbar-width: 10;
+    overflow: auto;
   }
-  .container .left,
-  .container .center,
+  .container .center {
+    padding: 10px 0px 10px 10px;
+    flex: 50%;
+  }
   .container .right {
-    flex: 0 0 100%;
-    margin-bottom: 20px;
+    flex: 100%;
   }
 }/*# sourceMappingURL=dashbord.css.map */

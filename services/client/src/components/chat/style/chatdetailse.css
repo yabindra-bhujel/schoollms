@@ -269,4 +269,10 @@
 }
 .write_message .write__message__button .include_file {
   margin-left: 10px;
+}
+
+.backBtn {
+  font-size: 30px;
+  color: #0943e3;
+  margin-left: 5px;
 }/*# sourceMappingURL=chatdetailse.css.map */

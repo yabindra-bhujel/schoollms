@@ -46,7 +46,7 @@ console.log("", subject)
     }
   };
 
-  for (let day = 1; day <= 6; day++) {
+  for (let day = 1; day <= 7; day++) {
     const date = moment().isoWeekday(day);
     const weekday = date.format("dddd");
     weekdays.push(weekday);

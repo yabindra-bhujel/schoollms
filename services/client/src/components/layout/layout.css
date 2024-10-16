@@ -27,7 +27,7 @@ body {
   transition: width 0.3s ease; /* Add smooth transition */
 }
 .main-container .main-content .header-bar {
-  height: 70px;
+  height: 65px;
   z-index: 99;
 }
 .main-container .main-content .body-content {
