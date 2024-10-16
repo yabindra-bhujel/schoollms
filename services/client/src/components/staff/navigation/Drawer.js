@@ -4,7 +4,6 @@ import "./style/sidebar.css";
 import { GiTeacher } from "react-icons/gi";
 import { PiStudentFill } from "react-icons/pi";
 import { FaRegUserCircle } from "react-icons/fa";
-import { RiLogoutCircleLine } from "react-icons/ri";
 import { IoMdLogOut } from "react-icons/io";
 import { FaBookOpen } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
@@ -127,7 +126,7 @@ const AdminSideBar = () => {
 			<Snackbar open={snackbar} autoHideDuration={6000} onClose={() => setSnackbar(false)} message={snackbarMessage} />
 
 			<Dialog open={passwordChange} onClose={handlePasswordChangeClose} fullWidth>
-				<DialogTitle>Change Password</DialogTitle>
+				<DialogTitle>パスワードの変更</DialogTitle>
 
 				<DialogContent>
 					<div className='password-change-form'>
@@ -152,22 +151,24 @@ const AdminSideBar = () => {
 
 				<DialogActions>
 					<Button variant='contained' color='primary' onClick={handlePasswordChangeSubmit}>
-						Submit
+						送信
 					</Button>
 					<Button variant='outlined' color='secondary' onClick={handlePasswordChangeCancel}>
-						Cancel
+						キャンセル
 					</Button>
 				</DialogActions>
 			</Dialog>
 
 			<div className='admin-nav-bar'>
-				<h1>CampusFlow Administration</h1>
+				<h1>尾崎ゼミー 卒研</h1>
+				
+
+				
 
 				<div className='nav-bar-menu'>
-					<div className='welcome'>
+				<div className='welcome'>
 						<p>Welcome {username}</p>
 					</div>
-
 					<div className='chnage-password'>
 						<p onClick={handlePasswordChange}>Change Password</p>
 					</div>
@@ -224,15 +225,6 @@ const AdminSideBar = () => {
 								<RiCalendarTodoLine size={20} />
 
 								<span>Enroll Student</span>
-							</Link>
-						</li>
-
-						<hr />
-
-						<li>
-							<Link onClick={handleLogout}>
-								<RiLogoutCircleLine size={20} />
-								<span>Logout</span>
 							</Link>
 						</li>
 					</ul>

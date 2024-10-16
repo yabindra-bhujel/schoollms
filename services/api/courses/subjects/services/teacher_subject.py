@@ -24,13 +24,7 @@ class TeacherSubjectService:
         serializer = SubjectRegistrationSerializer(enrollment).data
         subject_data = SubjectSerializer(subject).data
         
-        subject_data = [
-            serializer,
-            subject_data
-        ]
-
-        return subject_data
-
+        return [serializer,subject_data]
 
 
 

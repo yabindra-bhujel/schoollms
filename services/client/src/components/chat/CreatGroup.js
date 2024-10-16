@@ -7,7 +7,7 @@ import { IoIosRemoveCircle } from "react-icons/io";
 import getUserInfo from "../../api/user/userdata";
 import instance from "../../api/axios";
 
-const CreatGroup = ({ closeMethod, allusers, socket, get_Group_data }) => {
+const CreatGroup = ({ closeMethod, allusers, get_Group_data }) => {
     const [groupName, setGroupName] = useState("");
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [filteruser, setFilteruser] = useState("");
@@ -54,7 +54,7 @@ const CreatGroup = ({ closeMethod, allusers, socket, get_Group_data }) => {
       }catch(err){
         
       }
-      socket.emit("create_group", data);
+      // socket.emit("create_group", data);
     };
   
     return (

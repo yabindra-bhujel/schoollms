@@ -11,6 +11,7 @@ class SubjectService:
         self.__data = data
 
     def create_subject(self):
+        print(self.__data)
         department_code = self.__extract_department_code(self.__data.get('subject_faculty'))
         teacher_id = self.__extract_teacher_id(self.__data.get('teacher_name'))
 

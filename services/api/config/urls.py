@@ -12,6 +12,7 @@ from accounts.views import *
 from students.views import *
 from teachers.views import *
 import debug_toolbar
+from django.conf import settings
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='User')
@@ -24,8 +25,6 @@ router.register(r'admin/teachers', AdminTeacherViewSet, basename='admin-teachers
 router.register(r'teachers', TeacherViewSet, basename='Teacher')
 
 urlpatterns = [
-    # django が用意された admin の ページ
-    path('admin/', admin.site.urls),
     path('api/', include('courses.urls')),
     path('api/', include('common.urls')),
     path('api/', include(router.urls)),
@@ -49,5 +48,6 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += [
+        path('admin/', admin.site.urls),
         path('__debug__/', include(debug_toolbar.urls))
         ]

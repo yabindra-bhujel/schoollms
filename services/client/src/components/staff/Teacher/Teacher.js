@@ -1,17 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  InputAdornment,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
-  Checkbox,
   Button,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import "./style/style.css";
 import AdminLayout from "../navigation/NavigationLayout";
 import { Link } from "react-router-dom";
@@ -22,48 +18,38 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import Alert from "@mui/material/Alert";
 import Snackbar from '@mui/material/Snackbar';
-import { getTeacherList, deleteTeacher ,uploadTeahcerFile} from "./TeacherService";
+import { getTeacherList, deleteTeacher, uploadTeahcerFile } from "./TeacherService";
 import Avatar from '@mui/material/Avatar';
 
-
-const AdminTeacher = () =>{
-    const [teacherList, setTeacherList] = useState([])
-    const [openDialog, setOpenDialog] = useState(false);
-    const [teacherToDelete, setTeacherToDelete] = useState(null);
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-  const fileInputRef = useRef(null); 
+const AdminTeacher = () => {
+  const [teacherList, setTeacherList] = useState([])
+  const [openDialog, setOpenDialog] = useState(false);
+  const [teacherToDelete, setTeacherToDelete] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const fileInputRef = useRef(null);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-
-
-
-
-
-
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file && file.type === "text/csv") {
-      uploadTeacherFile(file); 
+      uploadTeacherFile(file);
     } else {
       setSnackbarMessage("Please select a CSV file.");
       setOpenSnackbar(true);
     }
   };
 
-
-
-  const uploadTeacherFile = async (file) => { 
+  const uploadTeacherFile = async (file) => {
     try {
       setUploadingFile(true);
       const formData = new FormData();
       formData.append("file", file);
-  
+
       await uploadTeahcerFile(formData);
-  
+
       setSnackbarMessage("Teacher successfully added.");
       setOpenSnackbar(true);
       fetchData();
@@ -78,99 +64,74 @@ const AdminTeacher = () =>{
   };
 
 
-  const handleReadFileButtonClick = () => {
-    if (selectedFile) {
-      uploadTeacherFile();
-    } else {
-      setSnackbarMessage("Please select a CSV file.");
-      setOpenSnackbar(true);
+  const fetchData = async () => {
+    try {
+      const response = await getTeacherList();
+      setTeacherList(response);
+    } catch (error) {
     }
   };
 
-  const fetchData = async () =>{
-    try{
-        const response = await getTeacherList();
-        setTeacherList(response);
-    }catch(error){
-        console.error("Error fetching teacher list:", error);
+  useEffect(() => {
+    fetchData();
+  }, [])
+
+
+  const handleTeacherDelete = (teacherID) => {
+    setTeacherToDelete(teacherID);
+    setOpenDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteTeacher(teacherToDelete);
+      setTeacherList((prevList) =>
+        prevList.filter((teacher) => teacher.teacher_id !== teacherToDelete)
+      );
+      setSnackbarMessage("Teacher successfully deleted.");
+      setOpenSnackbar(true);
+    } catch (error) {
+      setSnackbarMessage("Failed to delete teacher.");
+      setOpenSnackbar(true);
     }
-};
+    setOpenDialog(false);
+    setTeacherToDelete(null);
+  };
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setTeacherToDelete(null);
+  };
 
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
 
-    useEffect(() =>{
-        
-        fetchData();
-    
-    },[])
-
-
-    const handleTeacherDelete = (teacherID) => {
-        setTeacherToDelete(teacherID);
-        setOpenDialog(true);
-      };
-    
-      const handleConfirmDelete = async () => {
-        try {
-          await deleteTeacher(teacherToDelete);
-          setTeacherList((prevList) =>
-            prevList.filter((teacher) => teacher.teacher_id !== teacherToDelete)
-          );
-          setSnackbarMessage("Teacher successfully deleted.");
-          setOpenSnackbar(true);
-        } catch (error) {
-          setSnackbarMessage("Failed to delete teacher.");
-          setOpenSnackbar(true);
-        }
-        setOpenDialog(false);
-        setTeacherToDelete(null);
-      };
-
-
-
-      const handleCloseDialog = () => {
-        setOpenDialog(false);
-        setTeacherToDelete(null);
-      };
-
-
-      const handleCloseSnackbar = (event, reason) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-        setOpenSnackbar(false);
-      };
-      
-
-
-    
-
-    return(
-        <AdminLayout>
-           <div className="admin-teacher">
-           <div className="admin-teacher-header">
-          <h2>All Teacher List</h2>
-
-          
+  return (
+    <AdminLayout>
+      <div className="admin-teacher">
+        <div className="admin-teacher-header">
+          <h2>Teacher List</h2>
 
           <div className="add-new-teacher">
-                <input
-            type="file"
-            style={{ display: 'none' }}
-            accept=".csv"
-            onChange={handleFileSelect}
-            ref={fileInputRef} 
-        />
+            <input
+              type="file"
+              style={{ display: 'none' }}
+              accept=".csv"
+              onChange={handleFileSelect}
+              ref={fileInputRef}
+            />
             <Button
-        variant="contained"
-        color="primary"
-        onClick={() => fileInputRef.current.click()}
-        disabled={uploadingFile}
-      >
-        {uploadingFile ? 'Uploading...' : 'Read File'}
-      </Button>
-
-
+              variant="contained"
+              color="primary"
+              onClick={() => fileInputRef.current.click()}
+              disabled={uploadingFile}
+            >
+              {uploadingFile ? 'Uploading...' : 'Read File'}
+            </Button>
 
             <Link to="/admin/teacher/add">
               <Button variant="contained" color="primary">
@@ -178,7 +139,7 @@ const AdminTeacher = () =>{
               </Button>
             </Link>
           </div>
-           </div>
+        </div>
 
         <div className="admin-student-table">
           <TableContainer>
@@ -186,12 +147,11 @@ const AdminTeacher = () =>{
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    
+
                   </TableCell>
                   <TableCell>Teacher ID</TableCell>
                   <TableCell>Teacher Name</TableCell>
                   <TableCell>Email</TableCell>
-                  <TableCell>Phone Number</TableCell>
                   <TableCell>Date of Birth</TableCell>
                   <TableCell>Gender</TableCell>
                   <TableCell>Action</TableCell>
@@ -201,10 +161,10 @@ const AdminTeacher = () =>{
                 {teacherList.map((teacher) => (
                   <TableRow key={teacher.teacher_id}>
                     <TableCell>
-                     {/* image */}
+                      {/* image */}
                       <Avatar alt={teacher.first_name} src={teacher.image}
-                      sx={{ width: 40, height: 40 }}
-                       />
+                        sx={{ width: 40, height: 40 }}
+                      />
 
                     </TableCell>
                     <TableCell>{teacher.teacher_id}</TableCell>
@@ -214,7 +174,6 @@ const AdminTeacher = () =>{
                     <TableCell>
                       <p>{teacher.email}</p>
                     </TableCell>
-                    <TableCell>{teacher.phone}</TableCell>
                     <TableCell>{teacher.date_of_birth}</TableCell>
                     <TableCell>{teacher.gender}</TableCell>
                     <TableCell>
@@ -235,11 +194,11 @@ const AdminTeacher = () =>{
           </TableContainer>
         </div>
 
-           </div>
+      </div>
 
 
 
-           <Dialog
+      <Dialog
         open={openDialog}
         onClose={handleCloseDialog}
         aria-labelledby="alert-dialog-title"
@@ -273,15 +232,15 @@ const AdminTeacher = () =>{
 
 
       <Snackbar
-  open={openSnackbar}
-  autoHideDuration={3000}
-  onClose={handleCloseSnackbar}
-  message={snackbarMessage}
-/>
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        message={snackbarMessage}
+      />
 
 
-        </AdminLayout>
-       
-    )
+    </AdminLayout>
+
+  )
 }
 export default AdminTeacher;

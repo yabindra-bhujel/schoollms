@@ -26,7 +26,7 @@ function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notify, setNotify] = useState([]);
   const hasUnread = notify.some((item) => !item.is_read);
-  const { socket } = useWebSocket();
+  const [connectedUserList, setConnectedUserList] = useState([]);
 
   const [snackbarState, setSnackbarState] = useState({
     isOpen: false,
@@ -39,7 +39,6 @@ function Header() {
   const userId = getUserInfo().username;
   const [groupName, setGroupName] = useState([]);
 
-  console.log(groupName);
 
 
   // set sidebar width (70px or 200)
@@ -75,30 +74,31 @@ const groupData = async () => {
   }
 }
 
+console.log(connectedUserList);
+
 useEffect(() => {
-  if (socket) {
-    socket.on("connect", () => {
-      socket.emit("addNewuser", { userId });
-    });
+  const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${userId}/`);
 
-    socket.emit("addNewuser", { userId });
+  ws.onopen = () => {
 
-    groupName.forEach(group => {
-      socket.emit("join-group", { groupName: group, userId });
-    });
-
-    socket.on("receive-notification", (data) => {
-      setSnackbarState({
-        isOpen: true,
-        vertical: "bottom",
-        horizontal: "right",
-        message: data.title || "You have a new notification!",
-      });
-
-      setNotify((prev) => [data, ...prev]);
-    });
+    console.log("Connected to the websocket");
   }
-}, [socket, groupName, userId]);
+
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    console.log(data);
+
+    switch (data.type) {
+      case "broadcast_connected_users":
+        setConnectedUserList(data.notification.connected_users);
+        break;
+      default:
+        break;
+    }
+  }
+ 
+  
+}, [groupName, userId]);
 
   useEffect(() => {
     getNotification();

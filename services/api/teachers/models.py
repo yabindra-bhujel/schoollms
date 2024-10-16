@@ -12,8 +12,6 @@ class Teacher(models.Model):
     last_name = models.CharField(max_length=255, null= False, blank=False,default="")
     gender = models.CharField(max_length=20, null=False, blank=False)
     email = models.EmailField(max_length=50,  null=True, blank=True)
-    phone = models.CharField(max_length=20, unique=True)
-    address = models.CharField(max_length=255, null=False, blank=False)
     date_of_birth = models.DateField(null=True)
     image = models.ImageField(upload_to='images/', null=True, blank=True)
 
