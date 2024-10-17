@@ -40,4 +40,4 @@ ENV PORT 8000
 EXPOSE 8000
 
 # アプリケーションの起動
-CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
+CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "config.asgi:application"]

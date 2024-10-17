@@ -29,7 +29,12 @@ const PrivateChat = ({ selectedChat, onlineUsers }) => {
       const currentUser = sender_userId;
 
       // Initialize WebSocket connection
-      const ws = new WebSocket(`ws://127.0.0.1:8000/ws/private_chat/${receiver_userId}/${currentUser}/`);
+      // get domain
+
+      const host = window.location.hostname;
+
+
+      const ws = new WebSocket(`ws://${host}/ws/private_chat/${receiver_userId}/${currentUser}/`);
       setSocket(ws);
 
       ws.onopen = () => {

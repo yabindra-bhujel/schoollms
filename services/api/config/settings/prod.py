@@ -4,7 +4,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     'localhost',
-    '0.0.0.0'
+    '0.0.0.0',
+    'api'
 ]
 
 LOG_DIR = 'var/log/api/prod/'

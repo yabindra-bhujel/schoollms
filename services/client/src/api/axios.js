@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BaseUrl = () => {
-	return `/api/`;
+	return `http://0.0.0.0:8000/api/`;
 };
 
 const instance = axios.create({

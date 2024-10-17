@@ -8,6 +8,7 @@ services:
       - "8000:8000"
     volumes:
       - ./services/api:/srv/app
+      - ./var/log/api:/var/log/api
       - static_volume:/api/static
       - media_volume:/api/media
     environment:
@@ -37,6 +38,7 @@ services:
       - media_volume:/media
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ./services/client/build:/usr/share/nginx/html
+      - ./var/log/web:/var/log/nginx/
     
     networks:
       - school_app

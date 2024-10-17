@@ -72,7 +72,8 @@ const groupData = async () => {
 console.log(connectedUserList);
 
 useEffect(() => {
-  const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${userId}/`);
+  const hostname = window.location.hostname;
+  const ws = new WebSocket(`ws://${hostname}/ws/${userId}/`);
 
   ws.onopen = () => {
 
