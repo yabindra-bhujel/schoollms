@@ -24,6 +24,24 @@ services:
     networks:
       - school_app
 
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "80:80"
+
+    volumes:
+      - static_volume:/static
+      - media_volume:/media
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./services/client/build:/usr/share/nginx/html
+    
+    networks:
+      - school_app
+
+
 volumes:
   static_volume: {} 
   media_volume: {}
