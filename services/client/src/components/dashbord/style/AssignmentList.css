@@ -1,6 +1,7 @@
 .assignments-container {
   width: 100%;
   max-height: 98%;
+  min-height: 200px;
   overflow: scroll;
 }
 .assignments-container h2 {
