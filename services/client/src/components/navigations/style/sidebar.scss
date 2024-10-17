@@ -28,6 +28,12 @@ nav {
     font-weight: bold;
     color: white;
   }
+  
+  @media (max-width: 768px) {
+    .user_info_side {
+      font-size: 15px;
+    }
+  }
 
   .quick_acess {
     display: flex;

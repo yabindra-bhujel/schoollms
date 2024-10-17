@@ -19,6 +19,11 @@ nav .user_info_side {
   font-weight: bold;
   color: white;
 }
+@media (max-width: 768px) {
+  nav .user_info_side {
+    font-size: 15px;
+  }
+}
 nav .quick_acess {
   display: flex;
   align-items: center;
