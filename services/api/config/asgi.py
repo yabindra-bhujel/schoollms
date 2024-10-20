@@ -9,6 +9,10 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 
 import os
 import dotenv
+import django
+
+
+
 
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
@@ -27,6 +31,8 @@ if isDev:
 else:
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
 
+# Djangoの初期化
+django.setup()
 
 application = ProtocolTypeRouter({
     'http': get_asgi_application(),

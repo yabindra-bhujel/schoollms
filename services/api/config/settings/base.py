@@ -63,8 +63,8 @@ INSTALLED_APPS = (
     "common.calendar",
     "common.notes",
     "common.notifications",
-    "common.socials",
     "common.websocket_app",
+    "common.socials",
 )
 
 REST_FRAMEWORK = {
@@ -134,6 +134,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+AUTH_USER_MODEL = 'accounts.User'
 
 ROOT_URLCONF = 'config.urls'
 
@@ -214,7 +215,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'accounts.User'
 
 
 CORS_ORIGIN_ALLOW_ALL = True

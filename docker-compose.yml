@@ -8,9 +8,13 @@ services:
       - "8000:8000"
     volumes:
       - ./services/api:/srv/app
+      - ./services/api/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
       - ./var/log/api:/srv/app/var/log/api
+      - ./var/log/api/supervisor:/var/log/django_services/supervisor
       - static_volume:/api/static
       - media_volume:/api/media
+
+    command: ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
     environment:
       DB_HOST: database
       DB_PORT: 5432

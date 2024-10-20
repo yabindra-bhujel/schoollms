@@ -11,7 +11,10 @@ WORKDIR /srv/app
 
 # システム依存関係をインストール
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
+
+    && apt-get install -y \
+    --no-install-recommends curl \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # 依存関係ファイルをコピー
@@ -23,7 +26,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 - \
 
 # Poetryの設定と依存関係のインストール
 RUN poetry install --no-dev \
-    && poetry run gunicorn --version  # gunicornのバージョンを確認
+    && poetry run gunicorn --version
 
 
 
@@ -32,12 +35,16 @@ COPY ./bin /srv/app/bin
 RUN chmod 755 /srv/app/bin/*
 
 
-# アプリケーションコードをコピー
+
+RUN mkdir -p /var/log/django_services/supervisor
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+ENV DJANGO_SETTINGS_MODULE=config.settings.prod
+
+
 COPY . /srv/app
 
 # ポートの設定
 ENV PORT 8000
 EXPOSE 8000
-
-# アプリケーションの起動
-CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "config.asgi:application"]

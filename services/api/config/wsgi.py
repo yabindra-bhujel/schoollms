@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
 import os
 import sys
 import dotenv
+import django
 
 from django.core.wsgi import get_wsgi_application
 
@@ -22,5 +23,7 @@ if isDev:
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
 else:
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
+
+django.setup()
 
 application = get_wsgi_application()

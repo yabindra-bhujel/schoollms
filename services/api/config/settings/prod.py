@@ -6,6 +6,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '0.0.0.0',
     'api'
+    '127.0.0.1'
 ]
 
 LOG_DIR = 'var/log/api/prod/'
@@ -36,7 +37,7 @@ LOGGING = {
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/error.log',
+            'filename': LOG_DIR + 'error.log',
             'maxBytes': 1024 * 1024 * 5,  # 5MB
             'backupCount': 5,
             'formatter': 'verbose',

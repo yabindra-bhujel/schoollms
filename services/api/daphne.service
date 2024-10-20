@@ -1,0 +1,13 @@
+[Unit]
+Description=Daphne Service
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/srv/app/
+ExecStart=poetry run daphne config.asgi:application
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
