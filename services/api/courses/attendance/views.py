@@ -18,16 +18,25 @@ from ..subjects.models import Subject, SubjectRegistration
 from courses.subjects.serializers import SubjectRegistrationSerializer, SubjectSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
+from .services import AttendanceService
+from typing import Dict, Any
+from rest_framework.request import Request
+from rest_framework.pagination import PageNumberPagination
+from .serializers import AttendanceSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
-logger = logging.getLogger(__name__) # course.attendance.views
-User = get_user_model()
 
 logger = logging.getLogger(__name__)
+
 @extend_schema(tags=["Attendance"])
 class AttendanceViewSet(viewsets.ViewSet):
     serializer_class = AttendanceSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    attendance_service = AttendanceService()
+    pagination_class = PageNumberPagination
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
 
     @extend_schema(responses={201: AttendanceSerializer})
     @action(detail=False, methods=['post'], url_path='create_attendance', url_name='create_attendance')
@@ -43,14 +52,14 @@ class AttendanceViewSet(viewsets.ViewSet):
             except ObjectDoesNotExist as e:
                 logger.error("Course or teacher not found")
                 return Response({"message": "Course or teacher not found"}, status=404)
-            
+
             try:
                 attendance = Attendance.objects.create(course=subject, subject_enroll=subject_enroll_instance)
                 attendance.save()
             except Exception as e:
                 logger.error(e)
                 return Response({"message": "An error occurred"}, status=500)
-            
+
             attendance_serializer = AttendanceSerializer(attendance)
             response_data = attendance_serializer.data.copy()
 
@@ -70,7 +79,7 @@ class AttendanceViewSet(viewsets.ViewSet):
                     logger.error("StudentAttended attendance not found")
                     return Response({"message": "StudentAttended attendance not found"}, status=404)
             response_data["students_attended"] = students_attended
-            
+
             return Response({"message": "Attendance object created", "attendance": response_data}, status=201)
         except Exception as e:
             logger.error(e)
@@ -83,123 +92,57 @@ class AttendanceViewSet(viewsets.ViewSet):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
                 description="Subject code",
-            )
+            ),
         ],
         responses={200: dict}
     )
     @action(detail=False, methods=['get'], url_path='get_attendance_by_subject/(?P<subject_code>[^/.]+)', url_name='get_attendance_by_subject')
     def get_attendance_by_subject(self, request, subject_code: str=None):
         try:
+            query_params: Dict = request.query_params
+            date = query_params.get('date')
+            filter_query = {}
+
+            if date:
+                filter_query['date'] = date
+
             subject = get_object_or_404(Subject, subject_code=subject_code)
 
-            enroll_students = SubjectRegistration.objects.filter(subject=subject)
-            serializer = SubjectRegistrationSerializer(enroll_students, many=True)
+            attendance_data = self.attendance_service.get_attendance_by_subject(subject, filter_query)
 
-            student_ids = []
-            for enroll_student in serializer.data:
-                if 'students' in enroll_student:
-                    students_data = enroll_student['students']
-                    if isinstance(students_data, list):
-                        student_ids.extend([student['student_id'] for student in students_data])
-
-            students = Student.objects.filter(student_id__in=student_ids)
-
-            student_list = [{
-                "student_id": student.student_id,
-                "full_name": f"{student.first_name} {student.last_name}",
-                "course": subject.subject_name,
-            } for student in students]
-
-            attendance = Attendance.objects.filter(course=subject)
-            attendance_data = []
-            current_attendance = []
-            current_attendance = Attendance.objects.filter(course=subject, attendance_code__isnull=False).order_by('-created_at').first()
-            if current_attendance:
-                current_attendance_data = {
-                    "id": current_attendance.id,
-                    "attendance_code": current_attendance.attendance_code,
-                    "is_active": current_attendance.is_active,
-                }
-
-
-            for att in attendance:
-                course_name = att.course.subject_name
-
-                students_attended = []
-                for student_attended in att.students_attended.all():
-                    student_attended_data = {
-                        "student_id": student_attended.student.student_id,
-                        "full_name": f"{student_attended.student.first_name} {student_attended.student.last_name}",
-                        "is_present": student_attended.is_present,
-                    }
-                    students_attended.append(student_attended_data)
-
-                attendance_data.append({
-                    "id": att.id,
-                    "date": att.date,
-                    "attendance_code": att.attendance_code,
-                    "is_active": att.is_active,
-                    "course": course_name,
-                    "subject_enroll": att.subject_enroll.id,
-                    "students_attended": students_attended
-                })
-
-            if attendance_data:
-                return Response({"message": "OK", "attendance": attendance_data, "current_attendance": current_attendance_data}, status=200)
-            else:
-                return Response({"message": "OK", "student_list": student_list}, status=200)
+            return Response(attendance_data, status=200)
 
         except Exception as e:
-            logger.error(e) 
+            print("Error: ", e)
+            logger.error("An error occurred: %s. Subject code: %s", ) 
             return Response({"message": "An error occurred"}, status=500)
 
+    @extend_schema(responses={201: AttendanceSerializer})
+    @action(
+        detail=False,
+        methods=['post'],
+        url_path='add_attendance_by_teacher',
+        url_name='add_attendance_by_teacher')
+    def add_attendance_by_teacher(self, request: Request) -> Response:
+        data: Any  = request.data
 
-    @extend_schema(responses={200: AttendanceSerializer})
-    @action(detail=False, methods=['post'], url_path='add_attendance_by_teacher', url_name='add_attendance_by_teacher')
-    def add_attendance_by_teacher(self, request):
+        if isinstance(data, list) and len(data) > 0:
+            first_item = data[0]
+            subject_code: str = first_item.get('subject_code')
+            student_list: list = first_item.get('students')
+
+            if not subject_code or not student_list:
+                return Response({"message": "Invalid request"}, status=400)
+
+        student_list_with_attendances: dict = {}
+        for student in student_list:
+            student_list_with_attendances[student.get("student_id")] = student.get("attendance_status")
+
         try:
-            data = request.data
-            subject_code = data.get('course_id')
-            student_list = data.get('studentIds')
-
-            try:
-                subject = Subject.objects.get(subject_code=subject_code)
-                subject_enroll = SubjectRegistration.objects.get(subject=subject)
-                today = datetime.now().date()
-
-                if Attendance.objects.filter(course=subject, subject_enroll=subject_enroll, date=today).exists():
-                    return Response({"message": "Attendance already taken for today"}, status=400)
-                
-                try:
-                    with transaction.atomic():
-                        attendance = Attendance.objects.create(course=subject, subject_enroll=subject_enroll)
-                        attendance.save()
-
-                        selected_student_ids = []
-                        for student_id in student_list:
-                            if student_list[student_id]:
-                                selected_student_ids.append(student_id)
-
-                        for student_id in selected_student_ids:
-                            student = Student.objects.get(student_id=student_id)
-                            student_attended = StudentAttended.objects.create(student=student, is_present=True, attendance=attendance, attendance_time=datetime.now())
-                            student_attended.save()
-                            attendance.students_attended.add(student_attended)
-
-                        attendance.save()
-                except Exception as e:
-                    logger.error(e)
-                    return Response({"message": "An error occurred"}, status=500)
-            except ObjectDoesNotExist as e:
-                logger.error("Course not found")
-                return Response({"message": "Course not found"}, status=404)
-            
-            attendance_serializer = AttendanceSerializer(attendance)
-            return Response({"message": "Attendance object created", "attendance": attendance_serializer.data}, status=201)
+            self.attendance_service.add_student_attendance(subject_code, student_list_with_attendances)
+            return Response({"message": "Attendance added successfully"}, status=201)
         except Exception as e:
-            logger.error(e)
-            return Response({"message": "An error occurred"}, status=500)
-
+            return Response({"message": str(e)}, status=500)
 
     @extend_schema(responses={200: AttendanceSerializer})
     @action(detail=False, methods=['post'], url_path='mark_attendance', url_name='mark_attendance')
@@ -214,12 +157,12 @@ class AttendanceViewSet(viewsets.ViewSet):
             except ObjectDoesNotExist as e:
                 logger.error("Student not found") 
                 return Response({"message": "Student not found"}, status=status.HTTP_404_NOT_FOUND)
-            
+
             try:
                 attendance = Attendance.objects.get(attendance_code=attendance_code)
                 if attendance.is_active == False:
                     return Response({"message": "Attendance is not active"}, status=status.HTTP_400_BAD_REQUEST)
-                
+
             except ObjectDoesNotExist as e:
                 logger.error("Attendance not found") 
                 return Response({"message": "Attendance not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -230,7 +173,7 @@ class AttendanceViewSet(viewsets.ViewSet):
             except ObjectDoesNotExist as e:
                 logger.error("Student not enrolled in the course") 
                 return Response({"message": "Student is not enrolled in the course"}, status=status.HTTP_404_NOT_FOUND)
-            
+
             alrady_marked = StudentAttended.objects.filter(student=student, attendance_code=attendance_code, is_present = True).exists()
             if alrady_marked:
                 return Response({"message": "Attendance already marked"}, status=status.HTTP_200_OK)
@@ -247,7 +190,7 @@ class AttendanceViewSet(viewsets.ViewSet):
         except Exception as e:
             logger.error(e) 
             return Response({"message": f"An error occurred{e}",}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -300,7 +243,6 @@ class AttendanceViewSet(viewsets.ViewSet):
             logger.error(e)
             return Response({"message": f"An error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -331,3 +273,27 @@ class AttendanceViewSet(viewsets.ViewSet):
         except Exception as e:
             logger.error(e)
             return Response({"message": f"An error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="subject_code",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description="Subject code",
+            )
+        ],
+        responses={200: dict}
+    )
+    @action(detail=False, methods=['get'], url_path='get_student_info_for_inital_attendance/(?P<subject_code>[^/.]+)', url_name='get_attendance_by_subject')
+    def get_student_info_for_inital_attendance(self, request, subject_code: str=None):
+        try:
+            subject = get_object_or_404(Subject, subject_code=subject_code)
+
+            student_list = self.attendance_service.get_student_attendance_by_subject(subject)
+
+            return Response({"message": "OK", "student_list": student_list}, status=200)
+
+        except Exception as e:
+            logger.error("An error occurred: %s. Subject code: %s", ) 
+            return Response({"message": "An error occurred"}, status=500)

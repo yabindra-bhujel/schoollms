@@ -1,0 +1,158 @@
+$primary-color: #007bff;
+$secondary-color: #f8f9fa;
+$border-color: #dee2e6;
+$text-color: #343a40;
+
+.table-filter {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 5px;
+    width: 98%;
+
+    .filter-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        
+        .filter-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid black;
+            font-size: 16px;
+            min-width: 200px;
+            width: auto;
+            transition: border-color 0.3s; 
+            
+            &:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+        }
+    }
+
+    .attdance-pagenation{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+
+        button{
+            padding: 8px 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            color: black;
+            background-color: white;
+
+            .prev {
+                &:hover {
+                    background-color: #007bff;
+                    color: white;
+                }
+            }
+            .next{
+                &:hover {
+                    background-color: #007bff;
+                    color: white;
+                }
+            }
+        }
+
+        span{
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+    }
+}
+
+
+.table-container {
+    align-items: center;
+    padding: 20px;
+    width: 98%;
+}
+
+.table-wrapper {
+    width: 100%;
+    height: calc(100vh - 200px);
+    overflow-y: auto;
+    overflow-x: auto;
+    position: relative;
+  
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: transparent;
+    margin-right: 10px;
+    
+
+    th,
+    td {
+        padding: 15px;
+        text-align: center;
+        font-size: 16px;
+        white-space: nowrap;
+        transition: background-color 0.2s;
+    }
+
+    th {
+        background-color: rgb(41, 100, 117);
+        color: white;
+        font-weight: bold;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    tr {
+        border-bottom: 1px solid $border-color;
+
+        &:nth-child(odd) {
+            background-color: lighten($secondary-color, 5%);
+        }
+
+        &:nth-child(even) {
+            background-color: lighten($secondary-color, 15%);
+        }
+
+        &:hover {
+            background-color: rgba(130, 44, 228, 0.2);
+        }
+    }
+}
+
+.sticky-left-table-head {
+    position: relative;
+    left: 0;
+    background-color: rgb(130, 44, 228);
+    z-index: 2;
+}
+
+.sticky-left {
+    left: 0;
+    z-index: 2;
+}
+
+.attended {
+    color: blue;
+}
+
+.absent {
+    color: red;
+}

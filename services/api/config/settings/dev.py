@@ -47,16 +47,21 @@ DEBUG_TOOLBAR_CONFIG = {
 REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'}
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'LMS Shikoku University',
-    'DESCRIPTION': 'API for LMS Shikoku University',
-    'VERSION': '1.0.0',
-    'SECURITY': [
+    "TITLE": "LMS Shikoku University",
+    "DESCRIPTION": "API for LMS Shikoku University",
+    "VERSION": "1.0.0",
+    "SECURITY": [
         {
-            'Authorization': [],
+          "BearAuth": []
         },
-        
-
     ],
+    "SECURITY_SCHEMA": {
+        "BearAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+        }
+    }
 }
 
 LOG_DIR = 'var/log/api/dev/'
