@@ -16,7 +16,8 @@ admin.site.register(Assignment)
 admin.site.register(TextAssigemntQuestion)
 admin.site.register(AssignmentFile)
 admin.site.register(FileSubmission)
-
+admin.site.register(TextSubmission)
+admin.site.register(TextQuestionAnswer)
 
 admin.site.register(CourseMateriales)
 

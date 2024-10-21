@@ -163,7 +163,6 @@ class TeacherViewSet(viewsets.ViewSet):
                     'last_name': student.last_name,
                     'email': student.email,
                     'gender': student.gender,
-                    'phone': student.phone,
                     'date_of_birth': student.date_of_birth,
                 })
         return Response(student_list, status=status.HTTP_200_OK)

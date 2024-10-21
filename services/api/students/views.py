@@ -170,7 +170,7 @@ class StudentViewSet(viewsets.ViewSet):
         description='Get upcoming assignment deadlines'
     )
     @action(detail=False, methods=['get'], url_path='upcoming_or_recent_assignment_deadlines', url_name='upcoming_assignment_deadlines')
-    def upcoming_or_recent_assignment_deadlines(self, reques):
+    def upcoming_or_recent_assignment_deadlines(self, request):
         try:
             student = Student.objects.get(user=request.user)
 
