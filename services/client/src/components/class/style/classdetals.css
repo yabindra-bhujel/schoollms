@@ -7,11 +7,11 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  border-bottom: solid gray 2px;
+  border-bottom: solid rgb(204, 199, 199) 2px;
   height: 50px;
 }
 .class-header .back {
-  background-color: rgb(216, 82, 216);
+  background-color: rgb(95, 189, 220);
   margin-top: 15px;
   margin-left: 20px;
   font-size: 30px;
@@ -44,8 +44,9 @@
 }
 .card-item .card {
   margin: 10px;
-  height: 80px;
-  width: 17%;
+  height: 50px;
+  min-width: 70px;
+  max-width: auto;
   background-color: white;
   border-radius: 10px;
   align-items: center;
@@ -63,8 +64,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50px;
-  width: 50px;
+  height: 30px;
+  width: 30px;
   background-color: rgb(215, 207, 207);
   border-radius: 50%;
   font-weight: bold;
@@ -88,8 +89,7 @@
 }
 .card-item .card-attdance {
   margin: 10px;
-  height: 80px;
-  width: 17%;
+  height: 50px;
   background-color: white;
   border-radius: 10px;
   align-items: center;
@@ -158,6 +158,19 @@
 .all-btn .assigemnt-btn:hover {
   transform: scale(1.1);
 }
+.all-btn .attendance-btn {
+  width: 200px;
+  border: solid 1px black;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+}
+.all-btn .attendance-btn:hover {
+  transform: scale(1.1);
+}
 .all-btn .test-btn {
   width: 200px;
   border: solid 1px black;
@@ -222,4 +235,4 @@
   .main-section .main-element {
     max-height: 500px;
   }
-}
+}/*# sourceMappingURL=classdetals.css.map */

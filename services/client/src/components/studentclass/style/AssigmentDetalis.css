@@ -3,14 +3,14 @@
 }
 
 .class-header-student {
-  margin-bottom: 10px;
-  padding: 20px;
+  margin-bottom: 5px;
+  padding: 5px;
   display: flex;
   gap: 15px;
-  border-bottom: gray solid 1px;
+  border-bottom: rgb(196, 191, 191) solid 1px;
 }
 .class-header-student .back {
-  background-color: white;
+  background-color: lightcyan;
   border: solid black 1px;
   margin-top: 10px;
   margin-left: 20px;
@@ -131,7 +131,6 @@
   gap: 20px;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 50px;
 }
 .bottom-button .submit-button {
   display: flex;
@@ -305,4 +304,4 @@
   font-size: 50px;
   margin-right: 10px;
   color: red;
-}
+}/*# sourceMappingURL=AssigmentDetalis.css.map */

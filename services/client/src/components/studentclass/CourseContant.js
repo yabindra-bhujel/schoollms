@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import instance from "../../api/axios";
 import { useTranslation } from "react-i18next";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
-import IconButton from "@mui/material/IconButton";
-import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import './style/CourseContent.css';
 
 const CourseContent = () => {
   const { id } = useParams();
@@ -32,43 +28,29 @@ const CourseContent = () => {
   };
 
   return (
-    <div>
-      <Typography variant="h4" gutterBottom>
-        {t("studentAssigemnt.materiales")}
-      </Typography>
+    <div className="course-content-container">
+      <div className="student-course-content-header">
+        <h4>{t("studentAssigemnt.materiales")}</h4>
+        <div></div>
+      </div>
+
       {loading ? (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
-          <CircularProgress />
+        <div className="loading-container">
+          <div className="spinner"></div>
         </div>
       ) : error ? (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "16px" }}>
-          <Typography variant="body1" color="error" gutterBottom>
-            {error}
-          </Typography>
-          <Button variant="contained" color="primary" onClick={getFile} style={{ marginTop: "8px" }}>
-            Retry
-          </Button>
+        <div className="error-container">
+          <p className="error-text">{error}</p>
+          <button className="retry-button" onClick={getFile}>{t('Retry')}</button>
         </div>
       ) : (
-        <div>
-           {files.length > 0 && files.map((courseMaterial, index) => (
-
-            <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "8px", background: "rgb(223, 227, 230)", padding: "10px", borderRadius: "5px" }}>
-              <IconButton
-                variant="contained"
-                color="primary"
-                component="a"
-                href={courseMaterial.pdf_file}
-                download
-                style={{ marginRight: "8px" }}
-              >
-                <CloudDownloadIcon />
-              </IconButton>
-
-              <Typography style={{ marginRight: "8px" }}>
-                {courseMaterial.pdf_file.split("/").pop().replace(/_/g, '')}
-              </Typography>
-
+        <div className="files-container">
+          {files.length > 0 && files.map((courseMaterial, index) => (
+            <div key={index} className="file-item">
+              <a href={courseMaterial.pdf_file} download className="download-link">
+                <span className="download-icon">&#x1F4E5;</span> 
+              </a>
+              <span className="file-name">{courseMaterial.pdf_file.split("/").pop().replace(/_/g, '')}</span>
             </div>
           ))}
         </div>

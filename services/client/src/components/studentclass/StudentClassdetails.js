@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams , useLocation } from "react-router-dom";
 import Layout from "../layout/Layout";
-import "./style/classdetals.css";
+import "./style/classDetails.css";
 import instance from "../../api/axios";
-import { MdArrowBack } from "react-icons/md";
 import CourseContant from "./CourseContant";
 import AssignmentList from "./AssigemtList";
 import { useTranslation } from "react-i18next";
@@ -13,6 +12,8 @@ import Announcement from "./Announcement/Announcement";
 import Syllabus from "./syllabus/syllabus";
 import StudentExamList from "./Exam/ExamList";
 import Snackbar from "@mui/material/Snackbar";
+import { IoChevronBack } from "react-icons/io5";
+
 
 const StudentClassDetails = () => {
   const { id } = useParams();
@@ -27,8 +28,6 @@ const StudentClassDetails = () => {
     setSelectedButton(buttonType)
   }
  
-  console.log(subject)
-
   useEffect(() => {
     getCourseData();
   }, []);
@@ -60,7 +59,7 @@ const StudentClassDetails = () => {
         <div className="student-class-header">
           <div className="back-btn">
           <Link to="/studentclass">
-            <MdArrowBack className="student-back" />
+            <IoChevronBack className="student-back" />
           </Link>
           </div>
           <div className="other-onfo">
@@ -83,12 +82,6 @@ const StudentClassDetails = () => {
       onClick={() => handleButtonClick('assignment')}
       className={selectedButton === 'assignment' ? 'active' : ''}>
       {t("assignment")}
-    </button>
-    <button
-    disabled
-      onClick={() => handleButtonClick('exam')}
-      >
-      {t("exam")}
     </button>
     <button
       onClick={() => handleButtonClick('attendance')}
@@ -132,7 +125,8 @@ const StudentClassDetails = () => {
           {selectedButton === "attendance" &&(
               <div className="main-element-attendance">
                 <StudentAttdance className="attendace-table" />
-                <AttendanceInput className="attendace-input"/>
+                {/* TODO: 学生自分で確認するようにしたい */}
+                {/* <AttendanceInput className="attendace-input"/> */}
               </div>)}
 
           {selectedButton === "coursematerials" &&(

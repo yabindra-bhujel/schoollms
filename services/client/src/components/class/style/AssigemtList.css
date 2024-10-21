@@ -1,65 +1,134 @@
-* {
-  font-family: sans-serif;
+.assignment-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: darkgrey;
+}
+.assignment-list-header h4 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: black;
+}
+.assignment-list-header .create-assignment-button {
+  display: flex;
+  align-items: center;
+  background-color: blue;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.assignment-list-header .create-assignment-button:hover {
+  transform: translateY(-3px);
+  background-color: #465b47;
+}
+.assignment-list-header .create-assignment-button svg {
+  margin-right: 8px;
 }
 
-.assigment-list {
-  height: 540px;
-  background-color: white;
+.assignment-filter {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
   border-radius: 10px;
-  overflow-y: auto;
+  align-items: center;
 }
-.assigment-list .content-table {
-  border-collapse: collapse;
-  font-size: 0.9em;
+.assignment-filter .filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.assignment-filter .filter-option .filter-titile {
+  margin-right: 10px;
+  line-height: 20px;
+  font-weight: bold;
+  color: gray;
+}
+.assignment-filter .filter-option input {
+  width: 20px;
+  height: 20px;
+}
+.assignment-filter .filter-option input[type=checkbox] {
+  accent-color: #2849cb;
+}
+.assignment-filter .filter-option label {
+  font-size: 16px;
+  color: #555;
+}
+
+.assignment-list {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.assignment-list .teacher-assigmnet-table {
   width: 100%;
-  border-radius: 5px 5px 0 0;
-  overflow: hidden;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-collapse: collapse;
+  margin-top: 20px;
 }
-.assigment-list .content-table thead tr {
-  border-bottom: solid 1px black;
-  color: black;
+.assignment-list .teacher-assigmnet-table th,
+.assignment-list .teacher-assigmnet-table td {
+  padding: 10px;
   text-align: left;
-  font-weight: bold;
-  font-size: 18px;
+  border: 1px solid #ddd;
 }
-.assigment-list .content-table th {
-  padding: 12px 15px;
-  height: 40px;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+.assignment-list .teacher-assigmnet-table th {
+  background-color: #f0f4f7;
+  color: #333;
 }
-.assigment-list .content-table td {
-  padding: 20px 20px;
-  font-weight: 600;
-  font-weight: 15px;
-}
-.assigment-list .content-table tbody a {
+.assignment-list .teacher-assigmnet-table .assignment-link {
   text-decoration: none;
-  display: block;
-  width: 300px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-weight: bold;
-  font-size: 18px;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  color: black;
+  font-size: 20px;
+  transition: color 0.3s ease;
 }
-.assigment-list .content-table tbody tr {
-  border-bottom: 1px solid #dddddd;
+.assignment-list .teacher-assigmnet-table .assignment-link:hover {
+  color: #388e3c;
 }
-.assigment-list .content-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
-}
-.assigment-list .content-table tbody tr:last-of-type {
-  border-bottom: 2px solid #009879;
-}
-.assigment-list .content-table tbody tr .active {
+.assignment-list .teacher-assigmnet-table .active-assignment {
   color: green;
-  font-size: 18px;
-  font-weight: bold;
 }
-.assigment-list .content-table tbody tr .inactive {
+.assignment-list .teacher-assigmnet-table .inactive {
   color: red;
-  font-size: 18px;
+}
+.assignment-list .teacher-assigmnet-table .status-green {
+  color: green;
+}
+.assignment-list .teacher-assigmnet-table .status-red {
+  color: red;
+}
+.assignment-list .teacher-assigmnet-table .date-green {
+  color: green;
+}
+.assignment-list .teacher-assigmnet-table .date-red {
+  color: red;
+}
+
+.snackbar {
+  background-color: #f44336;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.dialog .dialog-title {
+  background-color: #e8f5e9;
+  color: #388e3c;
+  padding: 10px;
+  border-radius: 5px 5px 0 0;
+  font-size: 22px;
   font-weight: bold;
 }
+.dialog .dialog-content {
+  padding: 20px;
+}/*# sourceMappingURL=AssigemtList.css.map */

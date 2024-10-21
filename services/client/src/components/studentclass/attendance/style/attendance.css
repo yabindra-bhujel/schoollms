@@ -52,3 +52,41 @@
   background-color: #000;
   color: #fff;
 }
+
+.attendance-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+}
+.attendance-container .student-attendance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: darkslateblue;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+.attendance-container .student-attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+  text-align: left;
+}
+.attendance-container .student-attendance-table th, .attendance-container .student-attendance-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+.attendance-container .student-attendance-table th {
+  background-color: #f4f4f4;
+}
+.attendance-container .student-attendance-table tr:hover {
+  background-color: #f9f9f9;
+}
+.attendance-container .student-attendance-table .absent-cell {
+  color: red;
+}/*# sourceMappingURL=attendance.css.map */

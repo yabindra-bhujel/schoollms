@@ -1,30 +1,36 @@
-import React, { useState } from "react";
+import React, { useCallback } from "react";
 import ReactQuill from "react-quill";
+import { debounce } from "lodash";
 
+const toolbarOptions = {
+  toolbar: [
+    [{ header: [1, 2, 3] }],
+    ["bold", "italic", "underline", "removeFormat"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
+  ],
+};
 
 const AnswerFrom = ({ value, onChange, isDeadlinePassed }) => {
-    const toolbarOptions = {
-      toolbar: [
-        [{ header: [1, 2, 3] }],
-        ["bold", "italic", "underline", "removeFormat"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        [{ align: [] }],
-      ],
-    };
-    return (
-      <div>
-        <div>
-          <ReactQuill
-            modules={{
-              toolbar: toolbarOptions.toolbar,
-            }}
-            value={value}
-            onChange={(content) => onChange(content)}
-            readOnly={isDeadlinePassed}
-          />
-        </div>
-      </div>
-    );
-  };
-  
+  const debouncedOnChange = useCallback(
+    debounce((content) => {
+      onChange(content);
+    }, 300),
+    []
+  );
+
+  return (
+    <div>
+      <ReactQuill
+        modules={{
+          toolbar: toolbarOptions.toolbar,
+        }}
+        value={value}
+        onChange={debouncedOnChange}
+        readOnly={isDeadlinePassed}
+      />
+    </div>
+  );
+};
+
 export default AnswerFrom;

@@ -1,1 +1,102 @@
-.attendance-create-container{width:100%;height:100vh;display:flex;flex-direction:column;align-items:center}.attendance-create-container .attendance-create__header{width:95%;display:flex;justify-content:space-between;align-items:center}.attendance-create-container .attendance-create__header .attendance-title{font-size:20px;font-weight:bold;color:#979696;line-height:1.2}.attendance-create-container .attendance-create__header .action-buttons-attendance-create{display:flex;align-items:center;gap:20px}.attendance-create-container .attendance-create__header .action-buttons-attendance-create .btn-attendance{padding:10px 20px;border-radius:5px;border:none;background-color:#007bff;color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s ease}.attendance-create-container .attendance-create__header .action-buttons-attendance-create .btn-attendance:hover{background-color:#0056b3}.attendance-create-container .attendance-create__header .action-buttons-attendance-create .btn-attendance.disabled{background-color:#ccc;cursor:not-allowed}.attendance-create-container .attendance-create__body{width:100%;overflow:auto;padding:20px;margin-left:30px;box-shadow:0 4px 8px rgba(0,0,0,.1)}.attendance-create-container .attendance-create__body .btn-submit{margin-bottom:10px;padding:10px 20px;border:none;border-radius:5px;background-color:#28a745;color:#fff;cursor:pointer;transition:all .3s ease}.attendance-create-container .attendance-create__body .btn-submit:hover{background-color:#218838}.attendance-create-container .attendance-create__body .new-attendance-table{display:flex;justify-content:center;width:100%;overflow:hidden}.attendance-create-container .attendance-create__body .new-attendance-table .attendance-table{width:95%;border-collapse:collapse;margin:0 auto}.attendance-create-container .attendance-create__body .new-attendance-table .attendance-table th,.attendance-create-container .attendance-create__body .new-attendance-table .attendance-table td{padding:15px;text-align:left;border-bottom:1px solid #ddd;font-size:16px}.attendance-create-container .attendance-create__body .new-attendance-table .attendance-table th{background-color:#75aadf;font-weight:bold}.attendance-create-container .attended select{padding:8px;border:1px solid #ccc;width:100%;background-color:#fff;cursor:pointer}@media(max-width: 768px){.attendance-create__header{flex-direction:column;align-items:flex-start}.attendance-create__body{padding:10px;margin-left:0}}
+.attendance-create-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.attendance-create-container .attendance-create__header {
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.attendance-create-container .attendance-create__header .attendance-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #979696;
+  line-height: 1.2;
+}
+.attendance-create-container .attendance-create__header .action-buttons-attendance-create {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.attendance-create-container .attendance-create__header .action-buttons-attendance-create .btn-attendance {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007bff;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.attendance-create-container .attendance-create__header .action-buttons-attendance-create .btn-attendance:hover {
+  background-color: #0056b3;
+}
+.attendance-create-container .attendance-create__header .action-buttons-attendance-create .btn-attendance.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.attendance-create-container .attendance-create__body {
+  width: 100%;
+  overflow: auto;
+  padding: 20px;
+  margin-left: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.attendance-create-container .attendance-create__body .btn-submit {
+  margin-bottom: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #28a745;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.attendance-create-container .attendance-create__body .btn-submit:hover {
+  background-color: #218838;
+}
+.attendance-create-container .attendance-create__body .new-attendance-table {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+}
+.attendance-create-container .attendance-create__body .new-attendance-table .attendance-table {
+  width: 95%;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+.attendance-create-container .attendance-create__body .new-attendance-table .attendance-table th,
+.attendance-create-container .attendance-create__body .new-attendance-table .attendance-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 16px;
+}
+.attendance-create-container .attendance-create__body .new-attendance-table .attendance-table th {
+  background-color: #75aadf;
+  font-weight: bold;
+}
+.attendance-create-container .attended select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .attendance-create__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .attendance-create__body {
+    padding: 10px;
+    margin-left: 0;
+  }
+}/*# sourceMappingURL=AttendanceCreate.css.map */

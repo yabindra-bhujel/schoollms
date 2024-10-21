@@ -26,7 +26,6 @@ const AnnouncementWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
   background: rgb(226, 222, 222);
   border-radius: 10px;
 `;
@@ -39,6 +38,7 @@ const AddButton = styled.button`
   background-color: #2196f3;
   border: none;
   color: white;
+  margin-right: 10px;
 `;
 const AnnouncementListWrapper = styled.div`
   width: 90%;
