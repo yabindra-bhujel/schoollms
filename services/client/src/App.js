@@ -47,7 +47,7 @@ function App() {
           <Route path="/student" element={<ProtectedRoute allowedRoles={['teacher']}><Student /></ProtectedRoute>} />
           <Route path="/class" element={<ProtectedRoute allowedRoles={['teacher']} e><Class /></ProtectedRoute>} />
           <Route path="/class/:subject_code" element={<ProtectedRoute allowedRoles={['teacher']}><ClassDetails /></ProtectedRoute>} />
-          <Route path="/assignment/:assignmentID" element={<ProtectedRoute allowedRoles={['teacher']}><AssigmentDetalis /></ProtectedRoute>} />
+          <Route path="/assignment/:courseID/:assignmentID" element={<ProtectedRoute allowedRoles={['teacher']}><AssigmentDetalis /></ProtectedRoute>} />
           <Route path="/attendance/:courseID" element={<ProtectedRoute allowedRoles={['teacher']}><Attendace /></ProtectedRoute>} />
           <Route path="/survey" element={<ProtectedRoute allowedRoles={['teacher']}><Survey /></ProtectedRoute>} />
           <Route path="/studentclass" element={<ProtectedRoute allowedRoles={['student']}><StudentTableComponent /></ProtectedRoute>} />

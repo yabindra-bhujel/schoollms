@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./style/AssigmentDetalis.css";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Layout from "../layout/Layout";
 import instance from "../../api/axios";
 import { useTranslation } from "react-i18next";
@@ -8,17 +8,20 @@ import DataTable from "./AssigmentSubmitTable";
 import ReactQuill from "react-quill";
 import "./style/AssigmentCreate.css";
 import TextDataTable from "./TextSubmitTable";
-import {Accordion,AccordionSummary,AccordionDetails,Typography,Dialog,DialogActions,DialogContent,DialogContentText,DialogTitle,Button,} from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Snackbar from "@mui/material/Snackbar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from '@mui/material/IconButton';
-
-
-
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const AssigmentDetalis = () => {
   const { t } = useTranslation();
+  const [activeMenu, setActiveMenu] = useState("submissionList");
+
+  const handleMenuChange = (menu) => {
+    setActiveMenu(menu);
+  };
 
   const toolbarOptions = {
     toolbar: [
@@ -35,6 +38,7 @@ const AssigmentDetalis = () => {
 
   const params = useParams();
   const assignmentID = params.assignmentID;
+  const subject_code = params.courseID;
   const [assignment, setAssignment] = useState([]);
   const [message, setMessage] = useState(null);
   const [submissions, setSubmissions] = useState([]);
@@ -72,7 +76,7 @@ const AssigmentDetalis = () => {
         setOpen(false);
       }, 3000);
     } finally {
-      callback(); 
+      callback();
     }
   };
 
@@ -97,12 +101,13 @@ const AssigmentDetalis = () => {
       }
     } catch {
       setMessage("課題の更新中にエラーが発生しました。");
-        setTimeout(() => {
-          setMessage(null);
-          setOpen(false);
-        }, 3000);
+      setTimeout(() => {
+        setMessage(null);
+        setOpen(false);
+      }, 3000);
     }
   };
+
   const handleInputChange = (field, value) => {
     setAssignment((prevAssignment) => ({
       ...prevAssignment,
@@ -122,10 +127,8 @@ const AssigmentDetalis = () => {
     try {
       const endpoint = `assignments/teacher-assignment-detail/${assignmentID}/`;
       const response = await instance.get(endpoint);
-      const student = response.data.students;
       setAssignment(response.data);
       setSubmissions(response.data.submissions);
-      console.log(response.data.submissions);
       setQquestion(response.data.questions);
     } catch (e) {
       setMessage("課題のデータを取得中にエラーが発生しました。");
@@ -148,103 +151,114 @@ const AssigmentDetalis = () => {
         />
 
         <div className="assigment-section">
-          <Accordion className="assigment-details-forms">
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="assignment-body-content"
-              id="assignment-body-header"
-            >
-              <Typography style={{fontWeight: "bold"}} variant="h5">{assignment.title}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <div className="assigment-body">
-                <div className="assigment-form">
-                  <label>{t("assignmentTitle")}</label>
-                  <input
-                    type="text"
-                    value={assignment.title}
-                    onChange={(e) =>
-                      handleInputChange("title", e.target.value)
-                    }
-                  />
+          <div className="assigment-details-header">
+            <div className="submission-btns">
+              <button
+                onClick={() => handleMenuChange("submissionList")}
+                className={`menu-btn ${activeMenu === "submissionList" ? "active-menu" : ""}`}
+              >
+                提出一覧
+              </button>
+              <button
+                onClick={() => handleMenuChange("assigment")}
+                className={`menu-btn ${activeMenu === "assigment" ? "active-menu" : ""}`}
+              >
+                課題詳細
+              </button>
+            </div>
+            <Link to={`/class/${subject_code}`}>
+          <IoIosCloseCircleOutline size={40} className="assigemnt-back-btn" />
+        </Link>
+          </div>
 
-                  <div className="short-form">
-                    <div className="assigemnt-type">
-                      <label>{t("assignmentType")}</label>
-                      <input
-                      disabled
-                        type="text"
-                        value={assignment.assigment_type}
-                        onChange={(e) =>
-                          handleInputChange("assigment_type", e.target.value)
-                        }
-                      />
-                    </div>
-
-                    <div className="assigemnt-deadline">
-                      <label>{t("assignmentDeadline")}</label>
-                      <input
-                        type="text"
-                        value={assignment.formatted_assignment_deadline}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "formatted_assignment_deadline",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                    <label>{t("assignmentDescription")}</label>
-                    <div className="editor">
-                      <ReactQuill
-                        theme="snow"
-                        value={assignment.description}
-                        onChange={handleEditorChange}
-                        modules={{
-                          toolbar: toolbarOptions.toolbar,
-                        }}
-                        style={{
-                          minHeight: "100px",
-                          maxHeight: "300px",
-                          border: "none",
-                        }}
-                      />
-                    </div>
-
-                    {assignment.assigment_type === "Text" && (
-                    <div className="assignment-question">
-                      <Typography>{t("assignmentQuestion")}</Typography>
-                      {question.map((questionItem, index) => (
-                        <div className="item" key={index}>
-                          <Typography dangerouslySetInnerHTML={{ __html: questionItem.question }} />
-                          <IconButton onClick={() => handleClickOpen()}>
-                            <DeleteIcon />
-                          </IconButton>
+          {activeMenu === "submissionList" ? (
+            <div className="assigment-submit-table">
+              <h2>課題提出一覧</h2>
+              {assignment.assigment_type === "File" && (
+                <DataTable submissions={submissions} />
+              )}
+              {assignment.assigment_type === "Text" && (
+                <TextDataTable submissions={submissions} />
+              )}
+            </div>
+          ) : (
+            <Accordion className="assigment-details-forms">
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="assignment-body-content"
+                id="assignment-body-header"
+              >
+                <Typography style={{ fontWeight: "bold" }} variant="h5">
+                  {assignment.title}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <div className="assigment-body">
+                  <div className="assigment-form">
+                    <label>{t("assignmentTitle")}</label>
+                    <input
+                      type="text"
+                      value={assignment.title}
+                      onChange={(e) => handleInputChange("title", e.target.value)}
+                    />
+                    <div className="short-form">
+                      <div className="assigemnt-type">
+                        <label>{t("assignmentType")}</label>
+                        <input
+                          disabled
+                          type="text"
+                          value={assignment.assigment_type}
+                        />
+                      </div>
+                      <div className="assigemnt-deadline">
+                        <label>{t("assignmentDeadline")}</label>
+                        <input
+                          type="text"
+                          value={assignment.formatted_assignment_deadline}
+                        />
+                      </div>
+                      <label>{t("assignmentDescription")}</label>
+                      <div className="editor">
+                        <ReactQuill
+                          theme="snow"
+                          value={assignment.description}
+                          onChange={handleEditorChange}
+                          modules={{
+                            toolbar: toolbarOptions.toolbar,
+                          }}
+                          style={{
+                            minHeight: "100px",
+                            maxHeight: "300px",
+                            border: "none",
+                          }}
+                        />
+                      </div>
+                      {assignment.assigment_type === "Text" && (
+                        <div className="assignment-question">
+                          <Typography>{t("assignmentQuestion")}</Typography>
+                          {question.map((questionItem, index) => (
+                            <div className="item" key={index}>
+                              <Typography
+                                dangerouslySetInnerHTML={{
+                                  __html: questionItem.question,
+                                }}
+                              />
+                              <IconButton onClick={() => handleClickOpen()}>
+                                <DeleteIcon />
+                              </IconButton>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  )}
-
-
+                  </div>
+                  <div onClick={updateAssigemntData} className="update-btn">
+                    <button>{t("saveChange")}</button>
                   </div>
                 </div>
-
-                <div onClick={updateAssigemntData} className="update-btn">
-                  <button>{t("saveChange")}</button>
-                </div>
-              </div>
-            </AccordionDetails>
-          </Accordion>
-
-          <div className="assigment-submit-table">
-            <h2>{t("assigemnttabletitile")}</h2>
-            {assignment.assigment_type === "File" && (
-              <DataTable submissions={submissions} />
-            )}
-            {assignment.assigment_type === "Text" && (
-              <TextDataTable submissions={submissions} />
-            )}
-          </div>
+              </AccordionDetails>
+            </Accordion>
+          )}
         </div>
       </div>
       <Dialog
@@ -253,21 +267,24 @@ const AssigmentDetalis = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {t("confirmDeletion.title")}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">確認</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {t("confirmDeletion.description")}
+            この質問を削除してもよろしいですか？
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>{t("confirmDeletion.cancel")}</Button>
+          <Button onClick={handleClose} color="primary">
+            キャンセル
+          </Button>
           <Button
-            onClick={() => deleteQuestion(selectedQuestionId, handleClose)}
+            onClick={() => {
+              deleteQuestion(selectedQuestionId, handleClose);
+            }}
+            color="primary"
             autoFocus
           >
-            {t("confirmDeletion.confirm")}
+            削除
           </Button>
         </DialogActions>
       </Dialog>

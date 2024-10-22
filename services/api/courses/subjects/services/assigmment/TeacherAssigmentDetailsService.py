@@ -73,7 +73,7 @@ class TeacherAssignmentDetailsService:
                 "student_id": student.student_id,
                 "submission_datetime": self._format_iso_date(submission.get("submission_datetime")),
                 "is_submitted": submission.get("is_submitted"),
-                "assignment_submission_file_url": submission.get("assignment_submission_file"),
+                "assignment_submission_file_url": self._get_absolute_file_url(submission.get("assignment_submission_file_url"), request),
                 "type": "File",
                 "is_graded": submission.get("is_graded"),
                 "grade": submission.get("grade"),

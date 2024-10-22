@@ -233,7 +233,7 @@ const AssignmentList = () => {
               {assignmentList.map((assignment) => (
                 <tr key={assignment.id}>
                   <td>
-                    <Link to={`/assignment/${assignment.id}`} className="assignment-link">
+                    <Link to={`/assignment/${subject_code}/${assignment.id}`} className="assignment-link">
                       {assignment.title}
                     </Link>
                   </td>
