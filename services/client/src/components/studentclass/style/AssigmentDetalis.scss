@@ -27,7 +27,7 @@
             color: white;
         }
     }
-    p{
+    small, p{
         display: flex;
         justify-content: center;
         align-items: center;
@@ -38,9 +38,6 @@
 }
 
 .assigment-section-student{
-    margin-top: 20px;
-    border: solid 1px black;
-    width: 80%;
     margin: 0 auto;
     background-color: white;
     overflow-y: scroll;
@@ -57,11 +54,9 @@
     justify-content: center;
     align-items: center;
     background-color: white;
-        margin: 10px;
 
 
         .body-st{
-            min-height: 200px;
             width: 79%;
             padding: 20px;
             box-shadow: 0 2px 4px rgba(12, 1, 1, 0.1);
@@ -174,9 +169,9 @@
         font-weight: bold;
         color: black;
         background-color: white;
-        border-radius: 20px;
+        border-radius: 10px;
         padding: 10px;
-        margin-bottom: 10px;
+        margin-top: 20px;
         transition: all 0.3s ease-in-out;
         font-weight: bold;
         cursor: pointer;
@@ -346,6 +341,19 @@
             }
         }
 
+    }
+
+    .file-remove{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        color: red;
+        cursor: pointer;
+
+        &:hover{
+            color: black;
+        }
     }
 
     button{

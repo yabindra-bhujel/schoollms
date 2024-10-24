@@ -2,6 +2,7 @@ from ...models import *
 from ...serializers import *
 from rest_framework.request import Request
 from datetime import datetime
+from django.conf import settings
 
 class TeacherAssignmentDetailsService:
 
@@ -65,6 +66,9 @@ class TeacherAssignmentDetailsService:
         
         submission_data = []
         for submission in serializer.data:
+            file_submission_instance = FileSubmission.objects.get(id=submission["id"])
+            files = file_submission_instance.assignment_submission_file.all()
+
             student = Student.objects.get(student_id=submission["student"])
             formatted_data = {
                 "assignment_title": assignment.title,
@@ -73,11 +77,25 @@ class TeacherAssignmentDetailsService:
                 "student_id": student.student_id,
                 "submission_datetime": self._format_iso_date(submission.get("submission_datetime")),
                 "is_submitted": submission.get("is_submitted"),
-                "assignment_submission_file_url": self._get_absolute_file_url(submission.get("assignment_submission_file_url"), request),
+                "files": [],
                 "type": "File",
                 "is_graded": submission.get("is_graded"),
                 "grade": submission.get("grade"),
             }
+
+            for file in files:
+                base_url = f"{settings.MEDIA_URL}file_assignments/{assignment.start_date.strftime('%Y-%m-%d')}/"
+                filename = file.file.name.split('/')[-1]
+                file_url = f"{base_url}{filename}"
+                full_url = request.build_absolute_uri(file_url)
+
+                file_submission_file = {
+                    "id": file.id,
+                    "file": full_url,
+                }
+
+                formatted_data["files"].append(file_submission_file)
+
             submission_data.append(formatted_data)
         return submission_data
 

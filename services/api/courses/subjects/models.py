@@ -5,7 +5,7 @@ from django.utils import timezone
 from datetime import date
 from students.models import Student
 from django.utils.deconstruct import deconstructible
-
+from django.conf import settings
 
 
 class Subject(models.Model):
@@ -150,6 +150,11 @@ class AssignmentFile(models.Model):
 
     def __str__(self):
         return self.file.name
+    
+    def get_filepath(self):
+        base_url = settings.MEDIA_URL
+
+        return f"{base_url}{self.file.name}"
     
     class Meta:
         verbose_name = "Assignment File"

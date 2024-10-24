@@ -32,7 +32,7 @@ export default function TextDataTable({ submissions = [] }) {
 
     try {
       updateSubmission(editedSubmissions);
-      setSuccessMessage(t('gradesUpdatedSuccessfully'));
+      setSuccessMessage("点数が更新されました。");
       setTimeout(() => setSuccessMessage(''), 3000);
       setEditingRows(prev => ({
         ...prev,
@@ -53,7 +53,7 @@ export default function TextDataTable({ submissions = [] }) {
     submission_datetime: submission.submission_datetime,
     is_submitted: submission.is_submitted ? t('submitted') : t('notSubmitted'),
     grade: editingRows[submission.id]?.grade ?? submission.grade,
-    isEditing: editingRows[submission.id]?.isEditing && editingRows[submission.id].score !== '', // スコアが空でない場合のみ isEditing を有効にする
+    isEditing: editingRows[submission.id]?.isEditing && editingRows[submission.id].score !== '',
     file: submission.assignment_answer
       ? [
           {

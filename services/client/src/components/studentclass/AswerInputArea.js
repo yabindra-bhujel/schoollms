@@ -4,7 +4,7 @@ import { debounce } from "lodash";
 
 const toolbarOptions = {
   toolbar: [
-    [{ header: [1, 2, 3] }],
+    [{ header: [2, 3, 4, false] }],
     ["bold", "italic", "underline", "removeFormat"],
     [{ list: "ordered" }, { list: "bullet" }],
     [{ align: [] }],
@@ -27,7 +27,7 @@ const AnswerFrom = ({ value, onChange, isDeadlinePassed }) => {
         }}
         value={value}
         onChange={debouncedOnChange}
-        readOnly={isDeadlinePassed}
+        readOnly={!isDeadlinePassed}
       />
     </div>
   );

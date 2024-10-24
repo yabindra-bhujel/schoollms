@@ -62,7 +62,7 @@ function truncateText(text, length) {
                   </div>
                 ) : (
                   <Link
-                  to={`/${isTeacher ? `assignment/${assignment.id}` : `studentassignment/${assignment.id}/${assignment.subject_code}`} `}
+                  to={`/${isTeacher ? `assignment/${assignment.subject_code}/${assignment.id}` : `studentassignment/${assignment.id}/${assignment.subject_code}`} `}
                   className="assignment-link"
                 >
                   View

@@ -185,6 +185,7 @@ class TeacherViewSet(viewsets.ViewSet):
                     "title": assignment.title,
                     "deadline": assignment.deadline,
                     "subject": assignment.course.subject_name,
+                    "subject_code": assignment.course.subject_code
                 })
 
             return Response(assignments_data, status=200)

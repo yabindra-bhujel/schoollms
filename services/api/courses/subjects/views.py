@@ -25,6 +25,7 @@ import logging
 from .services.assigmment.CreateTextSubmission import CreateTextSubmission
 from .services.assigmment.CreateFileSubmission import CreateFileSubmission
 from .services.assigmment.TeacherAssigmentDetailsService import TeacherAssignmentDetailsService
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -355,11 +356,22 @@ class AssigmentViewSet(viewsets.ViewSet):
         elif assignment.assigment_type == Assignment.AssignmentType.FILE:
             response_data["file_submissions"] = []
             file_submissions = FileSubmission.objects.filter(assignment=assignment, student=student)
+
             for file_submission in file_submissions:
-                file_submission_data = {"id": file_submission.id, "files": []}
-                for file in file_submission.assignment_submission_file.all():
-                    file_submission_data["files"].append(file.file.url)
-                response_data["file_submissions"].append(file_submission_data)
+                files = file_submission.assignment_submission_file.all()
+
+                for file in files:
+                    base_url = f"{settings.MEDIA_URL}file_assignments/{assignment.start_date.strftime('%Y-%m-%d')}/"
+                    filename = file.file.name.split('/')[-1]
+                    file_url = f"{base_url}{filename}"
+                    full_url = request.build_absolute_uri(file_url)
+
+                    file_submission_data = {
+                        "id": file.id,
+                        "files": full_url
+                    }
+
+                    response_data["file_submissions"].append(file_submission_data)
 
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -456,12 +468,6 @@ class AssigmentViewSet(viewsets.ViewSet):
         assignment.save()
         return Response(AssignmentSerializer(assignment).data, status=status.HTTP_200_OK)
 
-    def __formatIsoDate(self, iso_date):
-        try:
-            date = parser.isoparse(iso_date)
-            return date.strftime("%Y-%m-%d %H:%M")
-        except ValueError:
-            return None
 
     @extend_schema(
         parameters=[
@@ -475,21 +481,52 @@ class AssigmentViewSet(viewsets.ViewSet):
         responses={200: AssignmentSerializer},
     )
     @action(detail=False, methods=['put'], url_path='update-assignment/(?P<id>[^/.]+)', url_name='update-assignment')
-    def update_assignment(self, request, id: int=None):
-        assignment_id = request.data.get("id")
+    def update_assignment(self, request, id: int):
         assignment_title = request.data.get("title")
         assignment_description = request.data.get("description")
+        deadline = request.data.get("deadline")
+        start_date = request.data.get("start_date")
 
         try:
-            assignment = Assignment.objects.get(id=assignment_id)
+            assignment = Assignment.objects.get(id=id)
         except Assignment.DoesNotExist:
             logger.error("Assignment not found")
             return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        now = datetime.datetime.now()
+        if assignment.deadline < now:
+            return Response({"error": "Assignment deadline has passed"}, status=status.HTTP_400_BAD_REQUEST)
 
         assignment.title = assignment_title
         assignment.description = assignment_description
+        assignment.deadline = parser.parse(deadline)
+        assignment.start_date = parser.parse(start_date)
         assignment.save()
         return Response(AssignmentSerializer(assignment).data, status=status.HTTP_200_OK)
+    
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the file assignment",
+            )
+        ],
+        responses={204, None},
+    )
+    @action(detail=False, methods=['delete'], url_path='delete_assigment_file/(?P<id>[^./]+)', url_name='delete_assigment_file')
+    def delete_assigment_file(self, request, id: int):
+        try:
+            file = AssignmentFile.objects.get(id=id)
+            file.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except AssignmentFile.DoesNotExist:
+            return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(e)
+            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @extend_schema(tags=["ourseMateriales"])
 class CourseMaterialesViewSet(viewsets.ViewSet):

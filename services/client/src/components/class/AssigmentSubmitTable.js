@@ -9,12 +9,12 @@ export default function DataTable({ submissions = [] }) {
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleEditCellChange = (id, value) => {
-    const parsedValue = value !== '' ? parseFloat(value) : ''; // Parse the input value to a float
+    const parsedValue = value !== '' ? parseFloat(value) : '';
     setEditingRows(prev => ({
       ...prev,
       [id]: {
         ...prev[id],
-        grade: parsedValue, // Use 'grade' instead of 'score'
+        grade: parsedValue,
         isEditing: value !== '',
       },
     }));
@@ -24,21 +24,19 @@ export default function DataTable({ submissions = [] }) {
     const editedData = editingRows[id];
     if (!editedData) return;
 
-    // Find the submission data and update the 'grade'
     const submission = submissions.find((s) => s.id === id);
     if (!submission) return;
 
     const updatedSubmission = {
       ...submission,
-      grade: editedData.grade, // Use 'grade' instead of 'score'
+      grade: editedData.grade,
     };
 
     try {
       updateSubmission([updatedSubmission]);
-      setSuccessMessage(t('gradesUpdatedSuccessfully'));
+      setSuccessMessage("点数が更新されました。");
       setTimeout(() => setSuccessMessage(''), 3000);
       
-      // Clear the editing state
       setEditingRows(prev => ({
         ...prev,
         [id]: {
@@ -47,7 +45,7 @@ export default function DataTable({ submissions = [] }) {
         },
       }));
     } catch (err) {
-      alert(t('errorUpdatingGrades'));
+      alert("点数の更新中にエラーが発生しました...." );
     }
   };
 
@@ -55,13 +53,14 @@ export default function DataTable({ submissions = [] }) {
     <div className="table-container">
       {successMessage && <div className="success-message">{successMessage}</div>}
 
+      {/* TODO: make only show table if submission is have . */}
       <table className="data-table">
         <thead>
           <tr>
             <th>{t('studentId')}</th>
             <th>{t('fullName')}</th>
             <th>{t('submissionDate')}</th>
-            <th>{t('grade')}</th> {/* Change 'score' to 'grade' */}
+            <th>{t('grade')}</th> 
             <th>{t('submittedFileHeader')}</th>
             <th>{t('actions')}</th>
           </tr>
@@ -79,13 +78,13 @@ export default function DataTable({ submissions = [] }) {
                 <td>
                   <input
                     type="number"
-                    value={grade} // Bind to 'grade'
+                    value={grade}
                     onChange={(e) => handleEditCellChange(submission.id, e.target.value)}
                     className="score-input"
                   />
                 </td>
                 <td>
-                  {submission.assignment_submission_file_url?.map((fileObj, index) => (
+                  {submission.files?.map((fileObj, index) => (
                     <div key={index}>
                       <a href={fileObj.file} target="_blank" rel="noopener noreferrer">
                         {fileObj.file.split('/').pop()}
@@ -105,6 +104,8 @@ export default function DataTable({ submissions = [] }) {
           })}
         </tbody>
       </table>
+
+
     </div>
   );
 }
