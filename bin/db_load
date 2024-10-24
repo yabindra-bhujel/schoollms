@@ -1,0 +1,14 @@
+#!/bin/bash -eu
+
+ROOT_DIR=$(cd $(dirname $0)/..; pwd)
+
+cd services/api
+
+FIXTURE_PATH=$ROOT_DIR/fixtures/db_dump.json
+
+if [ ! -f "$FIXTURE_PATH" ]; then
+  echo "Fixture file not found at $FIXTURE_PATH"
+  exit 1
+fi
+
+poetry run python manage.py loaddata "$FIXTURE_PATH"

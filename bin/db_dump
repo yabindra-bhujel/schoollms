@@ -1,0 +1,13 @@
+#!/bin/bash -eu
+
+ROOT_DIR=$(cd $(dirname $0)/..; pwd)
+
+cd services/api
+
+FIXTURE_PATH=$ROOT_DIR/fixtures/db_dump.json
+
+mkdir -p $(dirname "$FIXTURE_PATH")
+
+# if already exists, overwrite
+
+poetry run python manage.py dumpdata > "$FIXTURE_PATH"
