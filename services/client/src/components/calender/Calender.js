@@ -451,6 +451,7 @@ const CalendarComponent = () => {
                   value={reminderTime}
                   onChange={(e) => handleReminderTimeChange(e)}
                   disabled={!isEdit}
+                  step="600"
                    />
                 </div>
               </div>
