@@ -1,12 +1,73 @@
 
 .assigemnt-submission{
-  body {font-family: Arial, Helvetica, sans-serif;}
-  * {box-sizing: border-box;}
-  overflow: hidden;
+
+  .assigment-section{
+    height: calc(100vh -  72px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+
+    .assigment-details-header{
+      width: 90%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: solid 2px #d7d4d4;
+      margin-bottom: 10px;
+
+      .submission-btns{
+        display: flex;
+        gap: 20px;
+
+        .menu-btn{
+          background-color: rgb(122, 116, 218);
+          padding: 8px;
+          border-radius: 5px;
+          border: none;
+          font-weight: bold;
+          font-size: 18px;
+          cursor: pointer;
+          height: 40px;
+          min-width: 150px;
+          width: auto;
+          transition: all 0.5s ease-in-out;
+
+         .active-menu {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+          }
+          
+
+          &:hover{
+            transform: scale(1.1);
+            background-color: white;
+            border: solid 1px black;
+          }
+        }
+      }
+
+
+        .assigemnt-back-btn{
+          color: red;
+          font-weight: 600;
+          
+          &:hover{
+          transform: scale(1.1);
+        }
+      }
+    }
+
+  }
+
 }
 
+
+
+
 .assigment-section {
-  background-color: rgb(218, 227, 232);
   height: calc(100vh -  80px);
   padding: 20px;
   width: 100%;
@@ -141,10 +202,12 @@
 
 
 .assigment-submit-table{
-  margin-top: 70px;
-  width: 80%;
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
   background-color: white;
-  min-height: 300px;
   border-radius: 5px;
   overflow: hidden;
 

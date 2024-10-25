@@ -1,38 +1,25 @@
 import React, { useState } from 'react';
-import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import './style/table.css';
 import { updateSubmission } from './AssigemntService';
-import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
 
-export default function TextDataTable({ submissions }) {
+export default function TextDataTable({ submissions = [] }) {
   const { t } = useTranslation();
   const [editingRows, setEditingRows] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
 
-  const CustomToolbar = () => (
-    <div style={{ padding: '10px' }}>
-      <GridToolbarExport csvOptions={{ fileName: `${submissions.assignment_title}` }} />
-      <button  className='score-edit-btn' onClick={handleEditCellSubmit}>Submit Edited Cells</button>
-    </div>
-  );
-
-const handleEditCellChange = ({ id, field, props }) => {
-    if (field === 'grade') {
-      setEditingRows(prev => ({
-        ...prev,
-        [id]: {
-          ...prev[id],
-          grade: props.value,
-        },
-      }));
-    }
+  const handleEditCellChange = (id, value) => {
+    setEditingRows(prev => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        grade: value,
+        isEditing: value !== '',
+      },
+    }));
   };
 
-  
-
-  const handleEditCellSubmit = () => {
+  const handleSave = (id) => {
     const editedSubmissions = Object.entries(editingRows).map(([id, editData]) => {
       const submission = submissions.find((s) => s.id.toString() === id);
       return {
@@ -41,82 +28,32 @@ const handleEditCellChange = ({ id, field, props }) => {
       };
     });
 
-    // if data is null then stop
-    if (editedSubmissions.length === 0) {
-      return;
-    }
+    if (editedSubmissions.length === 0) return;
 
     try {
-      // Assuming updateSubmission takes an array of updated submissions
       updateSubmission(editedSubmissions);
-      setSuccessMessage('Grades updated successfully!');
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 3000);
+      setSuccessMessage("点数が更新されました。");
+      setTimeout(() => setSuccessMessage(''), 3000);
+      setEditingRows(prev => ({
+        ...prev,
+        [id]: {
+          ...prev[id],
+          isEditing: false,
+        },
+      }));
     } catch (err) {
-      alert('Error updating grades!');
+      alert(t('errorUpdatingGrades'));
     }
   };
 
-  const columns = [
-    { field: 'student_id', headerName: t('studentId'),sortable: false, width: 200, headerClassName: 'headerStyle' },
-    { field: 'student_name', headerName: t('fullName'),sortable: false, sortable: false, width: 200, headerClassName: 'headerStyle' },
-    { field: 'submission_datetime', headerName: t('submissionDate'),sortable: false, width: 180, headerClassName: 'headerStyle' },
-    { field: 'is_submitted', headerName: t('status'),sortable: false, width: 170, headerClassName: 'headerStyle' },
-    {
-      field: 'is_graded',
-      headerName: t('is_graded'),
-      sortable: false,
-      width: 100,
-      headerClassName: 'headerStyle',
-      renderCell: (params) => (
-        <input type="checkbox" checked={params.value} readOnly style={{ background: params.value ? 'green' : 'red' }} />
-      ),
-    },
-    {
-      field: 'grade',
-      headerName: t('score'),
-      sortable: false,
-      width: 100,
-      headerClassName: 'headerStyle',
-      editable: true,
-      renderCell: (params) => (
-        <input
-          type="number"
-          style={{ width: '50px' }}
-          value={params.value}
-          onChange={(e) => handleEditCellChange({ id: params.id, field: 'grade', props: { value: e.target.value } })}
-        />
-      ),
-    },
-    {
-      field: 'file',
-      headerName: t('submittedFileHeader'),
-      sortable: false,
-      width: 200,
-      headerClassName: 'headerStyle',
-      renderCell: (params) => (
-        <>
-          {params.value?.map((fileObj, index) => (
-            <div key={index}>
-              <a href={fileObj.url} target="_blank" rel="noopener noreferrer">
-                {fileObj.name}
-              </a>
-            </div>
-          ))}
-        </>
-      ),
-    },
-  ];
-
-  const rows = submissions?.map((submission, index) => ({
-    id: submission.id.toString(), // Ensure the ID is a string for comparison
+  const rows = submissions.map((submission) => ({
+    id: submission.id.toString(),
     student_id: submission.student_id,
     student_name: submission.student_name,
     submission_datetime: submission.submission_datetime,
-    is_submitted: submission.is_submitted ? 'Submitted' : 'Not Submitted',
-    is_graded: submission.is_graded,
+    is_submitted: submission.is_submitted ? t('submitted') : t('notSubmitted'),
     grade: editingRows[submission.id]?.grade ?? submission.grade,
+    isEditing: editingRows[submission.id]?.isEditing && editingRows[submission.id].score !== '',
     file: submission.assignment_answer
       ? [
           {
@@ -128,33 +65,57 @@ const handleEditCellChange = ({ id, field, props }) => {
   }));
 
   return (
-    <>
-      <div>
-        {successMessage && (
-          <Stack sx={{ width: '100%' }} spacing={2}>
-            <Alert severity="success">{successMessage}</Alert>
-          </Stack>
-        )}
-      </div>
-      <div style={{ height: 600, width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={15}
-          onEditCellChange={handleEditCellChange}
-          editMode="row"
-          isCellEditable={(params) => params.row.is_graded && params.row.grade == null}
-          components={{
-            Toolbar: CustomToolbar,
-          }}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 15 },
-            },
-          }}
-          pageSizeOptions={[15, 20]}
-        />
-      </div>
-    </>
+    <div className="table-container">
+      {successMessage && (
+        <div className="success-message">
+          {successMessage}
+        </div>
+      )}
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>{t('studentId')}</th>
+            <th>{t('fullName')}</th>
+            <th>{t('submissionDate')}</th>
+            <th>{t('score')}</th>
+            <th>{t('submittedFileHeader')}</th>
+            <th>Action</th> 
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.id}>
+              <td>{row.student_id}</td>
+              <td>{row.student_name}</td>
+              <td>{row.submission_datetime}</td>
+              <td>
+                <input
+                  type="number"
+                  value={row.grade}
+                  onChange={(e) => handleEditCellChange(row.id, e.target.value)}
+                  className="score-input"
+                />
+              </td>
+              <td>
+                {row.file.map((fileObj, index) => (
+                  <div key={index}>
+                    <a href={fileObj.url} target="_blank" rel="noopener noreferrer">
+                      {fileObj.name}
+                    </a>
+                  </div>
+                ))}
+              </td>
+              <td>
+                {row.isEditing && (
+                  <button onClick={() => handleSave(row.id)} className="save-button">
+                    保存
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

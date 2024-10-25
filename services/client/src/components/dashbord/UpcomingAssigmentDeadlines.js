@@ -53,7 +53,7 @@ const UpcomingAssigmentDeadlines = () => {
                     {assignments.map((assignment) => (
                         <ListItem key={assignment.id} style={{ backgroundColor: "#f0f0f0", marginBottom: "8px" }}>
                             <Link
-                                to={isTeacher ? `/assignment/${assignment.id}` : `/studentassignment/${assignment.id}/${assignment.subject_code}`}
+                                to={isTeacher ? `/assignment/${assignment.subject_code}/${assignment.id}` : `/studentassignment/${assignment.id}/${assignment.subject_code}`}
                                 style={{ textDecoration: "none", color: "black" }}>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                     <ListItemIcon>

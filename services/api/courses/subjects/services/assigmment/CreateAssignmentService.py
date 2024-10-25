@@ -10,7 +10,7 @@ import logging
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
-class CreateAssignment:
+class CreateAssignmentService:
     def __init__(self, data):
         self.data = data
 
@@ -24,8 +24,6 @@ class CreateAssignment:
                 students = Student.objects.filter(student_id__in=student_ids)
                 questions = self.data.get("questions", [])
 
-
-
                 assignment = Assignment.objects.create(
                     title=self.data['assignment_title'],
                     description=self.data['assignment_description'],
@@ -36,7 +34,6 @@ class CreateAssignment:
                     deadline=self.data['assignment_deadline'],
                 )
                 assignment.students.set(students)
-
 
                 # Create TextAssignmentQuestion instances and associate them with the assignment
                 if assignment.assigment_type == 'Text':
@@ -54,4 +51,4 @@ class CreateAssignment:
             return {'message': 'Assignment created successfully',}
         except ObjectDoesNotExist:
             logger.error('One or more objects does not exist')
-            return {'error': 'One or more objects does not exist'}
+            raise Exception('One or more objects does not exist')

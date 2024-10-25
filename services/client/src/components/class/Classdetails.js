@@ -2,22 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "../layout/Layout";
 import "./style/classdetals.css";
-import { MdArrowBack } from "react-icons/md";
 import CourseContant from "./CourseContant";
 import AssignmentList from "./AssigemtList";
-import { FaListCheck } from "react-icons/fa6";
-import { FcSurvey } from "react-icons/fc";
 import { useTranslation } from "react-i18next";
-import { BiSolidCloudUpload } from "react-icons/bi";
-import { IoCreateOutline } from "react-icons/io5";
 import Announcement from "./announcement/Announcement";
 import AssigmentCreate from "./AssigmentCreate";
 import UploadPDF from "./uploadPDF";
-import { getFile, getCourseDetails } from "./ClassServices";
+import TeacherClassServices from "./ClassServices";
 import Syllabus from "./syllabus/Syllabus";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
-
+import { IoChevronBack } from "react-icons/io5";
 
 const ClassDetails = () => {
   const params = useParams();
@@ -36,7 +31,7 @@ const ClassDetails = () => {
   const fetchData = async () => {
     try {
       setIsLoaded(true);
-      const response = await getFile(subject_code);
+      const response = await TeacherClassServices.getFile(subject_code);
       setIsLoaded(false);
       return response;
     } catch (error) {
@@ -56,7 +51,7 @@ const ClassDetails = () => {
   const fetchCourseData = async () => {
     try {
       setIsLoaded(true);
-      const response = await getCourseDetails(subject_code);
+      const response = await TeacherClassServices.getCourseDetails(subject_code);
       console.log(response.data[1]);
       setIsLoaded(false);
       setSubject(response.data[1]);
@@ -68,11 +63,6 @@ const ClassDetails = () => {
         setMessage("");
       }, 5000);
     }
-  };
-
-
-  const closeExamModel = () => {
-    setIsExamModelOpen(false);
   };
 
   const openAssigmentModal = () => {
@@ -108,7 +98,7 @@ const ClassDetails = () => {
         <div className="class-header">
           <div className="retun-bnt">
             <Link to="/class">
-              <MdArrowBack className="back" />
+              <IoChevronBack className="back" />
             </Link>
           </div>
 
@@ -155,60 +145,6 @@ const ClassDetails = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="card-item">
-
-          <div className="card-attdance">
-            <Link className={"link-styles"} to={`/attendance/${subject_code}`}>
-              <div className="link-to-attdance">
-                <div className="icon">
-                  <FaListCheck />
-                </div>
-                <div className="card-body">
-                  <h4>{t("attendance")}</h4>
-                  <p>{t("generate QR code or number")}</p>
-                </div>
-              </div>
-            </Link>
-          </div>
-
-          <div onClick={openAssigmentModal} className="card">
-            <div className="icon">
-              <IoCreateOutline />
-            </div>
-            <div className="card-body">
-              <button>
-                <h4>{t("create assignment")}</h4>
-                <p>{t("create assignment for this subject")}</p>
-              </button>
-            </div>
-          </div>
-
-          <div onClick={openPDFModel} className="card">
-            <div className="icon">
-              <BiSolidCloudUpload />
-            </div>
-            <div className="card-body">
-              <button>
-                <h4>{t("teaching materials")}</h4>
-                <p>{t("share materials related to the class")}</p>
-              </button>
-            </div>
-          </div>
-
-          <div className="card" disabled>
-            <div className="icon">
-              <FcSurvey />
-            </div>
-            <div className="card-body">
-              <button disabled>
-                <h4>アンケート</h4>
-                <p>授業に関するアンケート</p>
-              </button>
-            </div>
-          </div>
-
-        </div>
-
         <div className="all-btn">
           <button
             className={`assigemnt-btn ${selectedButton === "assignment" ? "menu-active" : ""}`}
@@ -216,6 +152,10 @@ const ClassDetails = () => {
           >
             {t("assignment")}
           </button>
+
+          <Link to={`/attendance/${subject_code}`}>
+            <button className="attendance-btn">{t("attendance")}</button>
+          </Link>
 
           <button className="survey-btn" disabled>{t("survey")}</button>
 
@@ -247,7 +187,7 @@ const ClassDetails = () => {
           )}
           {selectedButton === "course_contant" && (
             <div className="main-element">
-              <CourseContant setMessage={setMessage} setOpen={setOpen} />
+              <CourseContant setMessage={setMessage} setOpen={setOpen} fetchData={fetchData} />
             </div>
           )}
 

@@ -1,1 +1,80 @@
-.attendance-report{font-family:"Arial",sans-serif;display:flex;flex-direction:column;max-height:98%;overflow-y:auto;position:relative}.attendance-report h3{float:left;color:#ca168e;margin-bottom:20px;font-size:24px;font-weight:600;letter-spacing:1px;margin-top:10px}.attendance-report .circles-container{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:20px}.attendance-report .circles-container .outer-circle{width:120px;height:120px;border-radius:50%;display:flex;justify-content:center;align-items:center;box-shadow:0 4px 10px rgba(0,0,0,.1);transition:transform .3s ease;border:solid 10px #a7c3c7}.attendance-report .circles-container .outer-circle:hover{transform:scale(1.1)}.attendance-report .circles-container .outer-circle .circle-item{width:100px;height:100px;transition:transform .3s ease}.attendance-report .circles-container .outer-circle .circle-item:hover{transform:scale(1.1)}.attendance-report .details-container{margin-top:10px;display:flex;flex-direction:column;justify-content:space-evenly;align-items:flex-start;gap:20px}.attendance-report .details-container .detail-item{display:flex;align-items:center}.attendance-report .details-container .detail-item .dot{width:15px;height:15px;border-radius:50%;margin-right:10px}.attendance-report .details-container .detail-item span{font-size:18px;color:#333;font-weight:500}.attendance-report .view-all{margin-left:auto;display:inline-block;margin-top:10px;color:#4169e1;text-decoration:none;font-weight:bold;padding:10px 20px;text-decoration:underline;transition:background-color .3s ease}
+.attendance-report {
+  font-family: "Arial", sans-serif;
+  display: flex;
+  flex-direction: column;
+  max-height: 98%;
+  overflow-y: auto;
+  position: relative;
+}
+.attendance-report h3 {
+  float: left;
+  color: rgb(202, 22, 142);
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-top: 10px;
+}
+.attendance-report .circles-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 20px;
+}
+.attendance-report .circles-container .outer-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  border: solid 10px #a7c3c7;
+}
+.attendance-report .circles-container .outer-circle:hover {
+  transform: scale(1.1);
+}
+.attendance-report .circles-container .outer-circle .circle-item {
+  width: 100px;
+  height: 100px;
+  transition: transform 0.3s ease;
+}
+.attendance-report .circles-container .outer-circle .circle-item:hover {
+  transform: scale(1.1);
+}
+.attendance-report .details-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  gap: 20px;
+}
+.attendance-report .details-container .detail-item {
+  display: flex;
+  align-items: center;
+}
+.attendance-report .details-container .detail-item .dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.attendance-report .details-container .detail-item span {
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+}
+.attendance-report .view-all {
+  margin-left: auto;
+  display: inline-block;
+  margin-top: 10px;
+  color: #4169e1;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 20px;
+  text-decoration: underline;
+  transition: background-color 0.3s ease;
+}/*# sourceMappingURL=AttendanceReport.css.map */

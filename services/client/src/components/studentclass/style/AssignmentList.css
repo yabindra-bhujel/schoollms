@@ -1,0 +1,37 @@
+.student-assignment-list .student-assignment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: rgb(209, 213, 209);
+  margin-bottom: 10px;
+}
+.student-assignment-list .student-assignment-header h4 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: black;
+}
+.student-assignment-list .student-assigemnt-list {
+  width: 100%;
+  border-collapse: collapse;
+}
+.student-assignment-list .student-assigemnt-list th, .student-assignment-list .student-assigemnt-list td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+.student-assignment-list .student-assigemnt-list th {
+  background-color: #f2f2f2;
+}
+.student-assignment-list .student-assigemnt-list tr:hover {
+  background-color: #f1f1f1;
+}
+.student-assignment-list .student-assigemnt-list a {
+  text-decoration: none;
+  color: blue;
+}
+.student-assignment-list .student-assigemnt-list a:hover {
+  text-decoration: underline;
+}/*# sourceMappingURL=AssignmentList.css.map */

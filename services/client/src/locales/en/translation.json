@@ -131,57 +131,6 @@
 },
 
 
-"createExam":{
-  "examTitle": "Exam Title",
-  "placholder": "Exam Title Input",
-  "examStartDate": "Exam Start Date",
-  "examEndDate": "Exam End Date",
-  "examTime": "Exam Time",
-  "examMaxScore": "Max Score",
-  "examDescription": "Exam Description",
-  "createExam": "Create Exam",
-  "question": "Question",
-  "answerType": "Answer Type",
-  "submit": "Submit",
-  "cancel": "Cancel",
-  "back": "Back",
-  "next": "Next",
-  "examPreview": "Exam Preview",
-  "inputQuestion":"Enput Question",
-  "questiontype": "Choice Question Type",
-  "shortAnswer": "Short Answer",
-  "longAnswer": "Long Answer",
-  "addmore":"Add Question",
-  "creeateExma": "Create Exam",
-  "createQuestion": "Cretae Question",
-  "finish": "Finish"
-
-},
-
-
-"examD":{
-  "startDate": "Start Date Time",
-  "endDate": "End Date Time",
-  "duration": "Duration",
-  "maxGrade": "Max Grade",
-  "update": "Update",
-  "loading": "Loading...",
-  "shortAnswerQuestions": "Short Answer Questions",
-  "noShortAnswerQuestions": "No short answer questions",
-  "longAnswerQuestions": "Long Answer Questions",
-  "noLongAnswerQuestions": "No long answer questions",
-  "examlist": "Exam submission List"
-},
-
-
-"examTable":{
-  "studentID": "Student ID",
-  "studentName": "Student Name",
-  "subjectName": "Subject Name",
-  "submissionTime": "Submission Time",
-  "takeTime": "Take Time",
-  "submissionFile": "Submission File"
-},
 
 "studentInfo": {
   "idNumber": "ID Number",

@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.shortcuts import get_object_or_404
-from .services.assigmment.create_assigment import CreateAssignment
+from .services.assigmment.CreateAssignmentService import CreateAssignmentService
 from .services.student_subject import StduentSubjectService
 from .services.subject_registration import SubjectRegisterService
 from .models import *
@@ -18,17 +18,17 @@ from .services.announcement import AnnouncementService
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from dateutil import parser
-import os
-from django.conf import settings
-from utils.pdf_generator import PDFGenerator
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
 from typing import Optional
 import logging
+from .services.assigmment.CreateTextSubmission import CreateTextSubmission
+from .services.assigmment.CreateFileSubmission import CreateFileSubmission
+from .services.assigmment.TeacherAssigmentDetailsService import TeacherAssignmentDetailsService
+from django.conf import settings
 
-logger = logging.getLogger(__name__) # course.subject.views
+logger = logging.getLogger(__name__)
 User = get_user_model()
-
 
 @extend_schema(tags=["Admin Subject"])
 class AdminSubjectViewSet(viewsets.ViewSet):
@@ -54,12 +54,7 @@ class AdminSubjectViewSet(viewsets.ViewSet):
         ],
         responses={200: SubjectSerializer},
     )
-    @action(
-        detail=False,
-        methods=["get"],
-        url_path="(?P<subject_code>[^/.]+)",
-        url_name="subject_detail",
-    )
+    @action(detail=False,methods=["get"],url_path="(?P<subject_code>[^/.]+)",url_name="subject_detail")
     def subject_detail(self, request, subject_code: str = None):
         queryset = Subject.objects.all()
         subject = get_object_or_404(queryset, subject_code=subject_code)
@@ -107,7 +102,6 @@ class AdminSubjectViewSet(viewsets.ViewSet):
         subject = get_object_or_404(queryset, id=id)
         subject.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 @extend_schema(tags=["Subject Registration"])
 class SubjectRegistrationViewSet(viewsets.ViewSet):
@@ -180,7 +174,6 @@ class SubjectRegistrationViewSet(viewsets.ViewSet):
         registration.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
 @extend_schema(tags=["Student Subject"])
 class StudentSubjectViewSet(viewsets.ViewSet):
     serializer_class = SubjectSerializer
@@ -202,7 +195,6 @@ class StudentSubjectViewSet(viewsets.ViewSet):
     def retrieve(self, request, id: int=None):
         stduent_subject = StduentSubjectService(id, request.user.username).get_student_subject()
         return Response(stduent_subject)
-
 
 @extend_schema(tags=["Teacher Subject"])
 class TeacherSubjectViewSet(viewsets.ViewSet):
@@ -228,7 +220,6 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
         ).get_teacher_subject()
         return Response(teacher_subject)
 
-
 @extend_schema(tags=["Assigment"])
 class AssigmentViewSet(viewsets.ViewSet):
     serializer_class = AssignmentSerializer
@@ -251,10 +242,24 @@ class AssigmentViewSet(viewsets.ViewSet):
     @action(detail=False, 
             methods=['get'], url_path='assignment-list/(?P<subject_code>[^/.]+)', url_name='assignment_list')
     def assignment_list(self, request, subject_code: str=None):
-        queryset = Assignment.objects.filter(course__subject_code=subject_code)
+
+        query_params: dict = request.query_params
+        available = query_params.get('available')
+        not_available = query_params.get('not_available')
+        available = available.lower() == 'true' if available is not None else None
+        not_available = not_available.lower() == 'true' if not_available is not None else None
+
+        if available is True:
+            queryset = Assignment.objects.filter(course__subject_code=subject_code, is_active=True)
+        elif not_available is True:
+            queryset = Assignment.objects.filter(course__subject_code=subject_code, is_active=False)
+        else:
+            queryset = Assignment.objects.filter(course__subject_code=subject_code)
+        
         serializer = AssignmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -267,7 +272,14 @@ class AssigmentViewSet(viewsets.ViewSet):
         responses={200: AssignmentSerializer},
     )
     @action(detail=False, methods=['get'], url_path='student-assignment/(?P<subject_code>[^/.]+)', url_name='assignment_detail')
-    def assignment_detail_stduent(self, request, subject_code: str=None):
+    def subject_assignment_by_stduent(self, request, subject_code: str=None):
+                
+        query_params: dict = request.query_params
+        available = query_params.get('available')
+        not_available = query_params.get('not_available')
+        available = available.lower() == 'true' if available is not None else None
+        not_available = not_available.lower() == 'true' if not_available is not None else None
+
         user = User.objects.get(username=request.user.username)
         student = Student.objects.get(user=user)
         subject = Subject.objects.get(subject_code=subject_code)
@@ -277,8 +289,14 @@ class AssigmentViewSet(viewsets.ViewSet):
 
         assignment_data = []
 
-        for registration in serializer.data:
-            assignments = Assignment.objects.filter(course=subject, is_published=True)
+        for _ in serializer.data:
+
+            if available is True:
+                assignments = Assignment.objects.filter(course=subject, is_published=True, is_active=True)
+            elif not_available is True:
+                assignments = Assignment.objects.filter(course=subject, is_published=True, is_active=False)
+            else:
+                assignments = Assignment.objects.filter(course=subject, is_published=True)
 
             for assignment in assignments:
                 has_submitted = assignment.has_student_submitted(student)
@@ -291,7 +309,7 @@ class AssigmentViewSet(viewsets.ViewSet):
         return Response(assignment_data)
 
     def create(self, request):
-        new_assignment = CreateAssignment(request.data).create_assignment()
+        new_assignment = CreateAssignmentService(request.data).create_assignment()
         return Response(new_assignment,  status=status.HTTP_201_CREATED)
 
     @extend_schema(
@@ -338,17 +356,24 @@ class AssigmentViewSet(viewsets.ViewSet):
         elif assignment.assigment_type == Assignment.AssignmentType.FILE:
             response_data["file_submissions"] = []
             file_submissions = FileSubmission.objects.filter(assignment=assignment, student=student)
+
             for file_submission in file_submissions:
-                file_submission_data = {"id": file_submission.id, "files": []}
-                for file in file_submission.assignment_submission_file.all():
-                    file_submission_data["files"].append(file.file.url)
-                response_data["file_submissions"].append(file_submission_data)
+                files = file_submission.assignment_submission_file.all()
+
+                for file in files:
+                    base_url = f"{settings.MEDIA_URL}file_assignments/{assignment.start_date.strftime('%Y-%m-%d')}/"
+                    filename = file.file.name.split('/')[-1]
+                    file_url = f"{base_url}{filename}"
+                    full_url = request.build_absolute_uri(file_url)
+
+                    file_submission_data = {
+                        "id": file.id,
+                        "files": full_url
+                    }
+
+                    response_data["file_submissions"].append(file_submission_data)
 
         return Response(response_data, status=status.HTTP_200_OK)
-
-    def __ensureDirectoryExists(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
 
     @action(detail=False, methods=['post'], url_path='create-text-assignment', url_name='create-text-assignment')
     def create_text_assignment(self, request):
@@ -356,56 +381,22 @@ class AssigmentViewSet(viewsets.ViewSet):
         assignment_id = request.data.get("assignment_id")
         answers = request.data.get("answers", [])
 
-        if not student_id or not assignment_id or not answers:
-            return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
-        assignment = get_object_or_404(Assignment, id=assignment_id)
-        student = get_object_or_404(Student, student_id=student_id)
+        try:
 
-        textsubmission = TextSubmission.objects.filter(assignment=assignment, student=student).first()
+            if not student_id or not assignment_id or not answers:
+                logger.error("Invalid data format for text assignment")
+                return Response({"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            assignment = get_object_or_404(Assignment, id=assignment_id)
+            student = get_object_or_404(Student, student_id=student_id)
 
-        if textsubmission:
-            textsubmission.answers.clear()
-        else:
-            textsubmission = TextSubmission.objects.create(assignment=assignment, student=student, is_submitted=True)
-
-        for answer_data in answers:
-            question_id = answer_data.get("question_id")
-            answer_text = answer_data.get("answer")
-            question = TextAssigemntQuestion.objects.get(id=question_id)
-            text_answer = TextQuestionAnswer.objects.create(
-                    question_id=question_id,
-                    answer=answer_text)
-            textsubmission.answers.add(text_answer)
-        textsubmission.save()
-
-        filename = f"{student.student_id}.pdf"
-        assignment_title = assignment.title
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        full_name = f"{student.first_name} {student.last_name}"
-        question_answers = [
-                {"question": answer.question.question, "answer": answer.answer}
-                for answer in textsubmission.answers.all()
-            ]
-
-        media_dir = f"text_assignments/{assignment_title}/"
-        media_base_dir = settings.MEDIA_ROOT
-        self.__ensureDirectoryExists(os.path.join(media_base_dir, media_dir))
-        pdf_file_path = os.path.join(media_base_dir, media_dir, filename)
-
-        pdf = PDFGenerator(filename=pdf_file_path, title=assignment_title, student_name = full_name, date=current_date, student_id=student.student_id)
-        pdf.pdf_header()
-        for question_answer in question_answers:
-            pdf.add_text(question_answer["question"])
-            pdf.add_text(question_answer["answer"])
-        pdf.save()
-
-        relative_pdf_path = os.path.join(media_dir, filename)
-        textsubmission.student_answer_file = relative_pdf_path
-        textsubmission.save()
-
-        assignment.submission_count = TextSubmission.objects.filter(assignment=assignment, is_submitted=True, student=student).count()
-        assignment.save()
-        return Response(status=status.HTTP_200_OK)
+            CreateTextSubmission().create(answers, assignment, student)
+            
+            return Response(status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            logger.error(e)
+            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=False, methods=['post'], url_path='create-file-assignment', url_name='create-file-assignment')
     def create_file_assignment(self, request):
@@ -414,41 +405,19 @@ class AssigmentViewSet(viewsets.ViewSet):
         student_id = request.data.get("student")
 
         try:
-            assignment = get_object_or_404(Assignment, id=assignment_id)
-            student = get_object_or_404(Student, student_id=student_id)
-        except ObjectDoesNotExist as e:
+            try:
+                assignment = get_object_or_404(Assignment, id=assignment_id)
+                student = get_object_or_404(Student, student_id=student_id)
+            except ObjectDoesNotExist as e:
+                logger.error(e)
+                return Response({"message": "Assignment not found"}, status=404)
+
+            CreateFileSubmission().create(answer_files, assignment, student)
+
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
             logger.error(e)
-            return Response({"message": "Assignment not found"}, status=404)
-
-        media_dir = f"file_assignments/{assignment.title}/"
-        media_base_dir = settings.MEDIA_ROOT
-        self.__ensureDirectoryExists(os.path.join(media_base_dir, media_dir))
-
-        submission = None
-        existing_submission = FileSubmission.objects.filter(assignment=assignment, student=student).first()
-        if existing_submission:
-            submission = existing_submission
-            existing_submission.assignment_submission_file.clear()
-            existing_submission.is_submited = True
-            existing_submission.save()
-        else:
-            submission = FileSubmission.objects.create(assignment=assignment, student=student, is_submited=True)
-            submission.save()
-
-        if submission:
-            for file in answer_files:
-                file_path = os.path.join(media_base_dir, media_dir, file.name)
-                with open(file_path, 'wb') as destination:
-                    for chunk in file.chunks():
-                        destination.write(chunk)
-                assignment_file = AssignmentFile.objects.create(file=file_path)
-                submission.assignment_submission_file.add(assignment_file)
-        else:
-            return Response({"message": "Submission not found"}, status=404)
-
-        assignment.submission_count = FileSubmission.objects.filter(assignment=assignment, is_submited=True).count()
-        assignment.save()
-        return Response(status=status.HTTP_200_OK)
+            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @extend_schema(
         parameters=[
@@ -470,88 +439,12 @@ class AssigmentViewSet(viewsets.ViewSet):
                 logger.error("Assignment not found")
                 return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
 
-            serializer = AssignmentSerializer(assignment)
-            response_data = serializer.data.copy()
+            response = TeacherAssignmentDetailsService().get_assignment_details(assignment, request)
 
-            # Get all questions associated with this assignment
-            questions = assignment.questions.all()
-            question_list = [{"id": question.id, "question": question.question} for question in questions]
-            response_data["questions"] = question_list
-
-            posted_date_iso = serializer.data["posted_date"]
-            formatted_posted_date =self.__formatIsoDate(posted_date_iso)
-
-            assignment_deadline_iso = serializer.data["deadline"]
-            formatted_assignment_deadline = self.__formatIsoDate(assignment_deadline_iso)
-
-            if formatted_posted_date:
-                response_data["formatted_posted_date"] = formatted_posted_date
-
-            if formatted_assignment_deadline:
-                response_data["formatted_assignment_deadline"] = formatted_assignment_deadline
-
-            text_submissions = TextSubmission.objects.filter(assignment=assignment)
-
-            submission_data = []
-            if assignment.assigment_type == Assignment.AssignmentType.TEXT:
-                for text_submission in text_submissions:
-                    student_id = text_submission.student_id
-                    student = Student.objects.get(student_id=student_id)
-                    submission_datetime = str(text_submission.submission_time)
-                    is_submitted = text_submission.is_submitted
-
-                    assignment_answer = text_submission.student_answer_file.url if text_submission.student_answer_file else None
-                    if assignment_answer:
-                        assignment_answer = request.build_absolute_uri(assignment_answer)
-
-                        student_submission = {
-                            "assigemnt_title": assignment.title,
-                            "id": text_submission.id,
-                            "student_name": f"{student.first_name} {student.last_name}",
-                            "student_id": student_id,
-                            "submission_datetime": self.__formatIsoDate(submission_datetime),
-                            "is_submitted": is_submitted,
-                            "assignment_answer": assignment_answer,
-                            "type": "Text",
-                            "is_graded": text_submission.is_graded,
-                            "grade": text_submission.grade,
-                            }
-                        submission_data.append(student_submission)
-
-            elif assignment.assigment_type == Assignment.AssignmentType.FILE:
-
-                file_submissions = FileSubmission.objects.filter(assignment=assignment)
-                file_submission_serializer = FileSubmissionSerializer(file_submissions, many=True, context={"request": request})
-
-                for file_submission in file_submission_serializer.data:
-                    student_id = file_submission["student"]
-                    student = Student.objects.get(student_id=student_id)
-
-                    submission_datetime = str(file_submission["submission_datetime"])
-                    is_submitted = file_submission["is_submited"]
-                    is_graded = file_submission["is_graded"]
-                    grade = file_submission["grade"]
-                    assignment_submission_file = file_submission["assignment_submission_file"]
-                    student_submission = {
-                        "assigemnt_title": assignment.title,
-                        "id": file_submission["id"],
-                        "student_name": f"{student.first_name} {student.last_name}",
-                        "student_id": student_id,
-                        "submission_datetime":self.__formatIsoDate(submission_datetime),
-                        "is_submitted": is_submitted,
-                        "assignment_submission_file_url": assignment_submission_file,
-                        "type": "File",
-                        "is_graded": is_graded,
-                        "grade": grade,
-                        }
-                    submission_data.append(student_submission)
-
-            response_data["submissions"] = submission_data
-
-            return Response(response_data)
+            return Response(response)
         except Exception as e:
             logger.error(e)
-            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "An error occurred "}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @extend_schema(
         parameters=[
@@ -575,12 +468,6 @@ class AssigmentViewSet(viewsets.ViewSet):
         assignment.save()
         return Response(AssignmentSerializer(assignment).data, status=status.HTTP_200_OK)
 
-    def __formatIsoDate(self, iso_date):
-        try:
-            date = parser.isoparse(iso_date)
-            return date.strftime("%Y-%m-%d %H:%M")
-        except ValueError:
-            return None
 
     @extend_schema(
         parameters=[
@@ -594,22 +481,52 @@ class AssigmentViewSet(viewsets.ViewSet):
         responses={200: AssignmentSerializer},
     )
     @action(detail=False, methods=['put'], url_path='update-assignment/(?P<id>[^/.]+)', url_name='update-assignment')
-    def update_assignment(self, request, id: int=None):
-        assignment_id = request.data.get("id")
+    def update_assignment(self, request, id: int):
         assignment_title = request.data.get("title")
         assignment_description = request.data.get("description")
+        deadline = request.data.get("deadline")
+        start_date = request.data.get("start_date")
 
         try:
-            assignment = Assignment.objects.get(id=assignment_id)
+            assignment = Assignment.objects.get(id=id)
         except Assignment.DoesNotExist:
             logger.error("Assignment not found")
             return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        now = datetime.datetime.now()
+        if assignment.deadline < now:
+            return Response({"error": "Assignment deadline has passed"}, status=status.HTTP_400_BAD_REQUEST)
 
         assignment.title = assignment_title
         assignment.description = assignment_description
+        assignment.deadline = parser.parse(deadline)
+        assignment.start_date = parser.parse(start_date)
         assignment.save()
         return Response(AssignmentSerializer(assignment).data, status=status.HTTP_200_OK)
+    
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="ID of the file assignment",
+            )
+        ],
+        responses={204, None},
+    )
+    @action(detail=False, methods=['delete'], url_path='delete_assigment_file/(?P<id>[^./]+)', url_name='delete_assigment_file')
+    def delete_assigment_file(self, request, id: int):
+        try:
+            file = AssignmentFile.objects.get(id=id)
+            file.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except AssignmentFile.DoesNotExist:
+            return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(e)
+            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @extend_schema(tags=["ourseMateriales"])
 class CourseMaterialesViewSet(viewsets.ViewSet):

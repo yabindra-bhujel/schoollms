@@ -9,7 +9,6 @@ const AnnouncementWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
   background: rgb(226, 222, 222);
   border-radius: 10px;
 `;

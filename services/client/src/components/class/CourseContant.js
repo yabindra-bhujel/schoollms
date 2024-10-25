@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import instance from "../../api/axios";
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
+import { Dialog, DialogContent } from "@mui/material";
+import UploadPDF from "./uploadPDF";
+import "./style/FileList.css";
+import { IoMdCloudUpload } from "react-icons/io";
 
-const CourseContant = ({  setOpen, setMessage }) => {
+
+const CourseContant = ({ setOpen, setMessage, fetchData }) => {
   const [file, setFile] = useState([]);
   const params = useParams();
   const subject_code = params.subject_code;
+  const [isPDFModelOpen, setIsPDFModelOpen] = useState(false);
 
   useEffect(() => {
     getData();
@@ -28,8 +34,7 @@ const CourseContant = ({  setOpen, setMessage }) => {
         setOpen(false);
       }, 3000);
     }
-  }
-
+  };
 
   const deleteFile = async (fileID) => {
     try {
@@ -46,43 +51,73 @@ const CourseContant = ({  setOpen, setMessage }) => {
       setOpen(true);
     }
   };
-  
+
+  const closePDFModel = () => {
+    setIsPDFModelOpen(false);
+  };
+
+  const openPDFModel = () => {
+    setIsPDFModelOpen(true);
+  };
 
   return (
     <>
-    <Paper style={{ padding: "16px", marginBottom: "16px" }}>
-      <Typography style={{ marginBottom: "16px", fontWeight: "bold" }} variant="h5" gutterBottom>授業材料</Typography>
-      {file.length > 0 && file.map((courseMaterial, index) => (
-        <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "8px", background: "rgb(223, 227, 230)", padding: "10px", borderRadius: "5px" }}>
-          <IconButton
-            variant="contained"
-            color="primary"
-            component="a"
-            target="_blank"
-            style={{ marginRight: "8px" }}
-            onClick={() => deleteFile(courseMaterial.id)}
-          >
-            <DeleteIcon />
-          </IconButton>
-          <IconButton
-            variant="contained"
-            color="primary"
-            component="a"
-            href={courseMaterial.pdf_file}
-            download
-            style={{ marginRight: "8px" }}
-          >
-            <CloudDownloadIcon />
-          </IconButton>
+      <Dialog open={isPDFModelOpen} onClose={closePDFModel}>
+        <DialogContent>
+          <UploadPDF closePDFModel={closePDFModel} fetchData={fetchData} />
+        </DialogContent>
+      </Dialog>
 
-          <Typography style={{ marginRight: "8px" }}>
-            {courseMaterial.pdf_file.split("/").pop().replace(/_/g, '')}
-          </Typography>
+      <div className="class-details-header">
+        <p>
+          授業材料
+        </p>
+        <button onClick={openPDFModel}>
+          <IoMdCloudUpload size={40} className="file-upload-icon"/>
+        </button>
+      </div>
 
+      <Paper style={{ padding: "16px", marginBottom: "16px" }}>
+        {file.length > 0 &&
+          file.map((courseMaterial, index) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "8px",
+                background: "rgb(223, 227, 230)",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
+              <IconButton
+                variant="contained"
+                color="primary"
+                component="a"
+                target="_blank"
+                style={{ marginRight: "8px" }}
+                onClick={() => deleteFile(courseMaterial.id)}
+              >
+                <DeleteIcon />
+              </IconButton>
+              <IconButton
+                variant="contained"
+                color="primary"
+                component="a"
+                href={courseMaterial.pdf_file}
+                download
+                style={{ marginRight: "8px" }}
+              >
+                <CloudDownloadIcon />
+              </IconButton>
 
-        </div>
-      ))}
-    </Paper>
+              <Typography style={{ marginRight: "8px" }}>
+                {courseMaterial.pdf_file.split("/").pop().replace(/_/g, "")}
+              </Typography>
+            </div>
+          ))}
+      </Paper>
     </>
   );
 };

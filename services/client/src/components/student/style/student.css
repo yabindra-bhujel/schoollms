@@ -1,7 +1,7 @@
 .student-container .student-list {
-	display: flex;
-	width: 100%;
-	margin: auto;
-	height: calc(100vh - 73px);
-	position: relative;
-}
+  display: flex;
+  width: 100%;
+  margin: auto;
+  height: calc(100vh - 73px);
+  position: relative;
+}/*# sourceMappingURL=student.css.map */

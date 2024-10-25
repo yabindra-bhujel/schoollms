@@ -1,23 +1,24 @@
-import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import instance from '../../../api/axios';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import getUserInfo from '../../../api/user/userdata';
+import instance from '../../../api/axios';
 import { useTranslation } from 'react-i18next';
+import './style/attendance.css';
+import Alert from '@mui/material/Alert';
 
 const StudentAttendance = () => {
   const { id } = useParams();
-  const [attendanceList, setAttendanceList] = React.useState([]);
-  const studentID = getUserInfo().username;
+  const [attendanceList, setAttendanceList] = useState([]);
   const { t } = useTranslation();
+  const [loading, setLoading]= useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getAttendanceList();
   }, []);
 
   const getAttendanceList = async () => {
     try {
       const endpoint = `attendance/get_attendance_by_student/${id}/`;
+      setLoading(true);
       const response = await instance.get(endpoint);
       if (response.data && response.data.attendance) {
         const formattedData = response.data.attendance.map((item, index) => ({
@@ -27,37 +28,48 @@ const StudentAttendance = () => {
           subject: item.course
         }));
         setAttendanceList(formattedData);
+        setLoading(false);
       } else {
-        console.log(t('studentAssigemnt.noAttendanceData'));
       }
     } catch (error) {
-      console.error(t('studentAssigemnt.errorFetchingData'), error);
     }
-  }
-
-  const columns = [
-    { field: 'subject', headerName: t('studentAssigemnt.subject'), width: 200, sortable: false },
-    { field: 'date', headerName: t('studentAssigemnt.date'), width: 200, sortable: false },
-    {
-      field: 'status',
-      headerName: t('studentAssigemnt.status'),
-      width: 200,
-      sortable: false,
-      cellClassName: (params) => params.value === t('absent') ? 'absent-cell' : ''
-    }
-  ];
-
-  const gridStyles = {
-    height: '100%',
-    width: '50%',
-    '& .absent-cell': { 
-      color: 'red',
-    },
   };
 
   return (
-    <div style={gridStyles}>
-      <DataGrid rows={attendanceList} columns={columns} />
+    <div className="attendance-container">
+      <div  className='student-attendance-header'>
+        <h2>出席一覧</h2>
+        <div></div>
+      </div>
+      {loading && <div className="loading-container">
+        <div className="spinner"></div>
+        </div>}
+
+      {attendanceList.length === 0 &&   <Alert variant="filled" severity="info">
+        出席データがありません。
+      </Alert>}
+      <table className="student-attendance-table">
+        <thead>
+          <tr>
+            <th>科目名</th>
+            <th>日付</th>
+            <th>
+              出席状況
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {attendanceList.map((attendance) => (
+            <tr key={attendance.id}>
+              <td>{attendance.subject}</td>
+              <td>{attendance.date}</td>
+              <td className={attendance.status === t('studentAssigemnt.absent') ? 'absent-cell' : ''}>
+                {attendance.status}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

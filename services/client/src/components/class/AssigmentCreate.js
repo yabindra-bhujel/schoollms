@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 import instance from "../../api/axios";
 import AssigmentForm from "./AssigemntFrom";
 import { useTranslation } from "react-i18next";
-import { getCourseDetails } from "./ClassServices";
+import TeacherClassServices from "./ClassServices";
 import Snackbar from '@mui/material/Snackbar';
 
 const AssigmentCreate = (props) => {
@@ -123,7 +123,7 @@ const AssigmentCreate = (props) => {
         students: studentIds,
       });
       if (response.status === 201) {
-        getCourseDetails(subject_code);
+        TeacherClassServices.getCourseDetails(subject_code);
         setMessage("課題が作成されました。");
         setOpen(true);
         setTimeout(() => {

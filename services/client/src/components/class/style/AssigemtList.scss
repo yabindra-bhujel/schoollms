@@ -1,0 +1,159 @@
+  
+  .assignment-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: darkgrey;
+  
+    h4 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+    color: black;
+    }
+  
+    .create-assignment-button {
+      display: flex;
+      align-items: center;
+      background-color: blue;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-weight: bold;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+  
+      &:hover {
+        transform: translateY(-3px);
+        background-color: #465b47;
+      }
+  
+      svg {
+        margin-right: 8px;
+      }
+    }
+  }
+  
+  .assignment-filter {
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    align-items: center;
+  
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .filter-titile{
+        margin-right: 10px;
+        line-height: 20px;
+        font-weight: bold;
+        color: gray;
+      }
+
+      input{
+        width: 20px;
+        height: 20px;
+      }
+  
+      input[type="checkbox"] {
+        accent-color: #2849cb; 
+      }
+  
+      label {
+        font-size: 16px;
+        color: #555;
+      }
+    }
+  }
+  
+  .assignment-list {
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+    .teacher-assigmnet-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid #ddd;
+      }
+  
+      th {
+        background-color: #f0f4f7;
+        color: #333;
+      }
+  
+      .assignment-link {
+        text-decoration: none;
+        color: black;
+        font-size: 20px;
+        transition: color 0.3s ease;
+  
+        &:hover {
+          color: #388e3c; // Hover effect for links
+        }
+      }
+  
+      .active-assignment {
+        color: green;
+      }
+  
+      .inactive {
+        color: red;
+      }
+  
+      .status-green {
+        color: green;
+      }
+  
+      .status-red {
+        color: red;
+      }
+  
+      .date-green {
+        color: green;
+      }
+  
+      .date-red {
+        color: red;
+      }
+    }
+  }
+  
+  .snackbar {
+    background-color: #f44336; // Red background for error snackbar
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .dialog {
+    .dialog-title {
+      background-color: #e8f5e9;
+      color: #388e3c;
+      padding: 10px;
+      border-radius: 5px 5px 0 0;
+      font-size: 22px;
+      font-weight: bold;
+    }
+  
+    .dialog-content {
+      padding: 20px;
+    }
+  }
+  

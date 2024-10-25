@@ -14,7 +14,7 @@ import ReactQuill from "react-quill";
 import { useTranslation } from "react-i18next";
 import { Snackbar } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const StudentAssigmentDetalis = () => {
   const userid = getUserInfo();
@@ -33,9 +33,9 @@ const StudentAssigmentDetalis = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [submitedFiles, setSubmitedFiles] = useState([]);
 
-
-  const MakeTextSubmission = async () => {
+  const makeTextSubmission = async () => {
     try {
       const endpoint = `/assignments/create-text-assignment/`;
       const data = {
@@ -52,7 +52,9 @@ const StudentAssigmentDetalis = () => {
         window.history.back();
       }
     } catch {
-      setMessage("リクエスト失敗しました。しばらくしてからもう一度お試しください。");
+      setMessage(
+        "リクエスト失敗しました。しばらくしてからもう一度お試しください。"
+      );
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
@@ -63,7 +65,7 @@ const StudentAssigmentDetalis = () => {
     }
   };
 
-  const MakeFileSubmission = async () => {
+  const makeFileSubmission = async () => {
     try {
       const formData = new FormData();
       formData.append("student", user);
@@ -78,11 +80,14 @@ const StudentAssigmentDetalis = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      if (response.status === 201) {
-        window.history.back();
+      if (response.status === 201 || response.status === 200) {
+        getAssignmentData();
+        setFile([]);
       }
     } catch (e) {
-      setMessage("リクエスト失敗しました。しばらくしてからもう一度お試しください。");
+      setMessage(
+        "リクエスト失敗しました。しばらくしてからもう一度お試しください。"
+      );
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
@@ -98,7 +103,6 @@ const StudentAssigmentDetalis = () => {
       return file.length === 0;
     }
   };
-
 
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
@@ -136,13 +140,40 @@ const StudentAssigmentDetalis = () => {
       const endpoint = `assignments/student-assignment-detail/${assignmentId}/`;
       setIsLoading(true);
       const response = await instance.get(endpoint);
-      console.log(response.data);
       setAssignment(response.data);
       setQuestions(response.data.questions || []);
-      setAnswers(response.data.questions.map(question => question.answer || ""));
+      setAnswers(
+        response.data.questions.map((question) => question.answer || "")
+      );
 
+      const file_submissions = response.data.file_submissions || [];
+      setSubmitedFiles(file_submissions);
     } catch {
-      setMessage("データを取得できませんでした。しばらくしてからもう一度お試しください。");
+      setMessage(
+        "データを取得できませんでした。しばらくしてからもう一度お試しください。"
+      );
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        setMessage("");
+      }, 3000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteFile = async (fileId) => {
+    try {
+      const endpoint = `assignments/delete_assigment_file/${fileId}/`;
+      setIsLoading(true);
+      const response = await instance.delete(endpoint);
+      if (response.status === 204) {
+        setSubmitedFiles(submitedFiles.filter((file) => file.id !== fileId));
+      }
+    } catch {
+      setMessage(
+        "ファイルの削除に失敗しました。しばらくしてからもう一度お試しください。"
+      );
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
@@ -160,7 +191,7 @@ const StudentAssigmentDetalis = () => {
   };
 
   const haveValidAnswer = () => {
-    return answers.every(answer => answer !== null && answer !== "");
+    return answers.every((answer) => answer !== null && answer !== "");
   };
 
   const currentDate = new Date();
@@ -168,6 +199,7 @@ const StudentAssigmentDetalis = () => {
 
   const isDeadlinePassed = currentDate > deadline;
 
+  console.log(submitedFiles);
 
   return (
     <Layout>
@@ -179,12 +211,17 @@ const StudentAssigmentDetalis = () => {
       />
 
       {isLoading ? (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <CircularProgress />
         </div>
       ) : (
         <>
-
           <div className="assigemt-details-student">
             <div className="class-header-student">
               <Link to={`/studentclassdetails/${courseId}`}>
@@ -194,24 +231,23 @@ const StudentAssigmentDetalis = () => {
             </div>
             <div className="assigment-section-student">
               <div className="assigment-body-st">
-
                 <div className="body-st">
-                  <ReactQuill
-                    modules={{
-                      toolbar: [
-                      ],
-
-                    }}
-                    value={assignment.description} readOnly={true}
+                  <div
+                    className="body-st"
+                    dangerouslySetInnerHTML={{ __html: assignment.description }}
                   />
                 </div>
+
                 <div className="assigment-input">
                   {assignment.assigment_type === "File" ? (
                     <>
                       <div className="file-attagement">
-                        {!isDeadlinePassed && (
+                        {assignment.is_active && (
                           <>
-                            <button className="button" onClick={handleFileButtonClick}>
+                            <button
+                              className="button"
+                              onClick={handleFileButtonClick}
+                            >
                               <FiPlusCircle className="add-btn" />
                               <span>{t("studentAssigemnt.drag")}</span>
                               <span>{t("studentAssigemnt.maxFile")}</span>
@@ -227,6 +263,43 @@ const StudentAssigmentDetalis = () => {
                         )}
 
                         <div className="file-items">
+                          {submitedFiles.length > 0 && (
+                            <ul className="file-list">
+                              {submitedFiles.map((fileUrl, index) => {
+                                const filename = fileUrl.files.split("/").pop();
+
+                                return (
+                                  <li key={index}>
+                                    <div className="fielname-size">
+                                      {assignment.is_active && (
+                                        <button
+                                          onClick={() => deleteFile(fileUrl.id)}
+                                          className="file-remove"
+                                        >
+                                          <RiDeleteBin6Line
+                                            className="file-delete-icons"
+                                            size={30}
+                                          />
+                                        </button>
+                                      )}
+                                      <p>
+                                        <a
+                                          href={fileUrl}
+                                          download={filename}
+                                          className="file-link"
+                                        >
+                                          {filename}
+                                        </a>
+                                      </p>
+                                    </div>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          )}
+                        </div>
+
+                        <div className="file-items">
                           {file.length > 0 && (
                             <ul className="file-list">
                               {file.map((file, index) => (
@@ -238,19 +311,22 @@ const StudentAssigmentDetalis = () => {
                                       {file.name} <br />
                                       <span>
                                         {file && file.size
-                                          ? (file.size / (1024 * 1024)).toFixed(2)
+                                          ? (file.size / (1024 * 1024)).toFixed(
+                                              2
+                                            )
                                           : 0}{" "}
                                         MB
                                       </span>
                                     </p>
                                   </div>
-
-                                  <button>
-                                    <IoMdRemoveCircleOutline
-                                      onClick={() => handleFileDelete(index)}
-                                      className="btn-icon"
-                                    />
-                                  </button>
+                                  {assignment.is_active && (
+                                    <button>
+                                      <IoMdRemoveCircleOutline
+                                        onClick={() => handleFileDelete(index)}
+                                        className="btn-icon"
+                                      />
+                                    </button>
+                                  )}
                                 </li>
                               ))}
                             </ul>
@@ -259,19 +335,17 @@ const StudentAssigmentDetalis = () => {
                         </div>
                       </div>
                       <div className="file-bottom-button">
-                        {!isDeadlinePassed && (
-
+                        {assignment.is_active && (
                           <button
-                            className={`submit-file ${isInputEmpty() ? "disabled-button" : ""
-                              }`}
+                            className={`submit-file ${
+                              isInputEmpty() ? "disabled-button" : ""
+                            }`}
                             disabled={isInputEmpty()}
-                            onClick={MakeFileSubmission}
+                            onClick={makeFileSubmission}
                           >
                             <span>提出</span>
                           </button>
                         )}
-
-
                       </div>
                     </>
                   ) : (
@@ -279,7 +353,6 @@ const StudentAssigmentDetalis = () => {
                       {questions.map((question, index) => (
                         <div key={question.id}>
                           <p className="question-title">
-                            {index + 1}.{" "}
                             <span
                               dangerouslySetInnerHTML={{
                                 __html: question.question,
@@ -289,18 +362,20 @@ const StudentAssigmentDetalis = () => {
                           <div className="answer-input">
                             <AnswerFrom
                               value={answers[index]}
-                              onChange={(value) => handleAnswerChange(index, value)}
-                              isDeadlinePassed={isDeadlinePassed}
+                              onChange={(value) =>
+                                handleAnswerChange(index, value)
+                              }
+                              isDeadlinePassed={assignment.is_active}
                             />
                           </div>
                         </div>
                       ))}
                       <div className="bottom-button">
-                        {!isDeadlinePassed && (
+                        {assignment.is_active && (
                           <>
                             <button
-                              className="submit-button "
-                              onClick={MakeTextSubmission}
+                              className="submit-button"
+                              onClick={makeTextSubmission}
                               disabled={!haveValidAnswer()}
                             >
                               <span>{t("studentAssigemnt.submit")}</span>
@@ -315,7 +390,6 @@ const StudentAssigmentDetalis = () => {
               </div>
             </div>
           </div>
-
         </>
       )}
     </Layout>
