@@ -179,7 +179,7 @@ class CalendarEventViewSet(viewsets.ViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name="id",
+                name="pk",
                 type=OpenApiTypes.INT,
                 location=OpenApiParameter.PATH,
                 description="ID of the event",
@@ -187,9 +187,9 @@ class CalendarEventViewSet(viewsets.ViewSet):
         ],
         responses={204: None},
     )
-    def destroy(self, request, id: int):
+    def destroy(self, request, pk: int):
         queryset = CalendarEvent.objects.all()
-        event = get_object_or_404(queryset, id=id)
+        event = get_object_or_404(queryset, pk=pk)
         event.delete()
 
         # delete cache after deleting event
@@ -213,3 +213,28 @@ class CalendarEventViewSet(viewsets.ViewSet):
         serializer = CalendarEventSerializer(calendar_events, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(responses={200: CalendarEventSerializer})
+    @action(
+        detail=False,
+        methods=["put"],
+        url_path="update_event_reminder_time",
+        url_name="update_event_reminder_time",
+    )
+    def update_event_reminder_time(self, request):
+        try:
+            event_id = request.data.get("id")
+            reminder_time = request.data.get("reminder_time")
+            
+            if not event_id or not reminder_time:
+                return Response({"error": "ID and reminder_time are required."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            event = CalendarEvent.objects.get(id=event_id)
+            event.reminder_time = reminder_time
+            event.save()
+
+            self.delete_cache(request, f"calendar_events_{request.user.id}")
+
+            return Response(status=status.HTTP_200_OK)
+        except CalendarEvent.DoesNotExist:
+            return Response({"error": "Event not found."}, status=status.HTTP_404_NOT_FOUND)

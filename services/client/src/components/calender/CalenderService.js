@@ -57,6 +57,17 @@ const makeClassCancellation = async (event) => {
         return error.response;
     }
 
+
 }
 
-export { addNewEvent , deleteEvent, getEvents, updateEvent, makeClassCancellation}
+const updateReminderTime = async (event) => {
+    const endpoint = `${baseURL}update_event_reminder_time/`;
+    try{
+        const response = await instance.put(endpoint, event);
+        return response;
+    }catch(error){
+        return error.response;
+    }
+}
+
+export { addNewEvent , deleteEvent, getEvents, updateEvent, makeClassCancellation, updateReminderTime };

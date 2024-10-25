@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -18,17 +18,25 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EventIcon from "@mui/icons-material/Event";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import { addNewEvent, deleteEvent, getEvents, updateEvent, makeClassCancellation } from "./CalenderService";
+import {
+  addNewEvent,
+  deleteEvent,
+  getEvents,
+  updateEvent,
+  makeClassCancellation,
+  updateReminderTime
+} from "./CalenderService";
 import CustomToolbar from "./CustomToolbar";
 import { TextField, Button } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { Switch } from '@mui/material';
-
-
+import { Switch } from "@mui/material";
+import { FaPenAlt } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa6";
 
 const DnDCalendar = withDragAndDrop(Calendar);
 const localizer = momentLocalizer(moment);
 
+// ユーザが選択した色を表示するコンポーネント
 const ColorSelector = ({ buttonColors, selectedColor, onColorChange }) => {
   return (
     <div className="color-selector">
@@ -48,7 +56,7 @@ const CalendarComponent = () => {
   const userData = getUserInfo();
   const user = userData.user_id;
   const currentDate = new Date();
-  const currentDateFormatted = currentDate.toISOString().split('T')[0];
+  const currentDateFormatted = currentDate.toISOString().split("T")[0];
   const [newEvent, setNewEvent] = useState({
     title: "",
     start_date: currentDateFormatted,
@@ -66,18 +74,26 @@ const CalendarComponent = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [selected, setSelected] = useState();
   const { t } = useTranslation();
   const isTeacher = userData.isTeacher;
   const [isClassCancellation, setIsClassCancellation] = useState(false);
+  const [reminderTime, setReminderTime] = useState();
+  const [isEdit, setIsEdit] = useState(false);
 
-
+  
   useEffect(() => {
-    if (selectedEvent !== null) {
+    if (selectedEvent) {
       setIsClassCancellation(selectedEvent.is_class_cancellation);
+  
+      if (selectedEvent.reminder_time === null) {
+        setReminderTime("00:00");
+      } else {
+        // Convert reminder time to "HH:MM"
+        const reminderTimeFormatted = selectedEvent.reminder_time.slice(0, -3);
+        setReminderTime(reminderTimeFormatted);
+      }
     }
   }, [selectedEvent]);
-  
   
 
   const [seletedColorButton, setSeletedColorButton] = useState(
@@ -86,7 +102,6 @@ const CalendarComponent = () => {
   const handleColorChange = (index) => {
     setSeletedColorButton(index);
   };
-
 
   const formats = {
     weekdayFormat: (date, culture, localizer) =>
@@ -119,7 +134,6 @@ const CalendarComponent = () => {
       return [...filtered, updatedEvent];
     });
 
-    // Update to backend
     eventUpdate(updatedEvent);
   };
 
@@ -128,7 +142,7 @@ const CalendarComponent = () => {
     if (response.status === 200) {
       setEvents(response.data);
     }
-  }
+  };
 
   const eventUpdate = async (data) => {
     try {
@@ -147,7 +161,7 @@ const CalendarComponent = () => {
       fatchData();
       setOpenDialog(false);
     }
-  }
+  };
 
   const onEventResize = ({ event, start, end }) => {
     const updatedEvents = events.map((evt) => {
@@ -167,12 +181,12 @@ const CalendarComponent = () => {
     title: event.title,
     start: new Date(`${event.start_date}`),
     end: new Date(`${event.end_date}`),
-    start_time:  event.start_time,
+    start_time: event.start_time,
     end_time: event.end_time,
     color: event.color,
     is_class_cancellation: event.is_class_cancellation,
     subject: event.subject,
-
+    reminder_time: event.reminder_time,
   }));
 
   const handleInputChange = (event) => {
@@ -226,12 +240,11 @@ const CalendarComponent = () => {
         color: buttonColors[seletedColorButton],
       };
 
-
       const response = await addNewEvent(formattedEvent);
       if (response.status === 201) {
         console.log("Event added successfully");
       } else {
-        console.log(response)
+        console.log(response);
       }
       setNewEvent({
         title: "",
@@ -279,7 +292,6 @@ const CalendarComponent = () => {
       style,
     };
   };
-  
 
   const handleDelete = async (event) => {
     const eventID = event.id;
@@ -292,7 +304,7 @@ const CalendarComponent = () => {
 
   const handleSelectSlot = (slotInfo) => {
     const formattedStartDate = moment(slotInfo.start).format("YYYY-MM-DD");
-    setNewEvent(prevEvent => ({
+    setNewEvent((prevEvent) => ({
       ...prevEvent,
       start_date: formattedStartDate,
       end_date: formattedStartDate,
@@ -304,7 +316,32 @@ const CalendarComponent = () => {
     const eventDate = new Date(event.start);
     const currentDate = new Date();
     return eventDate < currentDate;
+  };
+
+
+  const updateReminder = async  () => {
+
+    if (reminderTime === "") return;
+
+    const data = selectedEvent
+    data.reminder_time = reminderTime
+
+    const response = await updateReminderTime(data);
+    if (response.status === 200) {
+      fatchData();
+      setOpenDialog(false);
+      setIsEdit(false);
+    }
+
   }
+
+  const handleReminderTimeChange = (e) => {
+    const newReminderTime = e.target.value;
+    setReminderTime(newReminderTime);
+  };
+
+
+
 
 
   return (
@@ -320,7 +357,9 @@ const CalendarComponent = () => {
           severity="warning"
           elevation={6}
           variant="filled"
-        >講義の日程は変更できません。</MuiAlert>
+        >
+          講義の日程は変更できません。
+        </MuiAlert>
       </Snackbar>
 
       <Dialog
@@ -330,59 +369,91 @@ const CalendarComponent = () => {
         anchorEl={anchorEl}
         anchorPosition={{ top: 50, left: 50 }}
         fullWidth={true}
+        disableBackdropClick
+        disableEscapeKeyDown
+
       >
-<DialogTitle>
-  <div className="close-delete-btn">
-    {selectedEvent && (
-      selectedEvent.color !== "red" &&
-      selectedEvent.color !== "green" ? (
-        <IconButton
-          aria-label="delete"
-          onClick={() => handleDelete(selectedEvent)}
-          style={{ marginRight: 8, color: "red" }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      ) : (
-        isTeacher && selectedEvent.subject !== null && (
-          <div>
-            <Switch
-              disabled={eventDateisPast(selectedEvent)}
-              checked={isClassCancellation}
-              onChange={() => handleClassCancellation(selectedEvent)}
-            />
+        <DialogTitle>
+          <div className="close-delete-btn">
+            {selectedEvent &&
+              (selectedEvent.color !== "red" &&
+              selectedEvent.color !== "green" ? (
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => handleDelete(selectedEvent)}
+                  style={{ marginRight: 8, color: "red" }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              ) : (
+                isTeacher &&
+                selectedEvent.subject !== null && (
+                  <div>
+                    <Switch
+                      disabled={eventDateisPast(selectedEvent)}
+                      checked={isClassCancellation}
+                      onChange={() => handleClassCancellation(selectedEvent)}
+                    />
 
-            <strong style={{ marginRight: 8, color:"red" }}>
-            {isClassCancellation ? "休講" : "講義"} <br />
-            </strong>
-            {eventDateisPast(selectedEvent) ? (
-              <small style={{ color: "red" }}>
-                過去の講義は休講に変更できません。
-              </small>
-            ) : (
-              <strong style={{ color: "red" }}>
-                {selectedEvent.is_class_cancellation ? "" : "休講にすると、生徒に通知が行きます。"}
-              </strong>
-            )}
+                    <strong style={{ marginRight: 8, color: "red" }}>
+                      {isClassCancellation ? "休講" : "講義"} <br />
+                    </strong>
+                    {eventDateisPast(selectedEvent) ? (
+                      <small style={{ color: "red" }}>
+                        過去の講義は休講に変更できません。
+                      </small>
+                    ) : (
+                      <strong style={{ color: "red" }}>
+                        {selectedEvent.is_class_cancellation
+                          ? ""
+                          : "休講にすると、生徒に通知が行きます。"}
+                      </strong>
+                    )}
+                  </div>
+                )
+              ))}
+
+              {/* edit btn */}
+
+              <IconButton
+                aria-label="pen"
+                onClick={
+                  // if isEdit is true, update reminder time
+                  isEdit ? () => updateReminder() :
+                  () => setIsEdit(!isEdit)
+                }
+                style={{ marginRight: 8 }}
+              >
+                {isEdit ? <FaCheck color="blue" /> :  <FaPenAlt color="orange" />}
+              </IconButton>
+              {!isEdit ? (
+            <IconButton
+              aria-label="close"
+              onClick={() => setOpenDialog(false)}
+              style={{ marginRight: 8 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          ) : null}
           </div>
-        )
-      )
-    )}
-
-    <IconButton
-      aria-label="close"
-      onClick={() => setOpenDialog(false)}
-      style={{ marginRight: 8 }}
-    >
-      <CloseIcon />
-    </IconButton>
-  </div>
-</DialogTitle>
-
+        </DialogTitle>
 
         <DialogContent>
           {selectedEvent && (
             <div className="event-details">
+
+              {/* リマインダタイムの設定 */}
+              <div className="reminder">
+                <p>リマインダー通知時間設定</p>
+                <div className="reminder-time">
+                  <input
+                  type="time"
+                  value={reminderTime}
+                  onChange={(e) => handleReminderTimeChange(e)}
+                  disabled={!isEdit}
+                   />
+                </div>
+              </div>
               <div className="event-title">
                 <EventIcon style={{ marginRight: 8 }} />
                 <strong>{selectedEvent.title}</strong>
@@ -392,10 +463,10 @@ const CalendarComponent = () => {
               </div>
               <div className="event-datetime">
                 <p>
-               { moment(selectedEvent.start_time, "HH:mm:ss").format("HH:mm")} - {moment(selectedEvent.end_time, "HH:mm:ss").format("HH:mm")}
-
+                  {moment(selectedEvent.start_time, "HH:mm:ss").format("HH:mm")}{" "}
+                  - {moment(selectedEvent.end_time, "HH:mm:ss").format("HH:mm")}
                 </p>
-                </div>
+              </div>
             </div>
           )}
         </DialogContent>
@@ -405,7 +476,7 @@ const CalendarComponent = () => {
         open={openNewEventDialog}
         onClose={() => setOpenNewEventDialog(false)}
         fullWidth={true}
-        maxWidth="sm" 
+        maxWidth="sm"
       >
         <DialogTitle>
           <div className="close-delete-btn">
@@ -418,8 +489,8 @@ const CalendarComponent = () => {
             </IconButton>
           </div>
         </DialogTitle>
-        <DialogContent dividers style={{ minHeight: 250 }}> 
-          <div className="input-area" style={{ padding: "16px" }}> 
+        <DialogContent dividers style={{ minHeight: 250 }}>
+          <div className="input-area" style={{ padding: "16px" }}>
             <ColorSelector
               buttonColors={buttonColors}
               selectedColor={seletedColorButton}
@@ -477,7 +548,10 @@ const CalendarComponent = () => {
               fullWidth
             />
           </div>
-          <div className="add-event-btn" style={{ textAlign: "right", padding: "16px" }}>
+          <div
+            className="add-event-btn"
+            style={{ textAlign: "right", padding: "16px" }}
+          >
             <Button
               variant="contained"
               color="primary"
@@ -490,12 +564,9 @@ const CalendarComponent = () => {
         </DialogContent>
       </Dialog>
 
-
-
       <div className="calender-container-main">
         <div className="calendar-container">
           <DnDCalendar
-            selected={selected}
             onSelectEvent={(event, target) => handleEventClick(event, target)}
             localizer={localizer}
             onSelectSlot={handleSelectSlot}
@@ -518,7 +589,5 @@ const CalendarComponent = () => {
     </Layout>
   );
 };
-
-
 
 export default CalendarComponent;
