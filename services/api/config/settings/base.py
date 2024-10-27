@@ -60,11 +60,11 @@ INSTALLED_APPS = (
     "courses.subjects",
     "courses.attendance",
     "common",
+    "common.socials",
     "common.calendar",
     "common.notes",
     "common.notifications",
     "common.websocket_app",
-    "common.socials",
 )
 
 REST_FRAMEWORK = {
@@ -162,15 +162,6 @@ TEMPLATE_CONTEXT_PROCESSORS = ('django.core.context_processors.request',)
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

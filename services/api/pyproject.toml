@@ -132,6 +132,7 @@ zope-interface = "6.1"
 python-socketio = "5.10.0"
 django-debug-toolbar = "4.3.0"
 channels-redis = "^4.2.0"
+uvicorn = "^0.32.0"
 
 
 [build-system]
