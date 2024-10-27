@@ -28,8 +28,6 @@ RUN curl -sSL https://install.python-poetry.org | python3 - \
 RUN poetry install --no-dev \
     && poetry run gunicorn --version
 
-
-
 COPY ./bin /srv/app/bin
 
 RUN chmod 755 /srv/app/bin/*
@@ -41,7 +39,6 @@ RUN mkdir -p /var/log/django_services/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ENV DJANGO_SETTINGS_MODULE=config.settings.prod
-
 
 COPY . /srv/app
 

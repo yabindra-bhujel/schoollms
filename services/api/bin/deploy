@@ -1,19 +1,5 @@
 #!/bin/bash -eu
 
-
-echo "Initialize write directory and set permissions"
-for directory in var/log; do
-   # Check if the directory exists before changing permissions
-   if [ -d "$directory" ]; then
-       chgrp www-data "$directory"
-       chmod 775 "$directory" 
-       echo "Set group ownership to www-data and permissions to 775 for $directory"
-   else
-       echo "Directory $directory does not exist."
-   fi
-done
-
-
 # Set up Poetry environment
 echo "Setting up the virtual environment with Poetry..."
 poetry env use python3

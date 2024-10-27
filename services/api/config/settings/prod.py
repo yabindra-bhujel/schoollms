@@ -18,7 +18,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-LOG_DIR = 'var/log/api/prod/'
+LOG_DIR = 'var/log/prod/'
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 

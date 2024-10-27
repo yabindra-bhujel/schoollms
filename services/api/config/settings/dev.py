@@ -73,7 +73,7 @@ SPECTACULAR_SETTINGS = {
     }
 }
 
-LOG_DIR = 'var/log/api/dev/'
+LOG_DIR = 'var/log/dev/'
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 # development logging
