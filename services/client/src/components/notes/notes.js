@@ -8,7 +8,15 @@ import { FaList } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { getNotes, addNotes } from "./NotesService";
 import getUserInfo from "../../api/user/userdata";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from "@mui/material";
+import { IoSearch } from "react-icons/io5";
 
 const Notes = () => {
   const username = getUserInfo().username;
@@ -60,42 +68,57 @@ const Notes = () => {
 
   return (
     <Layout>
-      <div className="nav-bar">
-        <div className="nav-left">
-          <ul className="node-ul">
-            <li
-              className={activeTab === "All" ? "note-active" : ""}
-              onClick={() => handleTabClick("All")}
-            >
-              <FaList  className="icon"/>
-              <span>All</span>
-            </li>
-            <li
-              className={activeTab === "Private" ? "note-active" : ""}
-              onClick={() => handleTabClick("Private")}
-            >
-              <GoShieldLock  className="icon" />
-              <span>Private</span>
-            </li>
-            <li
-              className={activeTab === "Shared" ? "note-active" : ""}
-              onClick={() => handleTabClick("Shared")}
-            >
-              <HiUserGroup   className="icon"/>
-              <span>Shared</span>
-            </li>
-          </ul>
+      <div className="note-component-header">
+
+      <div className="top-bar">
+        <div className="nav-search">
+          <IoSearch className="search-icon" />
+          <input type="text" placeholder="Search notes..." />
         </div>
+
         <div className="nav-right">
           <button onClick={handleCreateNote} className="add-note-btn">
             <IoMdAdd className="add-icon" />
-            <span> Add New Note</span>
+            <span>新規ノート</span>
           </button>
         </div>
       </div>
 
+      <div className="tab-bar">
+        <ul className="note-ul">
+          <li
+            className={activeTab === "All" ? "note-active" : ""}
+            onClick={() => handleTabClick("All")}
+          >
+            <FaList className="icon" />
+            <span>All</span>
+          </li>
+          <li
+            className={activeTab === "Private" ? "note-active" : ""}
+            onClick={() => handleTabClick("Private")}
+          >
+            <GoShieldLock className="icon" />
+            <span>Private</span>
+          </li>
+          <li
+            className={activeTab === "Shared" ? "note-active" : ""}
+            onClick={() => handleTabClick("Shared")}
+          >
+            <HiUserGroup className="icon" />
+            <span>Shared</span>
+          </li>
+        </ul>
+      </div>
+      </div>
+
+
       <div className="note-body">
-        <NoteList notes={notes} setNotes={setNotes} fetchData={fetchData} activeTab={activeTab} />
+        <NoteList
+          notes={notes}
+          setNotes={setNotes}
+          fetchData={fetchData}
+          activeTab={activeTab}
+        />
       </div>
 
       <Dialog
@@ -104,7 +127,9 @@ const Notes = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Maximum Notes Limit Reached"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {"Maximum Notes Limit Reached"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             You can only create up to {maxNotesAllowed} notes.
