@@ -60,10 +60,10 @@ INSTALLED_APPS = (
     "courses.subjects",
     "courses.attendance",
     "common",
+    "common.socials",
     "common.calendar",
     "common.notes",
     "common.notifications",
-    "common.socials",
     "common.websocket_app",
 )
 
@@ -134,6 +134,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+AUTH_USER_MODEL = 'accounts.User'
 
 ROOT_URLCONF = 'config.urls'
 
@@ -161,15 +162,6 @@ TEMPLATE_CONTEXT_PROCESSORS = ('django.core.context_processors.request',)
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -214,7 +206,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'accounts.User'
 
 
 CORS_ORIGIN_ALLOW_ALL = True

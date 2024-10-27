@@ -30,7 +30,6 @@ const AdminTeacher = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const fileInputRef = useRef(null);
   const [uploadingFile, setUploadingFile] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];

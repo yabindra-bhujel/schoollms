@@ -6,12 +6,10 @@ import { useTranslation } from "react-i18next";
 import { IconButton, Popover, Typography, Box } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Badge from "@mui/material/Badge";
-import { useWebSocket } from "../../../WebSocketContext";
 import Notifications from "./Notification";
 import Snackbar from "@mui/material/Snackbar";
 import ProfileMenu from "./Profile";
 import getUserInfo from "../../../api/user/userdata";
-
 
 function Header() {
   const userData = JSON.parse(localStorage.getItem("userData"));
@@ -39,8 +37,6 @@ function Header() {
   const userId = getUserInfo().username;
   const [groupName, setGroupName] = useState([]);
 
-
-
   // set sidebar width (70px or 200)
 const [sidebarWidth, setSidebarWidth] = useState(() => {
   const storedWidth = localStorage.getItem('sidebarWidth');
@@ -62,7 +58,6 @@ const toggleSidebar = () => {
 useEffect(() =>{
   groupData();
 
-
 }, [])
 
 const groupData = async () => {
@@ -74,9 +69,10 @@ const groupData = async () => {
   }
 }
 
-console.log(connectedUserList);
 
 useEffect(() => {
+  const hostname = window.location.hostname;
+  // const ws = new WebSocket(`ws://${hostname}/ws/${userId}/`);
   const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${userId}/`);
 
   ws.onopen = () => {

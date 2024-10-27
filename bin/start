@@ -20,6 +20,8 @@ cd "$(dirname ${0})/.."
 
 # 環境変数を読み込んで.envファイルを生成
 eval "echo \"$(cat services/api/env.template)\"" > services/api/.env
+eval "echo \"$(cat services/client/env.template)\"" > services/client/.env
+
 
 
 # Create Docker network if it doesn't exist

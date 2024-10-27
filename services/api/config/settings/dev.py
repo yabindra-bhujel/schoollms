@@ -10,6 +10,15 @@ ALLOWED_HOSTS = [
     '0.0.0.0'
 ]
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
 
 DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.versions.VersionsPanel',
@@ -64,7 +73,7 @@ SPECTACULAR_SETTINGS = {
     }
 }
 
-LOG_DIR = 'var/log/api/dev/'
+LOG_DIR = 'var/log/dev/'
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 # development logging

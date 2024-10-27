@@ -4,10 +4,21 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     'localhost',
-    '0.0.0.0'
+    '0.0.0.0',
+    'api'
+    '127.0.0.1'
 ]
 
-LOG_DIR = 'var/log/api/prod/'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis_db', 6379)],
+        },
+    },
+}
+
+LOG_DIR = 'var/log/prod/'
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 
@@ -35,7 +46,7 @@ LOGGING = {
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/error.log',
+            'filename': LOG_DIR + 'error.log',
             'maxBytes': 1024 * 1024 * 5,  # 5MB
             'backupCount': 5,
             'formatter': 'verbose',
