@@ -84,14 +84,14 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'var/log/api/dev/dev.log',
+            'filename': f'{LOG_DIR}/dev.log',
             'formatter': 'verbose',
             
         },
         'file_db': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'var/log/api/dev/db.log',
+            'filename': f'{LOG_DIR}/db.log',
             'formatter': 'verbose',
         },
         'console': {
