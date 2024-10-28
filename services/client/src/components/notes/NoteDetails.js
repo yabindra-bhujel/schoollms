@@ -1,21 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { updatedNote } from "./NotesService";
-import { IoPersonAdd } from "react-icons/io5";
-import getUserInfo from "../../api/user/userdata";
 import ShareDialog from "./ShareNote";
-import jsPDF from "jspdf";
 import { Snackbar } from "@mui/material";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import "./style/noteDetails.css";
-import { CiSaveDown2 } from "react-icons/ci";
 import Tooltip from "@mui/material/Tooltip";
-// import { MDXEditor } from '@mdxeditor/editor';
-import ReactMarkdown from "react-markdown";
-
+import NoteEditor from "./NoteEditor";
+import { MdModeEdit } from "react-icons/md";
+import { FaCheck } from "react-icons/fa";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -26,18 +22,12 @@ const NoteDetails = ({
   setOpenNoteDialog,
   selectedNote,
   setSelectedNote,
-  notes,
   fetchData,
 }) => {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
-  const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const currentUser = getUserInfo().username;
-
-  const isNoteOwner = () => {
-    return selectedNote && selectedNote.owner === currentUser;
-  };
+  const [isEditMode, setIsEditMode] = useState(false);
 
   if (!selectedNote) {
     return null;
@@ -55,23 +45,16 @@ const NoteDetails = ({
     }, 3000);
   };
 
-  const openShareDialog = (noteId) => {
-    setSelectedNoteId(noteId);
-    setShareDialogOpen(true);
-  };
-
   const closeShareDialog = () => {
     setShareDialogOpen(false);
   };
 
   const handleClose = () => {
-    setSelectedNote(null);
-    setSelectedNoteId(null);
     setOpenNoteDialog(false);
+    setIsEditMode(false);
   };
 
   const handleSave = () => {
-    const index = notes.findIndex((note) => note.id === selectedNote.id);
     const requestData = {
       content: selectedNote.content,
       title: selectedNote.title,
@@ -91,23 +74,31 @@ const NoteDetails = ({
   const handleEditorChange = (markdown) => {
     setSelectedNote((prevNote) => ({
       ...prevNote,
-      content: markdown, // Update the content as the user types
+      content: markdown,
     }));
   };
 
+  const handleEditModeChange = () => {
+    setIsEditMode(true);
+  };
+
+
+
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
+      {snackbarMessage && (
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          message={snackbarMessage}
+        />
+      )}
+
       <ShareDialog
         open={shareDialogOpen}
         handleClose={closeShareDialog}
-        noteid={selectedNoteId}
-        onUsersAdded={openSnackbar}
+        noteid={selectedNote.id}
         fetchData={fetchData}
       />
 
@@ -115,17 +106,25 @@ const NoteDetails = ({
         open={openNoteDialog}
         TransitionComponent={Transition}
         keepMounted
-        aria-describedby="alert-dialog-slide-description"
         maxWidth="xl"
-        fullWidth={true}
-        disableBackdropClick={true}
-        disableEscapeKeyDown={true}
+        fullWidth
+        disableBackdropClick
+        disableEscapeKeyDown
+        PaperProps={{
+          style: {
+            height: '100%',
+            maxHeight: '100%',
+            overflowY: 'auto',
+          },
+        }}
       >
         <DialogTitle>
           <div className="note-details-header">
             <div className="note-title">
               <input
                 type="text"
+                disabled={!isEditMode}
+                className={isEditMode ? "note-title-input" : "note-title-input-disabled"}
                 value={selectedNote?.title}
                 onChange={(e) =>
                   setSelectedNote((prevNote) => ({
@@ -133,32 +132,25 @@ const NoteDetails = ({
                     title: e.target.value,
                   }))
                 }
-                placeholder="Enter your note title here..."
+                placeholder="タイトル入力..."
                 onFocus={(e) => (e.target.style.borderColor = "#007BFF")}
                 onBlur={(e) => (e.target.style.borderColor = "#ccc")}
               />
             </div>
 
             <div className="button-group">
-              {isNoteOwner() && (
-                <>
-                  <Tooltip title="Add Collaborator">
-                    <button onClick={() => openShareDialog(selectedNote.id)}>
-                      <IoPersonAdd size={30} color="green" />
-                    </button>
-                  </Tooltip>
-                </>
-              )}
-
-              <Tooltip title="Save Note">
-                <button onClick={handleSave}>
-                  <CiSaveDown2 size={30} color="blue"/>
+              <Tooltip title={isEditMode ? "保存" : "編集"}>
+                <button onClick={isEditMode ? handleSave : handleEditModeChange}>
+                  {isEditMode ? (
+                    <FaCheck size={30} color="orange" />
+                  ) : (
+                    <MdModeEdit size={30} color="green" />
+                  )}
                 </button>
               </Tooltip>
-
-              <Tooltip title="Close">
-                <button onClick={handleClose}>
-                  <IoMdCloseCircleOutline size={30} color="red" />
+              <Tooltip title="閉じる">
+                <button disabled={isEditMode} onClick={handleClose}>
+                  <IoMdCloseCircleOutline size={30} color={isEditMode ? "white" : "red"} />
                 </button>
               </Tooltip>
             </div>
@@ -167,13 +159,11 @@ const NoteDetails = ({
 
         <DialogContent>
           <div className="note-details-body">
-            {/* <MDXEditor 
-              markdown={selectedNote.content} 
-              onChange={handleEditorChange} 
-              readOnly
-            /> */}
-             <ReactMarkdown>{selectedNote.content}</ReactMarkdown>
-
+            <NoteEditor 
+              noteContent={selectedNote.content}
+              handleEditorChange={handleEditorChange}
+              isEditMode={isEditMode}
+            />
           </div>
         </DialogContent>
       </Dialog>

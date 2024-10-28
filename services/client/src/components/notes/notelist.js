@@ -3,13 +3,21 @@ import "./style/notelist.css";
 import NoteDetails from "./NoteDetails";
 import getUserInfo from "../../api/user/userdata";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { MdModeEdit } from "react-icons/md";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { deleteNote } from "./NotesService";
+import MarkdownEditor from "@uiw/react-markdown-editor";
+import ShareDialog from "./ShareNote";
+
 
 const NoteList = ({ notes, fetchData, activeTab }) => {
   const [openNoteDialog, setOpenNoteDialog] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState(null);
+
+  const closeShareDialog = () => {
+    setShareDialogOpen(false);
+  };
 
   const isNoteOwner = (note) => {
     const isOwner = note.owner === getUserInfo().username;
@@ -26,11 +34,10 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
     }
   };
 
-  const parseHTML = (htmlString) => {
-    const tempElement = document.createElement("div");
-    tempElement.innerHTML = htmlString;
-    return tempElement.textContent || tempElement.innerText || "";
-  };
+  const handleOpenShareDialog = (noteId) => {
+    setSelectedNoteId(noteId);
+    setShareDialogOpen(true);
+  }
 
   const formattedDate = (dateTime) => {
     const date = new Date(dateTime);
@@ -43,6 +50,13 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
 
   return (
     <div>
+           <ShareDialog
+        open={shareDialogOpen}
+        handleClose={closeShareDialog}
+        noteid={selectedNoteId}
+        fetchData={fetchData}
+      />
+
       <NoteDetails
         openNoteDialog={openNoteDialog}
         setOpenNoteDialog={setOpenNoteDialog}
@@ -62,7 +76,11 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
                 </div>
                 <div className="note-other-menu">
                   {isNoteOwner(note) && (
-                    <button>
+                    <button
+                      onClick={() => {
+                        handleOpenShareDialog(note.id);
+                      }}
+                    >
                       <MdOutlinePersonAddAlt
                         className="note-header-menu-btn"
                         size={20}
@@ -70,13 +88,6 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
                       />
                     </button>
                   )}
-                  <button>
-                    <MdModeEdit
-                      className="note-header-menu-btn"
-                      size={20}
-                      color="blue"
-                    />
-                  </button>
                   {isNoteOwner(note) && (
                     <button
                       onClick={() => {
@@ -111,21 +122,19 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
                 }}
                 className="note-body"
               >
-                <h3 className="note-title">{note.title}</h3>
+                <h3 className="note-title">
+                {/* note.content.substring(0, 300) */}
+                  
+                  {note.title.substring(0, 50)}</h3>
 
-                <div className="content-update">
-                  <div className="content">
-                    <p>
-                      {note.content.length > 300 ? (
-                        <span>
-                          {`${parseHTML(note.content.substring(0, 300))}...`}
-                        </span>
-                      ) : (
-                        <span>{parseHTML(note.content)}</span>
-                      )}
-                    </p>
+                <div className="content-note">
+                    <div data-color-mode="light">
+                      <MarkdownEditor.Markdown
+                        source={note.content}
+                        height="auto"
+                      />
+                    </div>
                   </div>
-                </div>
               </div>
 
               {/* Footer */}

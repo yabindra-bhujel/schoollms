@@ -158,8 +158,15 @@
   
   .note-body {
     height: calc(100vh - 160px); 
-    margin-top: 20px;
+    margin-top: 10px;
     overflow-y: scroll;
-    margin-left: 40px;
+    margin-left: 20px;
+
+    .note-title{
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
   }
   

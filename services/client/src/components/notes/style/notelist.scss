@@ -34,17 +34,16 @@
         font-weight: 600;
       }
 
-      .content-update {
+      .content-note {
         display: flex;
         flex-direction: column;
-        flex-grow: 1; /* Allow content area to grow */
+        flex-grow: 1; 
       }
 
       .note-header {
         display: flex;
         justify-content: space-between;
         margin: 5px;
-        margin-bottom: 10px;
 
         .note-tag {
           background-color: orange;

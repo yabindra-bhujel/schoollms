@@ -2,10 +2,13 @@
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 5px;
+}
+.note-details-header .note-title {
+  flex: 1;
 }
 .note-details-header .note-title input {
-  width: auto;
-  max-width: 500px;
+  width: 100%;
   padding: 10px;
   font-size: 18px;
   border: none;
@@ -15,7 +18,23 @@
 .note-details-header .note-title input:focus {
   border-color: #007bff;
 }
+.note-details-header .note-title input.note-title-input {
+  border: solid 1px #007bff;
+  border-color: #007bff;
+  border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+}
+.note-details-header .note-title input.note-title-input-disabled {
+  background-color: #f8f9fa;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 18px;
+  color: #000;
+}
 .note-details-header .button-group {
+  margin-left: 40px;
   margin-right: 40px;
   display: flex;
   justify-content: space-between;

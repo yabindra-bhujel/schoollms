@@ -19,7 +19,6 @@ import {
 import { IoSearch } from "react-icons/io5";
 
 const Notes = () => {
-  const username = getUserInfo().username;
   const [activeTab, setActiveTab] = useState("All");
   const [notes, setNotes] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);

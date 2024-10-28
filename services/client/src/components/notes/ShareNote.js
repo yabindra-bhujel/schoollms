@@ -6,8 +6,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import instance from '../../api/axios';
 import getUserInfo from '../../api/user/userdata';
 import UserInfoDialog from './UserInfo';
@@ -51,9 +49,7 @@ const ShareDialog = ({ open, handleClose, noteid, onUsersAdded, fetchData }) => 
         setSelectedUsers([]);
         handleClose();
         fetchData();
-        onUsersAdded('Collaborators added successfully')
       } catch (error) {
-        console.error("Error fetching notes data: ", error);
         throw error;
       }
 
