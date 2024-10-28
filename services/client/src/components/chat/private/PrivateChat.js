@@ -7,7 +7,7 @@ import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import WriteMessage from "./MessageInput";
 
-const PrivateChat = ({ selectedChat, onlineUsers }) => {
+const PrivateChat = ({ selectedChat, onlineUsers, handleBackToList, isMobileView}) => {
   const [newmessage, setNewmessage] = useState("");
   const [messageList, setMessageList] = useState([]);
   const messageRef = useRef(null);
@@ -162,6 +162,8 @@ const PrivateChat = ({ selectedChat, onlineUsers }) => {
       <ChatHeader
         selectedChat={selectedChat}
         isOnline={isOnline}
+        handleBackToList={handleBackToList}
+        isMobileView={isMobileView}
       />
 
       <div className="messages__container">

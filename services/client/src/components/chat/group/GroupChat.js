@@ -10,7 +10,7 @@ import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import WriteMessage from "./MessageInput";
 
-const GroupChat = ({ selectedChat, onlineUsers }) => {
+const GroupChat = ({ selectedChat, onlineUsers, handleBackToList, isMobileView }) => {
   const [groupnewmessage, setGroupnewmessage] = useState("");
   const groupmessageRef = useRef(null);
   const isGroupChat = selectedChat?.type === "group";
@@ -277,6 +277,8 @@ const GroupChat = ({ selectedChat, onlineUsers }) => {
           open={open}
           anchorEl={anchorEl}
           handleClicks={handleClicks}
+          isMobileView={isMobileView}
+          handleBackToList={handleBackToList}
         />
         <div className="messages__container">
           <div className="chat_body">

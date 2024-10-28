@@ -177,7 +177,7 @@ useEffect(() => {
         <nav>
           <div className="user_info_side">
 
-            <p> CampusFlow  {t("header.welcome")}, {fullname}!</p>
+            <p className="welcomeText"> CampusFlow  {t("header.welcome")}, {fullname}!</p>
           </div>
           <div className="quick_acess">
             <li>

@@ -3,14 +3,18 @@ import { useTranslation } from "react-i18next";
 import NoImage from "../../images/group.png";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import IconButton from "@mui/material/IconButton";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const ChatHeader = (
-    {handleGroupImageChange, groupIconImage, selectedChat, handleClicks}
+    {handleGroupImageChange, groupIconImage, selectedChat, handleClicks, isMobileView, handleBackToList}
 ) => {
     const groupImage = useRef(null);
     return(
         <div className="do_chat_header">
         <div className="do__chat__left">
+        {isMobileView && (
+                <IoMdArrowRoundBack className="backBtn" onClick={handleBackToList}/>
+            )}
           <div className="profile__pic">
             <button
               onClick={() => groupImage.current && groupImage.current.click()}
