@@ -11,7 +11,7 @@ class CreateFileSubmission:
 
     def create(self, answer_files: dict, assignment: Assignment, student: Student) -> FileSubmission:
         try:
-            media_dir = f"file_assignments/{assignment.start_date.strftime("%Y-%m-%d")}/"
+            media_dir = f"file_assignments/{assignment.start_date.strftime('%Y-%m-%d')}/"
             media_base_dir = settings.MEDIA_ROOT
             self.__ensureDirectoryExists(os.path.join(media_base_dir, media_dir))
 
