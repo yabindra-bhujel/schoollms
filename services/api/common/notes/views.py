@@ -39,6 +39,7 @@ class NotesViewSet(viewsets.ViewSet):
             queryset = Notes.objects.filter(Q(user=request.user) | Q(shared_with=request.user))
             queryset = queryset.distinct().prefetch_related('user')
             serializer = NotesSerializer(queryset, many=True)
+
             cached_notes = serializer.data
             cache.set(cache_key, cached_notes, timeout=60 * 60)
 

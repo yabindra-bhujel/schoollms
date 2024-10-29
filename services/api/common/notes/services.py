@@ -17,14 +17,15 @@ class NotesService:
             raise Exception("You have reached the maximum number of notes")
         
         note = Notes.objects.create(title=data['title'],content=data['content'],user=user)
-        note.save()
 
+        note.save()
         return note
     
     @staticmethod
     def update_note(note, data):
         note.title = data['title']
         note.content = data['content']
+        note.tag = data['tag']
         note.save()
         return note
     

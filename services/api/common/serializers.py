@@ -16,6 +16,7 @@ class NotesSerializer(serializers.ModelSerializer):
         model = Notes
         fields = '__all__'
 
+
     def get_owner(self, obj)->str:
         return obj.user.username
 
