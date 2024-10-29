@@ -43,9 +43,6 @@ class UserProfile(models.Model):
     
 class ApplicationSettings(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_dark_mode = models.BooleanField(default=False)
-    is_notification = models.BooleanField(default=False)
-    isTwoFactorAuthEnabled = models.BooleanField(default=False)
     isEmailNotification = models.BooleanField(default=False)
 
     def __str__(self):
