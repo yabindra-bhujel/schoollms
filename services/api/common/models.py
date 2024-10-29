@@ -17,6 +17,16 @@ class CalendarEvent(models.Model):
     def __str__(self):
         return str(self.title)
     
+class NoteTag(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Name', unique=True, default='University')
+    
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        verbose_name = "Note Tag"
+        verbose_name_plural = "Note Tags"
+
 
 class Notes(models.Model):
     class NoteType(models.TextChoices):
@@ -32,6 +42,8 @@ class Notes(models.Model):
     color = models.CharField(max_length=20, null=True, blank=True, verbose_name='Color')
     shared_with = models.ManyToManyField(User, related_name='shared_notes', blank=True,
                                           verbose_name='Shared With')
+    tag = models.ForeignKey(NoteTag, related_name='notes', on_delete=models.SET_NULL, null=True,
+                            blank=True, verbose_name='Tag') 
     
     def __str__(self):
         return str(self.title)
@@ -39,17 +51,6 @@ class Notes(models.Model):
     class Meta:
         verbose_name = "Note"
         verbose_name_plural = "Notes"
-
-class NoteTag(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Name', unique=True, default='University')
-    notes = models.ManyToManyField(Notes, related_name='tags', verbose_name='Notes')
-    
-    def __str__(self):
-        return str(self.name)
-    
-    class Meta:
-        verbose_name = "Note Tag"
-        verbose_name_plural = "Note Tags"
 
 class Notification(models.Model):
     title = models.CharField(max_length=100, verbose_name='Title')
