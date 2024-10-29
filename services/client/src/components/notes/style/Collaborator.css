@@ -1,0 +1,45 @@
+.collaborator_list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.collaborator_list .collaborator_list_item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.collaborator_list .collaborator_list_item .user-av {
+  margin-right: 5px;
+}
+.collaborator_list .remove-col {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+.collaborator_list .remove-col .remove-icon {
+  font-size: 1.5rem;
+  color: white;
+}
+.collaborator_list .remove-col:hover {
+  background-color: darkred;
+}
+
+.dialog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+.dialog-title .h3_col {
+  margin: 0;
+  font-weight: 600;
+  font-size: 20px;
+  font-family: "Courier New", Courier, monospace;
+}/*# sourceMappingURL=Collaborator.css.map */

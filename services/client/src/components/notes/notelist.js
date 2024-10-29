@@ -8,12 +8,12 @@ import { deleteNote } from "./NotesService";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import ShareDialog from "./ShareNote";
 
-
 const NoteList = ({ notes, fetchData, activeTab }) => {
   const [openNoteDialog, setOpenNoteDialog] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [selectedNoteId, setSelectedNoteId] = useState(null);
+  const [isPrivateNote, setIsPrivateNote] = useState();
 
   const closeShareDialog = () => {
     setShareDialogOpen(false);
@@ -34,10 +34,18 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
     }
   };
 
-  const handleOpenShareDialog = (noteId) => {
+  const handleOpenShareDialog = (noteId, noteType) => {
+    setIsPrivateNote(null)
+
+    if(noteType === 'private'){
+      setIsPrivateNote(true);
+    }else{
+      setIsPrivateNote(false);
+    }
+
     setSelectedNoteId(noteId);
     setShareDialogOpen(true);
-  }
+  };
 
   const formattedDate = (dateTime) => {
     const date = new Date(dateTime);
@@ -50,11 +58,13 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
 
   return (
     <div>
-           <ShareDialog
+      <ShareDialog
         open={shareDialogOpen}
         handleClose={closeShareDialog}
         noteid={selectedNoteId}
         fetchData={fetchData}
+        isPrivateNote={isPrivateNote}
+        setIsPrivateNote={setIsPrivateNote}
       />
 
       <NoteDetails
@@ -78,7 +88,7 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
                   {isNoteOwner(note) && (
                     <button
                       onClick={() => {
-                        handleOpenShareDialog(note.id);
+                        handleOpenShareDialog(note.id, note.note_type);
                       }}
                     >
                       <MdOutlinePersonAddAlt
@@ -123,18 +133,19 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
                 className="note-body"
               >
                 <h3 className="note-title">
-                {/* note.content.substring(0, 300) */}
-                  
-                  {note.title.substring(0, 50)}</h3>
+                  {/* note.content.substring(0, 300) */}
+
+                  {note.title.substring(0, 50)}
+                </h3>
 
                 <div className="content-note">
-                    <div data-color-mode="light">
-                      <MarkdownEditor.Markdown
-                        source={note.content}
-                        height="auto"
-                      />
-                    </div>
+                  <div data-color-mode="light">
+                    <MarkdownEditor.Markdown
+                      source={note.content}
+                      height="auto"
+                    />
                   </div>
+                </div>
               </div>
 
               {/* Footer */}
