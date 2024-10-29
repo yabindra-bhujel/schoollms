@@ -5,6 +5,9 @@
   margin-bottom: 5px;
 }
 .note-details-header .note-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   flex: 1;
 }
 .note-details-header .note-title input {
@@ -32,6 +35,21 @@
   padding: 10px;
   font-size: 18px;
   color: #000;
+}
+.note-details-header .note-title .tag-selection {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  color: #000;
+  font-size: 18px;
+}
+.note-details-header .note-title .tag {
+  color: white;
+  padding: 7px;
+  border-radius: 10px;
+  font-size: 14px;
 }
 .note-details-header .button-group {
   margin-left: 40px;

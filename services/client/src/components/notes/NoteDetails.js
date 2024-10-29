@@ -33,6 +33,19 @@ const NoteDetails = ({
     return null;
   }
 
+  const tagColors = {
+    "University": "#FF5733",
+    "Work": "#33FF57",
+    "Personal": "#3357FF",
+    "Important": "#FF33A1",
+    "Study": "#FFD633",
+    "Meeting": "#33FFF5",
+    "Project": "#FF8333",
+    "Miscellaneous": "#9B59B6",
+    "Reminder": "#34495E",
+    "Others": "#E74C3C",
+  };
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -58,6 +71,7 @@ const NoteDetails = ({
     const requestData = {
       content: selectedNote.content,
       title: selectedNote.title,
+      tag: selectedNote.tag,
     };
 
     updatedNote(selectedNote.id, requestData)
@@ -77,6 +91,8 @@ const NoteDetails = ({
       content: markdown,
     }));
   };
+
+
 
   const handleEditModeChange = () => {
     setIsEditMode(true);
@@ -136,6 +152,41 @@ const NoteDetails = ({
                 onFocus={(e) => (e.target.style.borderColor = "#007BFF")}
                 onBlur={(e) => (e.target.style.borderColor = "#ccc")}
               />
+
+<div className="note-tag">
+  {isEditMode ? (
+    <select
+      id="tag"
+      className="tag-selection"
+      value={selectedNote.tag} 
+      onChange={(e) => {
+        const selectedTag = e.target.value;
+        setSelectedNote((prevNote) => ({
+          ...prevNote,
+          tag: selectedTag,
+        }));
+      }}
+    >
+      <option value="University">University</option>
+      <option value="Work">Work</option>
+      <option value="Personal">Personal</option>
+      <option value="Important">Important</option>
+      <option value="Study">Study</option>
+      <option value="Meeting">Meeting</option>
+      <option value="Project">Project</option>
+    </select>
+  ) : (
+    <p
+      className="tag"
+      style={{
+        backgroundColor: tagColors[selectedNote.tag] || '#E0E0E0',
+      }}
+    >
+      {selectedNote.tag || "Undefined"}
+    </p>
+  )}
+</div>
+
             </div>
 
             <div className="button-group">

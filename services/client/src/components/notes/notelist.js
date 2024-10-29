@@ -15,6 +15,19 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [isPrivateNote, setIsPrivateNote] = useState();
 
+  const tagColors = {
+    "University": "#FF5733",
+    "Work": "#33FF57",
+    "Personal": "#3357FF",
+    "Important": "#FF33A1",
+    "Study": "#FFD633",
+    "Meeting": "#33FFF5",
+    "Project": "#FF8333",
+    "Miscellaneous": "#9B59B6",
+    "Reminder": "#34495E",
+    "Others": "#E74C3C",
+  };
+
   const closeShareDialog = () => {
     setShareDialogOpen(false);
   };
@@ -35,11 +48,11 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
   };
 
   const handleOpenShareDialog = (noteId, noteType) => {
-    setIsPrivateNote(null)
+    setIsPrivateNote(null);
 
     if(noteType === 'private'){
       setIsPrivateNote(true);
-    }else{
+    } else {
       setIsPrivateNote(false);
     }
 
@@ -81,8 +94,12 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
           {filteredNotes().map((note, index) => (
             <div className="note-item" key={index}>
               <div className="note-header">
-                <div className="note-tag">
-                  <p>University</p>
+                <div className="note-tag" 
+                  style={{
+                    backgroundColor: tagColors[note.tag] || '#E0E0E0',
+                  }}
+                >
+                  <p>{note.tag || "Undefind"}</p>
                 </div>
                 <div className="note-other-menu">
                   {isNoteOwner(note) && (
@@ -127,14 +144,13 @@ const NoteList = ({ notes, fetchData, activeTab }) => {
                     owner: note.owner,
                     collaborators: note.collaborators,
                     type: note.note_type,
+                    tag: note.tag,
                   });
                   setOpenNoteDialog(true);
                 }}
                 className="note-body"
               >
                 <h3 className="note-title">
-                  {/* note.content.substring(0, 300) */}
-
                   {note.title.substring(0, 50)}
                 </h3>
 
