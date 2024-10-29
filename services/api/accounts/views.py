@@ -190,8 +190,6 @@ class UserViewSet(viewsets.ViewSet):
         if is_teacher:
             teacher = Teacher.objects.get(user=request.user)
             teacher_data.append({
-                "phone": teacher.phone,
-                "address": teacher.address,
                 "date_of_birth": teacher.date_of_birth,
                 "gender": teacher.gender
             })
@@ -201,11 +199,6 @@ class UserViewSet(viewsets.ViewSet):
             student_data.append({
                  "gender": student.gender,
                     "date_of_birth": student.date_of_birth,
-                    "phone": student.phone,
-                    "country": student.country,
-                    "state": student.state,
-                    "city": student.city,
-                    "zip_code": student.zip_code
                 })
 
         final_data = {
@@ -266,25 +259,21 @@ class ApplicationSettingsViewSet(viewsets.ViewSet):
             new_application_settings.save()
             return new_application_settings
 
-    @action(detail=False, methods=['put'], url_path='me', url_name='me')
+    @action(detail=False, methods=['put'], url_path='update_setting', url_name='me')
     def update_application_settings(self, request):
         application_settings = self.get_object(request)
-        serializer = ApplicationSettingsSerializer(application_settings, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        if application_settings.isEmailNotification == True:
+            application_settings.isEmailNotification = False
+        else:
+            application_settings.isEmailNotification = True
+        application_settings.save()
+        
+        return Response('Application settings updated successfully', status=status.HTTP_200_OK)
+    
     @action(detail=False, methods=['get'], url_path='have_email_notification', url_name='have_email_notification')
     def check_have_email_notification(self, request):
         application_settings = self.get_object(request)
         return Response(application_settings.isEmailNotification, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=['get'], url_path='have_notification', url_name='have_notification')
-    def two_factore_auth(self, request):
-        application_settings = self.get_object(request)
-        return Response(application_settings.isTwoFactorAuthEnabled, status=status.HTTP_200_OK)
-
 
 @extend_schema(tags=["Password Reset"])
 class PasswordResetViewzSet(viewsets.ViewSet):
