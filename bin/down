@@ -12,9 +12,7 @@ done
 
 shift $((OPTIND - 1))
 
-# schoollms-celery-beat schoollms-celery  database schoollms-redis-1
 # stop all containers
-
 DOCKER_FILE="docker-compose.yml"
 DATABASE_DOCKER_FILE="docker-compose.db.yml"
 CELERY_REDIS="docker-compose.celery-redis.yml"
