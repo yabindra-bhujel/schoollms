@@ -10,6 +10,7 @@
 .setting-menu {
   background-color: rgb(245, 248, 247);
   width: 100%;
+  margin-top: 10px;
 }
 .setting-menu .setting-menu-items {
   display: flex;

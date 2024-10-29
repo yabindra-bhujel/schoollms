@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import "./style/profile.css";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import { getUserProfile, uploadImage, getUserProfileInfo } from "./SettingService";
+import {
+  getUserProfile,
+  uploadImage,
+  getUserProfileInfo,
+} from "./SettingService";
 import getUserInfo from "../../api/user/userdata";
 import { Snackbar } from "@mui/material";
-import UserInfoForm from "./UserInfoForm";
+import UserInfo from "./UserInfo";
 import { useTranslation } from "react-i18next";
-
 
 const Profile = () => {
   const [image, setImage] = useState("");
@@ -47,7 +50,6 @@ const Profile = () => {
         setMessage(imgUpdated);
         setSnackbarOpen(true);
         fetchData();
-
       })
       .catch((error) => {
         setMessage(imgUpdateErr);
@@ -89,9 +91,7 @@ const Profile = () => {
         autoHideDuration={6000}
       />
       <div className="setting-profile">
-        <div className="profile-header">
-          <Typography variant="h4">{t("settings.individual")}</Typography>
-        </div>
+        <div className="profile-header"></div>
 
         <div className="profile-image-name">
           <div className="profile-image">
@@ -124,16 +124,21 @@ const Profile = () => {
               </strong>
             </Typography>
 
-            <Typography variant="body2" style={{ color: 'red', fontWeight: 'bold' }}>
-              <small>
-                {t("settings.imgInfo")}
-              </small>
+            <Typography
+              variant="body2"
+              style={{ color: "red", fontWeight: "bold" }}
+            >
+              <small>{t("settings.imgInfo")}</small>
             </Typography>
           </div>
         </div>
 
         <div className="userinfofrom">
-          <UserInfoForm userData={userData} isTeacher={isTeacher} setUserData={setUserData} />
+          <UserInfo
+            userData={userData}
+            isTeacher={isTeacher}
+            setUserData={setUserData}
+          />
         </div>
       </div>
     </>

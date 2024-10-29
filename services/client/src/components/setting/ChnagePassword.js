@@ -1,63 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { Snackbar, TextField, Button, Grid, Paper, Typography, List, ListItem, ListItemText, InputAdornment, IconButton } from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import React, { useState, useEffect } from "react";
+import {
+  Snackbar,
+  TextField,
+  Button,
+  Typography,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import "./style/password.css";
-import HttpsIcon from '@mui/icons-material/Https';
-import { chnagePassword, handleLogout, checkTwoFactorAuth, updateTwoFactorAuth, updateEmailNotification, checkEmailNotification } from './SettingService';
-import { Switch, FormGroup, FormControlLabel } from '@mui/material';
+import HttpsIcon from "@mui/icons-material/Https";
+import {
+  chnagePassword,
+  handleLogout,
+  updateEmailNotification,
+  checkEmailNotification,
+} from "./SettingService";
+import { Switch, FormGroup, FormControlLabel } from "@mui/material";
 
 const UserManagement = () => {
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [snackbaropen, setSnackbarOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
-  const [isTwoFactorAuthEnabled, setIsTwoFactorAuthEnabled] = useState(false);
-  const [isEmailNotificationEnabled, setIsEmailNotificationEnabled] = useState(false);
+  const [isEmailNotificationEnabled, setIsEmailNotificationEnabled] =
+    useState(false);
 
   const fatchData = async () => {
     try {
-      const response = await checkTwoFactorAuth();
-      setIsTwoFactorAuthEnabled(response.data.two_factor_auth);
       const emailNotificationResponse = await checkEmailNotification();
-      setIsEmailNotificationEnabled(emailNotificationResponse.data.is_email_notification);
+      setIsEmailNotificationEnabled(emailNotificationResponse.data);
     } catch (error) {
-      setMessage("データの取得中に問題が発生しました。後でもう一度試すか、サービスプロバイダーに問い合わせてください.");
+      setMessage(
+        "Something went wrong while fetching email notification status."
+      );
       setSnackbarOpen(true);
     }
-
-  }
-
-
-
+  };
 
   useEffect(() => {
     fatchData();
   }, []);
-
-
-  const handleToggleChange = async () => {
-    setIsTwoFactorAuthEnabled((prevValue) => !prevValue);
-
-    const data = {
-      two_factor_auth: !isTwoFactorAuthEnabled,
-    };
-   try{
-    const response = await updateTwoFactorAuth(data);
-    if (response.status === 200) {
-      setMessage("二要素認証が正常に更新されました");
-      setSnackbarOpen(true);
-    }
-   }catch (error) {
-    setMessage("二要素認証の更新中に問題が発生しました。後でもう一度試すか、サービスプロバイダーに問い合わせてください。");
-    setSnackbarOpen(true);
-   }
-  };
 
   const handleEmailToggleChange = async () => {
     setIsEmailNotificationEnabled((prevValue) => !prevValue);
@@ -65,32 +54,27 @@ const UserManagement = () => {
     const data = {
       emai_notification: !setIsEmailNotificationEnabled,
     };
-    try{
+    try {
       const response = await updateEmailNotification(data);
       if (response.status === 200) {
-        setMessage("電子メール通知が正常に更新されました");
+        setMessage("Updated Email Notification Successfully");
         setSnackbarOpen(true);
       }
-    }catch (error) {
-      setMessage("電子メール通知の更新中に問題が発生しました。後でもう一度試すか、サービスプロバイダーに問い合わせてください。");
+    } catch (error) {
+      setMessage("Something went wrong while updating email notification.");
       setSnackbarOpen(true);
     }
   };
-
 
   const handleClose = () => {
     setSnackbarOpen(false);
   };
 
-
-
-
   const validatePassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return regex.test(password);
   };
-
 
   const handleFormSubmit = (e) => {
     setErrors({});
@@ -111,7 +95,10 @@ const UserManagement = () => {
     }
 
     if (newPassword !== confirmPassword) {
-      setErrors({ confirmPassword: "パスワードは新しいパスワードと同じであることを確認してください" });
+      setErrors({
+        confirmPassword:
+          "パスワードは新しいパスワードと同じであることを確認してください",
+      });
       return;
     }
 
@@ -119,7 +106,6 @@ const UserManagement = () => {
       setErrors({ newPassword: "Password must meet the specified criteria." });
       return;
     }
-
 
     e.preventDefault();
     const data = {
@@ -140,12 +126,12 @@ const UserManagement = () => {
         }, 10000);
       })
       .catch((error) => {
-        setMessage("Something went wrong while updating password. Please try again later or contact to service provider.");
+        setMessage(
+          "Something went wrong while updating password. Please try again later or contact to service provider."
+        );
         setSnackbarOpen(true);
       });
-  }
-
-
+  };
 
   return (
     <>
@@ -156,34 +142,35 @@ const UserManagement = () => {
         autoHideDuration={6000}
       />
       <div className="password-security">
-        <div className='password-chnage'>
-
-          <HttpsIcon style={{
-            fontSize: 50,
-            color: 'blue',
-            marginTop: 10,
-            marginBottom: 10,
-            marginLeft: 20,
-            marginRight: 20,
-
-          }} />
+        <div className="password-chnage">
+          <HttpsIcon
+            style={{
+              fontSize: 50,
+              color: "blue",
+              marginTop: 10,
+              marginBottom: 10,
+              marginLeft: 20,
+              marginRight: 20,
+            }}
+          />
           <Typography
-            style={{ color: 'blue', fontSize: '18px', fontWeight: 'bold' }}
-          >パスワードを変更</Typography>
+            style={{ color: "blue", fontSize: "18px", fontWeight: "bold" }}
+          >
+            パスワードを変更
+          </Typography>
           <Typography
-            style={{ color: 'black', fontSize: '14px', fontWeight: 'bold' }}
-          >パスワードを変更するには、以下のフィールドに入力してください</Typography>
-          <br />
-          <Typography
-            style={{ color: 'red', fontSize: '14px', fontWeight: 'bold' }}
-          >パスワードは 8 文字以上で、大文字、小文字、数字、および特殊文字を少なくとも 1 つずつ含める必要があります。</Typography>
+            style={{ color: "red", fontSize: "14px", fontWeight: "bold" }}
+          >
+            パスワードは 8
+            文字以上で、大文字、小文字、数字、および特殊文字を少なくとも 1
+            つずつ含める必要があります。
+          </Typography>
           <div
-            style={{ marginTop: '20px', marginBottom: '20px', width: '70%' }}
-
+            style={{ marginTop: "20px", marginBottom: "20px", width: "70%" }}
           >
             <TextField
               label="古いパスワード"
-              type={showOldPassword ? 'text' : 'password'}
+              type={showOldPassword ? "text" : "password"}
               fullWidth
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
@@ -205,7 +192,7 @@ const UserManagement = () => {
             />
             <TextField
               label="新しいパスワード"
-              type={showNewPassword ? 'text' : 'password'}
+              type={showNewPassword ? "text" : "password"}
               fullWidth
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -213,7 +200,6 @@ const UserManagement = () => {
               error={errors.newPassword}
               helperText={errors.newPassword}
               InputProps={{
-
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
@@ -228,7 +214,7 @@ const UserManagement = () => {
             />
             <TextField
               label="新しいパスワードを確認"
-              type={showConfirmPassword ? 'text' : 'password'}
+              type={showConfirmPassword ? "text" : "password"}
               fullWidth
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -236,11 +222,12 @@ const UserManagement = () => {
               error={errors.confirmPassword}
               helperText={errors.confirmPassword}
               InputProps={{
-
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       edge="end"
                     >
                       {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
@@ -253,9 +240,8 @@ const UserManagement = () => {
               type="submit"
               variant="outlined"
               fullWidth
-              style={{ marginTop: '20px' }}
-              startIcon={<HttpsIcon />
-              }
+              style={{ marginTop: "20px" }}
+              startIcon={<HttpsIcon />}
               onClick={handleFormSubmit}
             >
               パスワードを変更
@@ -263,43 +249,29 @@ const UserManagement = () => {
           </div>
         </div>
 
-        <div className='other-security'>
-
-          <div className='two-factor-auth' aria-disabled>
-            <Typography >
-              <h2>二要素認証</h2>
+        <div className="other-security">
+          <div className="two-factor-auth">
+            <Typography>
+              <h2>電子メール通知</h2>
               <p>
-              二要素認証では、ログイン時にパスワードとともに<strong>電子メール</strong>からのコードが必要になるため、セキュリティが強化されます。この機能のプロフィールに<strong>電子メール</strong>が最新であることを確認してください。
-              </p>
-
-
-            </Typography>
-            <FormGroup>
-              <FormControlLabel
-                control={<Switch checked={isTwoFactorAuthEnabled} onChange={handleToggleChange} />}
-                label={isTwoFactorAuthEnabled ? 'Enabled' : 'Disabled'}
-              />
-            </FormGroup>
-          </div>
-
-          <div className='two-factor-auth'>
-            <Typography >
-            <h2>電子メール通知</h2>
-              <p>
-                二要素認証では、ログイン時にパスワードとともに<strong>電子メール</strong>からのコードが必要になるため、セキュリティが強化されます。この機能のプロフィールに<strong>電子メール</strong>が最新であることを確認してください。
+                この設定を有効にすると、課題の締め切りや新しい課題の作成に関する通知が電子メールで送信されます。
               </p>
             </Typography>
             <FormGroup>
               <FormControlLabel
-                control={<Switch checked={isEmailNotificationEnabled} onChange={handleEmailToggleChange} />}
-                label={isEmailNotificationEnabled ? 'Enabled' : 'Disabled'}
+                control={
+                  <Switch
+                    checked={isEmailNotificationEnabled}
+                    onChange={handleEmailToggleChange}
+                  />
+                }
+                label={isEmailNotificationEnabled ? "Enabled" : "Disabled"}
               />
             </FormGroup>
           </div>
         </div>
       </div>
     </>
-
   );
 };
 
