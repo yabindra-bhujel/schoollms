@@ -16,7 +16,6 @@ class CalendarEvent(models.Model):
 
     def __str__(self):
         return str(self.title)
-    
 
 class Notes(models.Model):
     class NoteType(models.TextChoices):
@@ -32,6 +31,7 @@ class Notes(models.Model):
     color = models.CharField(max_length=20, null=True, blank=True, verbose_name='Color')
     shared_with = models.ManyToManyField(User, related_name='shared_notes', blank=True,
                                           verbose_name='Shared With')
+    tag = models.CharField(max_length=100, default="University", null=True, blank=True, verbose_name='Tag')
     
     def __str__(self):
         return str(self.title)

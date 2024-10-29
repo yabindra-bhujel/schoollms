@@ -7,18 +7,19 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  justify-content: center;
 }
 .note-list .note-card .note-item {
   margin: 10px;
-  min-height: 100px;
+  min-height: 250px;
   max-height: 300px;
-  width: 250px;
+  width: 30%;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 5px;
+  display: flex;
+  flex-direction: column;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   margin-bottom: 15px;
 }
@@ -26,16 +27,51 @@
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-.note-list .note-card .note-item:hover .update,
-.note-list .note-card .note-item:hover .note-item-header button {
-  display: flex;
-}
 .note-list .note-card .note-item h3 {
   font-size: 15px;
   color: #333;
   font-weight: 600;
 }
-.note-list .note-card .note-item .content-update {
+.note-list .note-card .note-item .content-note {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+}
+.note-list .note-card .note-item .note-header {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px;
+}
+.note-list .note-card .note-item .note-header .note-tag {
+  color: white;
+  padding: 7px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.note-list .note-card .note-item .note-header .note-other-menu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+.note-list .note-card .note-item .note-header .note-other-menu button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #333;
+  transition: color 0.3s ease-in-out;
+}
+.note-list .note-card .note-item .note-header .note-other-menu button:hover {
+  color: #f00;
+}
+.note-list .note-card-footer {
+  margin-top: 20px;
+  float: right;
+}
+.note-list .note-card-footer small {
+  font-weight: 600;
+  font-size: 14px;
+  color: #716e6e;
+  font-family: "Courier New", Courier, monospace;
 }/*# sourceMappingURL=notelist.css.map */

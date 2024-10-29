@@ -7,15 +7,40 @@ import { HiUserGroup } from "react-icons/hi2";
 import { FaList } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { getNotes, addNotes } from "./NotesService";
-import getUserInfo from "../../api/user/userdata";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from "@mui/material";
+import { IoSearch } from "react-icons/io5";
+import { debounce } from "lodash";
 
 const Notes = () => {
-  const username = getUserInfo().username;
   const [activeTab, setActiveTab] = useState("All");
   const [notes, setNotes] = useState([]);
+  const [filteredNotes, setFilteredNotes] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const maxNotesAllowed = 6;
+  const maxNotesAllowed = 10;
+  const [searchText, setSearchText] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const notedata = await getNotes();
+      setNotes(notedata);
+      setFilteredNotes(notedata); 
+    } catch (error) {
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSearch = debounce((text) => {
+    setFilteredNotes(
+      notes.filter((note) => note.title.toLowerCase().includes(text.toLowerCase()))
+    );
+  }, 300);
+
+  useEffect(() => {
+    handleSearch(searchText);
+  }, [searchText, notes]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -28,14 +53,12 @@ const Notes = () => {
     }
 
     const newNote = {
-      title: "Enter your note title here...",
-      content: "Enter your note here...",
+      title: "ノートのタイトル...",
+      content: "ノートの詳細...",
     };
 
     addNotes(newNote)
-      .then(() => {
-        fetchData();
-      })
+      .then(() => fetchData())
       .catch((error) => {
         console.error("Error creating new note: ", error);
       });
@@ -45,57 +68,47 @@ const Notes = () => {
     setIsDialogOpen(false);
   };
 
-  const fetchData = async () => {
-    try {
-      const notedata = await getNotes();
-      setNotes(notedata);
-    } catch (error) {
-      console.error("Error fetching notes data: ", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   return (
     <Layout>
-      <div className="nav-bar">
-        <div className="nav-left">
-          <ul className="node-ul">
-            <li
-              className={activeTab === "All" ? "note-active" : ""}
-              onClick={() => handleTabClick("All")}
-            >
-              <FaList  className="icon"/>
+      <div className="note-component-header">
+        <div className="top-bar">
+          <div className="nav-search">
+            <IoSearch className="search-icon" />
+            <input 
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              type="text"
+              placeholder="Search notes title..."
+            />
+          </div>
+          <div className="nav-right">
+            <button onClick={handleCreateNote} className="add-note-btn">
+              <IoMdAdd className="add-icon" />
+              <span>新規ノート</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="tab-bar">
+          <ul className="note-ul">
+            <li className={activeTab === "All" ? "note-active" : ""} onClick={() => handleTabClick("All")}>
+              <FaList className="icon" />
               <span>All</span>
             </li>
-            <li
-              className={activeTab === "Private" ? "note-active" : ""}
-              onClick={() => handleTabClick("Private")}
-            >
-              <GoShieldLock  className="icon" />
+            <li className={activeTab === "Private" ? "note-active" : ""} onClick={() => handleTabClick("Private")}>
+              <GoShieldLock className="icon" />
               <span>Private</span>
             </li>
-            <li
-              className={activeTab === "Shared" ? "note-active" : ""}
-              onClick={() => handleTabClick("Shared")}
-            >
-              <HiUserGroup   className="icon"/>
+            <li className={activeTab === "Shared" ? "note-active" : ""} onClick={() => handleTabClick("Shared")}>
+              <HiUserGroup className="icon" />
               <span>Shared</span>
             </li>
           </ul>
         </div>
-        <div className="nav-right">
-          <button onClick={handleCreateNote} className="add-note-btn">
-            <IoMdAdd className="add-icon" />
-            <span> Add New Note</span>
-          </button>
-        </div>
       </div>
 
       <div className="note-body">
-        <NoteList notes={notes} setNotes={setNotes} fetchData={fetchData} activeTab={activeTab} />
+        <NoteList notes={filteredNotes} setNotes={setNotes} fetchData={fetchData} activeTab={activeTab} />
       </div>
 
       <Dialog
@@ -111,9 +124,7 @@ const Notes = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary" autoFocus>
-            Okay
-          </Button>
+          <Button onClick={handleCloseDialog} color="primary" autoFocus>Okay</Button>
         </DialogActions>
       </Dialog>
     </Layout>
