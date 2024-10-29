@@ -41,7 +41,7 @@ class Notes(models.Model):
         verbose_name_plural = "Notes"
 
 class NoteTag(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Name', unique=True)
+    name = models.CharField(max_length=100, verbose_name='Name', unique=True, default='University')
     notes = models.ManyToManyField(Notes, related_name='tags', verbose_name='Notes')
     
     def __str__(self):
