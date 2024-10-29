@@ -40,6 +40,17 @@ class Notes(models.Model):
         verbose_name = "Note"
         verbose_name_plural = "Notes"
 
+class NoteTag(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Name', unique=True)
+    notes = models.ManyToManyField(Notes, related_name='tags', verbose_name='Notes')
+    
+    def __str__(self):
+        return str(self.name)
+    
+    class Meta:
+        verbose_name = "Note Tag"
+        verbose_name_plural = "Note Tags"
+
 class Notification(models.Model):
     title = models.CharField(max_length=100, verbose_name='Title')
     content = models.TextField(verbose_name='Content')
