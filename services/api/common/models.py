@@ -13,6 +13,8 @@ class CalendarEvent(models.Model):
     is_class_cancellation = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     subject = models.ForeignKey('subjects.Subject', on_delete=models.CASCADE, null=True, blank=True)
+    reminder_time = models.TimeField(null=True, blank=True)
+    is_reminder_sent = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.title)

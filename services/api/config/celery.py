@@ -29,4 +29,9 @@ app.conf.beat_schedule = {
         'task': 'common.tasks.generate_events',
         'schedule': crontab(minute='*'),
     },
+
+    'send-reminder-notification': {
+        'task': 'common.tasks.send_reminder_notification',
+        'schedule': crontab(minute='*'),
+    },
 }

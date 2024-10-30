@@ -3,8 +3,45 @@ import logging
 from datetime import datetime, timedelta
 from courses.subjects.models import Subject
 from .models import CalendarEvent
+from datetime import datetime
+from django.core.mail import send_mail
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
+
+@shared_task
+def send_reminder_notification():
+    today = datetime.now().strftime('%Y-%m-%d')
+
+    reminder = CalendarEvent.objects.filter(
+        start_date=today,
+        reminder_time__isnull=False,
+        is_reminder_sent=False,
+    )
+
+    if not reminder.exists():
+        logger.info('No reminder to send')
+        return
+
+    for event in reminder:
+        email = event.user.email
+        subject = f'Reminder: {event.title}'
+        message = f'You have an event today: {event.title} at {event.start_time}'
+
+        try:
+            send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+            event.is_reminder_sent = True
+            event.save()
+            logger.info(f'Reminder sent to {email}')
+            
+        except Exception as e:
+            logger.error(f'Error sending email: {e}')
 
 @shared_task
 def generate_events():
