@@ -3,6 +3,6 @@
 if [ -f .env ]; then
   . .env
 else
-  echo "env.templateをコピーして.envファイルを作ってください"
+  echo "No .env file found"
   exit 1
 fi

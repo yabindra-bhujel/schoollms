@@ -25,6 +25,8 @@ router.register(r'admin/teachers', AdminTeacherViewSet, basename='admin-teachers
 router.register(r'teachers', TeacherViewSet, basename='Teacher')
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
+
     path('api/', include('courses.urls')),
     path('api/', include('common.urls')),
     path('api/', include(router.urls)),
@@ -48,6 +50,5 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += [
-        path('admin/', admin.site.urls),
         path('__debug__/', include(debug_toolbar.urls))
         ]
