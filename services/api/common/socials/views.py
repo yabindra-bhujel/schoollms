@@ -134,6 +134,10 @@ class GroupMessagesViewSet(viewsets.ViewSet):
             permission_classes = [IsAuthenticated]
 
         return [permission() for permission in permission_classes]
+    
+    def delete_cache(self, request):
+        cache_key = f"groups_{request.user.id}"
+        cache.delete(cache_key)
 
     @extend_schema(responses={201: dict})
     @action(detail=False, methods=['post'], url_path='create_group', url_name='create_group')
@@ -173,6 +177,8 @@ class GroupMessagesViewSet(viewsets.ViewSet):
         group.save()
         group.members.add(*user_objects)
         group.save()
+
+        self.delete_cache(request)
         return Response({"message":"Group created successfully"}, status=status.HTTP_201_CREATED)
 
     @extend_schema(responses={200: dict})
@@ -274,6 +280,8 @@ class GroupMessagesViewSet(viewsets.ViewSet):
             group = Group.objects.get(id=group_id)
             group.group_image = request.FILES.get("group_image")
             group.save()
+
+            self.delete_cache(request)
             return Response({"message":"Group image updated successfully"}, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
             logger.error(f"Group not found with id: {group_id}")
@@ -301,6 +309,8 @@ class GroupMessagesViewSet(viewsets.ViewSet):
             group = Group.objects.get(id=group_id)
             requesting_user = request.user
             group.members.remove(requesting_user)
+
+            self.delete_cache(request)
             return Response({"message":"Left group successfully"}, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
             logger.error(f"Group not found with id: {group_id}")
@@ -326,6 +336,8 @@ class GroupMessagesViewSet(viewsets.ViewSet):
                 return Response({"message":"You are not authorized to delete this group"}, status=status.HTTP_401_UNAUTHORIZED)
 
             group.delete()
+
+            self.delete_cache(request)
             return Response({"message":"Group deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
         except Group.DoesNotExist:
             logger.error(f"Group not found with id: {group_id}")
