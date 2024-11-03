@@ -64,7 +64,7 @@ jobs:
 
       - name: Set up test database
         run: |
-          python manage.py migrate --noinput
+          python3 manage.py migrate --noinput
           
       - name: Run tests
         run: pytest
