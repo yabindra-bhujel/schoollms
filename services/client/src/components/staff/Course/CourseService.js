@@ -38,7 +38,7 @@ const AdminCourseList = async () => {
 
 const DeleteCourse = async (course_id) => {
     try {
-        const endpoint = `${baseURL}${course_id}/`;
+        const endpoint = `${baseURL}delete_subject/${course_id}/`;
         const response = await instance.delete(endpoint);
         return response.data;
     } catch (error) {

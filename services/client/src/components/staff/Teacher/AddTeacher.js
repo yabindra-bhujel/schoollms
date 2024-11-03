@@ -1,127 +1,136 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import AdminLayout from "../navigation/NavigationLayout";
-import { TextField, Button, Container, Grid } from '@mui/material';
-import {Input, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { addTeacher } from './TeacherService';
-import { useNavigate } from 'react-router-dom';
+import { TextField, Button, Container, Grid } from "@mui/material";
+import {
+  Input,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import { addTeacher } from "./TeacherService";
+import { useNavigate } from "react-router-dom";
 
 const AddTeacher = () => {
-    const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
 
-    const [teacherData, setTeacherData] = useState({
-        teacher_id: '',
-        first_name: '',
-        last_name: '',
-        date_of_birth: '',
-        gender: '',
-        image: '',
-      });
+  const [teacherData, setTeacherData] = useState({
+    teacher_id: "",
+    first_name: "",
+    last_name: "",
+    date_of_birth: "",
+    gender: "",
+    image: "",
+    email: "",
+  });
 
+  const [errors, setErrors] = useState({});
+  const navigator = useNavigate();
 
-      const [errors, setErrors] = useState({});
-        const navigator = useNavigate();
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {};
 
-      const validateForm = () => {
-        let isValid = true;
-        const newErrors = {};
-    
-        // Validation rules
-        if (!teacherData.first_name.trim()) {
-          newErrors.first_name = 'First Name is required';
-          isValid = false;
-        }
-    
-        if (!teacherData.last_name.trim()) {
-          newErrors.last_name = 'Last Name is required';
-          isValid = false;
-        }
-    
-        if (!teacherData.date_of_birth.trim()) {
-          newErrors.date_of_birth = 'Date of Birth is required';
-          isValid = false;
-        }
-    
-        if (!teacherData.gender.trim()) {
-          newErrors.gender = 'Gender is required';
-          isValid = false;
-        }
+    // Validation rules
+    if (!teacherData.first_name.trim()) {
+      newErrors.first_name = "First Name is required";
+      isValid = false;
+    }
 
-    
-    
-        setErrors(newErrors);
-        return isValid;
+    if (!teacherData.last_name.trim()) {
+      newErrors.last_name = "Last Name is required";
+      isValid = false;
+    }
+
+    if (!teacherData.date_of_birth.trim()) {
+      newErrors.date_of_birth = "Date of Birth is required";
+      isValid = false;
+    }
+
+    if (!teacherData.gender.trim()) {
+      newErrors.gender = "Gender is required";
+      isValid = false;
+    }
+
+    if (!teacherData.teacher_id.trim()) {
+      newErrors.teacher_id = "Teacher ID is required";
+      isValid = false;
+    }
+
+    if (!teacherData.email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.match("image.*")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result);
       };
+      reader.readAsDataURL(file);
+    }
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      const response = await addTeacher(teacherData);
 
-      const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file && file.type.match('image.*')) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setImagePreviewUrl(reader.result);
-          };
-          reader.readAsDataURL(file);
-        }
-      };
+      if (response.status === 201) {
+        navigator("/admin/teacher");
+      } else {
+        alert("An error occurred. Please try again.");
+      }
+    }
+  };
 
-      const handleSubmit = async (e)  => {
-        e.preventDefault();
-        if (validateForm()) {
-         const response = await addTeacher(teacherData);
-
-            if (response.status === 201) {
-                navigator('/admin/teacher');
-               
-            } else {
-              alert('An error occurred. Please try again.');
-            }
-        }
-      };
-
-
-
-      const handleChange = (e) => {
-        setTeacherData({ ...teacherData, [e.target.name]: e.target.value });
-      };
-
-
+  const handleChange = (e) => {
+    setTeacherData({ ...teacherData, [e.target.name]: e.target.value });
+  };
 
   return (
     <AdminLayout>
       <Container>
         <h1>Add Teacher</h1>
         <form onSubmit={handleSubmit}>
-
-            <h1
+          <h1
             style={{
-                marginTop: '20px',
-                marginBottom: '20px',
+              marginTop: "20px",
+              marginBottom: "20px",
             }}
-            >General Information</h1>
+          >
+            General Information
+          </h1>
           <Grid container spacing={2}>
-
-          <Grid item xs={6}>
+            <Grid item xs={6}>
               <TextField
-                 label="Teacher ID"
-                 variant="outlined"
-                 fullWidth
-                 name="teacher_id"
-                 value={teacherData.teacher_id}
-                 onChange={handleChange}
+                label="Teacher ID"
+                variant="outlined"
+                fullWidth
+                name="teacher_id"
+                value={teacherData.teacher_id}
+                onChange={handleChange}
+                error={!!errors.teacher_id}
+                helperText={errors.teacher_id}
               />
             </Grid>
 
-
             <Grid item xs={6}>
               <TextField
-                 label="First Name"
-                 variant="outlined"
-                 fullWidth
-                 name="first_name"
-                 value={teacherData.first_name}
-                 onChange={handleChange}
-                 error={!!errors.first_name}
-                 helperText={errors.first_name}
+                label="First Name"
+                variant="outlined"
+                fullWidth
+                name="first_name"
+                value={teacherData.first_name}
+                onChange={handleChange}
+                error={!!errors.first_name}
+                helperText={errors.first_name}
               />
             </Grid>
             <Grid item xs={6}>
@@ -134,6 +143,19 @@ const AddTeacher = () => {
                 onChange={handleChange}
                 error={!!errors.last_name}
                 helperText={errors.last_name}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="Email"
+                variant="outlined"
+                fullWidth
+                name="email"
+                value={teacherData.email}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
               />
             </Grid>
 
@@ -162,9 +184,8 @@ const AddTeacher = () => {
                   name="gender"
                   value={teacherData.gender}
                   onChange={handleChange}
-                  error = {!!errors.gender}
-                  helperText = {errors.gender}
-
+                  error={!!errors.gender}
+                  helperText={errors.gender}
                 >
                   <MenuItem value="Male">Male</MenuItem>
                   <MenuItem value="Female">Female</MenuItem>
@@ -172,25 +193,28 @@ const AddTeacher = () => {
               </FormControl>
             </Grid>
 
-
             {/* image input filds */}
             <Grid item xs={6}>
-                <Input
-                  type="file"
-                  name="image"
-                  onChange={handleImageChange}
-                  inputProps={{
-                    accept: 'image/*', // Specify accepted file types
-                  }}
-                />
+              <Input
+                type="file"
+                name="image"
+                onChange={handleImageChange}
+                inputProps={{
+                  accept: "image/*", // Specify accepted file types
+                }}
+              />
             </Grid>
 
-             {/* Show selected image */}
-        {imagePreviewUrl && (
-          <Grid item xs={6}>
-            <img src={imagePreviewUrl} alt="Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
-          </Grid>
-        )}
+            {/* Show selected image */}
+            {imagePreviewUrl && (
+              <Grid item xs={6}>
+                <img
+                  src={imagePreviewUrl}
+                  alt="Preview"
+                  style={{ maxWidth: "200px", maxHeight: "200px" }}
+                />
+              </Grid>
+            )}
             <Grid item xs={12}>
               <Button type="submit" variant="contained" color="primary">
                 Add Teacher

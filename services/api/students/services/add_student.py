@@ -40,10 +40,7 @@ class StudentCreator:
 
     def __create_student(self):
 
-        if self.__data.get('email') is None:
-            email = f"{self.__data.get('first_name')}{self.__data.get('student_id')}@gmail.com"
-        else:
-            email = self.__data.get('email')
+        email = self.__data.get('email')
 
         self.__student = Student(
             student_id=self.__data.get('student_id'),

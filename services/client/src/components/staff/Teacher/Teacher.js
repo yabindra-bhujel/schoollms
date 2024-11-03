@@ -109,6 +109,37 @@ const AdminTeacher = () => {
     setOpenSnackbar(false);
   };
 
+
+  const generateSampleCSV = () => {
+    const sampleData = [
+      [
+        "teacher_id",
+        "first_name",
+        "last_name",
+        "date_of_birth",
+        "gender",
+        "email",
+      ],
+      ["33", "Teacher", "Sensei", "2024-11-03", "Male", "33@gmail.com"],
+    ];
+
+    // Convert data to CSV format
+    const csvContent = sampleData.map((e) => e.join(",")).join("\n");
+
+    // Create a Blob from the CSV data
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    // Trigger download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sample_teacher_data.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+
   return (
     <AdminLayout>
       <div className="admin-teacher">
@@ -116,6 +147,9 @@ const AdminTeacher = () => {
           <h2>Teacher List</h2>
 
           <div className="add-new-teacher">
+          <a href="#" onClick={generateSampleCSV}>
+              Download Sample CSV
+            </a>
             <input
               type="file"
               style={{ display: 'none' }}

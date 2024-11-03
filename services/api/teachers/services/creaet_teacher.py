@@ -34,20 +34,15 @@ class TeacherCreator:
             raise ValidationError("Teacher ID and User cannot be None.")
         
         try:
-            if self.__data.get('email') is None:
-                email = f"{self.__data.get('first_name')}{self.__teacher_id}@gmail.com"
-            else:
-                email = self.__data.get('email')
+            email = self.__data.get('email')
         
             self.__teacher = Teacher(
                 teacher_id=self.__teacher_id,
                 first_name=self.__data.get('first_name'),
                 last_name=self.__data.get('last_name'),
                 email=email,
-                phone=self.__data.get('phone'),
                 gender=self.__data.get('gender'),
                 date_of_birth=self.__data.get('date_of_birth'),
-                address=self.__data.get('address'),
                 user=self.__user
             )
             self.__teacher.save()

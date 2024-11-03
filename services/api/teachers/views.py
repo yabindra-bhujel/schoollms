@@ -105,7 +105,7 @@ class AdminTeacherViewSet(viewsets.ViewSet):
     )
     def destroy(self, request, id: int = None):
         queryset = Teacher.objects.all()
-        teacher = get_object_or_404(queryset, id=id)
+        teacher = get_object_or_404(queryset, teacher_id=id)
         teacher.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
