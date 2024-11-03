@@ -5,11 +5,12 @@ services:
     environment:
       POSTGRES_DB: school_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+      POSTGRES_PASSWORD: cocqYp-nodma7-cyszag?+`***@
 
     ports:
-    - target: 5432
-      published: 5432
+    # build only for local
+     - "127.0.0.1:5432:5432"
+
 
     volumes:
       - db_data:/var/lib/postgresql/data
