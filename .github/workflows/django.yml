@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: api
+        working-directory: services/api
 
     services:
       database:
