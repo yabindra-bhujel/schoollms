@@ -1,0 +1,46 @@
+.mobile-menu {
+    .mobile-menu-header {
+    }
+  
+    .mobile-menu-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+  
+      .mobile-menu-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        font-size: 1.2rem;
+        color: #333;
+        text-decoration: none;
+        border-radius: 8px;
+        height: 100px;
+        width: calc(50% - 1rem); // Two items per row, accounting for margin
+        margin: 0.5rem;
+        background-color: #bb9393;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+        &:hover {
+          background-color: #eaeaea;
+        }
+  
+        a {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: inherit;
+          text-decoration: none;
+          width: 100%;
+        }
+  
+        .icon {
+          font-size: 1.5rem;
+          color: #4a90e2;
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+  

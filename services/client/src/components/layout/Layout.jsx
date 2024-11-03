@@ -2,19 +2,34 @@
 import Header from '../navigations/header/header';
 import Sidebar from '../navigations/sidebar/Sidebar';
 import "./layout.css";
-import  React, { useState } from 'react';
+import  React, { useEffect, useState } from 'react';
+import MobileMenu from './MobileMenu';
 
 const Layout = ({ children }) => {
-    // set sidebar width (70px or 200)
 const [sidebarWidth, setSidebarWidth] = useState(() => {
   const storedWidth = localStorage.getItem('sidebarWidth');
   try {
     return storedWidth !== null ? JSON.parse(storedWidth) : true;
   } catch (error) {
-    console.error('Error parsing storedWidth:', error);
-    return true; // Use a default value or handle the error accordingly
+    return true;
   }
 });
+
+const [isMobile, setIsMobile] = useState(false);
+
+const checkScreenSize = () => {
+  setIsMobile(window.innerWidth < 519);
+};
+
+console.log(isMobile);
+
+useEffect(() => {
+  checkScreenSize();
+  window.addEventListener('resize', checkScreenSize);
+  return () => {
+    window.removeEventListener('resize', checkScreenSize);
+  };
+}, []);
 
 const toggleSidebar = () => {
   setSidebarWidth((prevWidth) => {
@@ -24,27 +39,37 @@ const toggleSidebar = () => {
   });
 };
 
-  return (
-    <div>
-      <div className="main-container">
-        <div className="main-sidebar" style={{
-          width: sidebarWidth ? "200px" : "70px",
-        }}>
+return (
+  <div className="main-container">
+    {isMobile ? (
+      <MobileMenu />
+    ) : (
+      <>
+        <div
+          className="main-sidebar"
+          style={{
+            width: sidebarWidth ? "200px" : "70px",
+          }}
+        >
           <Sidebar toggleSidebar={toggleSidebar} sidebarWidth={sidebarWidth} />
         </div>
-        <div className="main-content" style={{
-          width: sidebarWidth ? "calc(100% - 200px)" : "calc(100% - 70px)",
-        }}>
-          <div className='header-bar' >
+        <div
+          className="main-content"
+          style={{
+            width: sidebarWidth ? "calc(100% - 200px)" : "calc(100% - 70px)",
+          }}
+        >
+          <div className="header-bar">
             <Header />
           </div>
           <div className="body-content">
-              {children}
+            {children}
           </div>
         </div>
-      </div>
-    </div>
-  );
+      </>
+    )}
+  </div>
+);
 };
 
 export default Layout;
