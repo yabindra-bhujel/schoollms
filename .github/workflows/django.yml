@@ -58,7 +58,11 @@ jobs:
 
       - name: Set up virtual environment
         run: |
-          poetry shell
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+          poetry run python -m venv .venv
+          source .venv/bin/activate
+          
 
       - name: Set up test database
         run: |
