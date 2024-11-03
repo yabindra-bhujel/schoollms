@@ -54,15 +54,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry install
+          poetry env use python3
+
 
       - name: Set up virtual environment
         run: |
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project true
-          poetry run python -m venv .venv
-          source .venv/bin/activate
-          
+          poetry install --no-interaction --no-ansi
+
 
       - name: Set up test database
         run: |
