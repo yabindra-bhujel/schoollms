@@ -1,64 +1,62 @@
-      name: Django CI/CD
-      on:
-        push:
-          branches:
-            - main
-        pull_request:
-          branches:
-            - main
-      
-      jobs:
-        build:
-          runs-on: ubuntu-latest
-          env:
-            SECRET_KEY: django-insecure-324-f+674e6s0(ng9$qzu9j)=44xom(vtsn#o+11_#7*e!az$0
-            DEVELOPMENT_MODE: "False"
+name: Django CI/CD
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-          defaults:
-            run:
-              working-directory: api
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: django-insecure-324-f+674e6s0(ng9$qzu9j)=44xom(vtsn#o+11_#7*e!az$0
+      DEVELOPMENT_MODE: "False"
 
-          services:
-            database:
-              image: postgres:latest
-              env:
-                POSTGRES_USER: postgres
-                POSTGRES_PASSWORD: cocqYp-nodma7-cyszag?+`***@
-                POSTGRES_DB: database
-                name: school_db
-              ports:
-                - 5432:5432
-              options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-      
-          steps:
-          - name: Checkout code
-            uses: actions/checkout@v2
-      
-          - name: Set up Python
-            uses: actions/setup-python@v2
-            with:
-              python-version: 3.10
-            
-          - name: Cache dependencies
-            uses: actions/cache@v2
-            with:
-              path: ~/.cache/pypoetry
-              key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-              restore-keys: |
-                ${{ runner.os }}-poetry-
-      
-          - name: Install dependencies
-            run: |
-              poetry install
-      
-          - name: Set up test database
-            run: |
-              python manage.py migrate --noinput
-              
-          - name: Run tests
-            run: pytest
+    defaults:
+      run:
+        working-directory: api
+
+    services:
+      database:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: cocqYp-nodma7-cyszag?+`***@
+          POSTGRES_DB: database
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10
+        
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Set up test database
+        run: |
+          python manage.py migrate --noinput
           
-          - name: Run linter
-          run: |
-            poetry run flake8
-              
+      - name: Run tests
+        run: pytest
+        
+      - name: Run linter
+        run: |
+          poetry run flake8
