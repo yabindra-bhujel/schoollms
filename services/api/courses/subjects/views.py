@@ -70,17 +70,19 @@ class AdminSubjectViewSet(viewsets.ViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name="id",
-                type=OpenApiTypes.INT,
+                name="subject_code",
+                type=OpenApiTypes.STR,
+                required=True,
                 location=OpenApiParameter.PATH,
                 description="ID of the subject",
             )
         ],
         responses={200: SubjectSerializer},
     )
-    def update(self, request, id: Optional[int] = None):
-        queryset = Subject.objects.all()
-        subject = get_object_or_404(queryset, id=id)
+    @action(detail=False, methods=["put"], url_path="update_subject/(?P<subject_code>[^/.]+)", url_name="update_subject")
+    def update_subject(self, request, subject_code: str  = None):
+        subject = Subject.objects.get(subject_code=subject_code)
+
         serializer = SubjectSerializer(subject, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -90,17 +92,17 @@ class AdminSubjectViewSet(viewsets.ViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name="id",
-                type=OpenApiTypes.INT,
+                name="subject_code",
+                type=OpenApiTypes.STR,
+                required=True,
                 location=OpenApiParameter.PATH,
                 description="ID of the subject",
             )
         ],
     )
-    def destroy(self, request, id: Optional[int] = None):
-        queryset = Subject.objects.all()
-        subject = get_object_or_404(queryset, id=id)
-        subject.delete()
+    @action(detail=False, methods=["delete"], url_path="delete_subject/(?P<subject_code>[^/.]+)", url_name="delete_subject")
+    def delete_subject(self, request, subject_code: str = None):
+        Subject.objects.get(subject_code=subject_code).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 @extend_schema(tags=["Subject Registration"])

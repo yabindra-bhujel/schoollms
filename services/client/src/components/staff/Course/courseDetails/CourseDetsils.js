@@ -35,7 +35,7 @@ const CourseDetails = () => {
 
     const updateCourseDetails = async () => {
         try {
-            const response = await instance.put(`/course/update_course/${id}/`, courseDetails);
+            await instance.put(`/admin/subject/update_subject/${id}/`, courseDetails);
             setSnackbar(true);
             setSnackbarMessage("Course details updated successfully");
             setIsEditable(false);

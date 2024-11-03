@@ -6,7 +6,7 @@ const baseURL = 'admin/teachers/'
 
 const uploadTeahcerFile = async (file) => {
     try{
-        const endpoint = `${baseURL}add-teacher-from-file`;
+        const endpoint = `${baseURL}add-teacher-from-file/`;
         const response = await instance.post(endpoint, file);
         return response;
 
@@ -14,8 +14,6 @@ const uploadTeahcerFile = async (file) => {
         throw new Error(error);
     }
 }
-
-
 
 const addTeacher = async (teacherData) => {
     const endpoint = `${baseURL}`;
