@@ -19,7 +19,7 @@ services:
       DB_HOST: database
       DB_PORT: 5432
       DB_USER: postgres
-      DB_PASSWORD: cocqYp-nodma7-cyszag?+`***@
+      DB_PASSWORD: root
       DB_NAME: school_db
       SECRET_KEY: ${SECRET_KEY}
       EMAIL_IMAP_USERNAME: ${EMAIL_IMAP_USERNAME}

@@ -5,11 +5,10 @@ services:
     environment:
       POSTGRES_DB: school_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: cocqYp-nodma7-cyszag?+`***@
+      POSTGRES_PASSWORD: root
 
     ports:
-    # build only for local
-     - "127.0.0.1:5432:5432"
+      - "5432:5432"
 
 
     volumes:
