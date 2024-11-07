@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '34.146.2.8']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '34.146.2.8', ' bhuj-le.tech']
 
 CHANNEL_LAYERS = {
     'default': {
