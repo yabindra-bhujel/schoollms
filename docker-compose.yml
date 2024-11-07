@@ -13,7 +13,6 @@ services:
       - ./var/log/supervisor:/var/log/django_services/supervisor
       - static_volume:/api/static
       - media_volume:/api/media
-
     command: ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
     environment:
       DB_HOST: database
@@ -25,7 +24,6 @@ services:
       EMAIL_IMAP_USERNAME: ${EMAIL_IMAP_USERNAME}
       EMAIL_IMAP_PASSWORD: ${EMAIL_IMAP_PASSWORD}
       DEVELOPMENT_MODE: ${DEVELOPMENT_MODE}
-
     networks:
       - school_app
 
@@ -33,19 +31,26 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-
     ports:
       - "80:80"
-
-    # dajngo 用意された静的ファイルは開発環境だけで使う
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ./services/client/build:/usr/share/nginx/html
       - ./services/api/media:/usr/share/nginx/html/media
       - ./var/log/web:/var/log/nginx/
-    
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+
+
     networks:
       - school_app
+
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal -d bhuj-le.tech --agree-tos --staging --email yabindra2057@gmail.com --non-interactive
 
 
 volumes:
