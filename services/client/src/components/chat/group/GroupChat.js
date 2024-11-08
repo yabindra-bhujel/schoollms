@@ -56,9 +56,7 @@ const GroupChat = ({ selectedChat, onlineUsers, handleBackToList, isMobileView }
         }
       };
 
-
       ws.onclose = () => {
-        console.log("WebSocket connection closed");
       };
 
       setSocket(ws);
@@ -164,6 +162,9 @@ const GroupChat = ({ selectedChat, onlineUsers, handleBackToList, isMobileView }
 
       const seenMessageIds = new Set(groupMessage.map((msg) => msg.id));
 
+      // clear existing messages
+      setGroupMessage([]);
+
       const filteredMessages = messages.filter((message) => !seenMessageIds.has(message.id));
 
       setGroupMessage((prevMessages) => [
@@ -171,7 +172,6 @@ const GroupChat = ({ selectedChat, onlineUsers, handleBackToList, isMobileView }
         ...filteredMessages
       ]);
     } catch (err) {
-      console.error("Error fetching group messages:", err);
     }
   };
 

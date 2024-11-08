@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from django.db.models import Q
 from .models import Message, Group, GroupMessage
 from accounts.models import UserProfile
+from django.db.models import Prefetch
 import json
 from ..serializers import GroupMessageSerializer
 from django.core.cache import cache
@@ -19,7 +20,8 @@ import logging
 
 logger = logging.getLogger(__name__) # common.socials.views
 User = get_user_model()
-
+from datetime import datetime
+from django.utils import timezone
 
 
 @extend_schema(tags=["Private Messages"])
@@ -42,33 +44,45 @@ class PrivateMessagesViewSet(viewsets.ViewSet):
     @extend_schema(responses={200: dict})
     @action(detail=False, methods=['get'], url_path='user_list', url_name='list')
     def user_list(self, request):
-        cache_key = f"users_{request.user.id}"
-        user_data = cache.get(cache_key)
+        username = request.user.username
 
-        if user_data is None:
-            username = request.user.username
+        users = User.objects.filter(~Q(username=username))
 
-            users = User.objects.filter(~Q(username=username))
+        profiles = UserProfile.objects.filter(user__in=users).select_related('user')
 
-            profiles = UserProfile.objects.filter(user__in=users).select_related('user')
+        user_data = []
+        for profile in profiles:
+            last_message = Message.objects.filter(
+                Q(sender=profile.user, receiver=request.user) | Q(sender=request.user, receiver=profile.user)
+            ).order_by('-timestamp').first()
 
-            user_data = [
-                {
-                    "is_teacher": profile.user.is_teacher,
-                    "is_student": profile.user.is_student,
-                    "username": profile.user.username,
-                    "first_name": profile.user.first_name,
-                    "last_name": profile.user.last_name,
-                    "email": profile.user.email,
-                    "image": request.build_absolute_uri(profile.image.url) if profile.image else None,
+            last_message_data = None
+            if last_message:
+                last_message_data = {
+                    "message": last_message.message,
+                    "sender": last_message.sender.username,
+                    "timestamp": last_message.timestamp
                 }
-                for profile in profiles
-            ]
 
-            user_data = [user for user in user_data if user["is_teacher"] or user["is_student"]]
+            user_data.append({
+                "is_teacher": profile.user.is_teacher,
+                "is_student": profile.user.is_student,
+                "username": profile.user.username,
+                "first_name": profile.user.first_name,
+                "last_name": profile.user.last_name,
+                "email": profile.user.email,
+                "image": request.build_absolute_uri(profile.image.url) if profile.image else None,
+                "last_message": last_message_data
+            })
 
-            cache.set(cache_key, user_data, timeout=60 * 60)
+        # Filter users to include only teachers or students
+        user_data = [user for user in user_data if user["is_teacher"] or user["is_student"]]
 
+        # Sort users by the latest message timestamp (if available),
+        #  treating None as the smallest value
+        user_data.sort(key=lambda x: x['last_message']['timestamp']
+                        if x['last_message'] else timezone.make_aware(datetime.min), reverse=True)
+        
         return Response({"users": user_data}, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -191,40 +205,45 @@ class GroupMessagesViewSet(viewsets.ViewSet):
     @extend_schema(responses={200: dict})
     @action(detail=False, methods=['get'], url_path='group_list', url_name='group_list')
     def group_list(self, request):
-        cache_key = f"groups_{request.user.id}"
-        group_data = cache.get(cache_key)
 
-        if group_data is None:
+        username = request.user.username
+        requesting_user = User.objects.filter(username=username).first()
 
-            username = request.user.username
-            requesting_user = User.objects.filter(username=username).first()
-            groups = Group.objects.filter(
-                Q(admin=requesting_user) | Q(members=requesting_user)
-            ).distinct()
+        # Fetch all groups where the requesting user is either an admin or a member
+        groups = Group.objects.filter(
+            Q(admin=requesting_user) | Q(members=requesting_user)
+        ).distinct()
 
-            group_data = []
-            for group in groups:
-                member_count = group.members.count()
-                last_message = GroupMessage.objects.filter(group=group).order_by('-timestamp').first()
-                last_message_data = None
-                if last_message:
-                    last_message_data = {
-                        "message": last_message.message,
-                        "sender": last_message.sender.username,
-                        "timestamp": last_message.timestamp}
+        group_data = []
+        for group in groups:
+            member_count = group.members.count()
 
-                group_data.append({
-                    "id": group.id,
-                    "name": group.name,
-                    "admin": group.admin.username,
-                    "member_count": member_count,
-                    "members": [member.username for member in group.members.all()],
-                    "type": "group",
-                    "image": request.build_absolute_uri(group.group_image.url) if group.group_image else None,
-                    "last_message": last_message_data})
-                cache.set(cache_key, group_data, timeout=60 * 60)
+            # Get the latest message for each group
+            last_message = GroupMessage.objects.filter(group=group).order_by('-timestamp').first()
+            last_message_data = None
+            if last_message:
+                last_message_data = {
+                    "message": last_message.message,
+                    "sender": last_message.sender.username,
+                    "timestamp": last_message.timestamp
+                }
 
-        return Response({"groups":group_data}, status=status.HTTP_200_OK)
+            group_data.append({
+                "id": group.id,
+                "name": group.name,
+                "admin": group.admin.username,
+                "member_count": member_count,
+                "members": [member.username for member in group.members.all()],
+                "type": "group",
+                "image": request.build_absolute_uri(group.group_image.url) if group.group_image else None,
+                "last_message": last_message_data
+            })
+
+        # Sort the groups by the timestamp of the last message (if available)
+        group_data.sort(key=lambda x: x['last_message']['timestamp'] if x['last_message'] else None, reverse=True)
+
+
+        return Response({"groups": group_data}, status=status.HTTP_200_OK)
 
     @extend_schema(responses={201: dict})
     @action(detail=False, methods=['post'], url_path='save_group_message', url_name='save_group_message')
