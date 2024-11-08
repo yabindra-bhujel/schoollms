@@ -40,7 +40,8 @@ const Dashboard = () => {
                     <div className="center_header">
                         <div className="center_header_left__section"></div>
                         <div className="center_header_right_section">
-                            <AttendanceReport />
+                            {/* <AttendanceReport /> */}
+                           <h1>Good things take time! This feature is under construction.</h1>
                         </div>
                     </div>
 
@@ -48,12 +49,13 @@ const Dashboard = () => {
                     <div className="center__buttom">
                         <div className="center_buttom_left__section"></div>
                         <div className="center_buttom_right_section">
-                            <h1>Quick Links</h1>
+                            <h1>Good things take time! This feature is under construction.</h1>
+                            {/* <h1>Quick Links</h1>
                             <ul>
                                 <li><Link to="/submit-assignment">Submit Assignment</Link></li>
                                 <li><Link to="/view-grades">View Grades</Link></li>
                                 <li><Link to="/contact-support">Contact Support</Link></li>
-                            </ul>
+                            </ul> */}
                         </div>
                     </div>
 

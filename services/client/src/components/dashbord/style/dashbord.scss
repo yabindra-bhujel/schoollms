@@ -82,6 +82,15 @@
         overflow: auto;
         flex-grow: 1;
         width: 100%;
+
+        h1{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 18px;
+          color: #737070;
+          margin: 10px;
+        }
       }
     }
 
@@ -97,6 +106,18 @@
         background-color: rgb(26, 212, 60);
         width: 10px;
         height: 100%;
+      }
+
+      .center_buttom_right_section{
+
+        h1{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 18px;
+          color: #737070;
+          margin: 10px;
+        }
       }
     }
   }
