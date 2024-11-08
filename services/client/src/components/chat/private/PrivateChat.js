@@ -32,9 +32,9 @@ const PrivateChat = ({ selectedChat, onlineUsers, handleBackToList, isMobileView
       // get domain
 
       const host = window.location.hostname;
+      const ws = new WebSocket(`wss://bhuj-le.tech/ws/private_chat/${receiver_userId}/${currentUser}/`);
 
-
-      const ws = new WebSocket(`ws://127.0.0.1:8000/ws/private_chat/${receiver_userId}/${currentUser}/`);
+      // const ws = new WebSocket(`ws://127.0.0.1:8000/ws/private_chat/${receiver_userId}/${currentUser}/`);
       setSocket(ws);
 
       ws.onopen = () => {

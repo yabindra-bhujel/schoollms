@@ -28,7 +28,8 @@ const GroupChat = ({ selectedChat, onlineUsers, handleBackToList, isMobileView }
       const userId = getUserInfo().username;
 
       selectedChat.name = selectedChat.name.replace(/\s/g, "");
-      const ws = new WebSocket(`ws://127.0.0.1:8000/ws/group_chat/${selectedChat.name}/${userId}/`);
+      const ws = new WebSocket(`wss://bhuj-le.tech/ws/group_chat/${selectedChat.name}/${userId}/`);
+      // const ws = new WebSocket(`ws://127.0.0.1:8000/ws/group_chat/${selectedChat.name}/${userId}/`);
 
       setCurrentGroupName(selectedChat.name);
       setCurrentUser(userId);

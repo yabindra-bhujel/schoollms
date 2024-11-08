@@ -71,13 +71,11 @@ const groupData = async () => {
 
 
 useEffect(() => {
-  const hostname = window.location.hostname;
-  // const ws = new WebSocket(`ws://${hostname}/ws/${userId}/`);
-  const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${userId}/`);
+  // const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${userId}/`);
+  const ws = new WebSocket(`wss://bhuj-le.tech/ws/${userId}/`);
+
 
   ws.onopen = () => {
-
-    console.log("Connected to the websocket");
   }
 
   ws.onmessage = (e) => {
