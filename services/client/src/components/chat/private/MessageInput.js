@@ -17,7 +17,7 @@ const WriteMessage = (
     return (
         
         <div className="write_message" onClick={handleClick}>
-        <button className="file_add_btn">
+        <button className="file_add_btn" disabled>
           <IoIosAdd className="file_add" />
         </button>
         <textarea
@@ -31,10 +31,10 @@ const WriteMessage = (
         ></textarea>
 
         <div className="write__message__button">
-          <button className="emoji-btn">
+          <button className="emoji-btn" disabled>
             <BsEmojiSmile className="emoji" />
           </button>
-          <button onClick={handleFileButtonClick} className="emoji-btn">
+          <button disabled className="emoji-btn">
             <BiImageAdd className="emoji" />
           </button>
           <input

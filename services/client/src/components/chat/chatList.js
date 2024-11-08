@@ -36,9 +36,6 @@ const ChatList = ({
     setOpenCreateGroup(false);
   };
 
-  console.log(userList);
-  console.log(onlineUsers);
-  
 
   return (
     <>
@@ -52,7 +49,6 @@ const ChatList = ({
           <CreatGroup
             closeMethod={closeCreateGroupModal}
             allusers={userList}
-            // socket={socket}
             get_Group_data={get_Group_data}
           />
         </div>
