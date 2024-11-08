@@ -9,7 +9,7 @@ services:
     volumes:
       - ./services/api:/srv/app
       - ./services/api/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
-      - ./var/log:/srv/app/var/log/api
+      - ./var/log:/srv/app/var/log
       - ./var/log/supervisor:/var/log/django_services/supervisor
       - static_volume:/api/static
       - media_volume:/api/media

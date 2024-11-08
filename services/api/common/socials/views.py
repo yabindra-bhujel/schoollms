@@ -92,7 +92,10 @@ class PrivateMessagesViewSet(viewsets.ViewSet):
     def message_by_sender_receiver(self, request, sender: str, receiver: str):
         sender = get_object_or_404(User, username=sender)
         receiver = get_object_or_404(User, username=receiver)
-        messages = Message.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)).order_by('-timestamp')
+        messages = Message.objects.filter(
+            Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)
+        ).order_by('-timestamp')
+
         messages_data = []
         for message in messages:
             messages_data.append({
@@ -101,7 +104,11 @@ class PrivateMessagesViewSet(viewsets.ViewSet):
                 "message": message.message,
                 "timestamp": message.timestamp,
             })
-        return Response({"messages":messages_data}, status=status.HTTP_200_OK)
+
+        # reverse the messages
+        reversed_messages = list(reversed(messages_data))
+
+        return Response({"messages":reversed_messages}, status=status.HTTP_200_OK)
 
     @extend_schema(responses={201: dict})
     @action(detail=False, methods=['post'], url_path='save_message', url_name='save_message')
