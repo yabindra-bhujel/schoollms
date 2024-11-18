@@ -19,6 +19,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     border-radius: 10px;
     gap: 20px;
 
@@ -147,8 +148,8 @@
 
     .help-button {
         position: absolute;
-        bottom: 50px; /* Adjust as needed */
-        right: 30px; /* Adjust as needed */
+        bottom: 50px; 
+        right: 30px;
 
 
         button{

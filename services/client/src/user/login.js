@@ -87,8 +87,7 @@ function Login() {
       <div className="login-container">
         <div className="login-form">
           <div className="univerity-info">
-            <img src={logo} alt="Logo" />
-            <h2>四国大学</h2>
+            <h2>Hello University</h2>
           </div>
 
           <div className="user-form">
