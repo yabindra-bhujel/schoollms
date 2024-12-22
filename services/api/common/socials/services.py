@@ -71,7 +71,6 @@ class GroupMessageServices:
         """
 
         try:
-            print(data)
             # Validate input data
             required_fields = ['receiver_group_Id', 'user_id', 'message']
             for field in required_fields:
